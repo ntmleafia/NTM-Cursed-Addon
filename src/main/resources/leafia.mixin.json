@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.leafia.mixin.mod",
+  "plugin": "com.leafia.mixin.mod.ModMixinConfigPlugin",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(MOD)",
+  "client": [
+    "hbm.MixinParticleRBMKMush"
+  ],
+  "mixins": [
+  ],
+  "server": [],
+  "setSourceFile": true,
+  "minVersion": "0.8.7"
+}

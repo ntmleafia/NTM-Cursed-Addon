@@ -8,5 +8,7 @@
     "url": "",
     "authorList": [],
     "credits": "",
-    "dependencies": []
+    "dependencies": [
+      "hbm"
+    ]
 }]

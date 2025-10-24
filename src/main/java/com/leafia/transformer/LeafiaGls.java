@@ -1,6 +1,6 @@
 package com.leafia.transformer;
 
-import com.custom.render.amlfrom1710.CompositeBrush;
+import com.leafia.custom.render.amlfrom1710.CompositeBrush;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -8,12 +8,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 // Yeah uh this is bullsh*t i could have just used GL11.getState which i didn't know exis
 public class LeafiaGls extends GlStateManager {
