@@ -1,4 +1,4 @@
-package com.leafia.mixin.mod.hbm.other;
+package com.leafia.packets;
 
 
 import com.hbm.render.amlfrom1710.Vec3;

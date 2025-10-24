@@ -1,7 +1,6 @@
 package com.leafia;
 
 import com.leafia.contents.AddonBlocks;
-import com.leafia.init.PacketInit;
 import com.leafia.init.proxy.ServerProxy;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
@@ -47,7 +46,6 @@ public class AddonBase {
         // register to the event bus so that we can listen to events
         MinecraftForge.EVENT_BUS.register(this);
         AddonBlocks.preInit();
-        PacketInit.registerPackets();
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }
 

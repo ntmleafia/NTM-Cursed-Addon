@@ -5,13 +5,13 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
-    "hbm.MixinParticleRBMKMush",
-    "hbm.MixinItemLaserDetonator"
+    "hbm.MixinParticleRBMKMush"
   ],
   "mixins": [
+    "hbm.MixinItemLaserDetonator",
+    "hbm.MixinPacketDispatcher"
   ],
   "server": [
-    "hbm.MixinItemLaserDetonator"
   ],
   "setSourceFile": true,
   "minVersion": "0.8.7"

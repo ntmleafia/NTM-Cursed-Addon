@@ -2,7 +2,7 @@ package com.leafia.mixin.mod.hbm;
 
 import com.hbm.particle.ParticleRBMKMush;
 import com.hbm.render.NTMRenderHelper;
-import com.leafia.mixin.mod.hbm.interfaces.IMixinParticleRBMKMush;
+import com.leafia.interfaces.mixin.IMixinParticleRBMKMush;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.*;

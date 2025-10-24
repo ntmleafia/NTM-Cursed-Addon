@@ -6,22 +6,15 @@ import com.hbm.interfaces.IHoldableWeapon;
 import com.hbm.items.ModItems;
 import com.hbm.items.tool.ItemLaserDetonator;
 import com.hbm.lib.HBMSoundHandler;
-import com.hbm.lib.Library;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.render.amlfrom1710.Vec3;
-import com.hbm.render.misc.RenderScreenOverlay;
 import com.hbm.util.I18nUtil;
 import com.leafia.dev.LeafiaUtil;
-import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
-import com.leafia.dev.optimization.diagnosis.RecordablePacket;
-import com.leafia.mixin.mod.hbm.other.LaserDetonatorPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.ITooltipFlag;
+import com.leafia.packets.LaserDetonatorPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
@@ -32,24 +25,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.List;
-import java.util.Random;
-
 @Mixin(value = ItemLaserDetonator.class)
-public class MixinItemLaserDetonator extends Item implements IHoldableWeapon {
-	@Override
-	public RenderScreenOverlay.Crosshair getCrosshair() {
-		return RenderScreenOverlay.Crosshair.L_ARROWS;
-	}
+public abstract class MixinItemLaserDetonator extends Item implements IHoldableWeapon {
+
 	public MixinItemLaserDetonator(String s) {
 		this.setRegistryName(s);
 		this.setTranslationKey(s);
@@ -58,17 +40,8 @@ public class MixinItemLaserDetonator extends Item implements IHoldableWeapon {
 		ModItems.ALL_ITEMS.add(this);
 	}
 
-	@Override
-	public void addInformation(ItemStack stack,World worldIn,List<String> list,ITooltipFlag flagIn) {
-		list.add(I18nUtil.resolveKey("item.detonator_laser.desc"));
-		list.add(I18nUtil.resolveKey("item.detonator_laser.desc2"));
-	}
-	//@Override
-	//public float getADS() {
-	//	return 0.3f;
-	//}
 	/**
-	 * @author
+	 * @author leafia
 	 * @reason ability to detonate from 512 blocks away
 	 */
 	@Overwrite

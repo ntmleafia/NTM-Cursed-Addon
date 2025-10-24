@@ -6,7 +6,7 @@ import com.hbm.particle.ParticleRBMKMush;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
-import com.leafia.mixin.mod.hbm.interfaces.IMixinParticleRBMKMush;
+import com.leafia.interfaces.mixin.IMixinParticleRBMKMush;
 import com.leafia.unsorted.ParticleFireK;
 import com.leafia.unsorted.ParticleFireLavaK;
 import com.leafia.unsorted.ParticleSpark;
