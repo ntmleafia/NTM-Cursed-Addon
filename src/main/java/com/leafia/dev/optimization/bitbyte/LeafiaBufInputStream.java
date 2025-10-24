@@ -1,8 +1,8 @@
 package com.leafia.dev.optimization.bitbyte;
 
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf.Config;
-import com.leafia.llib.exceptions.LeafiaDevFlaw;
-import com.leafia.llib.technical.LeafiaBitByteUTF;
+import com.llib.exceptions.LeafiaDevFlaw;
+import com.llib.technical.LeafiaBitByteUTF;
 
 import java.io.DataInput;
 import java.io.EOFException;

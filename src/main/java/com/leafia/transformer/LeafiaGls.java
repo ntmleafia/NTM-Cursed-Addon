@@ -1,6 +1,6 @@
 package com.leafia.transformer;
 
-import com.leafia.custom.render.amlfrom1710.CompositeBrush;
+import com.custom_hbm.render.amlfrom1710.CompositeBrush;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;

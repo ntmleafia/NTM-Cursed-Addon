@@ -1,7 +1,9 @@
 package com.leafia;
 
+import com.leafia.contents.AddonBlocks;
 import com.leafia.init.PacketInit;
 import com.leafia.init.proxy.ServerProxy;
+import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -26,11 +28,25 @@ public class AddonBase {
     @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
     public static ServerProxy proxy;
 
+    public static void _initMemberClasses(Class<?> c) {
+        for (Class<?> cl : c.getClasses()) { // stupid solution to initialize the stupid fields
+            try {
+                Class.forName(cl.getName());
+                System.out.println("Initialized member class "+cl.getSimpleName());
+            } catch (ClassNotFoundException exception) {
+                LeafiaDevFlaw flaw = new LeafiaDevFlaw("ModItems failed to initialize member class "+cl.getSimpleName());
+                flaw.setStackTrace(exception.getStackTrace());
+                throw flaw;
+            }
+        }
+    }
+
     @EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items, etc. (Remove if not needed)
     public void preInit(FMLPreInitializationEvent event) {
         // register to the event bus so that we can listen to events
         MinecraftForge.EVENT_BUS.register(this);
+        AddonBlocks.preInit();
         PacketInit.registerPackets();
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }

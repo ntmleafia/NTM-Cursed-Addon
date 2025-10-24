@@ -1,6 +1,6 @@
 package com.leafia.dev.math;
 
-import com.leafia.llib.exceptions.LeafiaDevFlaw;
+import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.util.math.Vec3d;
 
 // Basically CFrame for minecraft except it uses degrees instead of radians owo

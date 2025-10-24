@@ -1,9 +1,8 @@
 package com.leafia.mixin.mod.hbm.other;
 
 
-import com.hbm.main.MainRegistry;
 import com.hbm.render.amlfrom1710.Vec3;
-import com.leafia.custom.effectNT.EffectNT;
+import com.custom_hbm.effectNT.EffectNT;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import net.minecraft.client.Minecraft;

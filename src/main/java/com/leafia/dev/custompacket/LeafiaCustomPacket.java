@@ -3,7 +3,7 @@ package com.leafia.dev.custompacket;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
-import com.leafia.llib.exceptions.LeafiaDevFlaw;
+import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
