@@ -1,4 +1,4 @@
-package com.llib.math;
+package com.leafia.llib.math;
 
 public class LeafiaColor { // Color utility for doing complex color mixing
 	public double red = 1;

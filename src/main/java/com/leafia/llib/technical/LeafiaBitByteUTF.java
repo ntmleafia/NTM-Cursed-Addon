@@ -1,8 +1,8 @@
-package com.llib.technical;
+package com.leafia.llib.technical;
 
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
-import com.llib.exceptions.LeafiaDevFlaw;
-import com.llib.math.range.RangeInt;
+import com.leafia.llib.exceptions.LeafiaDevFlaw;
+import com.leafia.llib.math.range.RangeInt;
 
 import java.util.ArrayList;
 import java.util.List;

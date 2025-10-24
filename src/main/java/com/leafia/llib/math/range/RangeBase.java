@@ -1,4 +1,4 @@
-package com.llib.math.range;
+package com.leafia.llib.math.range;
 
 public abstract class RangeBase implements Cloneable {
     public abstract double lerp(double t);

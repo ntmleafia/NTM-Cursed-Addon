@@ -112,7 +112,7 @@ public class ParticleSpark extends Particle {
 				if (z <= 1)
 					vec = vec.scale(partialTicks);
 				BeamPronter.prontBeam(
-						new Vec3(vec),
+						vec,
 						EnumWaveType.STRAIGHT,
 						EnumBeamType.SOLID,
 						color,color,

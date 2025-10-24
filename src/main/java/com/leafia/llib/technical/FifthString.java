@@ -1,9 +1,9 @@
-package com.llib.technical;
-import com.llib.exceptions.LeafiaDevFlaw;
-import com.llib.math.range.RangeInt;
+package com.leafia.llib.technical;
+import com.leafia.llib.exceptions.LeafiaDevFlaw;
+import com.leafia.llib.math.range.RangeInt;
 
-import static com.llib.technical.FifthString.CharType.*;
-import static com.llib.technical.FifthString.ControlType.*;
+import static com.leafia.llib.technical.FifthString.CharType.*;
+import static com.leafia.llib.technical.FifthString.ControlType.*;
 
 public class FifthString {
 	public int[] codes = new int[0];

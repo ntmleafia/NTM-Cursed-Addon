@@ -1,4 +1,4 @@
-package com.llib.technical;
+package com.leafia.llib.technical;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;

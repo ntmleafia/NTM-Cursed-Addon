@@ -1,4 +1,4 @@
-package com.llib.technical;
+package com.leafia.llib.technical;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.SyntaxErrorException;

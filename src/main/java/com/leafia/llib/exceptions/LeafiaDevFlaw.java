@@ -1,4 +1,4 @@
-package com.llib.exceptions;
+package com.leafia.llib.exceptions;
 
 public class LeafiaDevFlaw extends RuntimeException {
     public LeafiaDevFlaw(String s) {

@@ -1,7 +1,7 @@
-package com.llib.group;
+package com.leafia.llib.group;
 
-import com.llib.LLibRsc.*;
-import com.llib.exceptions.LeafiaDevFlaw;
+import com.leafia.llib.LLibRsc.*;
+import com.leafia.llib.exceptions.LeafiaDevFlaw;
 
 import java.util.*;
 import java.util.function.UnaryOperator;

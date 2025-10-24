@@ -1,4 +1,4 @@
-package com.llib.math;
+package com.leafia.llib.math;
 
 import java.util.function.BiFunction;
 

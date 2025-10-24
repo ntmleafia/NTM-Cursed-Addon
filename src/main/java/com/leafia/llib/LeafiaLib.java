@@ -1,4 +1,4 @@
-package com.llib;
+package com.leafia.llib;
 
 import java.util.function.Function;
 

@@ -1,4 +1,4 @@
-package com.llib.math.range;
+package com.leafia.llib.math.range;
 
 import java.util.Iterator;
 

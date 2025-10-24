@@ -1,4 +1,4 @@
-package com.llib.math.range;
+package com.leafia.llib.math.range;
 
 public class RangeFloat extends RangeBase {
     public float min;

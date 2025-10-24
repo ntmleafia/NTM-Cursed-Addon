@@ -1,10 +1,10 @@
 package com.leafia.dev.optimization.bitbyte;
 
-import com.llib.exceptions.LeafiaDevFlaw;
-import com.llib.technical.BitByteBuf;
-import com.llib.technical.FifthString;
-import com.llib.technical.FifthString.ControlType;
-import com.llib.technical.LeafiaBitByteUTF;
+import com.leafia.llib.exceptions.LeafiaDevFlaw;
+import com.leafia.llib.technical.BitByteBuf;
+import com.leafia.llib.technical.FifthString;
+import com.leafia.llib.technical.FifthString.ControlType;
+import com.leafia.llib.technical.LeafiaBitByteUTF;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.item.Item;

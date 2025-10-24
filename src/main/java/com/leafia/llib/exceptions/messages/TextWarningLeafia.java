@@ -1,4 +1,4 @@
-package com.llib.exceptions.messages;
+package com.leafia.llib.exceptions.messages;
 
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

@@ -1,8 +1,8 @@
 package com.leafia.dev.optimization.bitbyte;
 
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf.Config;
-import com.llib.technical.FifthString;
-import com.llib.technical.LeafiaBitByteUTF;
+import com.leafia.llib.technical.FifthString;
+import com.leafia.llib.technical.LeafiaBitByteUTF;
 
 import java.io.DataOutput;
 import java.io.IOException;
