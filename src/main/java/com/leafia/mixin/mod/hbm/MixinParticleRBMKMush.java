@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.*;
 @Mixin(value = ParticleRBMKMush.class)
 public abstract class MixinParticleRBMKMush extends Particle implements IMixinParticleRBMKMush {
     @Final
-    @Shadow
+    @Shadow(remap = false)
     private static ResourceLocation texture;
     @Unique
     public boolean isPink = false;

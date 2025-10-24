@@ -1,5 +1,6 @@
 package com.leafia.unsorted;
 
+import com.hbm.util.RenderUtil;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.particle.ParticleRedstone;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -29,21 +30,24 @@ public class ParticleRedstoneLight extends ParticleRedstone {
     @Override
     public void renderParticle(BufferBuilder buffer,Entity entityIn,float partialTicks,float rotationX,float rotationZ,float rotationYZ,float rotationXY,float rotationXZ) {
         Tessellator tes = Tessellator.getInstance();
-        tes.draw(); // ah fuck it
-
-        LeafiaGls._push();
-        LeafiaGls.pushMatrix();
-        LeafiaGls.color(1, 1, 1, 1);
-        LeafiaGls.disableLighting();
-        LeafiaGls.enableBlend();
-        LeafiaGls.alphaFunc(GL11.GL_GREATER, 0);
-        LeafiaGls.depthMask(false);
-        LeafiaGls.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+        boolean prevLighting = RenderUtil.isLightingEnabled();
+        boolean prevBlend = RenderUtil.isBlendEnabled();
+        boolean prevDepth = RenderUtil.isDepthEnabled();
+        tes.draw();
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
+        GlStateManager.depthMask(false);
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
         buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
         super.renderParticle(buffer,entityIn,partialTicks,rotationX,rotationZ,rotationYZ,rotationXY,rotationXZ);
         tes.draw();
-        LeafiaGls.popMatrix();
-        LeafiaGls._pop();
+        GlStateManager.depthMask(prevDepth);
+        if (!prevBlend) GlStateManager.disableBlend();
+        if (prevLighting) GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
 
         buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
     }

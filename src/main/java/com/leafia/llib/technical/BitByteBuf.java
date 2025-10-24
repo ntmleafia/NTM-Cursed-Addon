@@ -1,6 +1,6 @@
 package com.leafia.llib.technical;
 
-import com.llib.math.range.RangeInt;
+import com.leafia.llib.math.range.RangeInt;
 
 public class BitByteBuf {
 	public byte[] bytes;
