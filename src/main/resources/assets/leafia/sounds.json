@@ -1,0 +1,50 @@
+{
+  "external.furnacestressed00": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed00", "stream": false}]},
+  "external.furnacestressed01": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed01", "stream": false}]},
+  "external.furnacestressed02": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed02", "stream": false}]},
+  "external.furnacestressed03": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed03", "stream": false}]},
+  "external.furnacestressed04": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed04", "stream": false}]},
+  "external.furnacestressed05": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed05", "stream": false}]},
+  "external.furnacestressed06": {"category": "block", "sounds": [{"name": "hbm:external/furnacestressed06", "stream": false}]},
+
+  "external.pwrcontrolstart": {"category": "block", "sounds": [{"name": "hbm:external/stormworks_hingepivot4_start", "stream": false}]},
+  "external.pwrcontrol": {"category": "block", "sounds": [{"name": "hbm:external/stormworks_hingepivot4_loop", "stream": false}]},
+  "external.pwrcontrolstop": {"category": "block", "sounds": [{"name": "hbm:external/stormworks_hingepivot4_end", "stream": false}]},
+
+  "external.machineDestroyed": {"category": "block", "sounds": [{"name": "hbm:external/apeboss_death", "stream": false}]},
+  "external.machineExplode": {"category": "block", "sounds": [{"name": "hbm:external/mech_explosion", "stream": false}]},
+
+  "external.sbpickore": {"category": "block", "sounds": [{"name": "hbm:external/pickaxe_ore", "stream": false},{"name": "hbm:external/pickaxe_ore2", "stream": false}]},
+
+  "weapon.nuke": {"subtitle": "subtitles.weapon.nuke", "category": "player", "sounds": [{"name": "hbm:weapon/nuclearExplosion", "stream": false}]},
+  "weapon.nuke_n": {"subtitle": "subtitles.weapon.nuke_n", "category": "player", "sounds": [{"name": "hbm:weapon/nuclearexplosion_louder", "stream": false}]},
+  "weapon.nuke_d": {"subtitle": "subtitles.weapon.nuke_d", "category": "player", "sounds": [{"name": "hbm:weapon/nuclear_distant_mix", "stream": false}]},
+  "weapon.nuke_a": {"category": "player", "sounds": [{"name": "hbm:weapon/nuclear_distant", "stream": false}]},
+  "weapon.nuke_s": {"subtitle": "subtitles.weapon.nuke_s", "category": "player", "sounds": [{"name": "hbm:weapon/nuclear_mini", "stream": false}]},
+  "weapon.nuke_folkvangr": {"subtitle": "subtitles.weapon.nuke_folkvangr", "category": "player", "sounds": [{"name": "hbm:weapon/nuke_folkvangr", "stream": false}]},
+
+  "block.kfc.vs": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.vs", "name": "hbm:external/forcefield_loop", "stream": false}]},
+  "block.kfc.tw": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.tw", "name": "hbm:external/charge_full_hold1", "stream": false}]},
+  "block.kfc.eoh": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.eoh", "name": "hbm:external/avactron_loop", "stream": false}]},
+  "block.kfc.meltdown": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.meltdown", "name": "hbm:leafia/dfcstress", "stream": false}]},
+  "block.kfc.explode": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.explode", "name": "hbm:leafia/dfcexplode", "stream": false}]},
+
+  "music.422fgame": {"category": "music", "sounds": [{"name": "hbm:music/422fgame", "stream": false}]},
+  "music.422fmenu": {"category": "music", "sounds": [{"name": "hbm:music/422fmenu", "stream": false}]},
+
+  "item.pointed": {"subtitle": "subtitles.item.pointed", "category": "neutral", "sounds": ["hbm:entity/slicer3","hbm:weapon/hit_metal0"]},
+  "elevators.s6beep": { "category": "block", "sounds": ["hbm:elevators/s6_beep"]},
+  "elevators.s6bell": { "category": "block", "sounds": ["hbm:elevators/s6_bell"]},
+  "elevators.electronicpingshort": { "category": "block", "sounds": ["hbm:elevators/electronicpingshort"]},
+  "elevators.skyliftarrive": { "category": "block", "sounds": ["hbm:elevators/skylift_arrive"]},
+  "ui.button.invalid": { "category": "block", "sounds": ["hbm:external/clickon_error"]},
+  "external.mus_sfx_a_lithit": { "category": "block", "sounds": ["hbm:external/mus_sfx_a_lithit"]},
+  "external.lsplash.crucifix": { "category": "block", "sounds": ["hbm:external/lsplash_crucifix"]},
+  "external.lsplash.crucifix_fail": { "category": "block", "sounds": ["hbm:external/lsplash_crucifix_fail"]},
+  "external.crafting_tech1_part": { "category": "block", "sounds": ["hbm:external/crafting_tech1_part"]},
+
+  "external.mechcrafting_lower": { "category": "block", "sounds": ["hbm:external/mechcrafting_lower"]},
+  "external.mechcrafting_raise": { "category": "block", "sounds": ["hbm:external/mechcrafting_raise"]},
+  "external.mechcrafting_loop": { "category": "block", "sounds": ["hbm:external/mechcrafting_loop"]},
+  "external.mechcrafting_weld": { "category": "block", "sounds": ["hbm:external/mechcrafting_weld"]}
+}

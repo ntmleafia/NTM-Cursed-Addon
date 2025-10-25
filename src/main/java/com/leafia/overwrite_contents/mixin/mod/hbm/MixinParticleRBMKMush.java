@@ -2,7 +2,8 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.particle.ParticleRBMKMush;
 import com.hbm.render.NTMRenderHelper;
-import com.leafia.interfaces.mixin.IMixinParticleRBMKMush;
+import com.hbm.util.RenderUtil;
+import com.leafia.overwrite_contents.interfaces.IMixinParticleRBMKMush;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.*;
@@ -33,6 +34,9 @@ public abstract class MixinParticleRBMKMush extends Particle implements IMixinPa
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         NTMRenderHelper.resetParticleInterpPos(entityIn, partialTicks);
+        boolean prevLighting = RenderUtil.isLightingEnabled();
+        boolean prevBlend = RenderUtil.isBlendEnabled();
+        boolean prevDepth = RenderUtil.isDepthEnabled();
 
         int segs = 30;
 
@@ -69,6 +73,9 @@ public abstract class MixinParticleRBMKMush extends Particle implements IMixinPa
 
         GlStateManager.doPolygonOffset(0, 0);
         GlStateManager.enableLighting();
+        GlStateManager.depthMask(prevDepth);
+        if (!prevBlend) GlStateManager.disableBlend();
+        if (prevLighting) GlStateManager.enableLighting();
     }
 
     @Override

@@ -1,14 +1,19 @@
 package com.leafia;
 
+import com.hbm.lib.RefStrings;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.eventbuses.LeafiaServerListener;
+import com.leafia.init.EntityInit;
+import com.leafia.init.LeafiaSoundEvents;
+import com.leafia.init.TEInit;
 import com.leafia.init.proxy.ServerProxy;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +33,13 @@ public class AddonBase {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
     @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
     public static ServerProxy proxy;
+
+    public static final ResourceLocation solid = new ResourceLocation(RefStrings.MODID, "textures/solid.png");
+    public static final ResourceLocation solid_e = new ResourceLocation(RefStrings.MODID, "textures/solid_emissive.png");
+
+    static {
+        LeafiaSoundEvents.init();
+    }
 
     public static void _initMemberClasses(Class<?> c) {
         for (Class<?> cl : c.getClasses()) { // stupid solution to initialize the stupid fields
@@ -59,6 +71,10 @@ public class AddonBase {
         AddonBlocks.preInit();
         AddonItems.preInit();
         proxy.registerRenderInfo();
+
+        TEInit.preInit();
+        EntityInit.preInit();
+
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }
 

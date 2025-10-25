@@ -1,12 +1,15 @@
 package com.leafia.init.proxy;
 
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.effects.folkvangr.visual.EntityCloudFleijaBase;
+import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends ServerProxy {
 	@Override
@@ -21,5 +24,7 @@ public class ClientProxy extends ServerProxy {
 			}
 		}
         ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
+
+		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleijaBase.class, RenderCloudFleija.FACTORY);
 	}
 }

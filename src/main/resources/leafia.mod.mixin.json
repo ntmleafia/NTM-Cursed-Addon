@@ -9,6 +9,7 @@
     "hbm.MixinParticleRBMKMush"
   ],
   "mixins": [
+    "hbm.MixinEntityCloudFleija",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher"
   ],
