@@ -5,12 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
-    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinItemRenderLaserDetonator",
-    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinParticleRBMKMush"
+    "hbm.MixinItemRenderLaserDetonator",
+    "hbm.MixinParticleRBMKMush"
   ],
   "mixins": [
-    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinItemLaserDetonator",
-    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinPacketDispatcher"
+    "hbm.MixinItemLaserDetonator",
+    "hbm.MixinPacketDispatcher"
   ],
   "server": [
   ],

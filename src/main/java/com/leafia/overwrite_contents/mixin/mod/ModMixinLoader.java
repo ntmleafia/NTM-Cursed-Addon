@@ -10,6 +10,6 @@ public class ModMixinLoader implements ILateMixinLoader {
 
     @Override
     public List<String> getMixinConfigs() {
-        return Collections.singletonList("leafia.overwrite_contents.mod.mixin.json");
+        return Collections.singletonList("leafia.mod.mixin.json");
     }
 }
