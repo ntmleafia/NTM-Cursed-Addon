@@ -2,6 +2,8 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.main.NetworkHandler;
 import com.hbm.packet.PacketDispatcher;
+import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
+import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr.ClearChunkPacket;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
@@ -29,5 +31,7 @@ public class MixinPacketDispatcher {
         wrapper.registerMessage(LeafiaCustomPacket.Handler.class, LeafiaCustomPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(LeafiaParticlePacket.Handler.class, LeafiaParticlePacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(LaserDetonatorPacket.Handler.class, LaserDetonatorPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(EntityNukeFolkvangr.ClearChunkPacket.Handler.class, EntityNukeFolkvangr.ClearChunkPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(EntityNukeFolkvangr.FolkvangrVacuumPacket.Handler.class, EntityNukeFolkvangr.FolkvangrVacuumPacket.class, i++, Side.CLIENT);
     }
 }
