@@ -12,7 +12,7 @@ import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;
-import com.leafia.packets.LaserDetonatorPacket;
+import com.leafia.mixin.packets.LaserDetonatorPacket;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

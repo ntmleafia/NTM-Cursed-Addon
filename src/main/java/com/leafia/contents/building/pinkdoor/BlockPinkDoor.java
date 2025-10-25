@@ -1,4 +1,4 @@
-package com.leafia.contents.building;
+package com.leafia.contents.building.pinkdoor;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.generic.BlockModDoor;
@@ -15,10 +15,15 @@ import com.hbm.interfaces.IBomb;
 import com.hbm.lib.HBMSoundHandler;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.dev.optimization.LeafiaParticlePacket.PinkRBMK;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -31,6 +36,93 @@ public class BlockPinkDoor extends BlockModDoor implements IBomb {
 		this.setSoundType(SoundType.WOOD);
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
+
+	private int getCloseSound()
+	{
+		return 1012;
+	}
+
+	private int getOpenSound()
+	{
+		return 1006;
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
+		BlockPos base = state.getValue(HALF) == EnumDoorHalf.LOWER ? pos : pos.down();
+		IBlockState baseState = pos.equals(base) ? state : worldIn.getBlockState(base);
+		if (baseState.getBlock() != this) {
+			return false;
+		} else {
+			IBlockState toggled = baseState.cycleProperty(OPEN);
+			worldIn.setBlockState(base, toggled, 10);
+			worldIn.markBlockRangeForRenderUpdate(base, pos);
+			worldIn.playEvent(playerIn, ((Boolean)state.getValue(OPEN)).booleanValue() ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+			return true;
+		}
+	}
+	@Override
+	public void toggleDoor(World worldIn, BlockPos pos, boolean open) {
+		IBlockState state = worldIn.getBlockState(pos);
+		if (state.getBlock() == this) {
+			BlockPos base = state.getValue(HALF) == EnumDoorHalf.LOWER ? pos : pos.down();
+			IBlockState baseState = pos.equals(base) ? state : worldIn.getBlockState(base);
+			if (baseState.getBlock() == this && (Boolean)baseState.getValue(OPEN) != open) {
+				worldIn.setBlockState(base, baseState.withProperty(OPEN, open), 10);
+				worldIn.markBlockRangeForRenderUpdate(base, pos);
+				worldIn.playEvent((EntityPlayer)null, open ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+			}
+
+		}
+	}
+	@Override
+	public void neighborChanged(IBlockState state,World worldIn,BlockPos pos,Block blockIn,BlockPos fromPos) {
+		if (state.getValue(HALF) == EnumDoorHalf.UPPER) {
+			BlockPos below = pos.down();
+			IBlockState belowState = worldIn.getBlockState(below);
+			if (belowState.getBlock() != this) {
+				worldIn.setBlockToAir(pos);
+			} else if (blockIn != this) {
+				belowState.neighborChanged(worldIn, below, blockIn, fromPos);
+			}
+
+		} else {
+			boolean changed = false;
+			BlockPos above = pos.up();
+			IBlockState aboveState = worldIn.getBlockState(above);
+			if (aboveState.getBlock() != this) {
+				worldIn.setBlockToAir(pos);
+				changed = true;
+			}
+
+			if (!worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP)) {
+				worldIn.setBlockToAir(pos);
+				changed = true;
+				if (aboveState.getBlock() == this) {
+					worldIn.setBlockToAir(above);
+				}
+			}
+
+			if (changed) {
+				if (!worldIn.isRemote) {
+					this.dropBlockAsItem(worldIn, pos, state, 0);
+				}
+
+			} else {
+				boolean powered = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(above);
+				if (blockIn != this && (powered || blockIn.getDefaultState().canProvidePower()) && powered != (Boolean)aboveState.getValue(POWERED)) {
+					worldIn.setBlockState(above, aboveState.withProperty(POWERED, powered), 2);
+					if (powered != (Boolean)state.getValue(OPEN)) {
+						worldIn.setBlockState(pos, state.withProperty(OPEN, powered), 2);
+						worldIn.markBlockRangeForRenderUpdate(pos, pos);
+						worldIn.playEvent((EntityPlayer)null, powered ? this.getOpenSound() : this.getCloseSound(), pos, 0);
+					}
+				}
+
+			}
+		}
+	}
+
 	protected void spawnDebris(World world,BlockPos pos,DebrisType type) { // oh boy
 		EntityRBMKDebris debris = new EntityRBMKDebris(world, pos.getX() + 0.5D, pos.getY() + 1, pos.getZ() + 0.5D, type);
 		debris.motionX = world.rand.nextGaussian() * 0.25D * 2;

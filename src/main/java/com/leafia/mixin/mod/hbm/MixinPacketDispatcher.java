@@ -5,7 +5,7 @@ import com.hbm.packet.PacketDispatcher;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
-import com.leafia.packets.LaserDetonatorPacket;
+import com.leafia.mixin.packets.LaserDetonatorPacket;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraftforge.fml.relauncher.Side;
 import org.spongepowered.asm.mixin.Final;

@@ -1,4 +1,4 @@
-package com.leafia.packets;
+package com.leafia.mixin.packets;
 
 
 import com.hbm.render.amlfrom1710.Vec3;
@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
+// this used to be a static class of ItemLaserDetonator so I put it here - Leafia
 public class LaserDetonatorPacket extends RecordablePacket {
 	public Vec3 startPoint;
 	public Vec3 direction;

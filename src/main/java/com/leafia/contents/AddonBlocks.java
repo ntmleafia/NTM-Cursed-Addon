@@ -1,7 +1,7 @@
 package com.leafia.contents;
 
 import com.leafia.AddonBase;
-import com.leafia.contents.building.BlockPinkDoor;
+import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;

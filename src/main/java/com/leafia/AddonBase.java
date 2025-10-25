@@ -1,6 +1,7 @@
 package com.leafia;
 
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonItems;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.proxy.ServerProxy;
 import com.llib.exceptions.LeafiaDevFlaw;
@@ -57,6 +58,7 @@ public class AddonBase {
         }
         proxy.registerRenderInfo();
         AddonBlocks.preInit();
+        AddonItems.preInit();
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }
 
