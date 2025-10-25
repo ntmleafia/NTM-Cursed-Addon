@@ -1,8 +1,10 @@
 package com.leafia.contents.effects.folkvangr.visual;
 
 import com.custom_hbm.render.amlfrom1710.AdvancedModelLoader;
+import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.amlfrom1710.IModelCustom;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -11,14 +13,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import org.lwjgl.opengl.GL11;
 
-public class RenderCloudRainbow extends Render<EntityCloudFleijaRainbowBase> {
+public class RenderCloudRainbow extends Render<EntityCloudFleijaRainbow> {
 
 	private static final ResourceLocation objTesterModelRL = new ResourceLocation(/*"/assets/" + */RefStrings.MODID, "models/sphere.obj");
 	private IModelCustom blastModel;
     public float scale = 0;
     public float ring = 0;
 	//Drillgon200: Hey I figured out how to use a lambda!
-    public static final IRenderFactory<EntityCloudFleijaRainbowBase> FACTORY = (RenderManager manage) -> {return new RenderCloudRainbow(manage);};
+    public static final IRenderFactory<EntityCloudFleijaRainbow> FACTORY = (RenderManager manage) -> {return new RenderCloudRainbow(manage);};
     
 	protected RenderCloudRainbow(RenderManager renderManager) {
 		super(renderManager);
@@ -28,7 +30,7 @@ public class RenderCloudRainbow extends Render<EntityCloudFleijaRainbowBase> {
 	}
 	
 	@Override
-	public void doRender(EntityCloudFleijaRainbowBase cloud,double x,double y,double z,float entityYaw,
+	public void doRender(EntityCloudFleijaRainbow cloud,double x,double y,double z,float entityYaw,
 	                     float partialTicks) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT);
@@ -37,7 +39,7 @@ public class RenderCloudRainbow extends Render<EntityCloudFleijaRainbowBase> {
         GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		float s = (float)(cloud.scale+(/*cloud.remoteTicks+*/partialTicks)*cloud.tickrate);
+		float s = (float)(cloud.scale+(/*cloud.remoteTicks+*/partialTicks)*((IMixinEntityCloudFleija)cloud).getTickrate());
         GL11.glScalef(s,s,s);
 
 		GL11.glColor3ub((byte)cloud.world.rand.nextInt(0x100), (byte)cloud.world.rand.nextInt(0x100), (byte)cloud.world.rand.nextInt(0x100));
@@ -72,7 +74,7 @@ public class RenderCloudRainbow extends Render<EntityCloudFleijaRainbowBase> {
 	}
 	
 	@Override
-	protected ResourceLocation getEntityTexture(EntityCloudFleijaRainbowBase entity) {
+	protected ResourceLocation getEntityTexture(EntityCloudFleijaRainbow entity) {
 		return null;
 	}
 
