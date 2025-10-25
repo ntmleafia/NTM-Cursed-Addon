@@ -34,14 +34,6 @@ import static com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr.getPrefe
 
 @Mixin(value = EntityCloudFleija.class)
 public abstract class MixinEntityCloudFleija extends Entity implements IMixinEntityCloudFleija {
-    @Unique
-    private static final DataParameter<Float> SCALE = EntityDataManager.createKey(EntityCloudFleija.class, DataSerializers.FLOAT);
-    @Unique
-    private static final DataParameter<Float> TICKRATE = EntityDataManager.createKey(EntityCloudFleija.class, DataSerializers.FLOAT);
-    @Unique
-    private static final DataParameter<Boolean> ANTISCHRAB = EntityDataManager.createKey(EntityCloudFleija.class, DataSerializers.BOOLEAN);
-    @Unique
-    private static final DataParameter<Boolean> FINISHED = EntityDataManager.createKey(EntityCloudFleija.class, DataSerializers.BOOLEAN);
     @Shadow(remap = false)
     public float scale;
     @Unique
