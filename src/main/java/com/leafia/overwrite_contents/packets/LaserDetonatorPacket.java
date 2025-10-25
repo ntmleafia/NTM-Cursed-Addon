@@ -1,4 +1,4 @@
-package com.leafia.mixin.packets;
+package com.leafia.overwrite_contents.packets;
 
 
 import com.hbm.render.amlfrom1710.Vec3;

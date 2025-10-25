@@ -1,16 +1,16 @@
 {
   "required": true,
-  "package": "com.leafia.mixin.mod",
-  "plugin": "com.leafia.mixin.mod.ModMixinConfigPlugin",
+  "package": "com.leafia.overwrite_contents.mixin.mod",
+  "plugin": "com.leafia.overwrite_contents.mixin.mod.ModMixinConfigPlugin",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
-    "hbm.MixinItemRenderLaserDetonator",
-    "hbm.MixinParticleRBMKMush"
+    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinItemRenderLaserDetonator",
+    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinParticleRBMKMush"
   ],
   "mixins": [
-    "hbm.MixinItemLaserDetonator",
-    "hbm.MixinPacketDispatcher"
+    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinItemLaserDetonator",
+    "com.leafia.overwrite_contents.mixin.mod.hbm.MixinPacketDispatcher"
   ],
   "server": [
   ],

@@ -1,4 +1,4 @@
-package com.leafia.mixin.mod;
+package com.leafia.overwrite_contents.mixin.mod;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;

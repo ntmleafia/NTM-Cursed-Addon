@@ -1,4 +1,4 @@
-package com.leafia.mixin.mod.hbm;
+package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.main.ModEventHandlerClient;
 import com.hbm.main.ResourceManager;

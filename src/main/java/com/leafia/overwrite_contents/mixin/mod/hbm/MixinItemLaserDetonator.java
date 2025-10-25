@@ -1,4 +1,4 @@
-package com.leafia.mixin.mod.hbm;
+package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.GeneralConfig;
 import com.hbm.interfaces.IBomb;
@@ -12,7 +12,7 @@ import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;
-import com.leafia.mixin.packets.LaserDetonatorPacket;
+import com.leafia.overwrite_contents.packets.LaserDetonatorPacket;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

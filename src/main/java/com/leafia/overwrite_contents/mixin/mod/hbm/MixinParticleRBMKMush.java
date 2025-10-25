@@ -1,4 +1,4 @@
-package com.leafia.mixin.mod.hbm;
+package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.particle.ParticleRBMKMush;
 import com.hbm.render.NTMRenderHelper;
