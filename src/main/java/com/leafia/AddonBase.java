@@ -34,8 +34,8 @@ public class AddonBase {
     @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
     public static ServerProxy proxy;
 
-    public static final ResourceLocation solid = new ResourceLocation(RefStrings.MODID, "textures/solid.png");
-    public static final ResourceLocation solid_e = new ResourceLocation(RefStrings.MODID, "textures/solid_emissive.png");
+    public static final ResourceLocation solid = new ResourceLocation("leafia", "textures/solid.png");
+    public static final ResourceLocation solid_e = new ResourceLocation("leafia", "textures/solid_emissive.png");
 
     static {
         LeafiaSoundEvents.init();

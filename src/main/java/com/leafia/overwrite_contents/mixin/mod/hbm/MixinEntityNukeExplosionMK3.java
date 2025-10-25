@@ -4,6 +4,7 @@ import com.hbm.config.CompatibilityConfig;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
 import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.items.ModItems;
+import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.Style;
@@ -24,23 +25,24 @@ public abstract class MixinEntityNukeExplosionMK3 extends Entity implements IChu
 
 	@Shadow(remap = false) public abstract void setDead();
 
+	@Shadow public abstract void onUpdate();
+
 	public MixinEntityNukeExplosionMK3(World worldIn) {
 		super(worldIn);
 	}
 
-	@Inject(method = "onUpdate", at = @At("HEAD"))
+	@Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
 	private void onOnUpdate(CallbackInfo ci) {
 		if (!this.world.isRemote) {
 			if (CompatibilityConfig.isWarDim(this.world)) {
 				if (!this.did) {
 					if (!waste) {
 						if (extType == 0) {
-							System.out.println("TEST");
-							for (EntityPlayer player : world.playerEntities) {
-								if (player.getHeldItemMainhand().getItem() == ModItems.wand_d)
-									player.sendMessage(new TextComponentString("TEST").setStyle(new Style().setColor(TextFormatting.YELLOW)));
-							}
+							super.onUpdate();
+							EntityNukeFolkvangr folkvangr = new EntityNukeFolkvangr(world, this.getPositionVector(), null);
+							world.spawnEntity(folkvangr);
 							this.setDead();
+							ci.cancel();
 						}
 					}
 				}
