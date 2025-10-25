@@ -10,7 +10,9 @@
   ],
   "mixins": [
     "hbm.MixinEntityCloudFleija",
+    "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",
+    "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher"
   ],
