@@ -2,7 +2,6 @@ package com.leafia.init.proxy;
 
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.leafia.contents.AddonBlocks;
-import com.leafia.contents.effects.folkvangr.visual.EntityCloudFleijaBase;
 import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.llib.exceptions.LeafiaDevFlaw;

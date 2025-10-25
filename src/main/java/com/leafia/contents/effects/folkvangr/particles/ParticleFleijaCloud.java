@@ -3,7 +3,6 @@ package com.leafia.contents.effects.folkvangr.particles;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.NTMRenderHelper;
-import com.leafia.contents.effects.folkvangr.visual.EntityCloudFleijaBase;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;

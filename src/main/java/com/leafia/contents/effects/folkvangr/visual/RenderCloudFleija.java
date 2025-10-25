@@ -1,7 +1,7 @@
 package com.leafia.contents.effects.folkvangr.visual;
 
-import com.custom_hbm.render.amlfrom1710.AdvancedModelLoader;
 import com.hbm.entity.effect.EntityCloudFleija;
+import com.hbm.hfr.render.loader.HFRWavefrontObject;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.amlfrom1710.IModelCustom;
 import com.hbm.util.RenderUtil;
@@ -30,7 +30,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleija> {
 	
 	protected RenderCloudFleija(RenderManager renderManager) {
 		super(renderManager);
-		blastModel = AdvancedModelLoader.loadModel(objTesterModelRL);
+		blastModel = new HFRWavefrontObject(objTesterModelRL).asVBO();
     	blastTexture = AddonBase.solid_e;//new ResourceLocation(RefStrings.MODID, "textures/solid_emissive.png");//models/explosion/BlastFleija.png");
     	scale = 0;
 	}
@@ -62,7 +62,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleija> {
 		LeafiaGls.disableCull();
 		LeafiaGls.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		float alpha = 1;
-		if (cloud.getDataManager().get(EntityCloudFleijaBase.FINISHED)) {
+		if (((IMixinEntityCloudFleija)cloud).isFinished()) {
 			LeafiaGls.pushMatrix(); // multiplying by 0 might be irreversible so
 			float s3 = (float)(shrinkEase.get((cloud.ticksExisted+partialTicks-lastTicks)/(10+Math.pow(cloud.getMaxAge(),0.5)),1,0,true));
 			alpha = (float)(Math.pow(MathHelper.clampedLerp(1,0,(cloud.ticksExisted+partialTicks-lastTicks)/20),2));
