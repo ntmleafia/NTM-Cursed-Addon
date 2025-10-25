@@ -1,5 +1,6 @@
 package com.leafia.init.proxy;
 
+import com.hbm.entity.effect.EntityCloudFleija;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.effects.folkvangr.visual.EntityCloudFleijaBase;
 import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
@@ -25,6 +26,6 @@ public class ClientProxy extends ServerProxy {
 		}
         ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleijaBase.class, RenderCloudFleija.FACTORY);
+		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, RenderCloudFleija.FACTORY);
 	}
 }

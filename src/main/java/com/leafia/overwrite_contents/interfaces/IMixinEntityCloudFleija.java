@@ -4,9 +4,10 @@ import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 
 public interface IMixinEntityCloudFleija {
 	boolean getIsAntischrab();
-	void setIsAntischrab(boolean value);
+	IMixinEntityCloudFleija setAntischrab();
 	double getScale();
 	void setScale(double value);
 	EntityNukeFolkvangr getBound();
 	void setBound(EntityNukeFolkvangr value);
+	float getTickrate();
 }

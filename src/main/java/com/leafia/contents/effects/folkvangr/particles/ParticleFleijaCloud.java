@@ -1,8 +1,10 @@
 package com.leafia.contents.effects.folkvangr.particles;
 
+import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.NTMRenderHelper;
 import com.leafia.contents.effects.folkvangr.visual.EntityCloudFleijaBase;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -21,19 +23,19 @@ import org.lwjgl.opengl.GL11;
 public class ParticleFleijaCloud extends Particle {
 
 	private static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/particle/particle_base.png");
-	EntityCloudFleijaBase cloud;
+	IMixinEntityCloudFleija cloud;
 	Vec3d lookVector;
 	Vec3d rightVector;
 	double mySize = -1;
 	double mySpeed = 1;
 	void updatePosition() {
-		double s = cloud.scale*1.4;
-		this.posX = cloud.posX+lookVector.x*s+rightVector.x*s;
-		this.posY = cloud.posY+lookVector.y*s+rightVector.y*s;
-		this.posZ = cloud.posZ+lookVector.z*s+rightVector.z*s;
+		double s = cloud.getScale()*1.4;
+		this.posX = ((EntityCloudFleija)cloud).posX+lookVector.x*s+rightVector.x*s;
+		this.posY = ((EntityCloudFleija)cloud).posY+lookVector.y*s+rightVector.y*s;
+		this.posZ = ((EntityCloudFleija)cloud).posZ+lookVector.z*s+rightVector.z*s;
 	}
-	public ParticleFleijaCloud(World world,Vec3d forward,Vec3d right,EntityCloudFleijaBase cloud) {
-		super(world, cloud.posX, cloud.posY, cloud.posZ);
+	public ParticleFleijaCloud(World world,Vec3d forward,Vec3d right,IMixinEntityCloudFleija cloud) {
+		super(world, ((EntityCloudFleija)cloud).posX, ((EntityCloudFleija)cloud).posY, ((EntityCloudFleija)cloud).posZ);
 		this.particleScale = 3;
 		this.particleRed = this.particleGreen = this.particleBlue = 0.9F + world.rand.nextFloat() * 0.05F;
 		this.canCollide = false;
@@ -53,7 +55,7 @@ public class ParticleFleijaCloud extends Particle {
 
 	@Override
 	public void onUpdate() {
-		if (cloud.isDead) {
+		if (((EntityCloudFleija)cloud).isDead) {
 			// again, not worth the effort      world.spawnParticle(new ParticleFleijaVacuum(world,posX,posY,posZ,3,rand.nextFloat()*0.1f+0.1f,new VacuumInstance()));
 			this.setExpired();
 			return;

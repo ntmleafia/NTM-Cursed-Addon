@@ -1,10 +1,12 @@
 package com.leafia.contents.effects.folkvangr.visual;
 
 import com.custom_hbm.render.amlfrom1710.AdvancedModelLoader;
+import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.amlfrom1710.IModelCustom;
 import com.hbm.util.RenderUtil;
 import com.leafia.AddonBase;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.technical.LeafiaEase;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +18,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import org.lwjgl.opengl.GL11;
 
-public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
+public class RenderCloudFleija extends Render<EntityCloudFleija> {
 
 	private static final ResourceLocation objTesterModelRL = new ResourceLocation(/*"/assets/" + */RefStrings.MODID, "models/Sphere.obj");
 	private IModelCustom blastModel;
@@ -24,7 +26,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
     public float scale = 0;
     public float ring = 0;
     
-    public static final IRenderFactory<EntityCloudFleijaBase> FACTORY = (RenderManager man) -> {return new RenderCloudFleija(man);};
+    public static final IRenderFactory<EntityCloudFleija> FACTORY = (RenderManager man) -> {return new RenderCloudFleija(man);};
 	
 	protected RenderCloudFleija(RenderManager renderManager) {
 		super(renderManager);
@@ -35,8 +37,8 @@ public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
 	LeafiaEase shrinkEase = new LeafiaEase(LeafiaEase.Ease.EXPO,LeafiaEase.Direction.I);
 	float lastTicks = 0;
 	@Override
-	public void doRender(EntityCloudFleijaBase cloud,double x,double y,double z,float entityYaw,float partialTicks) {
-		if (cloud instanceof EntityCloudFleijaRainbowBase) return;
+	public void doRender(EntityCloudFleija cloud,double x,double y,double z,float entityYaw,float partialTicks) {
+		//if (cloud instanceof EntityCloudFleijaRainbowBase) return;
 		GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, (float)z);
         GlStateManager.disableLighting();
@@ -47,7 +49,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
         //GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
        // GlStateManager.disableAlpha();
         
-        float s = (float)(cloud.scale+(/*cloud.remoteTicks+*/partialTicks)*cloud.tickrate);
+        float s = (float)(cloud.scale+(/*cloud.remoteTicks+*/partialTicks)*((IMixinEntityCloudFleija)cloud).getTickrate());
         GL11.glScalef(s, s, s);
         
         
@@ -87,7 +89,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
 			LeafiaGls.scale(-1,-1,-1);
 			blastModel.renderAll();
 		}
-		if (cloud.isAntischrab) {
+		if (((IMixinEntityCloudFleija)cloud).getIsAntischrab()) {
 			LeafiaGls.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,GlStateManager.DestFactor.ONE);
 			float t = cloud.ticksExisted+partialTicks;
 			LeafiaGls.color(1,0.149f,0,(float)Math.pow(1-MathHelper.clamp(t-5,0,20)/20,2));
@@ -124,7 +126,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleijaBase> {
 	public void doRenderShadowAndFire(Entity entityIn, double x, double y, double z, float yaw, float partialTicks) {}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityCloudFleijaBase entity) {
+	protected ResourceLocation getEntityTexture(EntityCloudFleija entity) {
 		return blastTexture;
 	}
 
