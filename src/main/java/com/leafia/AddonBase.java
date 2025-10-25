@@ -56,9 +56,9 @@ public class AddonBase {
                 throw flaw;
             }
         }
-        proxy.registerRenderInfo();
         AddonBlocks.preInit();
         AddonItems.preInit();
+        proxy.registerRenderInfo();
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }
 

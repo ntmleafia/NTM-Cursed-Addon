@@ -34,6 +34,7 @@ public class BlockPinkDoor extends BlockModDoor implements IBomb {
 	public BlockPinkDoor(Material materialIn,String s) {
 		super(materialIn,s);
 		this.setSoundType(SoundType.WOOD);
+        ModBlocks.ALL_BLOCKS.remove(this);
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
 
