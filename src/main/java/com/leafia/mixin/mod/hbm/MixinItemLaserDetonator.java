@@ -10,8 +10,10 @@ import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
+import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.packets.LaserDetonatorPacket;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,8 +31,10 @@ import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+import java.util.List;
+
 @Mixin(value = ItemLaserDetonator.class)
-public abstract class MixinItemLaserDetonator extends Item implements IHoldableWeapon {
+public abstract class MixinItemLaserDetonator extends Item implements IHoldableWeapon, IADSWeapon {
 
 	public MixinItemLaserDetonator(String s) {
 		this.setRegistryName(s);
@@ -41,7 +45,22 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 	}
 
 	/**
-	 * @author leafia
+	 * @author Leafia
+	 * @reason item.detonator_laser.desc2
+	 */
+	@Overwrite
+	public void addInformation(ItemStack stack,World worldIn,List<String> list,ITooltipFlag flagIn) {
+		list.add(I18nUtil.resolveKey("item.detonator_laser.desc"));
+		list.add(I18nUtil.resolveKey("item.detonator_laser.desc2"));
+	}
+
+	@Override
+	public float getADS() {
+		return 0.3f;
+	}
+
+	/**
+	 * @author Leafia
 	 * @reason ability to detonate from 512 blocks away
 	 */
 	@Overwrite

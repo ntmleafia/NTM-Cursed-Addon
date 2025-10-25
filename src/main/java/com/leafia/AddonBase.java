@@ -1,6 +1,7 @@
 package com.leafia;
 
 import com.leafia.contents.AddonBlocks;
+import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.proxy.ServerProxy;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
@@ -45,6 +46,16 @@ public class AddonBase {
     public void preInit(FMLPreInitializationEvent event) {
         // register to the event bus so that we can listen to events
         MinecraftForge.EVENT_BUS.register(this);
+        for (Class<?> cl : LeafiaServerListener.class.getClasses()) {
+            try {
+                MinecraftForge.EVENT_BUS.register(cl.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                LeafiaDevFlaw flaw = new LeafiaDevFlaw(e.getMessage());
+                flaw.setStackTrace(e.getStackTrace());
+                throw flaw;
+            }
+        }
+        proxy.registerRenderInfo();
         AddonBlocks.preInit();
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }

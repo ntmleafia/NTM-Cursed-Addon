@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
+    "hbm.MixinItemRenderLaserDetonator",
     "hbm.MixinParticleRBMKMush"
   ],
   "mixins": [
