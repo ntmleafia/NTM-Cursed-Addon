@@ -10,6 +10,8 @@ import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.overwrite_contents.packets.LaserDetonatorPacket;
+import com.leafia.overwrite_contents.packets.TorexFinishPacket;
+import com.leafia.overwrite_contents.packets.TorexPacket;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraftforge.fml.relauncher.Side;
 import org.spongepowered.asm.mixin.Final;
@@ -36,7 +38,7 @@ public class MixinPacketDispatcher {
         wrapper.registerMessage(EntityNukeFolkvangr.ClearChunkPacket.Handler.class, EntityNukeFolkvangr.ClearChunkPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(EntityNukeFolkvangr.FolkvangrVacuumPacket.Handler.class, EntityNukeFolkvangr.FolkvangrVacuumPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(CommandLeaf.ShakecamPacket.Handler.class, CommandLeaf.ShakecamPacket.class, i++, Side.CLIENT);
-        wrapper.registerMessage(EntityNukeTorex.TorexPacket.Handler.class, EntityNukeTorex.TorexPacket.class, i++, Side.CLIENT);
-        wrapper.registerMessage(EntityNukeTorex.TorexFinishPacket.Handler.class, EntityNukeTorex.TorexFinishPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(TorexPacket.Handler.class, TorexPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(TorexFinishPacket.Handler.class, TorexFinishPacket.class, i++, Side.CLIENT);
     }
 }

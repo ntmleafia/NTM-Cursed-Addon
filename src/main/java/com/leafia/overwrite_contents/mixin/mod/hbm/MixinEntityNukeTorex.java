@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,12 +25,12 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
     @Unique
     private static Method writeNBT;
     static {
-        writeNBT = ObfuscationReflectionHelper.findMethod(
-                EntityNukeTorex.class,
-                "func_70014_b", // writeEntityToNBT
-                null,
-                NBTTagCompound.class
-        );
+        writeNBT = ReflectionHelper.findMethod(
+            EntityNukeTorex.class,
+            "writeEntityToNBT",
+            "func_70014_b",
+            NBTTagCompound.class
+    );
         writeNBT.setAccessible(true);
     }
     @Unique
@@ -123,7 +124,7 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
         return true;
     }
 
-    public static void spawnTorex(World world, EntityNukeTorex torex) {
+    private static void spawnTorex(World world, EntityNukeTorex torex) {
         IMixinEntityNukeTorex mixin = (IMixinEntityNukeTorex) torex;
         if (mixin.getBoundEntity() == null) {
             if (bindMe != null) {
