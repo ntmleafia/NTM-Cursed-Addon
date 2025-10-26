@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,16 +51,19 @@ public class TorexPacket extends RecordablePacket {
 		buf.writeBoolean(this.doWait);
 		buf.writeNBT(nbt);
 	}
-	static Method readNBT;
-	static {
-		readNBT = ObfuscationReflectionHelper.findMethod(
-				EntityNukeTorex.class,
-				"func_70037_a", // readEntityFromNBT
-				null,
-				NBTTagCompound.class
-		);
-		readNBT.setAccessible(true);
-	}
+
+    static Method readNBT;
+
+    static {
+        readNBT = ReflectionHelper.findMethod(
+                EntityNukeTorex.class,
+                "readEntityFromNBT",
+                "func_70037_a",
+                NBTTagCompound.class
+        );
+        readNBT.setAccessible(true);
+    }
+
 	public static class Handler implements IMessageHandler<TorexPacket,IMessage> {
 		@Override
 		@SideOnly(Side.CLIENT)

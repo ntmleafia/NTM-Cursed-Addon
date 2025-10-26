@@ -9,7 +9,6 @@ import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,11 +25,11 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
     private static Method writeNBT;
     static {
         writeNBT = ReflectionHelper.findMethod(
-            EntityNukeTorex.class,
-            "writeEntityToNBT",
-            "func_70014_b",
-            NBTTagCompound.class
-    );
+                EntityNukeTorex.class,
+                "writeEntityToNBT",
+                "func_70014_b",
+                NBTTagCompound.class
+        );
         writeNBT.setAccessible(true);
     }
     @Unique
@@ -112,25 +111,26 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
         calculationFinished = value;
     }
 
-    @Redirect(method = "statFac", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "statFac", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), remap = false)
     private static boolean onTorexStatFac(World instance, Entity entity){
         spawnTorex(instance, (EntityNukeTorex) entity);
         return true;
     }
 
-    @Redirect(method = "statFacBale", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "statFacBale", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), remap = false)
     private static boolean onTorexStatFacBale(World instance, Entity entity){
         spawnTorex(instance, (EntityNukeTorex) entity);
         return true;
     }
 
+    @Unique
     private static void spawnTorex(World world, EntityNukeTorex torex) {
         IMixinEntityNukeTorex mixin = (IMixinEntityNukeTorex) torex;
         if (mixin.getBoundEntity() == null) {
             if (bindMe != null) {
                 if (bindMe.isEntityAlive() && bindMe.ticksExisted < 10) {
                     if ((bindMe.dimension == torex.dimension) && (Math.sqrt(bindMe.getPosition().distanceSq(torex.getPosition())) < 1.5)) {
-                        ((IMixinEntityNukeTorex) torex).setBoundEntity(bindMe);
+                        mixin.setBoundEntity(bindMe);
                         bindMe = null;
                     }
                 } else bindMe = null;
