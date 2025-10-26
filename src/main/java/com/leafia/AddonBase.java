@@ -1,6 +1,5 @@
 package com.leafia;
 
-import com.hbm.lib.RefStrings;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.eventbuses.LeafiaServerListener;
@@ -33,6 +32,8 @@ public class AddonBase {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
     @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
     public static ServerProxy proxy;
+
+    public static final String MODID = "leafia";
 
     public static final ResourceLocation solid = new ResourceLocation("leafia", "textures/solid.png");
     public static final ResourceLocation solid_e = new ResourceLocation("leafia", "textures/solid_emissive.png");

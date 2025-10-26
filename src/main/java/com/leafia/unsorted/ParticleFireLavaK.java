@@ -1,6 +1,6 @@
 package com.leafia.unsorted;
 
-import com.hbm.lib.RefStrings;
+import com.leafia.AddonBase;
 import com.hbm.render.NTMRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ParticleFireLavaK extends Particle {
 
-	private static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/particle/leafia/particle_lava_k.png");
+	private static final ResourceLocation texture = new ResourceLocation(AddonBase.MODID + ":textures/particle/leafia/particle_lava_k.png");
 
 
 

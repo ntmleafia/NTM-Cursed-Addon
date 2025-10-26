@@ -4,7 +4,7 @@
   ],
   "passes": [
     {
-      "name": "hbm:leaf_bloom_shockwave",
+      "name": "leafia:leaf_bloom_shockwave",
       "intarget": "minecraft:main",
       "outtarget": "swap",
       "uniforms": [
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "name": "hbm:leaf_circular_blur",
+      "name": "leafia:leaf_circular_blur",
       "intarget": "swap",
       "outtarget": "minecraft:main",
       "uniforms": [

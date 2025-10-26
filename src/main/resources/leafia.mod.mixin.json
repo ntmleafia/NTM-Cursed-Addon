@@ -12,6 +12,7 @@
     "hbm.MixinEntityCloudFleija",
     "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",
+    "hbm.MixinEntityNukeTorex",
     "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher"

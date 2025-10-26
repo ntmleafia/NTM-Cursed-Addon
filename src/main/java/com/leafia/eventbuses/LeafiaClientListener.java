@@ -5,7 +5,9 @@ import com.hbm.handler.JetpackHandler;
 import com.hbm.interfaces.IHoldableWeapon;
 import com.hbm.items.weapon.ItemGunEgon;
 import com.hbm.items.weapon.ItemGunShotty;
+import com.hbm.items.weapon.ItemSwordCutter;
 import com.hbm.lib.Library;
+import com.hbm.lib.RecoilHandler;
 import com.hbm.particle.ParticleFirstPerson;
 import com.hbm.sound.GunEgonSoundHandler;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
@@ -15,10 +17,12 @@ import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.passive.effects.LeafiaShakecam;
 import com.leafia.shit.leafiashader.BigBruh;
+import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,12 +35,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,6 +89,41 @@ public class LeafiaClientListener {
 			LeafiaShakecam.noise = new NoiseGeneratorPerlin(new Random(),1);
 			this.addShader("tom",new ResourceLocation("leafia:shaders/help/tom_desat.json"));
 			this.addShader("nuclear",new ResourceLocation("leafia:shaders/help/nuclear.json"));
+		}
+		@SubscribeEvent
+		public void renderTick(RenderTickEvent e){
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			if (player != null) {
+				if (e.phase == Phase.END) {
+					boolean needsUpdate = false;
+					for (BigBruh shaderGroup : shaderGroups.values()) {
+						LeafiaGls.matrixMode(5890);
+						LeafiaGls.pushMatrix();
+						LeafiaGls.loadIdentity();
+						Minecraft mc = Minecraft.getMinecraft();
+						Framebuffer mainCanvas = mc.getFramebuffer();
+						if (shaderGroup != null)
+						{
+							if (lastW != mainCanvas.framebufferWidth || lastH != mainCanvas.framebufferHeight || needsUpdate) {
+								lastW = mc.getFramebuffer().framebufferWidth;
+								lastH = mc.getFramebuffer().framebufferHeight;
+								shaderGroup.createBindFramebuffers(mainCanvas.framebufferWidth,mainCanvas.framebufferHeight);
+								needsUpdate = true;
+							}
+							shaderGroup.render(e.renderTickTime);
+						}
+						LeafiaGls.popMatrix();
+					}
+				/*
+				//LeafiaGls.color(1.0F, 1.0F, 1.0F, 1.0F);
+				LeafiaGls.enableBlend();
+				LeafiaGls.enableDepth();
+				LeafiaGls.enableAlpha();
+				//LeafiaGls.enableFog();
+				LeafiaGls.enableLighting();
+				LeafiaGls.enableColorMaterial();*/
+				}
+			}
 		}
 		void addShader(String key,ResourceLocation resourceLocationIn)
 		{
@@ -165,6 +206,11 @@ public class LeafiaClientListener {
 					}
 				}
 			}
+		}
+		@SubscribeEvent
+		public void cameraSetup(EntityViewRenderEvent.CameraSetup e){
+			//IdkWhereThisShitBelongs.shakeCam();
+			LeafiaShakecam.shakeCam();
 		}
 	}
 	public static class Unsorted {
