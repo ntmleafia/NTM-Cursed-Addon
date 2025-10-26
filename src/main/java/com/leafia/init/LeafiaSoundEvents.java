@@ -114,14 +114,14 @@ public class LeafiaSoundEvents {
 	}
 
 	public static SoundEvent register(String name) {
-		SoundEvent e = new SoundEvent(new ResourceLocation(RefStrings.MODID, name));
+		SoundEvent e = new SoundEvent(new ResourceLocation("leafia", name));
 		e.setRegistryName(name);
 		ALL_SOUNDS.add(e);
 		return e;
 	}
 
 	public static SoundEvent registerBypass(String name){
-		SoundEvent e = new SoundEvent(new ResourceLocation(RefStrings.MODID, name));
+		SoundEvent e = new SoundEvent(new ResourceLocation("leafia", name));
 		e.setRegistryName(name);
 		ForgeRegistries.SOUND_EVENTS.register(e);
 		return e;
