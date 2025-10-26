@@ -20,13 +20,13 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class TorexPacket extends RecordablePacket {
-	private int entityId;
-	private double x;
-	private double y;
-	private double z;
-	private NBTTagCompound nbt;
-	private UUID uuid;
-	private boolean doWait;
+	public int entityId;
+	public double x;
+	public double y;
+	public double z;
+	public NBTTagCompound nbt;
+	public UUID uuid;
+	public boolean doWait;
 	public TorexPacket() {
 	}
 	@Override
@@ -50,6 +50,16 @@ public class TorexPacket extends RecordablePacket {
 		buf.writeBoolean(this.doWait);
 		buf.writeNBT(nbt);
 	}
+	static Method readNBT;
+	static {
+		readNBT = ObfuscationReflectionHelper.findMethod(
+				EntityNukeTorex.class,
+				"func_70037_a", // readEntityFromNBT
+				null,
+				NBTTagCompound.class
+		);
+		readNBT.setAccessible(true);
+	}
 	public static class Handler implements IMessageHandler<TorexPacket,IMessage> {
 		@Override
 		@SideOnly(Side.CLIENT)
@@ -68,14 +78,7 @@ public class TorexPacket extends RecordablePacket {
 				EntityTracker.updateServerPosition(torex,message.x,message.y,message.z);
 				//torex.readEntityFromNBT(message.nbt);
 				try {
-					Method m = ObfuscationReflectionHelper.findMethod(
-								torex.getClass(),
-									"func_70037_a", // readEntityFromNBT
-									null,
-									NBTTagCompound.class
-							);
-					m.setAccessible(true);
-					m.invoke(torex,message.nbt);
+					readNBT.invoke(torex,message.nbt);
 				} catch (InvocationTargetException | IllegalAccessException e) {
 					throw new LeafiaDevFlaw(e);
 				}
