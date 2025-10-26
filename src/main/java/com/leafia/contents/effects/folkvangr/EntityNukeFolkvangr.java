@@ -5,6 +5,7 @@ import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.items.ModItems;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
+import com.leafia.CommandLeaf;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaVacuum;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -165,23 +166,23 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 			EntityCloudFleija cloudBoundE = (EntityCloudFleija)cloudBound;
 			if (!played) {
 				world.playSound(null,getPosition(),LeafiaSoundEvents.nuke_folkvangr,SoundCategory.BLOCKS,cloudBoundE.getMaxAge(),1);
-				/*PacketDispatcher.wrapper.sendToAllAround(
+				PacketDispatcher.wrapper.sendToAllAround(
 						new CommandLeaf.ShakecamPacket(new String[]{
-								"duration="+cloudBound.getMaxAge(),
-								"range="+cloudBound.getMaxAge()*2
+								"duration="+cloudBoundE.getMaxAge(),
+								"range="+cloudBoundE.getMaxAge()*2
 						}).setPos(getPosition()),
-						new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBound.getMaxAge()*2.25)
+						new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBoundE.getMaxAge()*2.25)
 				);
-				if (cloudBound.isAntischrab) {
+				if (cloudBound.getIsAntischrab()) {
 					PacketDispatcher.wrapper.sendToAllAround(
 							new CommandLeaf.ShakecamPacket(new String[]{
 									"type=smooth","duration=2",
 									"speed=8","ease=expoOut","intensity=12",
-									"range="+cloudBound.getMaxAge()*2
+									"range="+cloudBoundE.getMaxAge()*2
 							}).setPos(getPosition()),
-							new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBound.getMaxAge()*2.25)
+							new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBoundE.getMaxAge()*2.25)
 					);
-				}*/
+				}
 			}
 			played = true;
 			loadMainChunk();
