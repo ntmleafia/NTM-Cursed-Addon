@@ -4,15 +4,19 @@ import com.hbm.entity.effect.EntityNukeTorex;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityNukeTorex;
+import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class TorexPacket extends RecordablePacket {
@@ -62,7 +66,19 @@ public class TorexPacket extends RecordablePacket {
 				mixin.setInitPosY(message.y);
 				mixin.setInitPosZ(message.z);
 				EntityTracker.updateServerPosition(torex,message.x,message.y,message.z);
-				torex.readEntityFromNBT(message.nbt);
+				//torex.readEntityFromNBT(message.nbt);
+				try {
+					Method m = ObfuscationReflectionHelper.findMethod(
+								torex.getClass(),
+									"func_70037_a", // readEntityFromNBT
+									null,
+									NBTTagCompound.class
+							);
+					m.setAccessible(true);
+					m.invoke(torex,message.nbt);
+				} catch (InvocationTargetException | IllegalAccessException e) {
+					throw new LeafiaDevFlaw(e);
+				}
 				mc.world.addWeatherEffect(torex);
 				if (message.doWait) {
 					//torex.calculationFinished = false;

@@ -1,5 +1,6 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.hbm.entity.effect.EntityNukeTorex;
 import com.hbm.main.NetworkHandler;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.CommandLeaf;
@@ -35,5 +36,7 @@ public class MixinPacketDispatcher {
         wrapper.registerMessage(EntityNukeFolkvangr.ClearChunkPacket.Handler.class, EntityNukeFolkvangr.ClearChunkPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(EntityNukeFolkvangr.FolkvangrVacuumPacket.Handler.class, EntityNukeFolkvangr.FolkvangrVacuumPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(CommandLeaf.ShakecamPacket.Handler.class, CommandLeaf.ShakecamPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(EntityNukeTorex.TorexPacket.Handler.class, EntityNukeTorex.TorexPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(EntityNukeTorex.TorexFinishPacket.Handler.class, EntityNukeTorex.TorexFinishPacket.class, i++, Side.CLIENT);
     }
 }

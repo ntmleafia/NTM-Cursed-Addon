@@ -25,4 +25,5 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
 	public MixinEntityNukeTorex(World worldIn) {
 		super(worldIn);
 	}
+
 }
