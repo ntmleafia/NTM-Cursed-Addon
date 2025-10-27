@@ -7,6 +7,7 @@ import com.leafia.init.EntityInit;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.TEInit;
 import com.leafia.init.proxy.ServerProxy;
+import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
 import net.minecraft.block.Block;
@@ -14,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -25,6 +27,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 
 @Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm")
 public class AddonBase {
@@ -60,6 +64,11 @@ public class AddonBase {
     public void preInit(FMLPreInitializationEvent event) {
         // register to the event bus so that we can listen to events
         MinecraftForge.EVENT_BUS.register(this);
+
+        Configuration config = new Configuration(new File(proxy.getDataDir().getPath() + "/config/hbm/leafia.cfg"));
+        config.load();
+        AddonConfig.loadFromConfig(config);
+
         for (Class<?> cl : LeafiaServerListener.class.getClasses()) {
             try {
                 MinecraftForge.EVENT_BUS.register(cl.newInstance());

@@ -1,13 +1,19 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.custom_hbm.contents.torex.LCETorex;
 import com.hbm.entity.effect.EntityNukeTorex;
 import com.hbm.interfaces.IConstantRenderer;
+import com.hbm.main.ServerProxy;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityNukeTorex;
 import com.leafia.overwrite_contents.packets.TorexPacket;
+import com.leafia.settings.AddonConfig;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -112,15 +118,23 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
     }
 
     @Redirect(method = "statFac", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), remap = false)
-    private static boolean onTorexStatFac(World instance, Entity entity){
-        spawnTorex(instance, (EntityNukeTorex) entity);
+    private static boolean onTorexStatFac(World instance,Entity entity,@Local(name = "x") double x,@Local(name = "y") double y,@Local(name = "z") double z,@Local(name = "scale") float scale){
+        if (AddonConfig.useLeafiaTorex) {
+            LCETorex.statFac(instance,x,y,z,scale);
+        } else
+            spawnTorex(instance, (EntityNukeTorex) entity);
         return true;
     }
 
     @Redirect(method = "statFacBale", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), remap = false)
-    private static boolean onTorexStatFacBale(World instance, Entity entity){
+    private static boolean onTorexStatFacBale(World instance, Entity entity,@Local(name = "x") double x,@Local(name = "y") double y,@Local(name = "z") double z,@Local(name = "scale") float scale){
         spawnTorex(instance, (EntityNukeTorex) entity);
         return true;
+    }
+
+    @Redirect(method = "onUpdate",at = @At(value = "INVOKE", target = "Lcom/hbm/main/ServerProxy;playSoundClient(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V"))
+    private void onOnUpdate(ServerProxy instance,double x,double y,double z,SoundEvent sound,SoundCategory category,float volume,float pitch) {
+        // nope
     }
 
     @Unique

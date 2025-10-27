@@ -6,7 +6,8 @@
   "target": "@env(MOD)",
   "client": [
     "hbm.MixinItemRenderLaserDetonator",
-    "hbm.MixinParticleRBMKMush"
+    "hbm.MixinParticleRBMKMush",
+    "hbm.MixinRenderTorex"
   ],
   "mixins": [
     "hbm.MixinEntityCloudFleija",

@@ -19,6 +19,7 @@ public class LeafiaSoundEvents {
 	public static SoundEvent nuke_smol;
 	public static SoundEvent nuke_folkvangr;
 	public static SoundEvent nuke_ambient;
+	public static SoundEvent mukeExplosion;
 
 	public static SoundEvent pwrRodStart;
 	public static SoundEvent pwrRodLoop;
@@ -58,6 +59,8 @@ public class LeafiaSoundEvents {
 	public static SoundEvent mechcrafting_raise;
 	public static SoundEvent mechcrafting_loop;
 	public static void init() {
+		mukeExplosion = register("weapon.mukeExplosion");
+
 		nuke = register("weapon.nuke");
 		nuke_near = register("weapon.nuke_n");
 		nuke_far = register("weapon.nuke_d");

@@ -1,5 +1,6 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.custom_hbm.contents.torex.LCETorex;
 import com.hbm.entity.effect.EntityNukeTorex;
 import com.hbm.main.NetworkHandler;
 import com.hbm.packet.PacketDispatcher;
@@ -40,5 +41,8 @@ public class MixinPacketDispatcher {
         wrapper.registerMessage(CommandLeaf.ShakecamPacket.Handler.class, CommandLeaf.ShakecamPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(TorexPacket.Handler.class, TorexPacket.class, i++, Side.CLIENT);
         wrapper.registerMessage(TorexFinishPacket.Handler.class, TorexFinishPacket.class, i++, Side.CLIENT);
+
+        wrapper.registerMessage(LCETorex.TorexPacket.Handler.class, LCETorex.TorexPacket.class, i++, Side.CLIENT);
+        wrapper.registerMessage(LCETorex.TorexFinishPacket.Handler.class, LCETorex.TorexFinishPacket.class, i++, Side.CLIENT);
     }
 }

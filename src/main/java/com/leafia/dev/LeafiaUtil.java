@@ -30,6 +30,13 @@ public class LeafiaUtil {
 	public static AxisAlignedBB createAABB(Vec3d min,Vec3d max) {
 		return new AxisAlignedBB(min.x,min.y,min.z,max.x,max.y,max.z);
 	}
+	public static Vec3d getKnockback(Vec3d entityPos,Vec3d blastPos,double amplitude) {
+		Vec3d deltaPos = entityPos.subtract(blastPos);
+		double dist = deltaPos.length();
+		//Vec3d unit = new Vec3d(deltaPos.x/dist,deltaPos.y/dist,deltaPos.z/dist);
+		float force = (float)Math.pow(Math.pow(Math.max(amplitude-dist*0.5,0)/amplitude,2)*amplitude,0.9)/4f;
+		return new Vec3d(deltaPos.x/dist*force,deltaPos.y/dist*force,deltaPos.z/dist*force);
+	}
 	public static class LeafiaRayTraceConfig {
 		public final World world;
 		public final Vec3d start;

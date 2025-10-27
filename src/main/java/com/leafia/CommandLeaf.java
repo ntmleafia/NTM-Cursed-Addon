@@ -1,5 +1,7 @@
 package com.leafia;
 
+import com.custom_hbm.contents.torex.LCETorex;
+import com.hbm.entity.effect.EntityNukeTorex;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -114,7 +116,7 @@ public class CommandLeaf extends CommandBase {
 							}
 						}
 						break;
-					/*case "torex":
+					case "torex":
 						args = shiftArgs(args,1);
 						if (args.length-1 <= 0) {
 							list.add("statFac");
@@ -141,7 +143,7 @@ public class CommandLeaf extends CommandBase {
 							}
 						}
 						break;
-					case "visualizer":
+					/*case "visualizer":
 						args = shiftArgs(args,1);
 						if (args.length-1 <= 0) {
 							list.add("select");
@@ -505,7 +507,7 @@ public class CommandLeaf extends CommandBase {
 						sender.sendMessage(new TextComponentString("  "+s));
 					}
 				} break;
-				/*case "torex": {
+				case "torex": {
 					String usage = "/hbmleaf torex statFac|statFacBale <x> <y> <z> <scale> [sound]\n OR /hbmleaf torex summon [x] [y] [z] [dataTag]";
 					args = shiftArgs(args,1);
 					if (args.length < 1)
@@ -516,18 +518,18 @@ public class CommandLeaf extends CommandBase {
 						BlockPos pos = parseBlockPos(sender,args,1,false);
 						switch(args[0]+args.length) {
 							case "statFac5":
-								EntityNukeTorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
+								LCETorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
 							case "statFacBale5":
-								EntityNukeTorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
-							case "statFac6":
-								EntityNukeTorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
-							case "statFacBale6":
-								EntityNukeTorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
+								LCETorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
+							//case "statFac6":
+							//	EntityNukeTorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
+							//case "statFacBale6":
+							//	EntityNukeTorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
 							default:
 								throw new WrongUsageException(usage, new Object[0]);
 						}
 						notifyCommandListener(sender, this, "commands.summon.success", new Object[0]);
-					} else if (args[0].equals("summon")) {
+					} /*else if (args[0].equals("summon")) {
 						//BlockPos blockpos = sender.getPosition();
 						Vec3d vec3d = sender.getPositionVector();
 						double d0 = vec3d.x;
@@ -561,9 +563,9 @@ public class CommandLeaf extends CommandBase {
 							torex.readFromNBT(nbttagcompound);
 						EntityNukeTorex.spawnTorex(sender.getEntityWorld(),torex);
 						notifyCommandListener(sender, this, "commands.summon.success", new Object[0]);
-					} else
+					}*/ else
 						throw new WrongUsageException(usage, new Object[0]);
-				} break;*/
+				} break;
 				case "shake": {
 					args = shiftArgs(args,1);
 					if (args.length < 1)
