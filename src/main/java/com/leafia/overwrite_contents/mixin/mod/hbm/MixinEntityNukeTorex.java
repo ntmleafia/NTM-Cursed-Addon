@@ -120,7 +120,7 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
 	}
 
 	@Inject(method = "statFac",at = @At("HEAD"),cancellable = true,remap = false)
-	private static void onTorexStatFacTop(CallbackInfo ci,@Local World world,@Local double x,@Local double y,@Local double z,@Local float scale) {
+	private static void onTorexStatFacTop(CallbackInfo ci, @Local(argsOnly = true) World world, @Local(argsOnly = true, ordinal = 0) double x, @Local(argsOnly = true, ordinal = 1) double y, @Local(argsOnly = true, ordinal = 2) double z, @Local(argsOnly = true, ordinal = 0) float scale) {
 		if (AddonConfig.useLeafiaTorex) {
 			LCETorex.statFac(world,x,y,z,scale);
 			ci.cancel();
