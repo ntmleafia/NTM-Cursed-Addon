@@ -10,6 +10,7 @@
     "hbm.MixinRenderTorex"
   ],
   "mixins": [
+    "hbm.MixinDictFrame",
     "hbm.MixinEntityCloudFleija",
     "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",
