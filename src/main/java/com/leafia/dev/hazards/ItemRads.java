@@ -67,6 +67,13 @@ public class ItemRads {
 			HazardData data = HazardSystem.itemMap.computeIfAbsent(item, k -> new HazardData());
 			// if you need to add a hazard modifier to HazardTypeRadiation, use
 			// data.entries.stream().filter(e -> e.type instanceof HazardTypeRadiation).findFirst().ifPresent(e -> e.mods.add(new NBTModifier(NBTModifier.NBTKey.ACTIVATION)));
+			apply(data);
+		}
+		public void register(String item) {
+			HazardData data = HazardSystem.oreMap.computeIfAbsent(item, k -> new HazardData());
+			apply(data);
+		}
+		public void apply(HazardData data) {
 			/// thanks mov but im just deleting it ^-^
 			for (HazardEntry entry : data.entries) {
 				if (entry.type instanceof HazardTypeRadiation) {
