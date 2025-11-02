@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class XRay implements IHazardType {
+public class XRay implements IHazardType, LCERad {
     private XRay() {
     }
 
@@ -28,6 +28,6 @@ public class XRay implements IHazardType {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
-
+        list.add("I am xray");
     }
 }

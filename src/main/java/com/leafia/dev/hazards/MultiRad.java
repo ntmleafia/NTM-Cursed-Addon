@@ -13,7 +13,9 @@ import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+@Deprecated
 public class MultiRad {
+	@Deprecated
 	public enum RadiationType {
 		ALPHA("alpha",TextFormatting.RED,(entity,base)->{
 			if (base <= 0) return 0f;

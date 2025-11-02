@@ -2,9 +2,12 @@ package com.leafia.dev.hazards;
 
 import com.hbm.hazard.HazardData;
 import com.hbm.hazard.HazardEntry;
+import com.hbm.hazard.HazardRegistry;
 import com.hbm.hazard.HazardSystem;
+import com.hbm.hazard.type.HazardTypeRadiation;
 import com.hbm.items.ModItems;
 import com.leafia.dev.hazards.modifiers.NBTModifier;
+import com.leafia.dev.hazards.modifiers.NBTModifier.NBTKey;
 import com.leafia.dev.hazards.types.*;
 import net.minecraft.item.Item;
 
@@ -17,48 +20,67 @@ public class ItemRads {
 	public static MultiRadContainer waste = new MultiRadContainer(0,125,125,50,25);
 	public static MultiRadContainer waste_v = waste.copy().multiply(1/2f);
 
-    //call after com.hbm.hazard.HazardRegistry.registerItems
-    public void register() {
-        cobalt60.register(ModItems.ingot_co60);
-    }
+	//call after com.hbm.hazard.HazardRegistry.registerItems
+	public static void register() {
+		cobalt60.register(ModItems.ingot_co60);
+	}
 
-    public static class MultiRadContainer {
-        public double alpha;
-        public double beta;
-        public double gamma;
-        public double x;
-        public double neutrons;
+	public static class MultiRadContainer {
+		public double alpha;
+		public double beta;
+		public double gamma;
+		public double x;
+		public double neutrons;
+		public double radon;
+		public double activation;
 
-        public MultiRadContainer(double alpha, double beta, double x, double gamma, double neutrons) {
-            this.alpha = alpha;
-            this.beta = beta;
-            this.x = x;
-            this.gamma = gamma;
-            this.neutrons = neutrons;
-        }
+		public MultiRadContainer(double alpha, double beta, double x, double gamma, double neutrons) {
+			this.alpha = alpha;
+			this.beta = beta;
+			this.x = x;
+			this.gamma = gamma;
+			this.neutrons = neutrons;
+		}
 
-        public MultiRadContainer multiply(double v) {
-            alpha *= v;
-            beta *= v;
-            x *= v;
-            gamma *= v;
-            neutrons *= v;
-            return this;
-        }
+		public MultiRadContainer(double alpha, double beta, double x, double gamma, double neutrons, double radon, double activation) {
+			this(alpha,beta,x,gamma,neutrons);
+			this.radon = radon;
+			this.activation = activation;
+		}
 
-        public MultiRadContainer copy() {
-            return new MultiRadContainer(alpha, beta, x, gamma, neutrons);
-        }
+		public MultiRadContainer multiply(double v) {
+			alpha *= v;
+			beta *= v;
+			x *= v;
+			gamma *= v;
+			neutrons *= v;
+			radon *= v;
+			activation *= v;
+			return this;
+		}
 
-        public void register(Item item) {
-            HazardData data = HazardSystem.itemMap.computeIfAbsent(item, k -> new HazardData());
-            // if you need to add a hazard modifier to HazardTypeRadiation, use
-            // data.entries.stream().filter(e -> e.type instanceof HazardTypeRadiation).findFirst().ifPresent(e -> e.mods.add(new NBTModifier(NBTModifier.NBTKey.ACTIVATION)));
-            if (alpha > 0) data.addEntry(new HazardEntry(Alpha.INSTANCE, alpha).addMod(new NBTModifier(NBTModifier.NBTKey.ALPHA)));
-            if (beta > 0) data.addEntry(new HazardEntry(Beta.INSTANCE, beta).addMod(new NBTModifier(NBTModifier.NBTKey.BETA)));
-            if (gamma > 0) data.addEntry(new HazardEntry(Gamma.INSTANCE, gamma).addMod(new NBTModifier(NBTModifier.NBTKey.GAMMA)));
-            if (neutrons > 0) data.addEntry(new HazardEntry(Neutrons.INSTANCE, neutrons).addMod(new NBTModifier(NBTModifier.NBTKey.NEUTRONS)));
-            if (x > 0) data.addEntry(new HazardEntry(XRay.INSTANCE, x).addMod(new NBTModifier(NBTModifier.NBTKey.XRAY)));
-        }
-    }
+		public MultiRadContainer copy() {
+			return new MultiRadContainer(alpha, beta, x, gamma, neutrons, radon, activation);
+		}
+
+		public void register(Item item) {
+			HazardData data = HazardSystem.itemMap.computeIfAbsent(item, k -> new HazardData());
+			// if you need to add a hazard modifier to HazardTypeRadiation, use
+			// data.entries.stream().filter(e -> e.type instanceof HazardTypeRadiation).findFirst().ifPresent(e -> e.mods.add(new NBTModifier(NBTModifier.NBTKey.ACTIVATION)));
+			/// thanks mov but im just deleting it ^-^
+			for (HazardEntry entry : data.entries) {
+				if (entry.type instanceof HazardTypeRadiation) {
+					data.entries.remove(entry);
+					break;
+				}
+			}
+			if (alpha > 0) data.addEntry(new HazardEntry(Alpha.INSTANCE, alpha).addMod(new NBTModifier(NBTModifier.NBTKey.ALPHA)));
+			if (beta > 0) data.addEntry(new HazardEntry(Beta.INSTANCE, beta).addMod(new NBTModifier(NBTModifier.NBTKey.BETA)));
+			if (gamma > 0) data.addEntry(new HazardEntry(Gamma.INSTANCE, gamma).addMod(new NBTModifier(NBTModifier.NBTKey.GAMMA)));
+			if (neutrons > 0) data.addEntry(new HazardEntry(Neutrons.INSTANCE, neutrons).addMod(new NBTModifier(NBTModifier.NBTKey.NEUTRONS)));
+			if (x > 0) data.addEntry(new HazardEntry(XRay.INSTANCE, x).addMod(new NBTModifier(NBTModifier.NBTKey.XRAY)));
+			if (radon > 0) data.addEntry(new HazardEntry(Radon.INSTANCE, radon).addMod(new NBTModifier(NBTKey.RADON)));
+			if (activation > 0) data.addEntry(new HazardEntry(HazardRegistry.RADIATION, activation).addMod(new NBTModifier(NBTKey.ACTIVATION)));
+		}
+	}
 }

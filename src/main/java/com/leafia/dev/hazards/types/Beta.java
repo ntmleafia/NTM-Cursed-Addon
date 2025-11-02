@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class Beta implements IHazardType {
+public class Beta implements IHazardType, LCERad {
     private Beta() {
     }
 
@@ -33,6 +33,6 @@ public class Beta implements IHazardType {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
-
+        list.add("I am beta");
     }
 }

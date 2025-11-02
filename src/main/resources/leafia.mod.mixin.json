@@ -14,6 +14,7 @@
     "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",
     "hbm.MixinEntityNukeTorex",
+    "hbm.MixinHazardSystem",
     "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher"

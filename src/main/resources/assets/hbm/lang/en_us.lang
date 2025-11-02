@@ -1,1 +1,8 @@
 tile.dfc_receiver.name=Test
+trait._hazarditem.radioactive.activation=Contamination:
+trait._hazarditem.radioactive.alpha=Alpha rays:
+trait._hazarditem.radioactive.beta=Beta rays:
+trait._hazarditem.radioactive.gamma=Gamma rays:
+trait._hazarditem.radioactive.neutrons=Neutrons:
+trait._hazarditem.radioactive.radon=Radon Gas:
+trait._hazarditem.radioactive.x=X rays:

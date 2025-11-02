@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class Neutrons implements IHazardType {
+public class Neutrons implements IHazardType, LCERad {
     private Neutrons() {
     }
 
@@ -27,5 +27,6 @@ public class Neutrons implements IHazardType {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
+        list.add("I am neutrons");
     }
 }

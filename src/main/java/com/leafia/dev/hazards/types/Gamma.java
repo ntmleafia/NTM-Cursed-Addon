@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class Gamma implements IHazardType {
+public class Gamma implements IHazardType, LCERad {
     private Gamma() {
     }
 
@@ -28,6 +28,6 @@ public class Gamma implements IHazardType {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
-
+        list.add("I am gamma");
     }
 }
