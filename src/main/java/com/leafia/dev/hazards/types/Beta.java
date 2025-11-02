@@ -1,17 +1,17 @@
 package com.leafia.dev.hazards.types;
 
 import com.hbm.hazard.modifier.IHazardModifier;
-import com.hbm.hazard.type.IHazardType;
 import com.hbm.util.ContaminationUtil;
 import com.leafia.contents.potion.LeafiaPotion;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
-public class Beta implements IHazardType, LCERad {
+public class Beta implements ILeafiaRadType {
     private Beta() {
     }
 
@@ -33,6 +33,21 @@ public class Beta implements IHazardType, LCERad {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
-        list.add("I am beta");
+
+    }
+
+    @Override
+    public int ordinal() {
+        return 1;
+    }
+
+    @Override
+    public TextFormatting color() {
+        return TextFormatting.AQUA;
+    }
+
+    @Override
+    public String translationKey() {
+        return "trait._hazarditem.radioactive.beta";
     }
 }

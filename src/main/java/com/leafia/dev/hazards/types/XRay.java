@@ -1,16 +1,16 @@
 package com.leafia.dev.hazards.types;
 
 import com.hbm.hazard.modifier.IHazardModifier;
-import com.hbm.hazard.type.IHazardType;
 import com.hbm.util.ContaminationUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
-public class XRay implements IHazardType, LCERad {
+public class XRay implements ILeafiaRadType {
     private XRay() {
     }
 
@@ -28,6 +28,20 @@ public class XRay implements IHazardType, LCERad {
 
     @Override
     public void addHazardInformation(EntityPlayer player, List<String> list, double level, ItemStack stack, List<IHazardModifier> modifiers) {
-        list.add("I am xray");
+
+    }
+    @Override
+    public int ordinal() {
+        return 3;
+    }
+
+    @Override
+    public TextFormatting color() {
+        return TextFormatting.DARK_AQUA;
+    }
+
+    @Override
+    public String translationKey() {
+        return "trait._hazarditem.radioactive.x";
     }
 }
