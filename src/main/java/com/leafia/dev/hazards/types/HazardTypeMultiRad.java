@@ -1,7 +1,7 @@
 package com.leafia.dev.hazards.types;
 
-import com.hbm.hazard.modifier.HazardModifier;
-import com.hbm.hazard.type.HazardTypeBase;
+import com.hbm.hazard.modifier.IHazardModifier;
+import com.hbm.hazard.type.IHazardType;
 import com.hbm.lib.Library;
 import com.hbm.util.I18nUtil;
 import com.leafia.dev.hazards.MultiRad;
@@ -14,7 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
-public class HazardTypeMultiRad extends HazardTypeBase {
+public class HazardTypeMultiRad implements IHazardType {
 
 	public MultiRad rad;
 
@@ -35,7 +35,7 @@ public class HazardTypeMultiRad extends HazardTypeBase {
 	}
 
 	@Override
-	public void addHazardInformation(EntityPlayer entityPlayer,List<String> list,double v,ItemStack stack,List<HazardModifier> list1) {
+	public void addHazardInformation(EntityPlayer entityPlayer, List<String> list, double v, ItemStack stack, List<IHazardModifier> list1) {
 		if(rad.total() /* module.tempMod*/ > 0) {
 			list.add(TextFormatting.GREEN + "[" + I18nUtil.resolveKey("trait._hazarditem.radioactive") + "]");
 			rad.forEach((type,rad)->{
