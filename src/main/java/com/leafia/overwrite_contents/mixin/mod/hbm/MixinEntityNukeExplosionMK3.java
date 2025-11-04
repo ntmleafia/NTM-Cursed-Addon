@@ -2,11 +2,15 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.CompatibilityConfig;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
+import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
 import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.items.ModItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
+import com.leafia.database.FolkvangrJammers;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -16,6 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = EntityNukeExplosionMK3.class)
 public abstract class MixinEntityNukeExplosionMK3 extends Entity implements IChunkLoader {
@@ -48,5 +53,10 @@ public abstract class MixinEntityNukeExplosionMK3 extends Entity implements IChu
 				}
 			}
 		}
+	}
+
+	@Inject(method = "isJammed",at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setDead()V"),remap = false)
+	private static void onIsJammed(World world,Entity entity,CallbackInfoReturnable<Boolean> cir,@Local(name = "jammer") ATEntry jammer) {
+		FolkvangrJammers.lastDetectedJammer = new BlockPos(jammer.x, jammer.y, jammer.z);
 	}
 }
