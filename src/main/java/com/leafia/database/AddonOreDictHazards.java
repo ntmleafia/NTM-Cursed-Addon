@@ -1,4 +1,4 @@
-package com.leafia.dev.hazards;
+package com.leafia.database;
 
 import java.util.HashMap;
 import java.util.Map;

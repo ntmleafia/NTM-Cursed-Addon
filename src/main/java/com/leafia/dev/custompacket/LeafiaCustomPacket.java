@@ -1,5 +1,6 @@
 package com.leafia.dev.custompacket;
 
+import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -22,6 +24,7 @@ import java.util.function.Consumer;
 public class LeafiaCustomPacket extends RecordablePacket {
 	public enum CustomPacketType { // add your packets here, that's literally all registering you have to do!
 		NONE,
+		EXPLOSION_NT(new ExplosionNTSyncPacket())
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }
@@ -46,6 +49,9 @@ public class LeafiaCustomPacket extends RecordablePacket {
 	}
 	public void __sendToAllAround(int dim,BlockPos pos,double range) {
 		PacketDispatcher.wrapper.sendToAllAround(this,new TargetPoint(dim,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,range));
+	}
+	public void __sendToAllAround(int dim,Vec3d pos,double range) {
+		PacketDispatcher.wrapper.sendToAllAround(this,new TargetPoint(dim,pos.x,pos.y,pos.z,range));
 	}
 	@Deprecated
 	public void __sendToAllInDimension(int dimension) {

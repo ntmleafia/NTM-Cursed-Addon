@@ -3,6 +3,7 @@ package com.leafia.dev.optimization;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.particle.ParticleRBMKMush;
+import com.leafia.contents.machines.powercores.dfc.particles.ParticleDFC;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -283,6 +284,73 @@ public class LeafiaParticlePacket extends RecordablePacket {
 			}
 		}
 	}
+	public static class DFCBlastParticle extends LeafiaParticle {
+		public float red;
+		public float green;
+		public float blue;
+		public int amount;
+		public DFCBlastParticle() {}
+		public DFCBlastParticle(float red,float green,float blue,int amount) {
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
+			this.amount = amount;
+		}
+		@Override
+		protected LeafiaParticle fromBits(LeafiaBuf buf,NBTTagCompound nbt) {
+			return new DFCBlastParticle(buf.readFloat(),buf.readFloat(),buf.readFloat(),buf.readInt());
+		}
+		@Override
+		protected void toBits(LeafiaBuf buf) {
+			buf.writeFloat(red);
+			buf.writeFloat(green);
+			buf.writeFloat(blue);
+			buf.writeInt(amount);
+		}
+		@Override
+		@SideOnly(Side.CLIENT)
+		protected void emit(NBTTagCompound nbt) {
+			World world = Minecraft.getMinecraft().world;
+			for (int i = 0; i < amount; i++) {
+				ParticleDFC particle = new ParticleDFC(
+						world,
+						nbt.getDouble("posX"),
+						nbt.getDouble("posY"),
+						nbt.getDouble("posZ"),
+						red,
+						green,
+						blue
+				);
+				Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	static {
 		for (Class<?> cl : LeafiaParticlePacket.class.getClasses()) {

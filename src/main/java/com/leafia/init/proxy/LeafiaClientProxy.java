@@ -2,6 +2,9 @@ package com.leafia.init.proxy;
 
 import com.custom_hbm.contents.torex.LCETorex;
 import com.custom_hbm.contents.torex.LCETorexRender;
+import com.custom_hbm.sound.LCEAudioWrapper;
+import com.custom_hbm.sound.LCEAudioWrapperClient;
+import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
@@ -10,13 +13,16 @@ import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import java.io.File;
 
-public class ClientProxy extends ServerProxy {
+public class LeafiaClientProxy extends LeafiaServerProxy {
 	@Override
 	public void registerRenderInfo() {
 		for (Class<?> cl : LeafiaClientListener.class.getClasses()) {
@@ -36,5 +42,21 @@ public class ClientProxy extends ServerProxy {
 	@Override
 	public File getDataDir() {
 		return Minecraft.getMinecraft().gameDir;
+	}
+
+	@Override
+	public LCEAudioWrapper getLoopedSound(SoundEvent sound,SoundCategory cat,float x,float y,float z,float volume,float pitch) {
+		LCEAudioWrapperClient audio = new LCEAudioWrapperClient(sound, cat);
+		audio.updatePosition(x, y, z);
+		return audio;
+	}
+
+	@Override
+	public LCEAudioWrapper getLoopedSoundStartStop(World world,SoundEvent sound,SoundEvent start,SoundEvent stop,SoundCategory cat,float x,float y,float z,float volume,float pitch) {
+		LCEAudioWrapperClientStartStop audio = new LCEAudioWrapperClientStartStop(world, sound, start, stop, volume, cat);
+		audio.updatePosition(x, y, z);
+		if (pitch != 1)
+			audio.updatePitch(pitch);
+		return audio;
 	}
 }

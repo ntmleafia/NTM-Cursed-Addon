@@ -1,9 +1,8 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
-import com.hbm.hazard.HazardEntry;
 import com.hbm.inventory.OreDictManager.DictFrame;
 import com.hbm.inventory.material.MaterialShapes;
-import com.leafia.dev.hazards.AddonOreDictHazards;
+import com.leafia.database.AddonOreDictHazards;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,11 +13,7 @@ import java.util.*;
 @Mixin(value = DictFrame.class)
 public class MixinDictFrame {
 	@Shadow(remap = false) public String[] mats;
-
-	@Shadow(remap = false) private List<HazardEntry> hazards;
-
 	@Shadow(remap = false) private float hazMult;
-
 	@Inject(method = "makeObject",at = @At(value = "RETURN"),remap = false)
 	void onMakeObject(MaterialShapes shape,Object[] objects,CallbackInfoReturnable<DictFrame> cir) {
 		AddonOreDictHazards.dictMap.putIfAbsent(this,new HashMap<>());

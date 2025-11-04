@@ -2,12 +2,13 @@ package com.leafia;
 
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.potion.LeafiaPotion;
 import com.leafia.dev.hazards.ItemRads;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.EntityInit;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.TEInit;
-import com.leafia.init.proxy.ServerProxy;
+import com.leafia.init.proxy.LeafiaServerProxy;
 import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
@@ -36,7 +37,7 @@ public class AddonBase {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
     @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
-    public static ServerProxy proxy;
+    public static LeafiaServerProxy proxy;
 
     public static final String MODID = "leafia";
 
@@ -81,6 +82,7 @@ public class AddonBase {
         }
         AddonBlocks.preInit();
         AddonItems.preInit();
+        LeafiaPotion.init();
         proxy.registerRenderInfo();
 
         TEInit.preInit();

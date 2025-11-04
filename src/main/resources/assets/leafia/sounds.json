@@ -48,5 +48,8 @@
   "external.mechcrafting_lower": { "category": "block", "sounds": ["leafia:external/mechcrafting_lower"]},
   "external.mechcrafting_raise": { "category": "block", "sounds": ["leafia:external/mechcrafting_raise"]},
   "external.mechcrafting_loop": { "category": "block", "sounds": ["leafia:external/mechcrafting_loop"]},
-  "external.mechcrafting_weld": { "category": "block", "sounds": ["leafia:external/mechcrafting_weld"]}
+  "external.mechcrafting_weld": { "category": "block", "sounds": ["leafia:external/mechcrafting_weld"]},
+  "external.overload": { "category": "block", "sounds": ["leafia:external/1205987156"]},
+  "external.longexplosion": { "category": "block", "sounds": ["leafia:external/178962800"]},
+  "external.actualexplosion": { "category": "block", "sounds": ["leafia:external/169628396"]}
 }

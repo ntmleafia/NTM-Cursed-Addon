@@ -7,6 +7,7 @@ import com.hbm.hazard.HazardSystem;
 import com.hbm.hazard.type.HazardTypeRadiation;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.OreDictManager.DictFrame;
+import com.leafia.database.AddonOreDictHazards;
 import com.leafia.dev.hazards.modifiers.NBTModifier;
 import com.leafia.dev.hazards.modifiers.NBTModifier.NBTKey;
 import com.leafia.dev.hazards.types.*;

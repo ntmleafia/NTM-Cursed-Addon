@@ -58,6 +58,12 @@ public class LeafiaSoundEvents {
 	public static SoundEvent mechcrafting_weld;
 	public static SoundEvent mechcrafting_raise;
 	public static SoundEvent mechcrafting_loop;
+
+	public static SoundEvent overload;
+	public static SoundEvent longexplosion;
+	public static SoundEvent actualexplosion;
+
+
 	public static void init() {
 		mukeExplosion = register("weapon.mukeExplosion");
 
@@ -103,6 +109,10 @@ public class LeafiaSoundEvents {
 		mechcrafting_raise = register("external.mechcrafting_raise");
 		mechcrafting_weld = register("external.mechcrafting_weld");
 		mechcrafting_loop = register("external.mechcrafting_loop");
+
+		overload = register("external.overload");
+		longexplosion = register("external.longexplosion");
+		actualexplosion = register("external.actualexplosion");
 
 		stressSounds = new SoundEvent[]{
 				register("external.furnacestressed00"),

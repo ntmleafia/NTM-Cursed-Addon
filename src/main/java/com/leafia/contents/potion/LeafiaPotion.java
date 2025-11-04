@@ -57,8 +57,8 @@ public class LeafiaPotion extends Potion {
 	}
 
 	public static void init() {
-		skindamage = registerPotion(true, 0xe11313, "leafia_skindamage", 4, 1);
-		frigid = registerPotion(true, /*0x65d3ff*/0xFFFFFF, "leafia_frigid", 0, 2);
+		skindamage = registerPotion(true, 0xe11313, "skindamage", 4, 1);
+		frigid = registerPotion(true, /*0x65d3ff*/0xFFFFFF, "frigid", 0, 2);
 	}
 
 	public static LeafiaPotion registerPotion(boolean isBad, int color, String name, int x, int y) {
@@ -80,7 +80,7 @@ public class LeafiaPotion extends Potion {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getStatusIconIndex() {
-		ResourceLocation loc = new ResourceLocation( "leafia/textures/gui/potions.png");
+		ResourceLocation loc = new ResourceLocation( "leafia","textures/gui/potions.png");
 		Minecraft.getMinecraft().renderEngine.bindTexture(loc);
 		if (this == skindamage) {
 			if (lastEffect != null) {
