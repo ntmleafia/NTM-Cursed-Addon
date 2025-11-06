@@ -1,10 +1,10 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.custom_hbm.explosion.LCEExplosionNT;
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.blocks.machine.MachineFieldDisturber;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
-import com.hbm.explosion.ExplosionNT;
 import com.hbm.handler.ArmorUtil;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
@@ -13,6 +13,7 @@ import com.hbm.items.machine.ItemCatalyst;
 import com.hbm.items.special.ItemAMSCore;
 import com.hbm.lib.Library;
 import com.hbm.main.AdvancementManager;
+import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
@@ -25,6 +26,7 @@ import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaVacuum;
 import com.leafia.contents.machines.powercores.dfc.particles.ParticleEyeOfHarmony;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
@@ -60,7 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(value = TileEntityCore.class, remap = false)
-public abstract class MixinTileEntityCore extends TileEntityMachineBase implements ITickable, IGUIProvider, IMixinTileEntityCore {
+public abstract class MixinTileEntityCore extends TileEntityMachineBase implements ITickable, IGUIProvider, LeafiaPacketReceiver, IMixinTileEntityCore {
     @Unique
     private boolean hasCore = false;
     @Shadow
@@ -370,7 +372,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                     LeafiaParticlePacket.DFCBlastParticle blast = new LeafiaParticlePacket.DFCBlastParticle((float) col.red, (float) col.green, (float) col.blue, 250);
                     blast.emit(new Vec3d(pos).add(0.5, 0.5, 0.5), new Vec3d(0, 1, 0), world.provider.getDimension(), 200);
 
-                    ExplosionNT nt = new ExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 50);
+                    LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 50);
                     nt.maxExplosionResistance = 20;
                     nt.iterationLimit = 150;
                     nt.ignoreBlockPoses.add(pos);
@@ -411,12 +413,12 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                         PacketDispatcher.wrapper.sendToAllAround(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=QUAKE", "blurDulling*4", "speed*3", "duration=40", "range=300"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400));
                         LeafiaPacket._start(this).__write(packetKeys.PLAY_SOUND.key, 3).__sendToAll();
 
-                        ExplosionNT nt = new ExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 150);
+                        LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 150);
                         nt.iterationLimit = 150;
                         nt.overrideResolution(24);
                         nt.ignoreBlockPoses.add(pos);
-                        nt.addAttrib(ExplosionNT.ExAttrib.FIRE);
-                        nt.addAttrib(ExplosionNT.ExAttrib.DFC_FALL);
+                        nt.addAttrib(LCEExplosionNT.LCEExAttrib.FIRE);
+                        nt.addAttrib(LCEExplosionNT.LCEExAttrib.DFC_FALL);
                         nt.explode();
                         LeafiaColor col = new LeafiaColor(colorCatalyst);
                         LeafiaParticlePacket.DFCBlastParticle blast = new LeafiaParticlePacket.DFCBlastParticle((float) col.red, (float) col.green, (float) col.blue, 250);
@@ -642,6 +644,34 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
         }
     }
 
+    private void broadcastState() {
+        NBTTagCompound fluidA = new NBTTagCompound();
+        NBTTagCompound fluidB = new NBTTagCompound();
+        tanks[0].writeToNBT(fluidA, "t0");
+        tanks[1].writeToNBT(fluidB, "t1");
+        Integer coreId = null;
+        try {
+            coreId = Cores.valueOf(inventory.getStackInSlot(1).getItem().getRegistryName().getPath()).ordinal();
+        } catch (IllegalArgumentException | NullPointerException ignored) {}
+        LeafiaPacket._start(this)
+                    .__write(packetKeys.TANK_A.key, fluidA)
+                    .__write(packetKeys.TANK_B.key, fluidB)
+                    .__write(packetKeys.TEMP.key, temperature)
+                    .__write(packetKeys.STABILIZATION.key, stabilization)
+                    .__write(packetKeys.CONTAINED.key, containedEnergy)
+                    .__write(packetKeys.EXPELLING.key, expellingEnergy)
+                    .__write(packetKeys.POTENTIAL.key, potentialGain)
+                    .__write(packetKeys.EXPEL_TICK.key, expellingSpk)
+                    .__write(packetKeys.MAXIMUM.key, meltingPoint)
+                    .__write(packetKeys.COLOR.key, color)
+                    .__write(packetKeys.COLOR_CATALYST.key, colorCatalyst)
+                    .__write(packetKeys.CORE_TYPE.key, coreId)
+                    .__write(packetKeys.JAMMER.key, jammerPos)
+                    .__write(packetKeys.COLLAPSE.key, collapsing)
+                    .__write(packetKeys.HASCORE.key, hasCore)
+                    .__sendToAffectedClients();
+    }
+
     private double getPullRange() {
         return 150;
     }
@@ -695,6 +725,74 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
     boolean isSurvivalFixTool(Entity e) {
         return e instanceof EntityItem && ((EntityItem) e).getItem().getItem() == ModItems.fix_survival;
     }
+
+    /// -------------------------- LeafiaPacketReceiver -------------------------- ///
+
+    @Override
+    public String getPacketIdentifier() { return "dfcore"; }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onReceivePacketLocal(byte key, Object value) {
+        for (packetKeys pkt : packetKeys.values()) {
+            if (key == pkt.key) {
+                switch (pkt) {
+                    case TEMP: temperature = (double) value; break;
+                    case STABILIZATION: stabilization = (double) value; break;
+                    case MAXIMUM: meltingPoint = (int) value; break;
+                    case CONTAINED: containedEnergy = (double) value; break;
+                    case EXPELLING: expellingEnergy = (double) value; break;
+                    case POTENTIAL: potentialGain = (double) value; break;
+                    case TANK_A: tanks[0].readFromNBT((NBTTagCompound) value, "t0"); break;
+                    case TANK_B: tanks[1].readFromNBT((NBTTagCompound) value, "t1"); break;
+                    case EXPEL_TICK: expellingSpk = (double) value; break;
+                    case COLOR: color = (int) value; break;
+                    case COLOR_CATALYST: colorCatalyst = (int) value; break;
+                    case JAMMER: jammerPos = (BlockPos) value; break;
+                    case CORE_TYPE:
+                        Cores lastCore = client_type;
+                        Integer id = (Integer) value;
+                        client_type = id == null ? null : Cores.values()[id];
+                        if (client_type != lastCore) {
+                            if (client_sfx != null) { client_sfx.stopSound(); client_sfx = null; sfxPlaying = false; }
+                            if (client_type != null) {
+                                client_sfx = AddonBase.proxy.getLoopedSound(
+                                        client_type.sfx, SoundCategory.BLOCKS,
+                                        pos.getX(), pos.getY(), pos.getZ(),
+                                        1, 1
+                                ).setCustomAttentuation(client_type.attentuationFunction);
+                            }
+                        }
+                        break;
+                    case PLAY_SOUND:
+                        if (value == null) break;
+                        int type = (int) value;
+                        if (type == 0 || type == 1) {
+                            if (meltdownSFX != null) meltdownSFX.stopSound();
+                            if (overloadSFX != null && type == 1) overloadSFX.stopSound();
+                            if (type == 0 && meltdownSFX != null) meltdownSFX.startSound();
+                            if (type == 1 && extinguishSFX != null) extinguishSFX.startSound();
+//                            if (type == 1) LeafiaDebug.debugLog(world, "STOP: 1");
+                        } else if (type == 2 && overloadSFX != null) {
+                            overloadSFX.startSound();
+                        } else if (type == 3 && explosionsSFX != null) {
+                            explosionsSFX.startSound();
+                            finalPhase = true;
+                        }
+                        break;
+                    case COLLAPSE: collapsing = (double) value; break;
+                    case HASCORE: hasCore = (boolean) value; break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onReceivePacketServer(byte key, Object value, EntityPlayer plr) { }
+    @Override
+    public void onPlayerValidate(EntityPlayer plr) { }
+    @Override
+    public double affectionRange() { return 300; }
 
     /// ------------------------- STATIC HELPERS FROM LCE ------------------------- ///
 

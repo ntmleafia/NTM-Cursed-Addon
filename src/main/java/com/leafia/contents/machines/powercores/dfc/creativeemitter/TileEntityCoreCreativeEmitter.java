@@ -2,12 +2,13 @@ package com.leafia.contents.machines.powercores.dfc.creativeemitter;
 
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;
 
-public class TileEntityCoreCreativeEmitter extends TileEntityCoreEmitter {
+public class TileEntityCoreCreativeEmitter extends TileEntityCoreEmitter implements LeafiaPacketReceiver {
 	public long[] joulesT = new long[]{
 			100_000,
 			20_000_000,
