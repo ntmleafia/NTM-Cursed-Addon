@@ -2,6 +2,7 @@ package com.leafia.passive;
 
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.llib.group.LeafiaSet;
 import com.llib.math.MathLeafia;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,7 @@ public class LeafiaPassiveLocal {
 	static int packetRecordTimer1s = 1_000;
 	static int packetRecordTimer1m = 60;
 
-	public static LeafiaSet<TileEntityCore> trackingCores = new LeafiaSet<>();
+	public static LeafiaSet<IMixinTileEntityCore> trackingCores = new LeafiaSet<>();
 
 	public static void onTick(World world) {
 		//TrackerLocal.localTick(Minecraft.getMinecraft().player);
@@ -25,8 +26,8 @@ public class LeafiaPassiveLocal {
 			callback.run();
 		queue.clear();
 		if (Minecraft.getMinecraft().isGamePaused()) {
-			for (TileEntityCore core : trackingCores);
-		//		core.explosionClock = System.currentTimeMillis();
+			for (IMixinTileEntityCore core : trackingCores)
+				core.setDFCExplosionClock(System.currentTimeMillis());
 		}
 	}
 	public static void priorTick(World world) {

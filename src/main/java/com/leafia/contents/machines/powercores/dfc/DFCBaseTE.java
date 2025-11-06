@@ -1,11 +1,11 @@
 package com.leafia.contents.machines.powercores.dfc;
 
-import com.hbm.lib.Library;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
-import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
+import com.llib.LeafiaLib;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -87,7 +87,7 @@ public abstract class DFCBaseTE extends TileEntityMachineBase implements LeafiaP
 	public TileEntityCore lastGetCore = null;
 	@Nullable
 	protected TileEntityCore getCore(int range) {
-		lastGetCore = Library.leafiaRayTraceBlocksCustom(world,new Vec3d(pos).add(0.5,0.5,0.5),new Vec3d(pos).add(0.5,0.5,0.5).add(getDirection().scale(range)),(process,config,current) -> {
+		lastGetCore = LeafiaLib.leafiaRayTraceBlocksCustom(world,new Vec3d(pos).add(0.5,0.5,0.5),new Vec3d(pos).add(0.5,0.5,0.5).add(getDirection().scale(range)),(process, config, current) -> {
 			if (current.posSnapped.equals(pos)) return process.CONTINUE();
 			if (!current.block.canCollideCheck(current.state,true))
 				return process.CONTINUE();
@@ -95,9 +95,9 @@ public abstract class DFCBaseTE extends TileEntityMachineBase implements LeafiaP
 			if (result == null)
 				return process.CONTINUE();
 			TileEntity te = world.getTileEntity(current.posSnapped);
-			if(te instanceof TileEntityCore) {
-				((TileEntityCore) te).componentPositions.add(pos);
-				return process.RETURN((TileEntityCore) te);
+			if(te instanceof TileEntityCore core) {
+				((IMixinTileEntityCore) core).getDFCComponentPositions().add(pos);
+				return process.RETURN(core);
 			}
 			return process.BREAK();
 		});

@@ -18,7 +18,8 @@
     "hbm.MixinHazardSystem",
     "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
-    "hbm.MixinPacketDispatcher"
+    "hbm.MixinPacketDispatcher",
+    "hbm.MixinTileEntityCore"
   ],
   "server": [
   ],
