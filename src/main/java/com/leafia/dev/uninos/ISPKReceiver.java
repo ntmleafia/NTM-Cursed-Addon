@@ -1,14 +1,16 @@
 package com.leafia.dev.uninos;
 
+import com.hbm.interfaces.ILaserable;
 import com.hbm.lib.DirPos;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.uninos.UniNodespace;
 import com.hbm.util.Compat;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface ISPKReceiver extends ISPKHandler {
+public interface ISPKReceiver extends ISPKHandler, ILaserable {
     /**
      * Transfers a specified amount of energy to this receiver.
      * If the receiver has enough capacity, all the energy is absorbed.
@@ -28,6 +30,8 @@ public interface ISPKReceiver extends ISPKHandler {
         if (!simulate) this.setSPK(this.getMaxSPK());
         return overshoot;
     }
+
+    default boolean isInputPreferable(EnumFacing dir) { return true; }
 
     /**
      * Retrieves the maximum speed at which this energy receiver can accept energy.
