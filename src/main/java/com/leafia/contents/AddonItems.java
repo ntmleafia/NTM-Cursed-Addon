@@ -7,6 +7,7 @@ import com.hbm.items.tool.ItemModDoor;
 import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
+import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -18,6 +19,17 @@ import java.util.List;
 public class AddonItems {
 	public static final List<Item> ALL_ITEMS = new ArrayList<Item>();
 	public static final Item door_fuckoff = new ItemPinkDoor("door_fuckoff").setCreativeTab(null);
+
+	public static final Item fix_tool = new CrucifixItem("fix_tool").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item fix_survival = new CrucifixItem("fix_survival").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+
+	// TODO: change the item classes to something new
+	// Hazards are already dealt with
+	public static final Item dfcsh_cable = new ItemHazard("dfcsh_cable").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_core = new ItemHazard("dfcsh_core").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_corner = new ItemHazard("dfcsh_corner").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_front = new ItemHazard("dfcsh_front").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_beam = new ItemHazard("dfcsh_beam").setCreativeTab(MainRegistry.controlTab);
 
 	public static void preInit(){
 		AddonBase._initMemberClasses(ModItems.class);

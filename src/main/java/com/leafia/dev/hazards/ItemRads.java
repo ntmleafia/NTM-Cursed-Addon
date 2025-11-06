@@ -5,12 +5,11 @@ import com.hbm.hazard.HazardEntry;
 import com.hbm.hazard.HazardRegistry;
 import com.hbm.hazard.HazardSystem;
 import com.hbm.hazard.type.HazardTypeRadiation;
-import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.OreDictManager.DictFrame;
 import com.leafia.database.AddonOreDictHazards;
 import com.leafia.dev.hazards.modifiers.NBTModifier;
 import com.leafia.dev.hazards.modifiers.NBTModifier.NBTKey;
-import com.leafia.dev.hazards.types.*;
+import com.leafia.dev.hazards.types.radiation.*;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.item.Item;
 
@@ -25,15 +24,6 @@ public class ItemRads {
 	public static MultiRadContainer tritium = new MultiRadContainer(0,0,0.5f,0,0);
 	public static MultiRadContainer waste = new MultiRadContainer(0,125,125,50,25);
 	public static MultiRadContainer waste_v = waste.copy().multiply(1/2f);
-
-	//call after com.hbm.hazard.HazardRegistry.registerItems
-	public static void register() {
-		//cobalt60.register(ModItems.ingot_co60);
-		//HashMap<String,HazardData> dat = HazardSystem.oreMap;
-		//Map<String,Float> fuck = dictMap.get(OreDictManager.CO60);
-		//System.out.println(fuck);
-		cobalt60.register(OreDictManager.CO60);
-	}
 
 	public static class MultiRadContainer {
 		public double alpha;

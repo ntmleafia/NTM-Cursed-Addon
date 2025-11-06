@@ -3,7 +3,7 @@ package com.leafia;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.potion.LeafiaPotion;
-import com.leafia.dev.hazards.ItemRads;
+import com.leafia.dev.hazards.AddonHazards;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.EntityInit;
 import com.leafia.init.LeafiaSoundEvents;
@@ -111,7 +111,7 @@ public class AddonBase {
     @EventHandler
     // load "Do your mod setup. Build whatever data structures you care about." (Remove if not needed)
     public void init(FMLInitializationEvent event) {
-        ItemRads.register();
+        AddonHazards.register();
     }
 
     @EventHandler

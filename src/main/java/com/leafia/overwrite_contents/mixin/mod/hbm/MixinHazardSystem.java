@@ -7,8 +7,8 @@ import com.hbm.hazard.type.HazardTypeRadiation;
 import com.hbm.hazard.type.IHazardType;
 import com.hbm.lib.Library;
 import com.hbm.util.I18nUtil;
-import com.leafia.dev.hazards.MultiRad.RadiationType;
 import com.leafia.dev.hazards.types.*;
+import com.leafia.dev.hazards.types.radiation.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,9 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.hbm.hazard.HazardSystem.getHazardsFromStack;
 import static com.hbm.hazard.type.HazardTypeRadiation.getNewValue;

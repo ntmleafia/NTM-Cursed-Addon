@@ -19,7 +19,8 @@
     "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher",
-    "hbm.MixinTileEntityCore"
+    "hbm.MixinTileEntityCore",
+    "hbm.MixinTileEntityCoreReceiver"
   ],
   "server": [
   ],

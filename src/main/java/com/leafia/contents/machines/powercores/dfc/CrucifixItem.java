@@ -2,6 +2,7 @@ package com.leafia.contents.machines.powercores.dfc;
 
 import com.hbm.items.ModItems;
 import com.hbm.items.special.ItemCustomLore;
+import com.leafia.contents.AddonItems;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -13,10 +14,12 @@ import java.util.List;
 public class CrucifixItem extends ItemCustomLore {
 	public CrucifixItem(String s) {
 		super(s);
+		ModItems.ALL_ITEMS.remove(this);
+		AddonItems.ALL_ITEMS.add(this);
 	}
 	@Override
 	public void addInformation(ItemStack stack,World world,List<String> list,ITooltipFlag flagIn) {
-		if (this == ModItems.fix_tool)
+		if (this == AddonItems.fix_tool)
 			list.add(TextFormatting.GRAY+"Throw this into a collapsing DFC to fix it");
 		else {
 			list.add(TextFormatting.GRAY+"It's a crucifix.");

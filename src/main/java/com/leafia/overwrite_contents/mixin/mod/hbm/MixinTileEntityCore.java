@@ -22,9 +22,11 @@ import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.leafia.AddonBase;
 import com.leafia.CommandLeaf;
 import com.leafia.LeafiaHelper;
+import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaVacuum;
 import com.leafia.contents.machines.powercores.dfc.particles.ParticleEyeOfHarmony;
+import com.leafia.database.FolkvangrJammers;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
@@ -32,6 +34,7 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.unsorted.LeafiaDamageSource;
 import com.llib.LeafiaLib;
@@ -263,20 +266,20 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 //                Tracker._tracePosition(this, pos.down(4), "deltaEnergy: ", deltaEnergy);
 
                 double absorbDiv = 0.001;
-                for (TileEntityCoreReceiver absorber : absorbers) absorbDiv += absorber.level;
+                for (TileEntityCoreReceiver absorber : absorbers) absorbDiv += ((IMixinTileEntityCoreReceiver)absorber).getLevel();
 
                 gainedEnergy = containedEnergy;
                 double absorbed = Math.pow(containedEnergy, 0.75 + energyRatio * 0.25) / 20 * absorbDiv;
                 double transferred = 0;
                 for (TileEntityCoreReceiver absorber : absorbers) {
                     if (finalPhase) {
-                        absorber.explode();
+                        ((IMixinTileEntityCoreReceiver)absorber).explode();
                         continue;
                     }
-                    long absorb = (long) (absorbed / absorbDiv * absorber.level * 1000_000);
+                    long absorb = (long) (absorbed / absorbDiv * ((IMixinTileEntityCoreReceiver)absorber).getLevel() * 1000_000);
                     containedEnergy -= absorb / 1000_000.0d;
                     transferred += absorb / 1000_000.0d;
-                    double val = (catalystPower * Math.pow(tempRatio, 0.1) + incomingSpk * 2000_000) / absorbDiv * absorber.level;
+                    double val = (catalystPower * Math.pow(tempRatio, 0.1) + incomingSpk * 2000_000) / absorbDiv * ((IMixinTileEntityCoreReceiver)absorber).getLevel();
                     val = Math.min(val, Long.MAX_VALUE);
                     absorber.joules += absorb + (long) val;
                 }
@@ -387,7 +390,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                         cloud.posZ = pos.getZ();
                         world.spawnEntity(cloud);
                     } else {
-                        jammerPos = EntityNukeExplosionMK3.lastDetectedJammer;
+                        jammerPos = FolkvangrJammers.lastDetectedJammer;
                         if (explosionIn < 0) {
                             explosionIn = 120;
                             explosionClock = System.currentTimeMillis();
@@ -719,11 +722,11 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
     }
 
     boolean isFixTool(Entity e) {
-        return e instanceof EntityItem && ((EntityItem) e).getItem().getItem() == ModItems.fix_tool;
+        return e instanceof EntityItem && ((EntityItem) e).getItem().getItem() == AddonItems.fix_tool;
     }
 
     boolean isSurvivalFixTool(Entity e) {
-        return e instanceof EntityItem && ((EntityItem) e).getItem().getItem() == ModItems.fix_survival;
+        return e instanceof EntityItem && ((EntityItem) e).getItem().getItem() == AddonItems.fix_survival;
     }
 
     /// -------------------------- LeafiaPacketReceiver -------------------------- ///
