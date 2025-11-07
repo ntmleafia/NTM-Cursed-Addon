@@ -2,7 +2,7 @@ package com.llib.exceptions;
 
 public class LeafiaDevFlaw extends RuntimeException {
     public LeafiaDevFlaw(String s) {
-        super("\uE05E\u8AFA"+s);
+        super("\uD83C\uDF3F"+s);//super("\uE05E\u8AFA"+s);
     }
     public LeafiaDevFlaw(String s,Exception e) {
         this(s+": "+e.getMessage());

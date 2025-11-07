@@ -2,6 +2,7 @@ package com.leafia.contents.machines.powercores.dfc.particles;
 
 import com.hbm.lib.RefStrings;
 import com.hbm.main.ResourceManager;
+import com.hbm.render.NTMRenderHelper;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
 import com.leafia.transformer.LeafiaGls;
@@ -60,7 +61,7 @@ public class ParticleEyeOfHarmony extends Particle {
 	
 	@Override
 	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ){
-		com.hbm.render.RenderHelper.resetParticleInterpPos(entityIn, partialTicks);
+		NTMRenderHelper.resetParticleInterpPos(entityIn, partialTicks);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(ResourceManager.white);
 
 		float f = ((float)this.particleAge + partialTicks) / (float)this.particleMaxAge;

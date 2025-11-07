@@ -9,6 +9,7 @@ import com.leafia.init.EntityInit;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.TEInit;
 import com.leafia.init.proxy.LeafiaServerProxy;
+import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.myname.mymodid.Tags;
@@ -36,7 +37,7 @@ import java.io.File;
 public class AddonBase {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
-    @SidedProxy(clientSide = "com.leafia.init.proxy.ClientProxy", serverSide = "com.leafia.init.proxy.ServerProxy")
+    @SidedProxy(clientSide = "com.leafia.init.proxy.LeafiaClientProxy", serverSide = "com.leafia.init.proxy.LeafiaServerProxy")
     public static LeafiaServerProxy proxy;
 
     public static final String MODID = "leafia";
@@ -87,6 +88,8 @@ public class AddonBase {
 
         TEInit.preInit();
         EntityInit.preInit();
+
+        LCEItemCatalyst.registerMeltingPoints();
 
         LOGGER.info("I am " + Tags.MODNAME + " + at version " + Tags.VERSION);
     }

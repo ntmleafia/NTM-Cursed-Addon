@@ -1,13 +1,14 @@
 package com.leafia.contents.machines.powercores.dfc.debris;
 
 import com.hbm.entity.projectile.EntityDebrisBase;
-import com.hbm.items.ModItems;
+import com.leafia.contents.AddonItems;
+import com.leafia.overwrite_contents.interfaces.IMixinDebrisBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-public class AbsorberShrapnelEntity extends EntityDebrisBase {
+public class AbsorberShrapnelEntity extends EntityDebrisBase implements IMixinDebrisBase {
 
 	public AbsorberShrapnelEntity(World world){
 		super(world);
@@ -28,23 +29,23 @@ public class AbsorberShrapnelEntity extends EntityDebrisBase {
 		if(!world.isRemote && !isDead) {
 			switch(this.getType()){
 				case CABLE:
-					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.dfcsh_cable)))
+					if(player.inventory.addItemStackToInventory(new ItemStack(AddonItems.dfcsh_cable)))
 						this.setDead();
 					break;
 				case CORE:
-					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.dfcsh_core)))
+					if(player.inventory.addItemStackToInventory(new ItemStack(AddonItems.dfcsh_core)))
 						this.setDead();
 					break;
 				case CORNER:
-					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.dfcsh_corner)))
+					if(player.inventory.addItemStackToInventory(new ItemStack(AddonItems.dfcsh_corner)))
 						this.setDead();
 					break;
 				case FRONT:
-					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.dfcsh_front)))
+					if(player.inventory.addItemStackToInventory(new ItemStack(AddonItems.dfcsh_front)))
 						this.setDead();
 					break;
 				case BEAM:
-					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.dfcsh_beam)))
+					if(player.inventory.addItemStackToInventory(new ItemStack(AddonItems.dfcsh_beam)))
 						this.setDead();
 					break;
 			}

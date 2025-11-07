@@ -35,6 +35,7 @@ import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
+import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.unsorted.LeafiaDamageSource;
 import com.llib.LeafiaLib;
@@ -219,7 +220,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
         expellingSpk = 0;
         if (inventory.getStackInSlot(1).getItem() instanceof ItemAMSCore) {
             if (tagA != null && tagB != null) {
-                meltingPoint = Math.min(1500000, Math.min(ItemCatalyst.getMelting(catalystA), ItemCatalyst.getMelting(catalystB)));
+                meltingPoint = Math.min(1500000, Math.min(LCEItemCatalyst.getMelting(catalystA), LCEItemCatalyst.getMelting(catalystB)));
 
                 double corePower = getCorePower();
                 double coreHeatMod = getCoreHeat();
@@ -316,8 +317,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
                 double timeToMeltdown = 10;
                 double timeToRegen = 30;
-                tagA.setDouble("damage", MathHelper.clamp(damageA + (temperature >= ItemCatalyst.getMelting(catalystA) ? 5 / timeToMeltdown : -5 / timeToRegen), 0, 100));
-                tagB.setDouble("damage", MathHelper.clamp(damageB + (temperature >= ItemCatalyst.getMelting(catalystB) ? 5 / timeToMeltdown : -5 / timeToRegen), 0, 100));
+                tagA.setDouble("damage", MathHelper.clamp(damageA + (temperature >= LCEItemCatalyst.getMelting(catalystA) ? 5 / timeToMeltdown : -5 / timeToRegen), 0, 100));
+                tagB.setDouble("damage", MathHelper.clamp(damageB + (temperature >= LCEItemCatalyst.getMelting(catalystB) ? 5 / timeToMeltdown : -5 / timeToRegen), 0, 100));
             }
         }
 

@@ -17,9 +17,9 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-
-public abstract class DFCBaseTE extends TileEntityMachineBase implements LeafiaPacketReceiver {
-	protected BlockPos targetPosition = new BlockPos(0,0,0);
+@Deprecated
+public abstract class DFCBaseTE {// extends TileEntityMachineBase implements LeafiaPacketReceiver {
+	/*protected BlockPos targetPosition = new BlockPos(0,0,0);
 	public BlockPos getTargetPosition() { return targetPosition; }
 	public DFCBaseTE(int scount) {
 		super(scount);
@@ -102,5 +102,5 @@ public abstract class DFCBaseTE extends TileEntityMachineBase implements LeafiaP
 			return process.BREAK();
 		});
 		return lastGetCore;
-	}
+	}*/
 }

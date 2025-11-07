@@ -1,8 +1,8 @@
 package com.leafia.contents.machines.powercores.dfc.debris;
 
+import com.hbm.hfr.render.loader.HFRWavefrontObject;
 import com.hbm.lib.RefStrings;
 import com.hbm.main.ResourceManager;
-import com.hbm.render.amlfrom1710.AdvancedModelLoader;
 import com.hbm.render.amlfrom1710.IModelCustom;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity.DebrisType;
 import net.minecraft.client.renderer.entity.Render;
@@ -15,16 +15,16 @@ public class AbsorberShrapnelRender extends Render<AbsorberShrapnelEntity> {
 
 	public static final IRenderFactory<AbsorberShrapnelEntity> FACTORY = man -> new AbsorberShrapnelRender(man);
 
-	static final IModelCustom core = AdvancedModelLoader.loadModel(
-			new ResourceLocation(RefStrings.MODID, "models/leafia/dfc_receiver_shrapnels/core.obj"));
-	static final IModelCustom framebeam = AdvancedModelLoader.loadModel(
-			new ResourceLocation(RefStrings.MODID, "models/leafia/dfc_receiver_shrapnels/framebeam.obj"));
-	static final IModelCustom framecable = AdvancedModelLoader.loadModel(
-			new ResourceLocation(RefStrings.MODID, "models/leafia/dfc_receiver_shrapnels/framecable.obj"));
-	static final IModelCustom framecorner = AdvancedModelLoader.loadModel(
-			new ResourceLocation(RefStrings.MODID, "models/leafia/dfc_receiver_shrapnels/framecorner.obj"));
-	static final IModelCustom framefront = AdvancedModelLoader.loadModel(
-			new ResourceLocation(RefStrings.MODID, "models/leafia/dfc_receiver_shrapnels/framefront.obj"));
+	static final IModelCustom core = new HFRWavefrontObject(
+			new ResourceLocation("leafia", "models/leafia/dfc_receiver_shrapnels/core.obj")).asVBO();
+	static final IModelCustom framebeam = new HFRWavefrontObject(
+			new ResourceLocation("leafia", "models/leafia/dfc_receiver_shrapnels/framebeam.obj")).asVBO();
+	static final IModelCustom framecable = new HFRWavefrontObject(
+			new ResourceLocation("leafia", "models/leafia/dfc_receiver_shrapnels/framecable.obj")).asVBO();
+	static final IModelCustom framecorner = new HFRWavefrontObject(
+			new ResourceLocation("leafia", "models/leafia/dfc_receiver_shrapnels/framecorner.obj")).asVBO();
+	static final IModelCustom framefront = new HFRWavefrontObject(
+			new ResourceLocation("leafia", "models/leafia/dfc_receiver_shrapnels/framefront.obj")).asVBO();
 
 	protected AbsorberShrapnelRender(RenderManager renderManager){
 		super(renderManager);

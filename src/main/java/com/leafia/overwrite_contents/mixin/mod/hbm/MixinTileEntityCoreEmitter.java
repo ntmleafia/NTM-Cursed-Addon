@@ -8,7 +8,6 @@ import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
-import com.leafia.overwrite_contents.interfaces.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.llib.LeafiaLib;
@@ -71,8 +70,8 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         if (!world.isRemote) {
             LeafiaPacket._start(this).__write(31,targetPosition).__sendToAffectedClients();
 
-            this.updateStandardConnections(world, pos);
-            this.updateSPKConnections(world, pos);
+            //this.updateStandardConnections(world, pos);
+            //this.updateSPKConnections(world, pos);
 
             watts = MathHelper.clamp(watts, 1, 100);
             long demand = maxPower * Math.min(watts, 100) / 2000;

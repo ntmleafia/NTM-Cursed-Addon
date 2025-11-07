@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.powercores.dfc.particles;
 
 import com.hbm.main.ResourceManager;
+import com.hbm.render.NTMRenderHelper;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
@@ -52,7 +53,7 @@ public class ParticleDFC extends Particle {
 	
 	@Override
 	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ){
-		com.hbm.render.RenderHelper.resetParticleInterpPos(entityIn, partialTicks);
+		NTMRenderHelper.resetParticleInterpPos(entityIn, partialTicks);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(ResourceManager.white);
 
 		GlStateManager.disableLighting();

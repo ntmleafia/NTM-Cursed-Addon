@@ -8,6 +8,7 @@ import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
+import com.leafia.dev.items.itembase.AddonItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -25,11 +26,11 @@ public class AddonItems {
 
 	// TODO: change the item classes to something new
 	// Hazards are already dealt with
-	public static final Item dfcsh_cable = new ItemHazard("dfcsh_cable").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_core = new ItemHazard("dfcsh_core").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_corner = new ItemHazard("dfcsh_corner").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_front = new ItemHazard("dfcsh_front").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_beam = new ItemHazard("dfcsh_beam").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_cable = new AddonItemBase("dfcsh_cable").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_core = new AddonItemBase("dfcsh_core").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_corner = new AddonItemBase("dfcsh_corner").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_front = new AddonItemBase("dfcsh_front").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_beam = new AddonItemBase("dfcsh_beam").setCreativeTab(MainRegistry.controlTab);
 
 	public static void preInit(){
 		AddonBase._initMemberClasses(ModItems.class);

@@ -14,15 +14,13 @@ import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.init.LeafiaSoundEvents;
-import com.leafia.overwrite_contents.interfaces.IDFCBase;
+import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
-import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.llib.LeafiaLib.NumScale;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -144,13 +142,13 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 				destructionLevel = Math.max(destructionLevel-1,0);
 			}
 
-			updateSPKConnections(world, pos);
+			//updateSPKConnections(world, pos);
 			if (Long.MAX_VALUE - power < joules * 5000L)
 				power = Long.MAX_VALUE;
 			else
 				power += joules * 5000L;
 
-			this.sendPower(world, pos);
+			//this.sendPower(world, pos);
 
 			long remaining = power / 5000L;
 			long totalTransfer = 0;
@@ -161,14 +159,14 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 					TileEntity te = world.getTileEntity(pos.offset(outFace));
 					if (te instanceof ILaserable) {
 						ILaserable thing = (ILaserable) te;
-						if (thing.isInputPreferable(outFace))
-							targets.add(new Pair<>(thing, outFace));
+						//if (thing.isInputPreferable(outFace))
+						//	targets.add(new Pair<>(thing, outFace));
 					}
 				}
 				if (targets.size() > 0) {
 					long transfer = remaining / targets.size();
-					for (Pair<ILaserable, EnumFacing> target : targets)
-						target.getKey().addEnergy(transfer, target.getValue());
+					//for (Pair<ILaserable, EnumFacing> target : targets)
+						//target.getKey().addEnergy(transfer, target.getValue());
 
 					totalTransfer = transfer * targets.size();
 					power -= totalTransfer * 5000L;
@@ -211,7 +209,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	@Unique public long syncJoules;
 	@Unique public long syncSpk = 0;
 
-	@Override
+	/*@Override
 	public boolean isInputPreferable(EnumFacing dir) {
 		Vec3d unit = getDirection();
 		double component;
@@ -220,7 +218,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 		else component = unit.z;
 		component *= dir.getOpposite().getAxisDirection().getOffset();
 		return component > 0.707;//dir.getOpposite().ordinal() == this.getBlockMetadata();
-	}
+	}*/
 
 	@Unique private BlockPos targetPosition = new BlockPos(0,0,0);
 	@Unique public TileEntityCore lastGetCore = null;

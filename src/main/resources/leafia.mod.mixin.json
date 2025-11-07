@@ -12,10 +12,12 @@
   "mixins": [
     "hbm.MixinDictFrame",
     "hbm.MixinEntityCloudFleija",
+    "hbm.MixinEntityDebrisBase",
     "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",
     "hbm.MixinEntityNukeTorex",
     "hbm.MixinHazardSystem",
+    "hbm.MixinItemCatalyst",
     "hbm.MixinItemCell",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher",

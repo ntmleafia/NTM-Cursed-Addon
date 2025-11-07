@@ -8,6 +8,8 @@ import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
+import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
+import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
@@ -38,6 +40,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, RenderCloudFleija.FACTORY);
 		RenderingRegistry.registerEntityRenderingHandler(LCETorex.class, LCETorexRender.FACTORY);
+
+		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);
 	}
 	@Override
 	public File getDataDir() {
