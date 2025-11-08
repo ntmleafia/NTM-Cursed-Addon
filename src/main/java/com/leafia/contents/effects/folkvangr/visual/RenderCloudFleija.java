@@ -1,9 +1,10 @@
 package com.leafia.contents.effects.folkvangr.visual;
 
 import com.hbm.entity.effect.EntityCloudFleija;
-import com.hbm.hfr.render.loader.HFRWavefrontObject;
 import com.hbm.lib.RefStrings;
-import com.hbm.render.amlfrom1710.IModelCustom;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
+import com.hbm.render.loader.HFRWavefrontObject;
+import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.util.RenderUtil;
 import com.leafia.AddonBase;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
@@ -21,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 public class RenderCloudFleija extends Render<EntityCloudFleija> {
 
 	private static final ResourceLocation objTesterModelRL = new ResourceLocation(/*"/assets/" + */RefStrings.MODID, "models/Sphere.obj");
-	private IModelCustom blastModel;
+	private WaveFrontObjectVAO blastModel;
     private ResourceLocation blastTexture;
     public float scale = 0;
     public float ring = 0;

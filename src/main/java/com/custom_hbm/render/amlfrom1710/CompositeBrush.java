@@ -1,7 +1,5 @@
 package com.custom_hbm.render.amlfrom1710;
 
-import com.hbm.render.amlfrom1710.QuadComparator;
-import com.hbm.render.amlfrom1710.TesselatorVertexState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
