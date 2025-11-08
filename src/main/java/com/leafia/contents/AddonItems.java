@@ -8,6 +8,7 @@ import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
+import com.leafia.dev.items.itembase.AddonItemBaked;
 import com.leafia.dev.items.itembase.AddonItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -21,16 +22,16 @@ public class AddonItems {
 	public static final List<Item> ALL_ITEMS = new ArrayList<Item>();
 	public static final Item door_fuckoff = new ItemPinkDoor("door_fuckoff").setCreativeTab(null);
 
-	public static final Item fix_tool = new CrucifixItem("fix_tool").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
-	public static final Item fix_survival = new CrucifixItem("fix_survival").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item fix_tool = new CrucifixItem("fix_tool","leafia/crucifix").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item fix_survival = new CrucifixItem("fix_survival","leafia/fix_survival").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 
 	// TODO: change the item classes to something new
 	// Hazards are already dealt with
-	public static final Item dfcsh_cable = new AddonItemBase("dfcsh_cable").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_core = new AddonItemBase("dfcsh_core").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_corner = new AddonItemBase("dfcsh_corner").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_front = new AddonItemBase("dfcsh_front").setCreativeTab(MainRegistry.controlTab);
-	public static final Item dfcsh_beam = new AddonItemBase("dfcsh_beam").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_cable = new AddonItemBaked("dfcsh_cable","leafia/absorber_shrapnels/framecable").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_core = new AddonItemBaked("dfcsh_core","leafia/absorber_shrapnels/core").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_corner = new AddonItemBaked("dfcsh_corner","leafia/absorber_shrapnels/framecorner").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_front = new AddonItemBaked("dfcsh_front","leafia/absorber_shrapnels/framefront").setCreativeTab(MainRegistry.controlTab);
+	public static final Item dfcsh_beam = new AddonItemBaked("dfcsh_beam","leafia/absorber_shrapnels/framebeam").setCreativeTab(MainRegistry.controlTab);
 
 	public static void preInit(){
 		AddonBase._initMemberClasses(ModItems.class);

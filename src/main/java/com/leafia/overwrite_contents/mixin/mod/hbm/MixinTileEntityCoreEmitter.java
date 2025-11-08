@@ -1,7 +1,10 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.interfaces.ILaserable;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
@@ -28,7 +31,7 @@ import org.spongepowered.asm.mixin.*;
 import java.util.List;
 
 @Mixin(value = TileEntityCoreEmitter.class, remap = false)
-public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreEmitter {
+public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreEmitter, IEnergyReceiverMK2, ILaserable, IFluidStandardReceiver {
     public MixinTileEntityCoreEmitter(int scount) {
         super(scount);
     }
@@ -70,6 +73,11 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         if (!world.isRemote) {
             LeafiaPacket._start(this).__write(31,targetPosition).__sendToAffectedClients();
 
+            for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+                this.trySubscribe(this.world, this.pos.getX() + dir.offsetX, this.pos.getY() + dir.offsetY, this.pos.getZ() + dir.offsetZ, dir);
+            }
+
+            this.subscribeToAllAround(this.tank.getTankType(), this);
             //this.updateStandardConnections(world, pos);
             //this.updateSPKConnections(world, pos);
 
@@ -222,6 +230,10 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
     // networking
     @Override
+    public String getPacketIdentifier() {
+        return "DFC_BOOSTER";
+    }
+    @Override
     public void onReceivePacketLocal(byte key, Object value) {
         IMixinTileEntityCoreEmitter.super.onReceivePacketLocal(key, value);
         switch (key) {
@@ -240,7 +252,15 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         }
     }
 
+    @Override
+    public TileEntityCore lastGetCore() {
+        return null;
+    }
 
+    @Override
+    public void lastGetCore(TileEntityCore core) {
+
+    }
 
 
     @Override

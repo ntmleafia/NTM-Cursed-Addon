@@ -1,9 +1,13 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.hbm.api.energymk2.IEnergyProviderMK2;
+import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.ExplosionLarge;
 import com.hbm.interfaces.ILaserable;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
@@ -33,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(value = TileEntityCoreReceiver.class)
-public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IDFCBase {
+public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver {
 	@Shadow public long joules;
 
 	@Shadow public long prevJoules;
@@ -147,6 +151,11 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 				power = Long.MAX_VALUE;
 			else
 				power += joules * 5000L;
+
+			this.subscribeToAllAround(this.tank.getTankType(), this);
+			for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				this.tryProvide(this.world, this.pos.getX() + dir.offsetX, this.pos.getY() + dir.offsetY, this.pos.getZ() + dir.offsetZ, dir);
+			}
 
 			//this.sendPower(world, pos);
 
