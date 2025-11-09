@@ -9,6 +9,7 @@ public class LeafiaDamageSource extends DamageSource {
 	public static DamageSource mine = (new DamageSource("mine")).setExplosion().setDamageBypassesArmor();
 	public static DamageSource dfc = (new DamageSource("dfc")).setDamageIsAbsolute().setDamageBypassesArmor();
 	public static DamageSource dfcMeltdown = (new DamageSource("dfcMeltdown")).setDamageIsAbsolute().setDamageBypassesArmor().setDamageAllowedInCreativeMode();
+	public static DamageSource pointed = (new DamageSource("pointed")).setDifficultyScaled();
 
 	public LeafiaDamageSource(String damageTypeIn) {
 		super(damageTypeIn);

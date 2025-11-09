@@ -2,18 +2,56 @@ package com.leafia.eventbuses;
 
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
 import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
+import com.hbm.hazard.HazardEntry;
+import com.hbm.hazard.HazardSystem;
+import com.hbm.inventory.OreDictManager;
+import com.hbm.lib.HBMSoundHandler;
+import com.hbm.lib.ModDamageSource;
+import com.hbm.potion.HbmPotion;
+import com.leafia.contents.potion.LeafiaPotion;
+import com.leafia.dev.hazards.types.HazardTypeSharpEdges;
+import com.leafia.dev.optimization.LeafiaParticlePacket;
+import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
+import com.leafia.init.LeafiaSoundEvents;
+import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.unsorted.IEntityCustomCollision;
+import com.leafia.unsorted.LeafiaDamageSource;
+import com.llib.group.LeafiaMap;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class LeafiaServerListener {
 	public static class Unsorted {
+		@SubscribeEvent
+		public void onWorldTick(WorldTickEvent evt) {
+			if (evt.phase == Phase.START)
+				LeafiaPassiveServer.priorTick(evt.world);
+			if (evt.phase == Phase.END)
+				LeafiaPassiveServer.onTick(evt.world);
+		}
 		@SubscribeEvent
 		public void onGetEntityCollision(GetCollisionBoxesEvent evt) {
 			if (evt.getEntity() == null) return;
@@ -62,6 +100,89 @@ public class LeafiaServerListener {
 			for (ATEntry entry : entries) {
 				if (entry.dim == evt.getWorld().provider.getDimension())
 					EntityNukeExplosionMK3.at.remove(entry);
+			}
+		}
+		@SubscribeEvent
+		public void onEntityHurt(LivingDamageEvent evt) {
+			DamageSource src = evt.getSource();
+			EntityLivingBase entity = evt.getEntityLiving();
+			Random rng = entity.getRNG();
+			if (src.isFireDamage()) {
+				if (rng.nextInt(5+5*LeafiaPotion.getSkinDamage(entity)/*HbmPotion.getSkinDamage(entity)*/) == 0)
+					LeafiaPotion.hurtSkin(entity,3);
+			}
+		}
+	}
+	public static class SharpEdges {
+		public static LeafiaMap<Entity,Float> damageCache = new LeafiaMap<>();
+		@SubscribeEvent
+		public void onEntityHurt(LivingDamageEvent evt) {
+			DamageSource src = evt.getSource();
+			if (!src.equals(LeafiaDamageSource.pointed))
+				damageCache.put(evt.getEntity(),evt.getAmount());
+			if (src.equals(DamageSource.FALL))
+				sharpDamageEntity(evt.getEntity(),evt.getAmount(),getItems(evt.getEntity()));
+		}
+		@SubscribeEvent
+		public void onEntityHit(LivingAttackEvent evt) {
+			Entity attacker = evt.getSource().getImmediateSource();
+			if (attacker != null) {
+				List<ItemStack> stacks = new ArrayList<>();
+				for (ItemStack stack : attacker.getHeldEquipment())
+					stacks.add(stack);
+				sharpDamageEntity(evt.getEntity(),evt.getAmount(),stacks);
+			}
+		}
+		@SubscribeEvent
+		public void onEntityKnockback(LivingKnockBackEvent evt) {
+			if (evt.getStrength() > 0) {
+				if (damageCache.containsKey(evt.getEntity())) {
+					float damage = damageCache.get(evt.getEntity());
+					sharpDamageEntity(evt.getEntity(),damage,getItems(evt.getEntity()));
+				}
+			}
+		}
+		@SubscribeEvent
+		public void onItemPickup(EntityItemPickupEvent evt) {
+			sharpDamageEntity(evt.getEntity(),1,Collections.singletonList(evt.getItem().getItem()));
+		}
+		List<ItemStack> getItems(Entity entity) {
+			List<ItemStack> stacks = new ArrayList<>();
+			if (entity instanceof EntityPlayer) {
+				InventoryPlayer inventory = ((EntityPlayer)entity).inventory;
+				for (int i = 0; i < inventory.getSizeInventory(); i++)
+					stacks.add(inventory.getStackInSlot(i));
+			} else {
+				for (ItemStack stack : entity.getEquipmentAndArmor())
+					stacks.add(stack);
+			}
+			return stacks;
+		}
+		public void sharpDamageEntity(Entity entity,float baseDamage,List<ItemStack> stacks) {
+			float modifier = 0;
+			float max = 0;
+			for (ItemStack stack : stacks) {
+				if (!stack.isEmpty()) {
+					List<HazardEntry> hazards = HazardSystem.getHazardsFromStack(stack);
+					for (HazardEntry hazard : hazards) {
+						if (hazard.type instanceof HazardTypeSharpEdges) {
+							modifier += (float) (hazard.baseLevel/100*stack.getCount());
+							max = Math.max(max,(float)hazard.baseLevel/100);
+						}
+					}
+				}
+			}
+			float additionalDamage = baseDamage*(modifier*(1-HazardTypeSharpEdges.sharpStackNerf)+max*HazardTypeSharpEdges.sharpStackNerf);
+			if (additionalDamage > 0) {
+				LeafiaPassiveServer.queueFunction(()->{
+					if (entity.world == null) return;
+					entity.world.playSound(null,entity.getPosition(),HBMSoundHandler.blood_splat,SoundCategory.MASTER,0.25f,entity.world.rand.nextFloat()*0.2f+0.9f);
+					entity.world.playSound(null,entity.getPosition(),LeafiaSoundEvents.pointed,SoundCategory.MASTER,0.25f,entity.world.rand.nextFloat()*0.2f+0.9f);
+					LeafiaParticlePacket.Sweat particle = new Sweat(entity,Blocks.REDSTONE_BLOCK.getDefaultState(),entity.world.rand.nextInt(4)+2);
+					particle.emit(new Vec3d(entity.posX,entity.posY,entity.posZ),Vec3d.ZERO,entity.dimension);
+					entity.hurtResistantTime = 0;
+					entity.attackEntityFrom(LeafiaDamageSource.pointed,additionalDamage);
+				});
 			}
 		}
 	}

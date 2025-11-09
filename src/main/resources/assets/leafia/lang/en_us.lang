@@ -1,6 +1,10 @@
+death.attack.back=%1$s was deatomized and sent to the backrooms
+death.attack.fleija=%1$s got their lungs exploded in the air around violently filling in the vacuum
+death.attack.dfc=%1$s burned away from immense microwave rays
+death.attack.dfcMeltdown=%1$s was vaporized in the fire of a collapsing star
+death.attack.mine=%1$s should have paid attention to the floor
+death.attack.pointed=%1$s was ragged by pointed items on impact
 item.detonator_laser.desc2=Also can be used to indicate on multiplayer.
-
-
 subtitles.alarm.airRaid=Air Raid Siren
 subtitles.alarm.amsSiren=AMS Siren
 subtitles.alarm.apcLoop=APC Siren
@@ -71,3 +75,12 @@ subtitles.weapon.nuke_d=Distant Nuclear Explosion
 subtitles.weapon.nuke_folkvangr=Fölkvangr Field appears
 subtitles.weapon.nuke_n=Nuclear Explosion
 subtitles.weapon.nuke_s=Small Nuclear Explosion
+trait._hazarditem.radioactive.activation=Contamination:
+trait._hazarditem.radioactive.alpha=Alpha rays:
+trait._hazarditem.radioactive.beta=Beta rays:
+trait._hazarditem.radioactive.gamma=Gamma rays:
+trait._hazarditem.radioactive.neutrons=Neutrons:
+trait._hazarditem.radioactive.radon=Radon Gas:
+trait._hazarditem.radioactive.x=X rays:
+trait._hazarditem.sharp.add=%s additional damage on impact
+trait._hazarditem.sharp=Sharp Edges

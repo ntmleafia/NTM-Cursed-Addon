@@ -25,8 +25,6 @@ public class AddonItems {
 	public static final Item fix_tool = new CrucifixItem("fix_tool","leafia/crucifix").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 	public static final Item fix_survival = new CrucifixItem("fix_survival","leafia/fix_survival").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 
-	// TODO: change the item classes to something new
-	// Hazards are already dealt with
 	public static final Item dfcsh_cable = new AddonItemBaked("dfcsh_cable","leafia/absorber_shrapnels/framecable").setCreativeTab(MainRegistry.controlTab);
 	public static final Item dfcsh_core = new AddonItemBaked("dfcsh_core","leafia/absorber_shrapnels/core").setCreativeTab(MainRegistry.controlTab);
 	public static final Item dfcsh_corner = new AddonItemBaked("dfcsh_corner","leafia/absorber_shrapnels/framecorner").setCreativeTab(MainRegistry.controlTab);

@@ -20,9 +20,9 @@ public class HazardTypeSharpEdges implements IHazardType {
 	@Override
 	public void addHazardInformation(EntityPlayer entityPlayer,List<String> list,double v,ItemStack stack,List<IHazardModifier> list1) {
 		list.add(TextFormatting.DARK_RED + "[" + I18nUtil.resolveKey("trait._hazarditem.sharp") + "]");
-		list.add(TextFormatting.DARK_RED+" -::" + TextFormatting.RED + "" + I18nUtil.resolveKey("trait._hazarditem.sharp.add",Math.round(v*100)+"%"));
+		list.add(TextFormatting.DARK_RED+" -::" + TextFormatting.RED + "" + I18nUtil.resolveKey("trait._hazarditem.sharp.add",Math.round(v*1)+"%"));
 		if(stack.getCount() > 1) {
-			list.add(TextFormatting.DARK_RED+" -::" + TextFormatting.RED + I18nUtil.resolveKey("desc.stack") + " " + Math.round((v*stack.getCount()*(1-sharpStackNerf)+v*sharpStackNerf)*100)+"%");
+			list.add(TextFormatting.DARK_RED+" -::" + TextFormatting.RED + I18nUtil.resolveKey("desc.stack") + " " + Math.round((v*stack.getCount()*(1-sharpStackNerf)+v*sharpStackNerf)*1)+"%");
 		}
 	}
 }
