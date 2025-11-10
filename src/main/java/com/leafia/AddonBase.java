@@ -4,7 +4,7 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.potion.LeafiaPotion;
-import com.leafia.dev.hazards.AddonHazards;
+import com.leafia.init.AddonHazards;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.EntityInit;
 import com.leafia.init.LeafiaSoundEvents;

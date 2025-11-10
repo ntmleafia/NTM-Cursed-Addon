@@ -139,10 +139,10 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
 		return true;
 	}
 
-	@Redirect(method = "onUpdate",at = @At(value = "INVOKE", target = "Lcom/hbm/main/ServerProxy;playSoundClient(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V"))
-	private void onOnUpdate(ServerProxy instance,double x,double y,double z,SoundEvent sound,SoundCategory category,float volume,float pitch) {
+	//@Redirect(method = "onUpdate",at = @At(value = "INVOKE", target = "Lcom/hbm/main/ServerProxy;playSoundClient(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V"))
+	//private void onOnUpdate(ServerProxy instance,double x,double y,double z,SoundEvent sound,SoundCategory category,float volume,float pitch) {
 		// nope
-	}
+	//}
 
 	@Unique
 	private static void spawnTorex(World world, EntityNukeTorex torex) {
