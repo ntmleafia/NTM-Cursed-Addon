@@ -59,6 +59,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     private BlockPos targetPosition = new BlockPos(0,0,0);
     @Unique
     private RayTraceResult lastRaycast;
+
     @Unique
     private boolean isActive;
 
@@ -145,7 +146,8 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
                                               .__write(0, isOn)
                                               .__write(1, watts)
                                               .__write(2, prev)
-                                              .__write(3, isActive);
+                                              .__write(3, isActive)
+                                              .__write(4, tank.getFill());
             //if (watts != prevWatts)
             //	packet.__write(1,watts);
             packet.__sendToAffectedClients();
@@ -249,6 +251,9 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
             case 3:
                 isActive = (boolean) value;
                 break;
+            case 4:
+                tank.setFill((int)value);
+                break;
         }
     }
 
@@ -264,7 +269,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
 
     @Override
-    public BlockPos targetPosition() {
+    public BlockPos getTargetPosition() {
         return targetPosition;
     }
 
@@ -281,5 +286,10 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     @Override
     public void isActive(boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public RayTraceResult lastRaycast() {
+        return lastRaycast;
     }
 }

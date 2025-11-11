@@ -244,7 +244,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	}
 
 	@Override
-	public BlockPos targetPosition() {
+	public BlockPos getTargetPosition() {
 		return targetPosition;
 	}
 	@Override

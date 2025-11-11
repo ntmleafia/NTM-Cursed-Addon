@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 
 public interface IDFCBase extends LeafiaPacketReceiver {
     default void writeTargetPos(NBTTagCompound compound) {
-        BlockPos targetPos = targetPosition();
+        BlockPos targetPos = getTargetPosition();
         compound.setInteger("x1",targetPos.getX());
         compound.setInteger("y1",targetPos.getY());
         compound.setInteger("z1",targetPos.getZ());
@@ -50,13 +50,13 @@ public interface IDFCBase extends LeafiaPacketReceiver {
 
     default LeafiaPacket syncClients(LeafiaPacket packet) {
 //        LeafiaDebug.debugLog(world,"syncClients");
-        packet.__write(31, targetPosition());
+        packet.__write(31, getTargetPosition());
         return packet;
     }
 
     @Override
     default void onPlayerValidate(EntityPlayer plr) {
-        LeafiaPacket._start((TileEntity) this).__write(31,targetPosition()).__sendToClient(plr);
+        LeafiaPacket._start((TileEntity) this).__write(31,getTargetPosition()).__sendToClient(plr);
     }
 
     default void setTargetPosition(BlockPos pos) {
@@ -69,12 +69,12 @@ public interface IDFCBase extends LeafiaPacketReceiver {
 
     default Vec3d getDirection() {
         TileEntity thisTE = (TileEntity) this;
-        return new Vec3d(targetPosition().subtract(thisTE.getPos())).normalize();
+        return new Vec3d(getTargetPosition().subtract(thisTE.getPos())).normalize();
     }
 
     default EnumFacing getFront() {
         TileEntity thisTE = (TileEntity) this;
-        Vec3i relative = targetPosition().subtract(thisTE.getPos());
+        Vec3i relative = getTargetPosition().subtract(thisTE.getPos());
         int max = Math.max(Math.abs(relative.getX()),Math.max(Math.abs(relative.getY()),Math.abs(relative.getZ())));
         if (max == relative.getX()) return EnumFacing.EAST;
         else if (max == -relative.getX()) return EnumFacing.WEST;
@@ -112,7 +112,7 @@ public interface IDFCBase extends LeafiaPacketReceiver {
 
     void lastGetCore(TileEntityCore core);
 
-    BlockPos targetPosition();
+    BlockPos getTargetPosition();
 
     /**
      * @deprecated internal setter

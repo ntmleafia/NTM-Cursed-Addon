@@ -10,4 +10,6 @@ public interface IMixinTileEntityCoreEmitter extends IDFCBase {
     boolean isActive();
 
     void isActive(boolean active);
+
+    RayTraceResult lastRaycast();
 }
