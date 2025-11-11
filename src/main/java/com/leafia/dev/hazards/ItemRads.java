@@ -109,8 +109,10 @@ public class ItemRads {
 		}
 		public void register(DictFrame frame) {
 			Map<String,Float> map = AddonOreDictHazards.dictMap.get(frame);
-			if (map == null)
-				throw new LeafiaDevFlaw("dictMap for "+frame.ingot()+" could not be captured");
+			if (map == null) {
+				System.out.println("\uD83C\uDF3FCAUTION: dictMap for "+frame.ingot()+" could not be captured");
+				return;
+			}
 			for (Entry<String,Float> entry : map.entrySet())
 				register(entry.getKey(),entry.getValue());
 		}
