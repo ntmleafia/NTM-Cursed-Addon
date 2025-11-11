@@ -18,6 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
@@ -27,6 +28,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -228,6 +233,16 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
             } else
                 return process.CONTINUE(result);
         });
+    }
+
+    @Inject(method = "readFromNBT",at = @At("HEAD"))
+    public void onReadFromNBT(NBTTagCompound compound,CallbackInfo ci) {
+        readTargetPos(compound);
+    }
+
+    @Inject(method = "writeToNBT",at = @At("HEAD"))
+    public void onWriteToNBT(NBTTagCompound compound,CallbackInfoReturnable<NBTTagCompound> cir) {
+        writeTargetPos(compound);
     }
 
     // networking

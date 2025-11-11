@@ -1,12 +1,15 @@
 [{
     "modid": "${modid}",
     "name": "${modname}",
-    "description": "An example mod for Minecraft 1.12.2 with Forge",
+    "description": "Some cursed addon for NTM Community Edition",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "logoFile": "",
     "url": "",
-    "authorList": [],
+    "authorList": [
+        "Leafia",
+        "movblock"
+    ],
     "credits": "",
     "dependencies": [
       "hbm"

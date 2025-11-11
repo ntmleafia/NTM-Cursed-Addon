@@ -20,9 +20,12 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.llib.LeafiaLib.NumScale;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -30,8 +33,13 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +123,12 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	}
 	@Unique int destructionLevel = 0;
 
+	/**
+	 * @author ntmleafia
+	 * @reason yipe yipe
+	 */
 	@Override
+	@Overwrite
 	public void update() {
 		core = null;
 		EnumFacing facing = getFront();
@@ -205,6 +218,19 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			fanAngle += Math.floorMod(720/20,360);
 		}
 	}
+
+	@Inject(method = "readFromNBT",at = @At("HEAD"))
+	public void onReadFromNBT(NBTTagCompound compound,CallbackInfo ci) {
+		readTargetPos(compound);
+		level = compound.getDouble("level");
+	}
+
+	@Inject(method = "writeToNBT",at = @At("HEAD"))
+	public void onWriteToNBT(NBTTagCompound compound,CallbackInfoReturnable<NBTTagCompound> cir) {
+		writeTargetPos(compound);
+		compound.setDouble("level",level);
+	}
+
 	// cleitn sht
 	@Unique public int fanAngle = 0;
 	@Unique public double joulesPerSec = 0;
@@ -217,6 +243,40 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 
 	@Unique public long syncJoules;
 	@Unique public long syncSpk = 0;
+
+	@Override
+	public long syncJoules() {
+		return syncJoules;
+	}
+
+	@Override
+	public void sendToPlayer(EntityPlayer player) {
+		LeafiaPacket._start(this)
+				.__write(0,syncJoules)
+				.__write(1,power)
+				.__write(2,level)
+				.__write(5,tank.getFill())
+				.__sendToClient(player);
+	}
+
+	@Override
+	public void onReceivePacketLocal(byte key,Object value) {
+		IMixinTileEntityCoreReceiver.super.onReceivePacketLocal(key, value);
+		switch(key) {
+			case 0: joules = (long)value; break;
+			case 1: power = (long)value; break;
+			case 2: level = (double)value; break;
+			case 5: tank.setFill((int)value);
+			case 4: syncSpk = (long)value; break;
+		}
+	}
+
+	@Override
+	public void onReceivePacketServer(byte key,Object value,EntityPlayer plr) {
+		IMixinTileEntityCoreReceiver.super.onReceivePacketServer(key, value, plr);
+		if (key == 0)
+			level = (double)value;
+	}
 
 	/*@Override
 	public boolean isInputPreferable(EnumFacing dir) {

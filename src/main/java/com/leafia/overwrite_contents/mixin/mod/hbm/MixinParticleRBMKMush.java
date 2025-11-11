@@ -27,7 +27,7 @@ public abstract class MixinParticleRBMKMush extends Particle implements IMixinPa
     }
 
     /**
-     * @author movblock
+     * @author mlbv
      * @reason fix black background
      */
     @Overwrite

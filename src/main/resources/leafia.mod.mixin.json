@@ -10,6 +10,8 @@
     "hbm.MixinRenderTorex"
   ],
   "mixins": [
+    "hbm.MixinContainerCoreReceiver",
+    "hbm.MixinCoreComponent",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityCloudFleija",
     "hbm.MixinEntityDebrisBase",
@@ -19,6 +21,7 @@
     "hbm.MixinHazardSystem",
     "hbm.MixinItemCatalyst",
     "hbm.MixinItemCell",
+    "hbm.MixinItemDesignatorRange",
     "hbm.MixinItemLaserDetonator",
     "hbm.MixinPacketDispatcher",
     "hbm.MixinTileEntityCore",
