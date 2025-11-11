@@ -231,7 +231,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 FluidType type0 = tanks[0].getTankType();
                 FluidType type1 = tanks[1].getTankType();
                 double fillPct0 = tanks[0].getFill() / (double) tanks[0].getMaxFill();
-                double fillPct1 = tanks[0].getFill() / (double) tanks[0].getMaxFill();
+                double fillPct1 = tanks[1].getFill() / (double) tanks[1].getMaxFill();
                 double fuelPower = getFuelEfficiency(type0) * getFuelEfficiency(type1);
 
                 double tempRatio = temperature / meltingPoint;

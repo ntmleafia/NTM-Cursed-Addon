@@ -28,7 +28,7 @@ public abstract class MixinCoreComponent extends BlockContainer {
 	protected MixinCoreComponent(Material materialIn) {
 		super(materialIn);
 	}
-	@Inject(method = "onBlockActivated",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/network/internal/FMLNetworkHandler;openGui(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;ILnet/minecraft/world/World;III)V",shift = Shift.BEFORE),cancellable = true)
+	@Inject(method = "onBlockActivated",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/network/internal/FMLNetworkHandler;openGui(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;ILnet/minecraft/world/World;III)V",shift = Shift.BEFORE,remap = false),cancellable = true)
 	public void onOnBlockActivated(World world,BlockPos pos,IBlockState state,EntityPlayer player,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ,CallbackInfoReturnable<Boolean> cir) {
 		if (!player.getHeldItem(hand).isEmpty()) {
 			TileEntity te = world.getTileEntity(pos);

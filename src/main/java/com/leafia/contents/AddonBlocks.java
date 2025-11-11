@@ -1,5 +1,6 @@
 package com.leafia.contents;
 
+import com.hbm.blocks.ModBlocks;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
 import net.minecraft.block.Block;
@@ -14,7 +15,16 @@ public class AddonBlocks {
 
 	public static final Block door_fuckoff = new BlockPinkDoor(Material.WOOD, "door_fuckoff").setHardness(3);
 
+	private static void modifyBlockParams() {
+		ModBlocks.dfc_core.setResistance(65000000);
+		ModBlocks.dfc_emitter.setResistance(50);
+		ModBlocks.dfc_receiver.setResistance(50);
+		ModBlocks.dfc_injector.setResistance(50);
+		ModBlocks.dfc_stabilizer.setResistance(50);
+	}
+
 	public static void preInit(){
+		modifyBlockParams();
 		AddonBase._initMemberClasses(AddonBlocks.class);
 		System.out.println("Blocks: "+ALL_BLOCKS.size());
 		for(Block block : ALL_BLOCKS){

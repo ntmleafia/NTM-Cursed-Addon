@@ -46,12 +46,12 @@ import java.util.List;
 
 @Mixin(value = TileEntityCoreReceiver.class)
 public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver {
-	@Shadow public long joules;
+	@Shadow(remap = false) public long joules;
 
-	@Shadow public long prevJoules;
+	@Shadow(remap = false) public long prevJoules;
 
-	@Shadow public long power;
-	@Shadow public FluidTankNTM tank;
+	@Shadow(remap = false) public long power;
+	@Shadow(remap = false) public FluidTankNTM tank;
 	@Unique public TileEntityCore core = null;
 
 	@Unique public double level = 1;

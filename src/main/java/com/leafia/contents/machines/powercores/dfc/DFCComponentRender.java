@@ -4,9 +4,9 @@ import com.hbm.main.ResourceManager;
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.hbm.render.misc.BeamPronter;
-import com.hbm.render.misc.BeamPronter.EnumBeamType;
-import com.hbm.render.misc.BeamPronter.EnumWaveType;
+import com.custom_hbm.render.misc.LCEBeamPronter;
+import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
+import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
@@ -154,9 +154,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 				LeafiaGls.disableBlend();
 				if (range > 0 && stabilizer.isOn) {
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, outerColor, innerColor, 0, 1, 0F, 2, 0.125F);
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, outerColor, innerColor, (int) te.getWorld().getTotalWorldTime() * -8 % 360, (int) Math.round(range * 3), 0.125F, 2, 0.04F);
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, outerColor, innerColor, (int) te.getWorld().getTotalWorldTime() * -8 % 360 + 180, (int) Math.round(range * 3), 0.125F, 2, 0.04F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, outerColor, innerColor, 0, 1, 0F, 2, 0.125F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, outerColor, innerColor, (int) te.getWorld().getTotalWorldTime() * -8 % 360, (int) Math.round(range * 3), 0.125F, 2, 0.04F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, outerColor, innerColor, (int) te.getWorld().getTotalWorldTime() * -8 % 360 + 180, (int) Math.round(range * 3), 0.125F, 2, 0.04F);
 				}
 			}
 			LeafiaGls.enableBlend();
@@ -181,9 +181,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 						colorA = 0x281332;
 						colorB = 0x110165;
 					}*/
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, colorA, 0x7F7F7F, 0, 1, 0F, 2, width);
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorA, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorB, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000 + 1, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, colorA, 0x7F7F7F, 0, 1, 0F, 2, width);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorA, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorB, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000 + 1, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
 				}
 			}
 		}
@@ -195,9 +195,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			if (range > 0) {
 				NTMRenderHelper.bindBlockTexture();
 				if (injector.tanks[0].getFill() > 0)
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, injector.tanks[0].getFluid().getFluid().getColor(), 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() * -2 % 360, (int) Math.round(range), 0.09F, 3, 0.0625F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, injector.tanks[0].getFluid().getFluid().getColor(), 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() * -2 % 360, (int) Math.round(range), 0.09F, 3, 0.0625F);
 				if (injector.tanks[1].getFill() > 0)
-					BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, injector.tanks[1].getFluid().getFluid().getColor(), 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() * -2 % 360 + 180, (int) Math.round(range), 0.09F, 3, 0.0625F);
+					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, injector.tanks[1].getFluid().getFluid().getColor(), 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() * -2 % 360 + 180, (int) Math.round(range), 0.09F, 3, 0.0625F);
 			}
 			bindTexture(ResourceManager.dfc_injector_tex);
 		}
@@ -214,7 +214,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				GL11.glTranslated(0, 0, -distance);
 				if (mspk > 0) {
 					for (int i = 0; i < (int) Math.pow(mspk / 200, 0.5) + 1; i++) {
-						BeamPronter.prontBeam(
+						LCEBeamPronter.prontBeam(
 								new Vec3d(0, 0, distance - 0.5),
 								EnumWaveType.RANDOM,
 								EnumBeamType.SOLID,
@@ -235,10 +235,10 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 
 			if (range > 0) {
 				//0xffa200
-				BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -25 % 360, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
-				BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -15 % 360 + 180, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
-				BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -5 % 360 + 180, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
-				BeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, 0xffd000, 0xffd000, 0, 1, 0, 1, 0.01f);
+				LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -25 % 360, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
+				LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -15 % 360 + 180, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
+				LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.SPIRAL, EnumBeamType.SOLID, 0x9b4100, 0x9b4100, (int)te.getWorld().getTotalWorldTime() * -5 % 360 + 180, (int)(range * 3), 0.125F/1.5f, 1, 0.01f);
+				LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, 0xffd000, 0xffd000, 0, 1, 0, 1, 0.01f);
 			}
 			bindTexture(dfc_exchanger_tex);
 		}*/
