@@ -6,6 +6,7 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.sound.LCEAudioWrapperClient;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
+import com.hbm.main.ModEventHandlerClient;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
@@ -25,8 +26,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 
 import java.io.File;
 
@@ -73,5 +77,10 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		if (pitch != 1)
 			audio.updatePitch(pitch);
 		return audio;
+	}
+
+	@Override
+	public void onLoadComplete(FMLLoadCompleteEvent event){
+		if (!Loader.isModLoaded("backups")) LeafiaClientListener.HandlerClient.backupsWarning = true;
 	}
 }

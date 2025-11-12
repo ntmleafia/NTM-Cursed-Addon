@@ -1,15 +1,8 @@
 package com.leafia.eventbuses;
 
+import com.custom_hbm.GuiBackupsWarning;
 import com.google.gson.JsonSyntaxException;
-import com.hbm.handler.JetpackHandler;
-import com.hbm.interfaces.IHoldableWeapon;
-import com.hbm.items.weapon.ItemGunEgon;
-import com.hbm.items.weapon.ItemGunShotty;
-import com.hbm.items.weapon.ItemSwordCutter;
-import com.hbm.lib.Library;
-import com.hbm.lib.RecoilHandler;
-import com.hbm.particle.ParticleFirstPerson;
-import com.hbm.sound.GunEgonSoundHandler;
+import com.hbm.render.GuiCTMWarning;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.container_utility.LeafiaPacket;
@@ -20,12 +13,10 @@ import com.leafia.shit.leafiashader.BigBruh;
 import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -51,6 +43,29 @@ import java.util.*;
 
 public class LeafiaClientListener {
 	public static class HandlerClient {
+		public static boolean backupsWarning = false;
+		public static boolean seenWarning = false;
+		@SubscribeEvent
+		public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+			if (seenWarning) return;
+			if (!backupsWarning) return;
+			if (Minecraft.getMinecraft().currentScreen instanceof GuiCTMWarning) return;
+			if (event.getGui() instanceof GuiCTMWarning) {
+				seenWarning = false;
+				return;
+			}
+			if (event.getGui() instanceof net.minecraft.client.gui.GuiMainMenu) {
+				if (backupsWarning) {
+					GuiBackupsWarning.text.add("Backups is recommended as the addon is highly unstable.");
+					GuiBackupsWarning.downloadButtonIndex = GuiBackupsWarning.text.size();
+					GuiBackupsWarning.text.add("Click to download Backups");
+				}
+				GuiBackupsWarning.text.add("");
+				GuiBackupsWarning.text.add("Press any key to continue");
+				Minecraft.getMinecraft().displayGuiScreen(new GuiBackupsWarning());
+				seenWarning = true;
+			}
+		}
 		public static float getViewADS(EntityPlayer player) {
 			if (player.isSneaking()) {
 				boolean canADS = true;
