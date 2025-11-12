@@ -195,7 +195,7 @@ public class LCEExplosionNT extends Explosion {
 
 							if(block.getMaterial() != Material.AIR) {
 								float resistance = this.exploder != null ? this.exploder.getExplosionResistance(this, this.worldObj, new BlockPos(j1, k1, l1), block) : block.getBlock().getExplosionResistance(worldObj, new BlockPos(j1, k1, l1), (Entity) null, this);
-								if (maxExplosionResistance >= 0 && resistance > maxExplosionResistance/5f)
+								if (maxExplosionResistance >= 0 && resistance > maxExplosionResistance/3f)
 									power = 0;
 								power -= (resistance + 0.3F) * weaken;
 								if (has(LCEExAttrib.DFC_FALL) && power > 0) {
