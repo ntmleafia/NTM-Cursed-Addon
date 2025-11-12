@@ -21,6 +21,14 @@ public class AddonBlocks {
 		ModBlocks.dfc_receiver.setResistance(50);
 		ModBlocks.dfc_injector.setResistance(50);
 		ModBlocks.dfc_stabilizer.setResistance(50);
+		ModBlocks.deco_aluminium.setResistance(30);
+		ModBlocks.deco_asbestos.setResistance(30);
+		ModBlocks.deco_beryllium.setResistance(30);
+		ModBlocks.deco_lead.setResistance(30);
+		ModBlocks.deco_steel.setResistance(30);
+		ModBlocks.deco_tungsten.setResistance(30);
+		ModBlocks.deco_titanium.setResistance(30);
+		ModBlocks.deco_red_copper.setResistance(30);
 	}
 
 	public static void preInit(){
