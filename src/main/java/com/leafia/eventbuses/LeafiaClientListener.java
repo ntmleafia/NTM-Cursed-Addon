@@ -2,13 +2,19 @@ package com.leafia.eventbuses;
 
 import com.custom_hbm.GuiBackupsWarning;
 import com.google.gson.JsonSyntaxException;
+import com.hbm.blocks.ILookOverlay;
+import com.hbm.items.ModItems;
 import com.hbm.render.GuiCTMWarning;
+import com.custom_hbm.util.LCETuple.*;
+import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.gear.IADSWeapon;
+import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.passive.effects.LeafiaShakecam;
+import com.leafia.passive.rendering.TopRender;
 import com.leafia.shit.leafiashader.BigBruh;
 import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
@@ -20,17 +26,21 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -43,6 +53,111 @@ import java.util.*;
 
 public class LeafiaClientListener {
 	public static class HandlerClient {
+		@SubscribeEvent(priority = EventPriority.LOWEST)
+		public void renderWorld(RenderWorldLastEvent evt) {
+			TopRender.main(evt);
+		}
+		@SubscribeEvent
+		public void onOverlayRender(RenderGameOverlayEvent.Pre event) {
+			if(event.getType() == ElementType.CROSSHAIRS) {
+				Minecraft mc = Minecraft.getMinecraft();
+				World world = mc.world;
+				RayTraceResult mop = mc.objectMouseOver;
+
+				if (mop != null && mop.typeOfHit == mop.typeOfHit.BLOCK) {
+					if (world.getBlockState(mop.getBlockPos()).getBlock() instanceof ILookOverlay) {
+						((ILookOverlay) world.getBlockState(mop.getBlockPos()).getBlock()).printHook(event,world,mop.getBlockPos().getX(),mop.getBlockPos().getY(),mop.getBlockPos().getZ());
+					}
+					if (mc.player.getHeldItemOffhand().getItem() == AddonItems.wand_v) {
+						Chunk chunk = world.getChunk(mop.getBlockPos());
+						TileEntity entity = chunk.getTileEntity(mop.getBlockPos(),Chunk.EnumCreateEntityType.CHECK);
+						if (entity != null) {
+							NBTTagCompound nbt = new NBTTagCompound();
+							entity.writeToNBT(nbt);
+							LeafiaGls.pushMatrix();
+							LeafiaGls.scale(0.6,0.6,1);
+							mc.fontRenderer.drawStringWithShadow("Replicated blockdata",4,4,LeafiaUtil.colorFromTextFormat(TextFormatting.GREEN));
+							int textX = 10;
+							int textY = 4;
+							List<Triplet<Integer,Integer,List<Pair<String,NBTBase>>>> stack = new ArrayList<>();
+							stack.add(new Triplet<>(0,0,new ArrayList<>()));
+							for (String key : nbt.getKeySet()) {
+								stack.get(0).getC().add(new Pair<>(key,nbt.getTag(key)));
+							}
+							while (stack.size() > 0) {
+								Triplet<Integer,Integer,List<Pair<String,NBTBase>>> stackItem = stack.get(stack.size()-1);
+								List<Pair<String,NBTBase>> compound = stackItem.getC();
+								if (compound.size() > 0) {
+									Pair<String,NBTBase> entry = compound.remove(0);
+									textY += 10;
+									String lineTxt = (entry.getA() != null) ? TextFormatting.YELLOW+"["+entry.getA()+"] " : "["+stackItem.getB()+"] ";
+									stackItem.setB(stackItem.getB()+1);
+									NBTBase value = entry.getB();
+									if (value instanceof NBTTagByte)
+										lineTxt += TextFormatting.BLUE+""+((NBTTagByte) value).getByte();
+									if (value instanceof NBTTagShort)
+										lineTxt += TextFormatting.DARK_AQUA+""+((NBTTagShort) value).getShort();
+									if (value instanceof NBTTagInt)
+										lineTxt += TextFormatting.AQUA+""+((NBTTagInt) value).getInt();
+									if (value instanceof NBTTagLong)
+										lineTxt += TextFormatting.GOLD+""+((NBTTagLong) value).getLong();
+									if (value instanceof NBTTagFloat)
+										lineTxt += TextFormatting.GREEN+""+((NBTTagFloat) value).getFloat()+"f";
+									if (value instanceof NBTTagDouble)
+										lineTxt += TextFormatting.RED+""+((NBTTagDouble) value).getDouble()+"d";
+									if (value instanceof NBTTagByteArray)
+										lineTxt += TextFormatting.DARK_GRAY+""+value;
+									if (value instanceof NBTTagIntArray)
+										lineTxt += TextFormatting.DARK_GRAY+""+value;
+									if (value instanceof NBTTagLongArray)
+										lineTxt += TextFormatting.GRAY+""+value;
+									if (value instanceof NBTTagList) {
+										lineTxt += TextFormatting.RESET+"[";
+										List<Pair<String,NBTBase>> subCompound = new ArrayList<>();
+										for (NBTBase item : ((NBTTagList) value)) {
+											subCompound.add(new Pair<>(null,item));
+										}
+										stack.add(new Triplet<>(1,0,subCompound));
+									}
+									if (value instanceof NBTTagString)
+										lineTxt += TextFormatting.LIGHT_PURPLE+""+((NBTTagString) value).getString();
+									if (value instanceof NBTTagCompound) {
+										lineTxt += "{";
+										List<Pair<String,NBTBase>> subCompound = new ArrayList<>();
+										NBTTagCompound nbtValue = (NBTTagCompound) value;
+										for (String key : nbtValue.getKeySet()) {
+											subCompound.add(new Pair<>(key,nbtValue.getTag(key)));
+										}
+										stack.add(new Triplet<>(2,0,subCompound));
+									}
+									mc.fontRenderer.drawStringWithShadow(lineTxt,textX,textY,-1);
+									if (value instanceof NBTTagCompound)
+										textX += 6;
+									if (value instanceof NBTTagList)
+										textX += 6;
+								}
+								if (stack.get(stack.size()-1).getC().size() <= 0) {
+									switch(stack.get(stack.size()-1).getA()) {
+										case 1:
+											textX -= 6;
+											textY += 10;
+											mc.fontRenderer.drawStringWithShadow("]",textX,textY,LeafiaUtil.colorFromTextFormat(TextFormatting.WHITE));
+											break;
+										case 2:
+											textX -= 6;
+											textY += 10;
+											mc.fontRenderer.drawStringWithShadow("}",textX,textY,LeafiaUtil.colorFromTextFormat(TextFormatting.YELLOW));
+											break;
+									}
+									stack.remove(stack.size()-1);
+								}
+							}
+							LeafiaGls.popMatrix();
+						}
+					}
+				}
+			}
+		}
 		public static boolean backupsWarning = false;
 		public static boolean seenWarning = false;
 		@SubscribeEvent

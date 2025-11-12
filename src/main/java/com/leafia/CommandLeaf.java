@@ -2,11 +2,15 @@ package com.leafia;
 
 import com.custom_hbm.contents.torex.LCETorex;
 import com.hbm.entity.effect.EntityNukeTorex;
+import com.leafia.contents.gear.wands.ItemWandV;
+import com.leafia.dev.LeafiaDebug;
+import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.passive.effects.LeafiaShakecam;
 import com.llib.exceptions.messages.TextWarningLeafia;
+import com.llib.group.LeafiaSet;
 import com.llib.technical.LeafiaEase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.*;
@@ -143,7 +147,7 @@ public class CommandLeaf extends CommandBase {
 							}
 						}
 						break;
-					/*case "visualizer":
+					case "visualizer":
 						args = shiftArgs(args,1);
 						if (args.length-1 <= 0) {
 							list.add("select");
@@ -192,7 +196,7 @@ public class CommandLeaf extends CommandBase {
 							}
 						}
 						break;
-					case "wand":
+					/*case "wand":
 						args = shiftArgs(args,1);
 						if (args.length-1 <= 0) {
 							list.add("save");
@@ -263,7 +267,7 @@ public class CommandLeaf extends CommandBase {
 						default:
 							throw new WrongUsageException("/hbmleaf wand save|remove", new Object[0]);
 					}
-				} break;
+				} break;*/
 				case "visualizer": {
 					args = shiftArgs(args,1);
 					if (args.length < 1)
@@ -295,7 +299,7 @@ public class CommandLeaf extends CommandBase {
 							}
 							Tracker.getSubjects().put(selectPos,args[0]);
 							notifyCommandListener(sender, this, "Successfully renamed watch", new Object[0]);
-							Tracker.notifySubjectMapChanges(ItemWandD.remote);
+							Tracker.notifySubjectMapChanges(ItemWandV.remote);
 							break;
 						case "remove":
 							args = shiftArgs(args,1);
@@ -313,7 +317,7 @@ public class CommandLeaf extends CommandBase {
 								Tracker.notifySelectionChange();
 							}
 							notifyCommandListener(sender, this, "Successfully removed watch", new Object[0]);
-							Tracker.notifySubjectMapChanges(ItemWandD.remote);
+							Tracker.notifySubjectMapChanges(ItemWandV.remote);
 							break;
 						case "teleport":
 							args = shiftArgs(args,1);
@@ -339,7 +343,7 @@ public class CommandLeaf extends CommandBase {
 							else if (!args[0].equals("server"))
 								throw new WrongUsageException("/hbmleaf visualizer side remote|server", new Object[0]);
 							LeafiaDebug.debugLog(server.getEntityWorld(),"New watches will be created on "+(remote ? "remote" : "server"));
-							ItemWandD.remote = remote;
+							ItemWandV.remote = remote;
 							break;
 						case "display":
 							args = shiftArgs(args,1);
@@ -500,7 +504,7 @@ public class CommandLeaf extends CommandBase {
 						default:
 							throw new WrongUsageException("/hbmleaf visualizer remove|rename|side|teleport|display [...]", new Object[0]);
 					}
-				} break;*/
+				} break;
 				case "eases": {
 					sender.sendMessage(new TextComponentString("Available eases:").setStyle(header));
 					for (String s : LeafiaEase.listEasesForCommands()) {

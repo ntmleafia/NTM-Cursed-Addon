@@ -2,11 +2,13 @@ package com.leafia.init.proxy;
 
 import com.custom_hbm.contents.torex.LCETorex;
 import com.custom_hbm.contents.torex.LCETorexRender;
+import com.custom_hbm.render.tileentity.LCERenderSpinnyLight;
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.sound.LCEAudioWrapperClient;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.main.ModEventHandlerClient;
+import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
@@ -52,6 +54,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		RenderingRegistry.registerEntityRenderingHandler(LCETorex.class, LCETorexRender.FACTORY);
 
 		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpinnyLight.class,new LCERenderSpinnyLight());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,new DFCComponentRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());

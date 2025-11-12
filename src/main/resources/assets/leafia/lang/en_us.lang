@@ -6,6 +6,7 @@ death.attack.dfcMeltdown=%1$s was vaporized in the fire of a collapsing star
 death.attack.mine=%1$s should have paid attention to the floor
 death.attack.pointed=%1$s was ragged by pointed items on impact
 item.detonator_laser.desc2=Also can be used to indicate on multiplayer.
+item.wand_v.name=Visualizer Wand
 subtitles.weapon.nuke=Nuclear Explosion
 subtitles.weapon.nuke_d=Distant Nuclear Explosion
 subtitles.weapon.nuke_folkvangr=Fölkvangr Field appears

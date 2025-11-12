@@ -1,15 +1,13 @@
 package com.leafia.contents;
 
-import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.generic.BlockModDoor;
 import com.hbm.items.ModItems;
-import com.hbm.items.tool.ItemModDoor;
 import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
+import com.leafia.contents.gear.wands.ItemWandV;
 import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
 import com.leafia.dev.items.itembase.AddonItemBaked;
-import com.leafia.dev.items.itembase.AddonItemBase;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -30,6 +28,8 @@ public class AddonItems {
 	public static final Item dfcsh_corner = new AddonItemBaked("dfcsh_corner","leafia/absorber_shrapnels/framecorner").setCreativeTab(MainRegistry.controlTab);
 	public static final Item dfcsh_front = new AddonItemBaked("dfcsh_front","leafia/absorber_shrapnels/framefront").setCreativeTab(MainRegistry.controlTab);
 	public static final Item dfcsh_beam = new AddonItemBaked("dfcsh_beam","leafia/absorber_shrapnels/framebeam").setCreativeTab(MainRegistry.controlTab);
+
+	public static final Item wand_v = new ItemWandV("wand_v","wands/wand_v");
 
 	public static void preInit(){
 		AddonBase._initMemberClasses(ModItems.class);
