@@ -377,7 +377,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                     blast.emit(new Vec3d(pos).add(0.5, 0.5, 0.5), new Vec3d(0, 1, 0), world.provider.getDimension(), 200);
 
                     LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 50);
-                    nt.maxExplosionResistance = 20;
+                    nt.maxExplosionResistance = 28;
                     nt.iterationLimit = 150;
                     nt.ignoreBlockPoses.add(pos);
                     nt.explode();
