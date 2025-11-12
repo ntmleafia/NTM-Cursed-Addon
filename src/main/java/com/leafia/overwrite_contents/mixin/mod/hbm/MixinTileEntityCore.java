@@ -260,8 +260,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
                 double tgtTemp = temperature;
                 tgtTemp += Math.pow(deltaEnergy * 666 * catalystHeatMod, 2 / (1 + stabilization)) * (1 - tempRatio / 2) * coreHeatMod * Math.pow(potentialGain, 0.25);
-                double rdc = 1 - energyRatio;
-                tgtTemp -= Math.pow(Math.abs(rdc), 0.5) * Math.signum(rdc) * tempRatio;
+
 
 //                Tracker._tracePosition(this, pos.down(3), "containedEnergy: ", containedEnergy);
 //                Tracker._tracePosition(this, pos.down(4), "deltaEnergy: ", deltaEnergy);
@@ -292,6 +291,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 expellingSpk = transferred;
                 expelTicks[Math.floorMod(ticks, 20)] = expellingSpk;
                 containedEnergy = Math.max(containedEnergy, 0);
+                double rdc = 1-energyRatio;
+                tgtTemp -= Math.pow(Math.abs(rdc),0.5)*Math.signum(rdc)*tempRatio;//*10;
 
                 tgtTemp -= Math.max(0, Math.pow(temperature / meltingPoint, 4) * temperature * getStabilizationDivAlt()) * (0.5 + (Math.pow(Math.abs(rdc), 0.01) * Math.signum(rdc)) / 2);
                 tgtTemp = Math.min(Math.max(tgtTemp, 0), 5000000);
