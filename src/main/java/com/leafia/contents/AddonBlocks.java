@@ -29,6 +29,7 @@ public class AddonBlocks {
 		ModBlocks.deco_tungsten.setResistance(30);
 		ModBlocks.deco_titanium.setResistance(30);
 		ModBlocks.deco_red_copper.setResistance(30);
+		ModBlocks.control_panel_custom.setResistance(30);
 	}
 
 	public static void preInit(){
