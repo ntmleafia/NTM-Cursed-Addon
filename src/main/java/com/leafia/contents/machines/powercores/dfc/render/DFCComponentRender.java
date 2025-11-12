@@ -1,4 +1,4 @@
-package com.leafia.contents.machines.powercores.dfc;
+package com.leafia.contents.machines.powercores.dfc.render;
 
 import com.hbm.main.ResourceManager;
 import com.hbm.render.NTMRenderHelper;
@@ -12,6 +12,7 @@ import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
+import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;

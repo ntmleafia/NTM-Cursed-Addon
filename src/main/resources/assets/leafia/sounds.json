@@ -51,5 +51,6 @@
   "external.mechcrafting_weld": { "category": "block", "sounds": ["leafia:external/mechcrafting_weld"]},
   "external.overload": { "category": "block", "sounds": ["leafia:external/1205987156"]},
   "external.longexplosion": { "category": "block", "sounds": ["leafia:external/178962800"]},
-  "external.actualexplosion": { "category": "block", "sounds": ["leafia:external/169628396"]}
+  "external.actualexplosion": { "category": "block", "sounds": ["leafia:external/169628396"]},
+  "external.glitch_alpha10302": { "category": "block", "sounds": ["leafia:external/glitch_alpha10302"]}
 }

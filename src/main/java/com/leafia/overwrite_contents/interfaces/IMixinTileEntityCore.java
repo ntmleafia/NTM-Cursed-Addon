@@ -31,9 +31,17 @@ public interface IMixinTileEntityCore {
     double maxEnergy     = 10_000.0;
 
     enum Cores {
-        ams_core_sing(LeafiaSoundEvents.dfc_vs, (intended, distance) -> Math.pow(MathHelper.clamp(1 - (distance - 3) / 15, 0, 1), 1.5)),
-        ams_core_wormhole(LeafiaSoundEvents.dfc_tw, (intended, distance) -> Math.pow(MathHelper.clamp(1 - (distance - 3) / 40, 0, 1), 2)),
-        ams_core_eyeofharmony(LeafiaSoundEvents.dfc_eoh, (intended, distance) -> Math.pow(MathHelper.clamp(1 - (distance - 3) / 150, 0, 1), 3));
+        ams_core_sing(
+                LeafiaSoundEvents.dfc_vs, (intended, distance) ->
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 15, 0, 1), 1.5)),
+        ams_core_wormhole(
+                LeafiaSoundEvents.dfc_tw, (intended, distance) ->
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 40, 0, 1), 2)),
+        ams_core_eyeofharmony(
+                LeafiaSoundEvents.dfc_eoh, (intended, distance) ->
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 150, 0, 1), 3)),
+        glitch(LeafiaSoundEvents.glitch_alpha10302, (intended,distance) ->
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 125, 0, 1), 3));
 
         public final SoundEvent sfx;
         public final BiFunction<Float, Double, Double> attentuationFunction;

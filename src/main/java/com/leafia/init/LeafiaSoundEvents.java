@@ -62,6 +62,7 @@ public class LeafiaSoundEvents {
 	public static SoundEvent overload;
 	public static SoundEvent longexplosion;
 	public static SoundEvent actualexplosion;
+	public static SoundEvent glitch_alpha10302;
 
 
 	public static void init() {
@@ -113,6 +114,7 @@ public class LeafiaSoundEvents {
 		overload = register("external.overload");
 		longexplosion = register("external.longexplosion");
 		actualexplosion = register("external.actualexplosion");
+		glitch_alpha10302 = register("external.glitch_alpha10302");
 
 		stressSounds = new SoundEvent[]{
 				register("external.furnacestressed00"),
