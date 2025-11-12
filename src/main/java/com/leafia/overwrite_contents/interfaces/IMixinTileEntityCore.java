@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 public interface IMixinTileEntityCore {
     // ===== constants =====
     double failsafeLevel = 250000000.0;
-    double maxEnergy     = 100_000.0;
+    double maxEnergy     = 10_000.0;
 
     enum Cores {
         ams_core_sing(LeafiaSoundEvents.dfc_vs, (intended, distance) -> Math.pow(MathHelper.clamp(1 - (distance - 3) / 15, 0, 1), 1.5)),

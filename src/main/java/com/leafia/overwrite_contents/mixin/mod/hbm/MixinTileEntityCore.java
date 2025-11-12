@@ -252,8 +252,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
                 double boost = catalystPowerMod * energyMod;
                 double deltaEnergy = (Math.pow(Math.pow(incomingSpk, 0.666 / 2) + 1, 0.666 / 2) - 1) * 6.666 / 3 * Math.pow(1.2, potentialGain);
-                double addition0 = (deltaEnergy * corePower + Math.pow(Math.max(0, incomingSpk - deltaEnergy), 0.9)) * boost * fillPct0 * fillPct1;
-                double addition1 = Math.pow(Math.min(temperature, 10000) / 100, 0.75) * corePower * potentialGain * boost * fillPct0 * fillPct1 * fuelPower / 666 * Math.pow(0.9, potentialGain);
+                double addition0 = (deltaEnergy * corePower + Math.pow(Math.max(0, incomingSpk - deltaEnergy), 0.9)) * boost * fillPct0 * fillPct1 /666;
+                double addition1 = Math.pow(Math.min(temperature, 10000) / 100, 0.75) * corePower * potentialGain * boost * fillPct0 * fillPct1 * fuelPower / 20 * Math.pow(0.9, potentialGain);
                 addition0 = Math.max(addition0, 0);
                 addition1 = Math.max(addition1, 0);
                 containedEnergy = Math.min(Math.min(containedEnergy + addition0, failsafeLevel) + addition1, failsafeLevel);
@@ -270,7 +270,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 for (TileEntityCoreReceiver absorber : absorbers) absorbDiv += ((IMixinTileEntityCoreReceiver)absorber).getLevel();
 
                 gainedEnergy = containedEnergy;
-                double absorbed = Math.pow(containedEnergy, 0.75 + energyRatio * 0.25) / 20 * absorbDiv;
+                double absorbed = Math.pow(containedEnergy, 0.75 + Math.min(energyRatio*0.25,0.25)) / 20 * absorbDiv;
                 double transferred = 0;
                 for (TileEntityCoreReceiver absorber : absorbers) {
                     if (finalPhase) {
@@ -288,7 +288,9 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 expelTicks[Math.floorMod(ticks, 20)] = expellingSpk;
                 containedEnergy = Math.max(containedEnergy, 0);
 
-                containedEnergy += Math.max(Math.pow(collapsing,2)*1_500_000-addition0-addition1,0);
+                //double collapseAddition = Math.pow(collapsing,4)*1_500_000+Math.pow(collapsing,0.5)*150_000;
+                //containedEnergy += Math.max(collapseAddition-addition0-addition1,0);
+
                 containedEnergy = Math.min(containedEnergy, failsafeLevel);
 
                 tgtTemp -= Math.max(0, Math.pow(temperature / meltingPoint, 4) * temperature * getStabilizationDivAlt()) * (0.5 + (Math.pow(Math.abs(rdc), 0.01) * Math.signum(rdc)) / 2);
@@ -303,8 +305,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 temperature = Math.max(temperature, 0);
 
                 if (shockCooldown > 0) shockCooldown--;
-                double energyPerShock = 3_000_000 * 0.75;
-                if (containedEnergy >= 1_000_000 * (world.rand.nextInt(150) + 6.66) + 0.5 && shockCooldown <= 0) {
+                double energyPerShock = 300_000 * 0.75;
+                if (containedEnergy >= 100_000 * (world.rand.nextInt(150) + 6.66) + 0.5 && shockCooldown <= 0) {
                     double count = Math.ceil(containedEnergy / energyPerShock);
                     for (int i = 0; i < Math.pow(count, 0.25); i++) shock();
                     world.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.mus_sfx_a_lithit, SoundCategory.BLOCKS, 6.66f, 1 + (float) world.rand.nextGaussian() * 0.1f);
