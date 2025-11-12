@@ -269,8 +269,13 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 double absorbDiv = 0.001;
                 for (TileEntityCoreReceiver absorber : absorbers) absorbDiv += ((IMixinTileEntityCoreReceiver)absorber).getLevel();
 
+                double collapseAddition = Math.pow(collapsing,2)*500_000;
+                containedEnergy += Math.max(collapseAddition-addition0-addition1,0);
+
+                containedEnergy = Math.min(containedEnergy,failsafeLevel);
+
                 gainedEnergy = containedEnergy;
-                double absorbed = Math.pow(containedEnergy, 0.75 + Math.min(energyRatio*0.25,0.25)) / 20 * absorbDiv;
+                double absorbed = Math.pow(containedEnergy,0.75+0.25*(1-1/(1+absorbDiv)))*absorbDiv;
                 double transferred = 0;
                 for (TileEntityCoreReceiver absorber : absorbers) {
                     if (finalPhase) {
@@ -287,11 +292,6 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 expellingSpk = transferred;
                 expelTicks[Math.floorMod(ticks, 20)] = expellingSpk;
                 containedEnergy = Math.max(containedEnergy, 0);
-
-                double collapseAddition = Math.pow(collapsing,4)*50_000;
-                containedEnergy += Math.max(collapseAddition-addition0-addition1,0);
-
-                containedEnergy = Math.min(containedEnergy, failsafeLevel);
 
                 tgtTemp -= Math.max(0, Math.pow(temperature / meltingPoint, 4) * temperature * getStabilizationDivAlt()) * (0.5 + (Math.pow(Math.abs(rdc), 0.01) * Math.signum(rdc)) / 2);
                 tgtTemp = Math.min(Math.max(tgtTemp, 0), 5000000);

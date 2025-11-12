@@ -30,6 +30,12 @@ public class AddonBlocks {
 		ModBlocks.deco_titanium.setResistance(30);
 		ModBlocks.deco_red_copper.setResistance(30);
 		ModBlocks.control_panel_custom.setResistance(30);
+		ModBlocks.steel_corner.setResistance(30);
+		ModBlocks.steel_wall.setResistance(30);
+		ModBlocks.steel_roof.setResistance(30);
+		ModBlocks.steel_scaffold.setResistance(30);
+		ModBlocks.steel_grate.setResistance(15);
+		ModBlocks.steel_grate_wide.setResistance(15);
 	}
 
 	public static void preInit(){
