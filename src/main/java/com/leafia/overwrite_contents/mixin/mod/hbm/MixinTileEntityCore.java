@@ -288,8 +288,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 expelTicks[Math.floorMod(ticks, 20)] = expellingSpk;
                 containedEnergy = Math.max(containedEnergy, 0);
 
-                //double collapseAddition = Math.pow(collapsing,4)*1_500_000+Math.pow(collapsing,0.5)*150_000;
-                //containedEnergy += Math.max(collapseAddition-addition0-addition1,0);
+                double collapseAddition = Math.pow(collapsing,4)*50_000;
+                containedEnergy += Math.max(collapseAddition-addition0-addition1,0);
 
                 containedEnergy = Math.min(containedEnergy, failsafeLevel);
 
