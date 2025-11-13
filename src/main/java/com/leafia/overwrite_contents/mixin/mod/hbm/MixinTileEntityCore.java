@@ -25,6 +25,8 @@ import com.leafia.LeafiaHelper;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaVacuum;
+import com.leafia.contents.machines.powercores.dfc.core.CoreContainer;
+import com.leafia.contents.machines.powercores.dfc.core.CoreGUI;
 import com.leafia.contents.machines.powercores.dfc.particles.ParticleEyeOfHarmony;
 import com.leafia.database.FolkvangrJammers;
 import com.leafia.dev.container_utility.LeafiaPacket;
@@ -41,18 +43,21 @@ import com.leafia.unsorted.LeafiaDamageSource;
 import com.llib.LeafiaLib;
 import com.llib.math.LeafiaColor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -607,6 +612,25 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
         super.invalidate();
     }
 
+    /**
+     * @author ntmleafia
+     * @reason yipe yipe
+     */
+    @Overwrite
+    @Override
+    public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
+        return new CoreContainer(entityPlayer.inventory,(TileEntityCore)(IMixinTileEntityCore)this);
+    }
+
+    /**
+     * @author ntmleafia
+     * @reason yipe yipe
+     */
+    @Overwrite
+    @Override
+    public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
+        return new CoreGUI(entityPlayer.inventory,(TileEntityCore)(IMixinTileEntityCore)this);
+    }
 
     /// ---------------------------- HELPERS FROM LCE ---------------------------- ///
     private void vaporization() {
@@ -702,7 +726,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
     @Unique
     private double getStabilizationDiv() {
-        return 1.0 + Math.sqrt(stabilization * 10.0);
+        return IMixinTileEntityCore.getStabilizationDiv(stabilization);
     }
 
     @Unique

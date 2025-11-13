@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.spongepowered.asm.mixin.Unique;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public interface IMixinTileEntityCore {
     // ===== constants =====
     double failsafeLevel = 250000000.0;
     double maxEnergy     = 10_000.0;
+
+    static double getStabilizationDiv(double stabilization) {
+        return 1.0 + Math.sqrt(stabilization * 10.0);
+    }
 
     enum Cores {
         ams_core_sing(
