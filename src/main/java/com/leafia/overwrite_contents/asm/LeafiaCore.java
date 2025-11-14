@@ -23,7 +23,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class LeafiaCore implements IClassTransformer {
 	// fuck you in particular
 	public static final String[] classesBeingTransformed = {
-			"<REMOVED>",
+			"com.hbm.packet.toserver.ItemFolderPacket.Handler",
 			"<REMOVED>",
 			"net.minecraft.client.gui.GuiMainMenu",
 			"net.minecraft.client.renderer.EntityRenderer",
@@ -73,6 +73,7 @@ public class LeafiaCore implements IClassTransformer {
 			} else {
 				switch (index) {
 					case 0:
+						doTransform(classNode,isObfuscated,null,index);
 						break;
 					case 1: case 4: case 5:
 						doTransform(classNode,isObfuscated,WorldServerLeafia.class,index);
@@ -405,7 +406,16 @@ public class LeafiaCore implements IClassTransformer {
 	private static boolean tryBind(String name,String desc,Helper helper,int transformerIndex) {
 		FMLDeobfuscatingRemapper pain = FMLDeobfuscatingRemapper.INSTANCE;
 		switch(transformerIndex) {
-			case 0: case 1:
+			case 0:
+				if (name.equals("tryMakeItem")) {
+					System.out.println("### TRYMAKEITEM");
+					printBytecodes(helper.method.instructions);
+					for (AbstractInsnNode node : helper.method.instructions.toArray()) {
+
+					}
+				}
+				break;
+			case 1:
 				// DATA EXPUNGED
 				break;
 			case 2:
