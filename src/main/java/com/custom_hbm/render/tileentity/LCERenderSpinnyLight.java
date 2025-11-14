@@ -1,8 +1,12 @@
 package com.custom_hbm.render.tileentity;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.LightRenderer;
 import com.hbm.render.amlfrom1710.Vec3;
+import com.hbm.render.item.ItemRenderBase;
+import com.hbm.render.tileentity.IItemRendererProvider;
+import com.hbm.render.tileentity.RenderSpinnyLight;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,10 +17,11 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
-public class LCERenderSpinnyLight extends TileEntitySpecialRenderer<TileEntitySpinnyLight> {
+public class LCERenderSpinnyLight extends TileEntitySpecialRenderer<TileEntitySpinnyLight> implements IItemRendererProvider {
 	
 	public static int[] coneMeshes = null;
 	
@@ -145,5 +150,29 @@ public class LCERenderSpinnyLight extends TileEntitySpecialRenderer<TileEntitySp
 
 		GL11.glEndList();
 		return list;
+	}
+
+
+	public Item getItemForRenderer() {
+		return Item.getItemFromBlock(ModBlocks.spinny_light);
+	}
+
+	public ItemRenderBase getRenderer(Item item) {
+		return new ItemRenderBase() {
+			public void renderInventory() {
+				GlStateManager.scale(10.0F, 10.0F, 10.0F);
+				GlStateManager.rotate(22.5F, 1.0F, 0.0F, 0.0F);
+				GlStateManager.translate(25.0F, -4.0F, 0.0F);
+			}
+
+			public void renderCommon() {
+				bindTexture(ResourceManager.spinny_light_tex);
+				GlStateManager.translate((double)1.25F, (double)-1.25F, (double)-1.25F);
+				GlStateManager.scale(5.0F, 5.0F, 5.0F);
+				GlStateManager.shadeModel(7425);
+				ResourceManager.spinny_light.renderAll();
+				GlStateManager.shadeModel(7424);
+			}
+		};
 	}
 }

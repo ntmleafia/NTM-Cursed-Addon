@@ -9,11 +9,13 @@ import com.hbm.lib.ModDamageSource;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
+import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.llib.LeafiaLib;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -203,9 +205,13 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
             Vec3d vec = result.hitVec;
             TileEntity te = world.getTileEntity(current.posSnapped);
-            if (te instanceof ISPKReceiver receiver && receiver.isInputPreferrable(ForgeDirection.getOrientation(config.pivotAxisFace))) {
-                if (!world.isRemote) receiver.transferSPK(out * 100 * watts / 10000, false);
-                return process.RETURN(result);
+            if (te instanceof ISPKReceiver receiver) {
+                if (receiver.isInputPreferrable(ForgeDirection.getOrientation(config.pivotAxisFace))) {
+                    if (!world.isRemote) receiver.transferSPK(out*100*watts/10000,false);
+                    return process.RETURN(result);
+                } else if (te instanceof TileEntityCoreReceiver) {
+                    ((IMixinTileEntityCoreReceiver)te).explode();
+                }
             }
 
             if (te instanceof TileEntityCore) {
