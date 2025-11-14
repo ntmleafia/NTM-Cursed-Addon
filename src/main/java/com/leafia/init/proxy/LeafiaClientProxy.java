@@ -10,6 +10,7 @@ import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
@@ -22,7 +23,9 @@ import com.leafia.init.ItemRendererInit;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.item.Item;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -94,5 +97,19 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 	public void preInit(FMLPreInitializationEvent evt) {
 		ItemRendererInit.preInit();
 		ItemRendererInit.apply();
+
+		// that's just for example.
+		// if you're going to make like more than 2-3 blocks, put it in a separate method
+		// so you won't bloat the class much
+		ModelLoader.setCustomModelResourceLocation(
+				Item.getItemFromBlock(AddonBlocks.spk_cable),
+				0,
+				new ModelResourceLocation("leafia:spk_cable", "inventory")
+		);
+		ModelLoader.setCustomModelResourceLocation(
+				AddonItems.door_fuckoff,
+				0,
+				new ModelResourceLocation("leafia:door_fuckoff", "inventory")
+		);
 	}
 }
