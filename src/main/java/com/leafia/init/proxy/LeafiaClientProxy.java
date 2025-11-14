@@ -15,6 +15,8 @@ import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
+import com.leafia.contents.network.spk_cable.SPKCableRender;
+import com.leafia.contents.network.spk_cable.SPKCableTE;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
@@ -51,6 +53,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 
 		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpinnyLight.class,new LCERenderSpinnyLight());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,new DFCComponentRender());
