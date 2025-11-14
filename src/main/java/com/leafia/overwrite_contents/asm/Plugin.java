@@ -12,12 +12,12 @@ public class Plugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{KillMethodTransformer.class.getName()};
+        return new String[]{KillMethodTransformer.class.getName(),LeafiaCore.class.getName()};
     }
 
     @Override
     public @Nullable String getModContainerClass() {
-        return null;
+        return "com.leafia.overwrite_contents.asm.CoreModContainer";
     }
 
     @Override

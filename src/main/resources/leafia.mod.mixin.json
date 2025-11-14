@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
+    "hbm.MixinFolderButton",
     "hbm.MixinItemRenderLaserDetonator",
     "hbm.MixinParticleRBMKMush",
     "hbm.MixinRenderTorex"
@@ -12,6 +13,7 @@
   "mixins": [
     "hbm.MixinContainerCoreReceiver",
     "hbm.MixinCoreComponent",
+    "hbm.MixinCoreCore",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityCloudFleija",
     "hbm.MixinEntityDebrisBase",
