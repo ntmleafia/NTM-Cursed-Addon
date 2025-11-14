@@ -1,12 +1,18 @@
 package com.leafia.contents.network.spk_cable;
 
+import com.custom_hbm.render.misc.LCEBeamPronter;
+import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
+import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.network.spk_cable.SPKCableTE.EffectLink;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConnector;
+import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
@@ -52,23 +58,23 @@ public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
 			if(pZ) mdl.renderPart("negZ");
 			if(nZ) mdl.renderPart("posZ");
             //mlbv: i really don't know how i am supposed to port this
-//			for (EffectLink link : te.links) {
-//				if (link.link == null || !link.emit) continue;
-//				double distance = Math.sqrt(te.getPos().distanceSq(link.link));
-//				Vec3d look = new Vec3d(link.direction.getDirectionVec());
-//				LeafiaGls.inLocalSpace(()->{
-//					double offset = 3/16d;
-//					LeafiaGls.translate(look.scale(offset));
-//					LCEBeamPronter.prontBeam(
-//							look.scale(distance-offset*(link.nonCable ? 1 : 2)),
-//							EnumWaveType.RANDOM,EnumBeamType.SOLID,
-//							0x64001e,0x9A9A9A,
-//							(int)(getWorld().getTotalWorldTime()%1000),
-//							(int)(distance*5),1/16f,
-//							2,0.666f/16f
-//					);
-//				});
-//			}
+			for (EffectLink link : te.links) {
+				if (link.link == null || !link.emit) continue;
+				double distance = Math.sqrt(te.getPos().distanceSq(link.link));
+				Vec3d look = new Vec3d(link.direction.getDirectionVec());
+				LeafiaGls.inLocalSpace(()->{
+					double offset = 3/16d;
+					LeafiaGls.translate(look.scale(offset));
+					LCEBeamPronter.prontBeam(
+							look.scale(distance-offset*(link.nonCable ? 1 : 2)),
+							EnumWaveType.RANDOM,EnumBeamType.SOLID,
+							0x64001e,0x9A9A9A,
+							(int)(getWorld().getTotalWorldTime()%1000),
+							(int)(distance*5),1/16f,
+							2,0.666f/16f
+					);
+				});
+			}
 		}
 
 		GL11.glTranslated(-x - 0.5F, -y - 0.5F, -z - 0.5F);
