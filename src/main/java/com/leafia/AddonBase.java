@@ -33,6 +33,8 @@ public class AddonBase {
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
     @SidedProxy(clientSide = "com.leafia.init.proxy.LeafiaClientProxy", serverSide = "com.leafia.init.proxy.LeafiaServerProxy")
     public static LeafiaServerProxy proxy;
+    @Mod.Instance(Tags.MODID)
+    public static AddonBase instance;
 
     public static final String MODID = "leafia";
 
