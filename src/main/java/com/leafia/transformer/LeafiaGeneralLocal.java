@@ -83,7 +83,7 @@ public class LeafiaGeneralLocal {
 		splashes.add("Redditors aren't people!");
 		splashes.add("Can someone tell me what corrosive fumes the people on Reddit are huffing so I can avoid those more effectively?");
 		// VV lce shit
-		splashes.add("Extra information on F3 debug screen!");
+		//splashes.add("Extra information on F3 debug screen!");
 		splashes.add("This addon sends string characters in just 5 bits!");
 		splashes.add("Core game community nowadays is really toxic!");
 	}
