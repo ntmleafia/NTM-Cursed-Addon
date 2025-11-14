@@ -18,6 +18,7 @@ import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
 import com.leafia.contents.network.spk_cable.SPKCableRender;
 import com.leafia.contents.network.spk_cable.SPKCableTE;
 import com.leafia.eventbuses.LeafiaClientListener;
+import com.leafia.init.ItemRendererInit;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 
@@ -86,5 +88,11 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 	@Override
 	public void onLoadComplete(FMLLoadCompleteEvent event){
 		if (!Loader.isModLoaded("backups")) LeafiaClientListener.HandlerClient.backupsWarning = true;
+	}
+
+	@Override
+	public void preInit(FMLPreInitializationEvent evt) {
+		ItemRendererInit.preInit();
+		ItemRendererInit.apply();
 	}
 }

@@ -6,12 +6,14 @@ import com.hbm.blocks.ILookOverlay;
 import com.hbm.items.ModItems;
 import com.hbm.render.GuiCTMWarning;
 import com.custom_hbm.util.LCETuple.*;
+import com.hbm.render.item.ItemRenderBase;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import com.leafia.init.ItemRendererInit;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.passive.effects.LeafiaShakecam;
 import com.leafia.passive.rendering.TopRender;
@@ -20,6 +22,8 @@ import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.entity.Entity;
@@ -33,6 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -50,9 +55,19 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
+
+import static com.hbm.main.ModEventHandlerClient.swapModels;
 
 public class LeafiaClientListener {
 	public static class HandlerClient {
+		@SubscribeEvent
+		public void modelBaking(ModelBakeEvent evt) {
+			IRegistry<ModelResourceLocation,IBakedModel> reg = evt.getModelRegistry();
+			for(Entry<Item,ItemRenderBase> entry : ItemRendererInit.renderers.entrySet()){
+				swapModels(entry.getKey(), reg);
+			}
+		}
 		@SubscribeEvent(priority = EventPriority.LOWEST)
 		public void renderWorld(RenderWorldLastEvent evt) {
 			TopRender.main(evt);

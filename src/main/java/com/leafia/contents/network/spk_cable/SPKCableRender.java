@@ -8,6 +8,7 @@ import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.network.spk_cable.SPKCableTE.EffectLink;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConnector;
+import com.leafia.dev.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -18,6 +19,25 @@ import org.lwjgl.opengl.GL11;
 public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
 	public static final WaveFrontObjectVAO mdl = new HFRWavefrontObject(new ResourceLocation("leafia", "models/leafia/cable_spk.obj")).asVBO();
 	public static final ResourceLocation tex = new ResourceLocation("leafia", "textures/blocks/leafia/cable_spk.png");
+
+	public static class SPKCableItemRender extends LeafiaItemRenderer {
+		@Override
+		protected WaveFrontObjectVAO __getModel() {
+			return mdl;
+		}
+		@Override
+		protected ResourceLocation __getTexture() {
+			return tex;
+		}
+		@Override
+		protected double _itemYoffset() {
+			return 0;
+		}
+		@Override
+		protected double _sizeReference() {
+			return 1;
+		}
+	}
 
 	@Override
 	public void render(SPKCableTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
