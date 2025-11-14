@@ -33,7 +33,7 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
     @Inject(method = "update()V", at = @At(value = "FIELD", target = "Lcom/hbm/tileentity/machine/TileEntityCrateTungsten;heatTimer:I", ordinal = 0, shift = At.Shift.BEFORE, remap = false))
     public void onUpdate(CallbackInfo ci) {
         for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-            trySubscribeSPK(world, pos, dir);
+            trySubscribeSPK(world, pos.getX() + dir.offsetX, pos.getY() + dir.offsetY, pos.getZ() + dir.offsetZ, dir);
         }
     }
 
