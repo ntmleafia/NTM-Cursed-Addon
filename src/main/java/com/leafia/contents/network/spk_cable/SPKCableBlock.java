@@ -41,7 +41,5 @@ public class SPKCableBlock extends BlockCable {
     @Override
     public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
         super.addInformation(stack,worldIn,tooltip,flagIn);
-        tooltip.add("You know what? Fuck the item model");
-        tooltip.add("We tried, minecraft just refuses to render it.");
     }
 }
