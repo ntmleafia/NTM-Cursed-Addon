@@ -1,8 +1,10 @@
 package com.leafia.contents;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
+import com.leafia.contents.network.spk_cable.SPKCableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -14,6 +16,7 @@ public class AddonBlocks {
 	public static final List<Block> ALL_BLOCKS = new ArrayList();
 
 	public static final Block door_fuckoff = new BlockPinkDoor(Material.WOOD, "door_fuckoff").setHardness(3);
+	public static final Block spk_cable = new SPKCableBlock(Material.IRON, "spk_cable").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
 	private static void modifyBlockParams() {
 		ModBlocks.dfc_core.setResistance(65000000);
