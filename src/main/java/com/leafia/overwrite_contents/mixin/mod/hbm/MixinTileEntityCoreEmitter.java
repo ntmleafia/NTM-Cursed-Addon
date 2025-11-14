@@ -9,6 +9,7 @@ import com.hbm.lib.ModDamageSource;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
+import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
@@ -84,8 +85,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
             }
 
             this.subscribeToAllAround(this.tank.getTankType(), this);
-            //this.updateStandardConnections(world, pos);
-            //this.updateSPKConnections(world, pos);
+            this.updateSPKConnections();
 
             watts = MathHelper.clamp(watts, 1, 100);
             long demand = maxPower * Math.min(watts, 100) / 2000;
@@ -168,6 +168,13 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         }
     }
 
+    @Unique
+    private void updateSPKConnections() {
+        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+            if (isInputPreferrable(dir))
+                this.trySubscribeSPK(this.world, this.pos.getX() + dir.offsetX, this.pos.getY() + dir.offsetY, this.pos.getZ() + dir.offsetZ, dir);
+        }
+    }
 
     //mlbv: intentionally marked this final. overriding may need bridge methods when you need to call super.raycast due to compile-time visibility problems
     @Override
@@ -196,8 +203,8 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
             Vec3d vec = result.hitVec;
             TileEntity te = world.getTileEntity(current.posSnapped);
-            if (te instanceof ILaserable) {
-                if (!world.isRemote) ((ILaserable) te).addEnergy(world, current.posSnapped, out * 100 * watts / 10000, config.pivotAxisFace);
+            if (te instanceof ISPKReceiver receiver && receiver.isInputPreferrable(ForgeDirection.getOrientation(config.pivotAxisFace))) {
+                if (!world.isRemote) receiver.transferSPK(out * 100 * watts / 10000, false);
                 return process.RETURN(result);
             }
 
@@ -282,6 +289,25 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
     }
 
+    @Override
+    public boolean isInputPreferrable(ForgeDirection side) {
+        return side.getOpposite().ordinal() != getBlockMetadata();
+    }
+
+    @Override
+    public long getSPK(){
+        return joules;
+    }
+
+    @Override
+    public void setSPK(long power) {
+        joules = power;
+    }
+
+    @Override
+    public long getMaxSPK() {
+        return Long.MAX_VALUE;
+    }
 
     @Override
     public BlockPos getTargetPosition() {

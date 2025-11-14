@@ -1,6 +1,5 @@
 package com.leafia.contents.network.spk_cable;
 
-import com.hbm.api.energymk2.Nodespace;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityLoadedBase;
 import com.hbm.uninos.UniNodespace;
@@ -43,10 +42,18 @@ public class SPKCableTE extends TileEntityLoadedBase implements ISPKConductor, I
 
         if(!world.isRemote) {
             if(this.node != null) {
-                Nodespace.destroyNode(world, pos);
+                UniNodespace.destroyNode(world, pos, SPKNet.THE_NETWORK_PROVIDER);
             }
         }
     }
+
+    public boolean pX = false;
+    public boolean pY = false;
+    public boolean pZ = false;
+    public boolean nX = false;
+    public boolean nY = false;
+    public boolean nZ = false;
+    public boolean isCorner = false;
 
     @Override
     public boolean canConnectSPK(ForgeDirection dir) {

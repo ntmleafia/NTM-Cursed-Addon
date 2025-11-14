@@ -1,7 +1,6 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.api.energymk2.IEnergyProviderMK2;
-import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.ExplosionLarge;
@@ -15,12 +14,11 @@ import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.Tuple.Pair;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity.DebrisType;
+import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.init.LeafiaSoundEvents;
-import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
-import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.llib.LeafiaLib.NumScale;
 import net.minecraft.entity.player.EntityPlayer;
@@ -146,7 +144,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 		core = getCore(TileEntityCoreEmitter.range);
 		IMixinTileEntityCore mcore = (IMixinTileEntityCore)core;
 		if (core != null)
-			mcore.getDFCAbsorbers().add((TileEntityCoreReceiver)(IMixinTileEntityCoreReceiver)this);
+			mcore.getDFCAbsorbers().add((TileEntityCoreReceiver) (Object) this);
 		if (!world.isRemote) {
 			LeafiaPacket._start(this).__write(31,targetPosition).__sendToAffectedClients();
 			if (joules >= NumScale.GIGA*100L && world.getBlockState(pos).getBlock() == ModBlocks.dfc_receiver) {
@@ -159,7 +157,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 				destructionLevel = Math.max(destructionLevel-1,0);
 			}
 
-			//updateSPKConnections(world, pos);
+			updateSPKConnections();
 			if (Long.MAX_VALUE - power < joules * 5000L)
 				power = Long.MAX_VALUE;
 			else
@@ -170,28 +168,26 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 				this.tryProvide(this.world, this.pos.getX() + dir.offsetX, this.pos.getY() + dir.offsetY, this.pos.getZ() + dir.offsetZ, dir);
 			}
 
-			//this.sendPower(world, pos);
-
 			long remaining = power / 5000L;
 			long totalTransfer = 0;
 			if (remaining > 0) {
-				List<Pair<ILaserable, EnumFacing>> targets = new ArrayList<>();
-				for (EnumFacing outFace : EnumFacing.values()) {
+				List<Pair<TileEntity, EnumFacing>> targets = new ArrayList<>();
+				for (EnumFacing outFace : EnumFacing.VALUES) {
 					if (outFace.getAxis().equals(facing.getAxis())) continue;
-					TileEntity te = world.getTileEntity(pos.offset(outFace));
-					if (te instanceof ILaserable) {
-						ILaserable thing = (ILaserable) te;
-						//if (thing.isInputPreferable(outFace))
-						//	targets.add(new Pair<>(thing, outFace));
-					}
+                    BlockPos target = pos.offset(outFace);
+                    ForgeDirection dir = ForgeDirection.getOrientation(outFace);
+                    TileEntity te = world.getTileEntity(target);
+                    tryLinkSPK(world, target, te, dir);
+					if (te instanceof ISPKReceiver receiver && receiver.isInputPreferrable(dir))
+                        targets.add(new Pair<>(te, outFace));
 				}
-				if (targets.size() > 0) {
-					long transfer = remaining / targets.size();
-					//for (Pair<ILaserable, EnumFacing> target : targets)
-						//target.getKey().addEnergy(transfer, target.getValue());
-
-					totalTransfer = transfer * targets.size();
-					power -= totalTransfer * 5000L;
+				if (!targets.isEmpty()) {
+					long transfer = remaining / (long) targets.size();
+					for (Pair<TileEntity, EnumFacing> target : targets) {
+                        // FIXME: can't rely on this to calculate the transfer amount, the net update is independent of this
+                        totalTransfer += tryProvideSPK(target.getKey(), ForgeDirection.getOrientation(target.getValue()), transfer, false);
+                    }
+                    power -= totalTransfer * 5000L;
 				}
 			}
 
@@ -278,16 +274,37 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			level = (double)value;
 	}
 
-	/*@Override
-	public boolean isInputPreferable(EnumFacing dir) {
-		Vec3d unit = getDirection();
-		double component;
-		if (dir.getAxis() == Axis.X) component = unit.x;
-		else if (dir.getAxis() == Axis.Y) component = unit.y;
-		else component = unit.z;
-		component *= dir.getOpposite().getAxisDirection().getOffset();
-		return component > 0.707;//dir.getOpposite().ordinal() == this.getBlockMetadata();
-	}*/
+    public void updateSPKConnections() {
+        for (ForgeDirection f : ForgeDirection.VALID_DIRECTIONS)
+            if (isInputPreferrable(f)) trySubscribeSPK(world, pos, f);
+    }
+
+    @Override
+    public boolean isInputPreferrable(ForgeDirection direction) {
+        EnumFacing dir = direction.toEnumFacing();
+        Vec3d unit = getDirection();
+        double component;
+        if (dir.getAxis() == EnumFacing.Axis.X) component = unit.x;
+        else if (dir.getAxis() == EnumFacing.Axis.Y) component = unit.y;
+        else component = unit.z;
+        component *= dir.getOpposite().getAxisDirection().getOffset();
+        return component > 0.707;//dir.getOpposite().ordinal() == this.getBlockMetadata();
+    }
+
+    @Override
+    public long getSPK() {
+        return power;
+    }
+
+    @Override
+    public void setSPK(long power) {
+        this.power = power;
+    }
+
+    @Override
+    public long getMaxSPK() {
+        return Long.MAX_VALUE;
+    }
 
 	@Unique private BlockPos targetPosition = new BlockPos(0,0,0);
 	@Unique public TileEntityCore lastGetCore = null;

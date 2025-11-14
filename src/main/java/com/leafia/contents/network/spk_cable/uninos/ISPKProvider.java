@@ -30,14 +30,14 @@ public interface ISPKProvider extends ISPKHandler {
     }
 
     /**
-     * Attempts to provide energy to a target tile entity at specific coordinates.
-     * It checks for HBM's native energy interfaces first, and then checks for Forge Energy capability
+     * Attempts to provide SPK to a target tile entity at specific coordinates.
      *
      * @param world The game world.
      * @param x     The x-coordinate of the <b>target tile entity</b> (the potential receiver).
      * @param y     The y-coordinate of the <b>target tile entity</b>.
      * @param z     The z-coordinate of the <b>target tile entity</b>.
      * @param dir   The {@link ForgeDirection} from this provider to the target tile entity.
+     * @return The amount of power successfully provided to the receiver.
      */
     default void tryProvideSPK(World world, int x, int y, int z, ForgeDirection dir) {
         BlockPos targetPos = new BlockPos(x, y, z);
@@ -45,8 +45,9 @@ public interface ISPKProvider extends ISPKHandler {
 
         if (targetTE == null) return;
 
+        ForgeDirection dirOpposite = dir.getOpposite();
         if (targetTE instanceof ISPKConductor con) {
-            if (con.canConnectSPK(dir.getOpposite())) {
+            if (con.canConnectSPK(dirOpposite)) {
                 SPKNode node =  UniNodespace.getNode(world, targetPos, SPKNet.THE_NETWORK_PROVIDER);
                 if (node != null && node.net != null) {
                     node.net.addProvider(this);
@@ -55,15 +56,15 @@ public interface ISPKProvider extends ISPKHandler {
         }
 
         if (targetTE instanceof ISPKReceiver rec && targetTE != this) {
-            if (rec.canConnectSPK(dir.getOpposite())) {
+            if (rec.canConnectSPK(dirOpposite) && rec.isInputPreferrable(dirOpposite)) {
                 long canProvide = Math.min(this.getSPK(), this.getSPKProviderSpeed());
                 long canReceive = Math.min(rec.getMaxSPK() - rec.getSPK(), rec.getSPKReceiverSpeed());
                 long toTransfer = Math.min(canProvide, canReceive);
 
-                if (toTransfer > 0) {
+                if (toTransfer > 0L) {
                     long rejected = rec.transferSPK(toTransfer, false);
                     long accepted = toTransfer - rejected;
-                    if (accepted > 0) {
+                    if (accepted > 0L) {
                         this.useSPK(accepted);
                     }
                 }
@@ -71,8 +72,40 @@ public interface ISPKProvider extends ISPKHandler {
         }
     }
 
-    default void tryProvideSPK(World world, BlockPos pos, ForgeDirection dir) {
-        tryProvideSPK(world, pos.getX(), pos.getY(), pos.getZ(), dir);
+    //output to a specific te, does not add to net
+    default long tryProvideSPK(TileEntity targetTE, ForgeDirection dir, long canProvide, boolean simulate) {
+        if (targetTE == null) return 0L;
+        ForgeDirection dirOpposite = dir.getOpposite();
+        if (targetTE instanceof ISPKReceiver rec && targetTE != this) {
+            if (rec.canConnectSPK(dirOpposite) && rec.isInputPreferrable(dirOpposite)) {
+                long canReceive = Math.min(rec.getMaxSPK() - rec.getSPK(), rec.getSPKReceiverSpeed());
+                long toTransfer = Math.min(canProvide, canReceive);
+                if (toTransfer > 0L) {
+                    long rejected = rec.transferSPK(toTransfer, simulate);
+                    long accepted = toTransfer - rejected;
+                    if (accepted > 0L) {
+                        if (!simulate) this.useSPK(accepted);
+                        return accepted;
+                    }
+                }
+            }
+        }
+        return 0L;
     }
 
+    default void tryLinkSPK(World world, BlockPos pos, TileEntity te, ForgeDirection dir) {
+        ForgeDirection dirOpposite = dir.getOpposite();
+        if (te instanceof ISPKConductor con) {
+            if (con.canConnectSPK(dirOpposite)) {
+                SPKNode node =  UniNodespace.getNode(world,pos, SPKNet.THE_NETWORK_PROVIDER);
+                if (node != null && node.net != null) {
+                    node.net.addProvider(this);
+                }
+            }
+        }
+    }
+
+    default void tryProvideSPK(World world, BlockPos pos, ForgeDirection dir, boolean simulate) {
+        tryProvideSPK(world, pos.getX(), pos.getY(), pos.getZ(), dir);
+    }
 }

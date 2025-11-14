@@ -13,7 +13,6 @@ import com.leafia.init.proxy.LeafiaServerProxy;
 import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
-import com.myname.mymodid.Tags;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;

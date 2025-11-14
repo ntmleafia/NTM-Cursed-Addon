@@ -28,7 +28,8 @@
     "hbm.MixinPacketDispatcher",
     "hbm.MixinTileEntityCore",
     "hbm.MixinTileEntityCoreEmitter",
-    "hbm.MixinTileEntityCoreReceiver"
+    "hbm.MixinTileEntityCoreReceiver",
+    "hbm.MixinTileEntityCrateTungsten"
   ],
   "server": [
   ],
