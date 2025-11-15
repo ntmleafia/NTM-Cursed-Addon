@@ -412,7 +412,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 boolean tick = true;
                 MinecraftServer server = world.getMinecraftServer();
                 if (server != null) {
-                    if (!server.isDedicatedServer()) tick = !Minecraft.getMinecraft().isGamePaused();
+                    if (!server.isDedicatedServer()) tick = !isGamePaused();
                 }
                 if (tick) {
                     long time = System.currentTimeMillis();
@@ -465,6 +465,12 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
                 overloadTimer = 0;
             }
         }
+    }
+
+    @Unique
+    @SideOnly(Side.CLIENT)
+    private boolean isGamePaused() {
+        return Minecraft.getMinecraft().isGamePaused();
     }
 
     // =====================
