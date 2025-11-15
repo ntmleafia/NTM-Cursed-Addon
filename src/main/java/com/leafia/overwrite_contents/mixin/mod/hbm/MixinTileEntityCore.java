@@ -628,6 +628,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
      */
     @Overwrite
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
         return new CoreGUI(entityPlayer.inventory,(TileEntityCore)(IMixinTileEntityCore)this);
     }

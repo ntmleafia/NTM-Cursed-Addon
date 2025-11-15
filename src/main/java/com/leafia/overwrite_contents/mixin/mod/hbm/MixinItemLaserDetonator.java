@@ -27,6 +27,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -49,6 +51,7 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 	 * @reason item.detonator_laser.desc2
 	 */
 	@Overwrite
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack,World worldIn,List<String> list,ITooltipFlag flagIn) {
 		list.add(I18nUtil.resolveKey("item.detonator_laser.desc"));
 		list.add(I18nUtil.resolveKey("item.detonator_laser.desc2"));

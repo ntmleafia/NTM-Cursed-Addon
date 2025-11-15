@@ -11,6 +11,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 
 import javax.annotation.Nullable;
@@ -26,6 +28,7 @@ public abstract class MixinCoreCore extends BlockContainer {
 	{
 		return NULL_AABB;
 	}
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void addInformation(ItemStack stack,@Nullable World player,List<String> tooltip,ITooltipFlag advanced) {
 		MachineTooltip.addMultiblock(tooltip);
