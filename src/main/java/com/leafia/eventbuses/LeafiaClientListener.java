@@ -14,6 +14,7 @@ import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.init.ItemRendererInit;
+import com.leafia.init.ResourceInit;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.passive.effects.LeafiaShakecam;
 import com.leafia.passive.rendering.TopRender;
@@ -357,6 +358,10 @@ public class LeafiaClientListener {
 			//IdkWhereThisShitBelongs.shakeCam();
 			LeafiaShakecam.shakeCam();
 		}
+        @SubscribeEvent
+        public void onModelBaking(ModelBakeEvent e) {
+            ResourceInit.init();
+        }
 	}
 	public static class Unsorted {
 		/**

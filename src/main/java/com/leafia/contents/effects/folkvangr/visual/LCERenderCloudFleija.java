@@ -3,9 +3,11 @@ package com.leafia.contents.effects.folkvangr.visual;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.loader.HFRWavefrontObject;
+import com.hbm.render.loader.IModelCustom;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.util.RenderUtil;
 import com.leafia.AddonBase;
+import com.leafia.init.ResourceInit;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.technical.LeafiaEase;
@@ -19,25 +21,23 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import org.lwjgl.opengl.GL11;
 
 public class LCERenderCloudFleija extends Render<EntityCloudFleija> {
+    private static final ResourceLocation blastTexture = AddonBase.solid_e;
 
-	private static final ResourceLocation objTesterModelRL = new ResourceLocation(/*"/assets/" + */RefStrings.MODID, "models/Sphere.obj");
-	private WaveFrontObjectVAO blastModel;
-    private ResourceLocation blastTexture;
     public float scale = 0;
     public float ring = 0;
     
-    public static final IRenderFactory<EntityCloudFleija> FACTORY = (RenderManager man) -> {return new LCERenderCloudFleija(man);};
+    public static final IRenderFactory<EntityCloudFleija> FACTORY = LCERenderCloudFleija::new;
 	
 	protected LCERenderCloudFleija(RenderManager renderManager) {
 		super(renderManager);
-		blastModel = new HFRWavefrontObject(objTesterModelRL).asVBO();
-    	blastTexture = AddonBase.solid_e;//new ResourceLocation(RefStrings.MODID, "textures/solid_emissive.png");//models/explosion/BlastFleija.png");
     	scale = 0;
 	}
+
 	LeafiaEase shrinkEase = new LeafiaEase(LeafiaEase.Ease.EXPO,LeafiaEase.Direction.I);
 	float lastTicks = 0;
 	@Override
 	public void doRender(EntityCloudFleija cloud,double x,double y,double z,float entityYaw,float partialTicks) {
+        IModelCustom blastModel = ResourceInit.cloudFleija;
 		//if (cloud instanceof EntityCloudFleijaRainbowBase) return;
 		GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, (float)z);
