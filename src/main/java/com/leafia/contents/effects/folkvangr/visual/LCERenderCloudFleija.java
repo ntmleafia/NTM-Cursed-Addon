@@ -20,11 +20,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import org.lwjgl.opengl.GL11;
 
+import static com.leafia.init.ResourceInit.getVAO;
+
 public class LCERenderCloudFleija extends Render<EntityCloudFleija> {
     private static final ResourceLocation blastTexture = AddonBase.solid_e;
 
     public float scale = 0;
     public float ring = 0;
+	public static final WaveFrontObjectVAO cloudFleija = getVAO(new ResourceLocation(RefStrings.MODID, "models/Sphere.obj"));
     
     public static final IRenderFactory<EntityCloudFleija> FACTORY = LCERenderCloudFleija::new;
 	
@@ -37,7 +40,7 @@ public class LCERenderCloudFleija extends Render<EntityCloudFleija> {
 	float lastTicks = 0;
 	@Override
 	public void doRender(EntityCloudFleija cloud,double x,double y,double z,float entityYaw,float partialTicks) {
-        IModelCustom blastModel = ResourceInit.cloudFleija;
+        IModelCustom blastModel = cloudFleija;
 		//if (cloud instanceof EntityCloudFleijaRainbowBase) return;
 		GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, (float)z);

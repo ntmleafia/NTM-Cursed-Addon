@@ -37,6 +37,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.lwjgl.opengl.GL11;
 
+import static com.leafia.init.ResourceInit.getVAO;
+
 public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMachineBase> implements IItemRendererProvider {
 	public Item getItemForRenderer() {
 		return null;
@@ -137,26 +139,26 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 	static final ResourceLocation dfc_cemitter_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_cemitter.png");
 	static final ResourceLocation dfc_booster_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_emitter.png");
 	static final WaveFrontObjectVAO dfc_booster_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/booster.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/booster.obj"));
 
 	static final ResourceLocation dfc_absorber_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_receiver.png");
 	static final WaveFrontObjectVAO dfc_absorber_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/absorber.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/absorber.obj"));
 
 	static final ResourceLocation dfc_injector_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_injector.png");
 	static final WaveFrontObjectVAO dfc_injector_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/injector.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/injector.obj"));
 
 	static final ResourceLocation dfc_stabilizer_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/test_texture64.png");
 	static final WaveFrontObjectVAO dfc_stabilizer_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/stabilizer.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/stabilizer.obj"));
 
 	static final WaveFrontObjectVAO dfc_reinforced_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/reinforced.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/reinforced.obj"));
 
 	static final ResourceLocation dfc_exchanger_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_exchanger.png");
 	static final WaveFrontObjectVAO dfc_exchanger_mdl =
-			new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/dfc_rotatable/exchanger.obj")).asVBO();
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/exchanger.obj"));
 
 	@Override
 	public void render(TileEntityMachineBase te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {

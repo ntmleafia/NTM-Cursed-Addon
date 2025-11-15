@@ -46,15 +46,17 @@ public class AddonBase {
     }
 
     public static void _initMemberClasses(Class<?> c) {
-        for (Class<?> cl : c.getClasses()) { // stupid solution to initialize the stupid fields
-            try {
-                Class.forName(cl.getName());
-                System.out.println("Initialized member class "+cl.getSimpleName());
-            } catch (ClassNotFoundException exception) {
-                LeafiaDevFlaw flaw = new LeafiaDevFlaw("ModItems failed to initialize member class "+cl.getSimpleName());
-                flaw.setStackTrace(exception.getStackTrace());
-                throw flaw;
-            }
+        for (Class<?> cl : c.getClasses()) // stupid solution to initialize the stupid fields
+            _initClass(cl);
+    }
+    public static void _initClass(Class<?> c) {
+        try {
+            Class.forName(c.getName());
+            System.out.println("Initialized member class "+c.getSimpleName());
+        } catch (ClassNotFoundException exception) {
+            LeafiaDevFlaw flaw = new LeafiaDevFlaw("ModItems failed to initialize member class "+c.getSimpleName());
+            flaw.setStackTrace(exception.getStackTrace());
+            throw flaw;
         }
     }
 

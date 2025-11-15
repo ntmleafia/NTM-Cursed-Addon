@@ -37,13 +37,15 @@ import org.lwjgl.opengl.GL11;
 import java.util.ConcurrentModificationException;
 import java.util.Random;
 
+import static com.leafia.init.ResourceInit.getVAO;
+
 public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 	public static WaveFrontObjectVAO[] deformSphere = new WaveFrontObjectVAO[10];
 	static {
 		for (int i = 0; i < 10; i++)
-			deformSphere[i] = new HFRWavefrontObject(new ResourceLocation("leafia", "models/leafia/deformed_sphere/deform"+i+".obj")).asVBO();
+			deformSphere[i] = getVAO(new ResourceLocation("leafia", "models/leafia/deformed_sphere/deform"+i+".obj"));
 	}
-	public static WaveFrontObjectVAO instability_ring = new HFRWavefrontObject(new ResourceLocation("leafia","models/leafia/ecr_instability_ring.obj")).asVBO();
+	public static WaveFrontObjectVAO instability_ring = getVAO(new ResourceLocation("leafia","models/leafia/ecr_instability_ring.obj"));
 
 	@Override
 	public boolean isGlobalRenderer(TileEntityCore te) {
