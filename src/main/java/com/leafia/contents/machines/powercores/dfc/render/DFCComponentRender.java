@@ -20,11 +20,14 @@ import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreStabilizer;
 import com.leafia.transformer.LeafiaGls;
 import com.leafia.transformer.LeafiaGls.GlStates;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -233,13 +236,14 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 		double range = 0;
 		if (base.lastGetCore() != null)
 			range = new Vec3d(te.getPos()).add(0.5, 0.5, 0.5).distanceTo(new Vec3d(base.lastGetCore().getPos()).add(0.5, 0.5, 0.5));
-		/*if (te instanceof TileEntityCoreStabilizer) {
+		if (te instanceof TileEntityCoreStabilizer) {
 			TileEntityCoreStabilizer stabilizer = (TileEntityCoreStabilizer) te;
-			int outerColor = stabilizer.lens.outerColor;
-			int innerColor = stabilizer.lens.innerColor;
-			if (stabilizer.cl_hasLens) {
+			IMixinTileEntityCoreStabilizer mixin = (IMixinTileEntityCoreStabilizer)te;
+			int outerColor = mixin.getLens().outerColor;
+			int innerColor = mixin.getLens().innerColor;
+			if (mixin.hasLens()) {
 				LeafiaGls.enableBlend();
-				IBakedModel baked = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(new ItemStack(stabilizer.lens.item), getWorld(), null);
+				IBakedModel baked = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(new ItemStack(mixin.getLens().item), getWorld(), null);
 				bindByIconName(baked.getParticleTexture().getIconName());
 				LeafiaGls.blendFunc(SourceFactor.ONE, DestFactor.SRC_COLOR);
 				mdl.renderPart("lens");
@@ -259,7 +263,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			mdl.renderPart("Glass");
 			GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 			LeafiaGls.disableBlend();
-		}*/
+		}
 
 		if (te instanceof TileEntityCoreEmitter) {
 			//int range = ((TileEntityCoreEmitter)tileEntity).beam;
