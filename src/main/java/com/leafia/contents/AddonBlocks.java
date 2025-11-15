@@ -5,6 +5,7 @@ import com.hbm.blocks.machine.CoreComponent;
 import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
+import com.leafia.contents.machines.powercores.dfc.AddonCoreComponent;
 import com.leafia.contents.network.spk_cable.SPKCableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -18,9 +19,9 @@ public class AddonBlocks {
 
 	public static final Block door_fuckoff = new BlockPinkDoor(Material.WOOD, "door_fuckoff").setHardness(3);
 	public static final Block spk_cable = new SPKCableBlock(Material.IRON, "spk_cable").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_reinforced = new CoreComponent(Material.IRON, "dfc_reinforced").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_exchanger = new CoreComponent(Material.IRON, "dfc_exchanger").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_cemitter = new CoreComponent(Material.IRON, "dfc_cemitter").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+	public static final Block dfc_reinforced = new AddonCoreComponent(Material.IRON, "dfc_reinforced").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+	public static final Block dfc_exchanger = new AddonCoreComponent(Material.IRON, "dfc_exchanger").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+	public static final Block dfc_cemitter = new AddonCoreComponent(Material.IRON, "dfc_cemitter").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
 
 	private static void modifyBlockParams() {
 		ModBlocks.dfc_core.setResistance(65000000);

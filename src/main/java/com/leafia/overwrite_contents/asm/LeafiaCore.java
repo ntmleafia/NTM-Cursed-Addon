@@ -836,7 +836,8 @@ public class LeafiaCore implements IClassTransformer {
 					break;
 				}*/
 			}
-			System.out.println("#");
+			if (debugMode)
+				System.out.println("#");
 			/*
 			if (method.name.equals("disableLighting") || method.name.equals("func_179140_f")) {
 				System.out.println("#Leaf: Patching");

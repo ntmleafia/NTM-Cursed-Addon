@@ -98,18 +98,13 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		ItemRendererInit.preInit();
 		ItemRendererInit.apply();
 
-		// that's just for example.
-		// if you're going to make like more than 2-3 blocks, put it in a separate method
-		// so you won't bloat the class much
-		ModelLoader.setCustomModelResourceLocation(
-				Item.getItemFromBlock(AddonBlocks.spk_cable),
-				0,
-				new ModelResourceLocation("leafia:spk_cable", "inventory")
-		);
-		ModelLoader.setCustomModelResourceLocation(
-				AddonItems.door_fuckoff,
-				0,
-				new ModelResourceLocation("leafia:door_fuckoff", "inventory")
-		);
+		// thanks TheSlize
+		for (Item toFix : ItemRendererInit.fixFuckingLocations) {
+			ModelLoader.setCustomModelResourceLocation(
+					toFix,
+					0,
+					new ModelResourceLocation(toFix.getRegistryName(), "inventory")
+			);
+		}
 	}
 }

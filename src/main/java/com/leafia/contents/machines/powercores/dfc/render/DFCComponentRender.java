@@ -1,24 +1,33 @@
 package com.leafia.contents.machines.powercores.dfc.render;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.NTMRenderHelper;
+import com.hbm.render.item.ItemRenderBase;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.custom_hbm.render.misc.LCEBeamPronter;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
+import com.hbm.render.tileentity.IItemRendererProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
+import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.leafia.transformer.LeafiaGls;
+import com.leafia.transformer.LeafiaGls.GlStates;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -28,8 +37,89 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.lwjgl.opengl.GL11;
 
-public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMachineBase> {
+public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMachineBase> implements IItemRendererProvider {
+	public Item getItemForRenderer() {
+		return null;
+	}
 
+	public Item[] getItemsForRenderer() {
+		return new Item[]{
+				Item.getItemFromBlock(ModBlocks.dfc_emitter),
+				Item.getItemFromBlock(ModBlocks.dfc_receiver),
+				Item.getItemFromBlock(ModBlocks.dfc_injector),
+				Item.getItemFromBlock(ModBlocks.dfc_stabilizer),
+				Item.getItemFromBlock(AddonBlocks.dfc_cemitter),
+				Item.getItemFromBlock(AddonBlocks.dfc_reinforced),
+				Item.getItemFromBlock(AddonBlocks.dfc_exchanger),
+		};
+	}
+
+	public ItemRenderBase getRenderer(Item item) {
+		return new ItemRenderBase() {
+			public void renderInventory() {
+				GlStateManager.translate((double)0.0F, (double)-2.5F, (double)0.0F);
+				double scale = (double)5.0F;
+				GlStateManager.scale(scale, scale, scale);
+			}
+
+			public void renderCommon(ItemStack item) {
+				GlStateManager.scale(2.0F, 2.0F, 2.0F);
+				GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
+				GlStateManager.translate(0,0.5,0);
+				WaveFrontObjectVAO mdl;
+				if (item.getItem() == Item.getItemFromBlock(ModBlocks.dfc_emitter)) {
+					NTMRenderHelper.bindTexture(dfc_booster_tex);
+					mdl = dfc_booster_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(ModBlocks.dfc_receiver)) {
+					NTMRenderHelper.bindTexture(dfc_absorber_tex);
+					mdl = dfc_absorber_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(ModBlocks.dfc_stabilizer)) {
+					NTMRenderHelper.bindTexture(dfc_stabilizer_tex);
+					mdl = dfc_stabilizer_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(ModBlocks.dfc_injector)) {
+					NTMRenderHelper.bindTexture(dfc_injector_tex);
+					mdl = dfc_injector_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(AddonBlocks.dfc_cemitter)) {
+					NTMRenderHelper.bindTexture(dfc_cemitter_tex);
+					mdl = dfc_booster_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(AddonBlocks.dfc_exchanger)) {
+					NTMRenderHelper.bindTexture(dfc_exchanger_tex);
+					mdl = dfc_exchanger_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(AddonBlocks.dfc_reinforced)) {
+					NTMRenderHelper.bindTexture(dfc_absorber_tex);
+					mdl = dfc_reinforced_mdl;
+				} else return;
+				mdl.renderPart("Core");
+				if (mdl == dfc_reinforced_mdl)
+					mdl.renderPart("Fan");
+				if (mdl == dfc_stabilizer_mdl) {
+					LeafiaGls.enableBlend();
+					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+					GlStateManager.enableLighting();
+					GL11.glAlphaFunc(GL11.GL_ALWAYS, 0);
+					mdl.renderPart("Glass");
+					GL11.glAlphaFunc(GL11.GL_GREATER, 0);
+					LeafiaGls.disableBlend();
+				}
+				GlStateManager.pushMatrix();
+				for (int i = 0; i < 4; i++) {
+					mdl.renderPart("Arm");
+					GlStateManager.rotate(90,0,0,1);
+				}
+				GlStateManager.popMatrix();
+				mdl.renderPart("Frame");
+				GlStateManager.rotate(90,0,1,0);
+				mdl.renderPart("Frame");
+				GlStateManager.rotate(-180,0,1,0);
+				mdl.renderPart("Frame");
+				GlStateManager.rotate(90,0,1,0);
+				GlStateManager.rotate(90,1,0,0);
+				mdl.renderPart("Frame");
+				GlStateManager.rotate(-180,1,0,0);
+				mdl.renderPart("Frame");
+			}
+		};
+	}
 	@Override
 	public boolean isGlobalRenderer(TileEntityMachineBase te) {
 		return true;
