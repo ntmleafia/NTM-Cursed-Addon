@@ -36,7 +36,7 @@ public abstract class MixinEntityNukeExplosionMK3 extends Entity implements IChu
 		super(worldIn);
 	}
 
-	@Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true)
+	@Inject(method = {"onUpdate","func_70071_h_"}, at = @At("HEAD"), cancellable = true)
 	private void onOnUpdate(CallbackInfo ci) {
 		if (!this.world.isRemote) {
 			if (CompatibilityConfig.isWarDim(this.world)) {

@@ -10,8 +10,7 @@ import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
-import com.leafia.contents.AddonItems;
-import com.leafia.contents.effects.folkvangr.visual.RenderCloudFleija;
+import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
@@ -53,7 +52,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		}
         ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, RenderCloudFleija.FACTORY);
+		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, LCERenderCloudFleija.FACTORY);
 		RenderingRegistry.registerEntityRenderingHandler(LCETorex.class, LCETorexRender.FACTORY);
 
 		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);

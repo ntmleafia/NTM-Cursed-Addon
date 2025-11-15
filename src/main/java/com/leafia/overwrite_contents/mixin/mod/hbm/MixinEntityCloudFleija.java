@@ -59,7 +59,7 @@ public abstract class MixinEntityCloudFleija extends Entity implements IMixinEnt
         super(worldIn);
     }
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
         if (!world.isRemote) tryBindAuto();
     }
