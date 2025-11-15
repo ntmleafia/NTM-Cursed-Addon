@@ -5,16 +5,21 @@ import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
+import com.hbm.render.misc.BeamPronter;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.network.spk_cable.SPKCableTE.EffectLink;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConnector;
 import com.leafia.dev.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
+
+import static com.hbm.render.NTMRenderHelper.bindTexture;
 
 public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
 	public static final WaveFrontObjectVAO mdl = new HFRWavefrontObject(new ResourceLocation("leafia", "models/leafia/cable_spk.obj")).asVBO();
@@ -31,11 +36,37 @@ public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
 		}
 		@Override
 		protected double _itemYoffset() {
-			return 0;
+			return 0.13;
 		}
 		@Override
 		protected double _sizeReference() {
-			return 1;
+			return 1.4;
+		}
+		@Override
+		public void renderCommon() {
+			GL11.glScaled(0.5, 0.5, 0.5);
+			bindTexture(__getTexture());
+			mdl.renderPart("Core");
+			mdl.renderPart("posX");
+			mdl.renderPart("posZ");
+			mdl.renderPart("negX");
+			mdl.renderPart("negZ");
+			for (EnumFacing horizontal : EnumFacing.HORIZONTALS) {
+				Vec3d look = new Vec3d(horizontal.getDirectionVec());
+				LeafiaGls.inLocalSpace(()->{
+					double offset = 3/16d;
+					LeafiaGls.translate(look.scale(offset));
+					BeamPronter.prontBeam(
+							look.scale(0.5-offset),
+							com.hbm.render.misc.BeamPronter.EnumWaveType.RANDOM,
+							com.hbm.render.misc.BeamPronter.EnumBeamType.SOLID,
+							0x64001e,0x9A9A9A,
+							(int)(Minecraft.getMinecraft().world.getTotalWorldTime()%1000),
+							(int)((0.5-offset)*5),1/16f,
+							2,0.666f/16f
+					);
+				});
+			}
 		}
 	}
 

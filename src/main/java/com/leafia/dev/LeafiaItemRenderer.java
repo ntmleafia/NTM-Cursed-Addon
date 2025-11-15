@@ -1,5 +1,6 @@
 package com.leafia.dev;
 
+import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.item.ItemRenderBase;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.dev.items.LeafiaGripOffsetHelper;
@@ -13,15 +14,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import static com.hbm.render.NTMRenderHelper.bindTexture;
-
 public abstract class LeafiaItemRenderer extends ItemRenderBase {
-	static boolean debug = true;
+	static boolean debug = false;
 	double scale = _sizeReference();
 	double offset = _itemYoffset();
 	protected abstract double _sizeReference();
@@ -98,5 +95,8 @@ public abstract class LeafiaItemRenderer extends ItemRenderBase {
 		bindTexture(__getTexture());
 		__getModel().renderAll();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
+	}
+	public static void bindTexture(ResourceLocation loc) {
+		NTMRenderHelper.bindTexture(loc);
 	}
 }
