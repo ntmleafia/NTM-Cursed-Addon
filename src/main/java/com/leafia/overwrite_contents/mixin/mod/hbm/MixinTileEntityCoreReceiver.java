@@ -172,8 +172,10 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			long totalTransfer = 0;
 			if (remaining > 0) {
 				List<Pair<TileEntity, EnumFacing>> targets = new ArrayList<>();
-				for (EnumFacing outFace : EnumFacing.VALUES) {
-					if (outFace.getAxis().equals(facing.getAxis())) continue;
+				//for (EnumFacing outFace : EnumFacing.VALUES) {
+					//if (outFace.equals(facing)) continue;
+				{
+					EnumFacing outFace = facing.getOpposite();
                     BlockPos target = pos.offset(outFace);
                     ForgeDirection dir = ForgeDirection.getOrientation(outFace);
                     TileEntity te = world.getTileEntity(target);
