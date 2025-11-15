@@ -121,7 +121,7 @@ public abstract class MixinEntityCloudFleija extends Entity implements IMixinEnt
         }
     }
 
-    @Inject(method = "entityInit", at = @At("TAIL"))
+    @Inject(method = {"entityInit", "func_70088_a"}, at = @At("TAIL"))
     private void onEntityInit(CallbackInfo ci) {
         this.dataManager.register(SCALE, 0.0f);
         this.dataManager.register(TICKRATE, 1.0f);
