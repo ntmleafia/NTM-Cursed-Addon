@@ -1,7 +1,6 @@
 package com.custom_hbm.render.amlfrom1710;
 
-import com.hbm.render.amlfrom1710.IModelCustom;
-import com.hbm.render.amlfrom1710.ModelFormatException;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
 import net.minecraft.util.ResourceLocation;
 
 public interface IModelCustomLoader {

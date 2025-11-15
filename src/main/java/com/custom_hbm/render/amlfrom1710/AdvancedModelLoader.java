@@ -1,8 +1,7 @@
 package com.custom_hbm.render.amlfrom1710;
 
 import com.google.common.collect.Maps;
-import com.hbm.render.amlfrom1710.IModelCustom;
-import com.hbm.render.amlfrom1710.ModelFormatException;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;

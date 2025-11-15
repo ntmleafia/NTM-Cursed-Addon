@@ -1,7 +1,7 @@
 package com.leafia.overwrite_contents.packets;
 
 
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.custom_hbm.effectNT.EffectNT;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;

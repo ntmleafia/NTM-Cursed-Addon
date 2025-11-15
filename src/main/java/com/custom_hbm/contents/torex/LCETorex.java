@@ -3,7 +3,7 @@ package com.custom_hbm.contents.torex;
 import com.hbm.interfaces.IConstantRenderer;
 import com.hbm.items.ModItems;
 import com.hbm.packet.PacketDispatcher;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.llib.exceptions.messages.TextWarningLeafia;

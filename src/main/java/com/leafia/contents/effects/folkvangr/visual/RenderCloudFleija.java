@@ -1,9 +1,9 @@
 package com.leafia.contents.effects.folkvangr.visual;
 
+import com.custom_hbm.render.amlfrom1710.AdvancedModelLoader;
 import com.hbm.entity.effect.EntityCloudFleija;
-import com.hbm.hfr.render.loader.HFRWavefrontObject;
 import com.hbm.lib.RefStrings;
-import com.hbm.render.amlfrom1710.IModelCustom;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
 import com.hbm.util.RenderUtil;
 import com.leafia.AddonBase;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
@@ -30,7 +30,7 @@ public class RenderCloudFleija extends Render<EntityCloudFleija> {
 	
 	protected RenderCloudFleija(RenderManager renderManager) {
 		super(renderManager);
-		blastModel = new HFRWavefrontObject(objTesterModelRL).asVBO();
+		blastModel = AdvancedModelLoader.loadModel(objTesterModelRL);
     	blastTexture = AddonBase.solid_e;//new ResourceLocation(RefStrings.MODID, "textures/solid_emissive.png");//models/explosion/BlastFleija.png");
     	scale = 0;
 	}

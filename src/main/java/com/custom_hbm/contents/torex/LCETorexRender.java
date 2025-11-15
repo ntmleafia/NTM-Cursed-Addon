@@ -3,7 +3,7 @@ package com.custom_hbm.contents.torex;
 import com.custom_hbm.contents.torex.LCETorex.Cloudlet;
 import com.hbm.lib.RefStrings;
 import com.hbm.main.MainRegistry;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.effects.LeafiaShakecam;

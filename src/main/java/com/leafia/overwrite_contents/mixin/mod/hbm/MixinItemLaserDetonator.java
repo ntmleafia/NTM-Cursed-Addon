@@ -8,7 +8,7 @@ import com.hbm.items.tool.ItemLaserDetonator;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;

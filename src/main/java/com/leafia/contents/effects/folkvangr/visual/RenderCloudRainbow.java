@@ -3,7 +3,7 @@ package com.leafia.contents.effects.folkvangr.visual;
 import com.custom_hbm.render.amlfrom1710.AdvancedModelLoader;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.lib.RefStrings;
-import com.hbm.render.amlfrom1710.IModelCustom;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;

@@ -1,8 +1,7 @@
 package com.custom_hbm.render.amlfrom1710;
 
-import com.hbm.render.amlfrom1710.IModelCustom;
-import com.hbm.render.amlfrom1710.ModelFormatException;
-import com.hbm.render.amlfrom1710.WavefrontObject;
+import com.custom_hbm.render.amlfrom1710.IModelCustom;
+import com.custom_hbm.render.amlfrom1710.IModelCustomLoader;
 import net.minecraft.util.ResourceLocation;
 
 public class ObjModelLoader implements IModelCustomLoader
