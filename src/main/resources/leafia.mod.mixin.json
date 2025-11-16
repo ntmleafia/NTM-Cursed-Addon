@@ -29,6 +29,7 @@
     "hbm.MixinTileEntityCore",
     "hbm.MixinTileEntityCoreEmitter",
     "hbm.MixinTileEntityCoreReceiver",
+    "hbm.MixinTileEntityCoreStabilizer",
     "hbm.MixinTileEntityCrateTungsten"
   ],
   "server": [

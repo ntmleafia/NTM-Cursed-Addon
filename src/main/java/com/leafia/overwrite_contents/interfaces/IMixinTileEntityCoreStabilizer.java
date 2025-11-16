@@ -1,10 +1,11 @@
 package com.leafia.overwrite_contents.interfaces;
 
+import com.hbm.inventory.control_panel.IControllable;
 import com.hbm.items.ModItems;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import net.minecraft.item.Item;
 
-public interface IMixinTileEntityCoreStabilizer extends IDFCBase {
+public interface IMixinTileEntityCoreStabilizer extends IDFCBase, IControllable {
     long maxPower = 10000000000000L;
     int range = 50;
 
@@ -17,6 +18,7 @@ public interface IMixinTileEntityCoreStabilizer extends IDFCBase {
         public final int outerColor;
         public final int innerColor;
         public final Item item;
+        public static final LensType[] VALUES = new LensType[]{STANDARD, BLANK, LIMITER, BOOSTER, OMEGA};
 
         LensType(int outerColor, int innerColor, Item item) {
             this.outerColor = outerColor;
