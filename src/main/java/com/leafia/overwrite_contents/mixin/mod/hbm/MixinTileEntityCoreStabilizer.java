@@ -4,12 +4,12 @@ import com.hbm.inventory.control_panel.ControlEvent;
 import com.hbm.inventory.control_panel.ControlEventSystem;
 import com.hbm.inventory.control_panel.DataValue;
 import com.hbm.inventory.control_panel.DataValueFloat;
-import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemLens;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.dev.items.LeafiaItemLens;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreStabilizer;
 import com.leafia.settings.AddonConfig;
@@ -88,9 +88,9 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 
             //beam = 0;
 
-            ItemLens lens = null;
-            if (inventory.getStackInSlot(0).getItem() instanceof ItemLens) {
-                lens = (ItemLens) inventory.getStackInSlot(0).getItem();
+            LeafiaItemLens lens = null;
+            if (inventory.getStackInSlot(0).getItem() instanceof LeafiaItemLens leafiaItemLens) {
+                lens = leafiaItemLens;
                 for (LensType type : LensType.values()) {
                     if (type.item == lens) {
                         this.lens = type;
@@ -117,7 +117,7 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
                     //core.field += (int)(watts * lens.fieldMod);
                     mixinTileEntityCore.setDFCStabilization(mixinTileEntityCore.getDFCStabilization() + lens.fieldMod * (watts / 100d));
                     mixinTileEntityCore.setDFCStabilizers(mixinTileEntityCore.getDFCStabilizers() + 1);
-                    mixinTileEntityCore.setDFCEnergyMod(mixinTileEntityCore.getDFCEnergyMod() * getLensEnergyMod(lens));
+                    mixinTileEntityCore.setDFCEnergyMod(mixinTileEntityCore.getDFCEnergyMod() * lens.energyMod);
                     this.power -= (long) (demand * lens.drainMod);
 
                     long dmg = ItemLens.getLensDamage(inventory.getStackInSlot(0));
@@ -138,20 +138,6 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
                         .__sendToClients(250);
         } else if (isOn)
             lastGetCore = getCore();
-    }
-
-
-    @Unique
-    private float getLensEnergyMod(ItemLens lens) {
-        if (lens == ModItems.ams_focus_blank || lens == ModItems.ams_lens)
-            return 1.0f;
-        if (lens == ModItems.ams_focus_limiter)
-            return 0.5f;
-        if (lens == ModItems.ams_focus_booster)
-            return 1.35f;
-        if (lens == ModItems.ams_focus_omega)
-            return 3.5f;
-        throw new IllegalArgumentException("Unknown lens type: " + lens);
     }
 
     @Unique

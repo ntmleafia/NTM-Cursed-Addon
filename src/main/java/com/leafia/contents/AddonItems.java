@@ -7,6 +7,7 @@ import com.leafia.AddonBase;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.gear.wands.ItemWandV;
 import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
+import com.leafia.dev.items.LeafiaItemLens;
 import com.leafia.dev.items.itembase.AddonItemBaked;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -29,7 +30,12 @@ public class AddonItems {
 	public static final Item dfcsh_front = new AddonItemBaked("dfcsh_front","leafia/absorber_shrapnels/framefront").setCreativeTab(MainRegistry.controlTab);
 	public static final Item dfcsh_beam = new AddonItemBaked("dfcsh_beam","leafia/absorber_shrapnels/framebeam").setCreativeTab(MainRegistry.controlTab);
 
-	public static final Item wand_v = new ItemWandV("wand_v","wands/wand_v");
+    public static final Item ams_focus_blank = new LeafiaItemLens(400000L, 0.5F, 1.75F, 1, "ams_focus_blank").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+    public static final Item ams_focus_limiter = new LeafiaItemLens(2500000000L, 1.5F, 1.75F, 0.8F, "ams_focus_limiter").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+    public static final Item ams_focus_booster = new LeafiaItemLens(100000000L, 0.8F, 0.5F, 1.35F, "ams_focus_booster").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+    public static final Item ams_focus_omega = new LeafiaItemLens(1000000000L, 5.0F, 10.0F, 3.5F, "ams_focus_omega").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+
+    public static final Item wand_v = new ItemWandV("wand_v","wands/wand_v");
 
 	public static void preInit(){
 		AddonBase._initMemberClasses(ModItems.class);
