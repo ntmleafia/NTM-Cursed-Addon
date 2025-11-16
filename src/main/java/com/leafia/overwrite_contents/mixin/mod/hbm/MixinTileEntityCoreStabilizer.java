@@ -9,7 +9,7 @@ import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.dev.container_utility.LeafiaPacket;
-import com.leafia.dev.items.LeafiaItemLens;
+import com.leafia.contents.machines.powercores.dfc.LCEItemLens;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreStabilizer;
 import com.leafia.settings.AddonConfig;
@@ -88,8 +88,8 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 
             //beam = 0;
 
-            LeafiaItemLens lens = null;
-            if (inventory.getStackInSlot(0).getItem() instanceof LeafiaItemLens leafiaItemLens) {
+            LCEItemLens lens = null;
+            if (inventory.getStackInSlot(0).getItem() instanceof LCEItemLens leafiaItemLens) {
                 lens = leafiaItemLens;
                 for (LensType type : LensType.values()) {
                     if (type.item == lens) {

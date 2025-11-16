@@ -1,4 +1,4 @@
-package com.leafia.dev.items;
+package com.leafia.contents.machines.powercores.dfc;
 
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemLens;
@@ -11,20 +11,22 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class LeafiaItemLens extends ItemLens {
+// when it's called LeafiaItemLens but it's actually made by movblock
+// MlbvItemLens?
+public class LCEItemLens extends ItemLens {
     public float fieldMod;
     public float drainMod;
     public float energyMod;
 
     // ctor for the existing ams_lens
-    public LeafiaItemLens(long maxDamage, String s) {
+    public LCEItemLens(long maxDamage,String s) {
         super(maxDamage, s);
         fieldMod = 1.0F;
         drainMod = 1.0F;
         energyMod = 1.0F;
     }
 
-    public LeafiaItemLens(long maxDamage, float fieldMod, float drainMod, float energyMod, String s) {
+    public LCEItemLens(long maxDamage,float fieldMod,float drainMod,float energyMod,String s) {
         super(maxDamage, s);
         this.fieldMod = fieldMod;
         this.drainMod = drainMod;

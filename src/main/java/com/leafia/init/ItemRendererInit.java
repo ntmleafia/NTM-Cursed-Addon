@@ -27,6 +27,11 @@ public class ItemRendererInit {
 		register(true,AddonBlocks.dfc_cemitter,new DFCComponentRender());
 		register(true,AddonBlocks.dfc_exchanger,new DFCComponentRender());
 		register(true,AddonBlocks.dfc_reinforced,new DFCComponentRender());
+
+		fix(AddonItems.ams_focus_blank);
+		fix(AddonItems.ams_focus_booster);
+		fix(AddonItems.ams_focus_limiter);
+		fix(AddonItems.ams_focus_omega);
 	}
 	private static void register(boolean doFix,Item item,ItemRenderBase renderer) { if (doFix) fixFuckingLocations.add(item); renderers.put(item,renderer); }
 	private static void register(boolean doFix,Block block,ItemRenderBase renderer) { if (doFix) fixFuckingLocations.add(Item.getItemFromBlock(block)); renderers.put(Item.getItemFromBlock(block),renderer); }
