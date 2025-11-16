@@ -247,7 +247,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				bindByIconName(baked.getParticleTexture().getIconName());
 				LeafiaGls.blendFunc(SourceFactor.ONE, DestFactor.SRC_COLOR);
 				mdl.renderPart("lens");
-				bindTexture(ResourceManager.dfc_stabilizer_tex);
+				bindTexture(dfc_stabilizer_tex);
 				LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 				LeafiaGls.disableBlend();
 				if (range > 0 && stabilizer.isOn) {

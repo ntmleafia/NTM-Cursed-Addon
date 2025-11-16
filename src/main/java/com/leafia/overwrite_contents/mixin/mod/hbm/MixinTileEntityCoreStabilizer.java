@@ -50,7 +50,7 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
     @Unique
     public TileEntityCore lastGetCore;
     @Unique
-    public BlockPos targetPosition;
+    public BlockPos targetPosition = new BlockPos(0,0,0);
 
     @SideOnly(Side.CLIENT)
     @Override
