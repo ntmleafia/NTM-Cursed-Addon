@@ -18,6 +18,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -68,6 +69,19 @@ public abstract class MixinCoreComponent extends BlockContainer {
 				cir.cancel();
 			}
 		}
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason who cares
+	 */
+	@Override
+	@Overwrite
+	public void onBlockPlacedBy(World worldIn,BlockPos pos,IBlockState state,EntityLivingBase placer,ItemStack stack) {
+		super.onBlockPlacedBy(worldIn,pos,state,placer,stack);
+		TileEntity te = worldIn.getTileEntity(pos);
+		if (te instanceof IDFCBase base)
+			base.setTargetPosition(pos.offset(EnumFacing.getDirectionFromEntityLiving(pos, placer)));
 	}
 
 	@SideOnly(Side.CLIENT)
