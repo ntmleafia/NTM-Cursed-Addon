@@ -1,6 +1,6 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "leafia:items/ams_focus_blank"
+		"layer0": "leafia:items/dfc/ams_focus_blank"
 	}
 }

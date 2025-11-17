@@ -27,7 +27,7 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
     @Shadow(remap = false)
     public long joules;
 
-    @Shadow
+    @Shadow(remap = false)
     public abstract void addEnergy(World world, BlockPos pos, long energy, EnumFacing dir);
 
     @Inject(method = "update()V", at = @At(value = "FIELD", target = "Lcom/hbm/tileentity/machine/TileEntityCrateTungsten;heatTimer:I", ordinal = 0, shift = At.Shift.BEFORE, remap = false))

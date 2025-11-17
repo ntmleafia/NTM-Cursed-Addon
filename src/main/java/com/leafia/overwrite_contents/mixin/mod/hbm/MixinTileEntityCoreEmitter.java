@@ -3,6 +3,7 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.interfaces.ILaserable;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.ModDamageSource;
@@ -16,6 +17,7 @@ import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
+import com.leafia.settings.AddonConfig;
 import com.llib.LeafiaLib;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -46,9 +48,6 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     @Final
     @Shadow
     public static long maxPower;
-    @Final
-    @Shadow
-    public static int range = 50;
     @Shadow
     public long power;
     @Shadow
@@ -181,7 +180,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     //mlbv: intentionally marked this final. overriding may need bridge methods when you need to call super.raycast due to compile-time visibility problems
     @Override
     public final RayTraceResult raycast(long out) {
-        return LeafiaLib.leafiaRayTraceBlocksCustom(world, new Vec3d(pos).add(0.5, 0.5, 0.5), new Vec3d(pos).add(0.5, 0.5, 0.5).add(getDirection().scale(range)), (process, config, current) -> {
+        return LeafiaLib.leafiaRayTraceBlocksCustom(world, new Vec3d(pos).add(0.5, 0.5, 0.5), new Vec3d(pos).add(0.5, 0.5, 0.5).add(getDirection().scale(AddonConfig.dfcComponentRange)), (process,config,current) -> {
             if (!world.isRemote) {
                 Vec3d centerVec = current.posIntended.add(new Vec3d(config.pivotAxisFace.getDirectionVec()).scale(0.5)
                                                                                                            .add(config.secondaryVector.scale(0.5)));
@@ -281,6 +280,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
                 break;
             case 4:
                 tank.setFill((int)value);
+                tank.setTankType(Fluids.CRYOGEL);
                 break;
         }
     }

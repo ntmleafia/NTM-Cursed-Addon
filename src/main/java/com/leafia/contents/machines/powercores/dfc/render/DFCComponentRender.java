@@ -71,6 +71,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				GlStateManager.scale(2.0F, 2.0F, 2.0F);
 				GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
 				GlStateManager.translate(0,0.5,0);
+				GlStateManager.disableCull();
 				WaveFrontObjectVAO mdl;
 				if (item.getItem() == Item.getItemFromBlock(ModBlocks.dfc_emitter)) {
 					NTMRenderHelper.bindTexture(dfc_booster_tex);
@@ -122,6 +123,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				mdl.renderPart("Frame");
 				GlStateManager.rotate(-180,1,0,0);
 				mdl.renderPart("Frame");
+				GlStateManager.enableCull();
 			}
 		};
 	}

@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
@@ -49,6 +50,7 @@ public class LCEBeamPronter {
         if (prevTex2D) GlStateManager.disableTexture2D();
         if (prevLighting) GlStateManager.disableLighting();
         if (!prevDepthMask) GlStateManager.depthMask(true);
+        //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 
         if (beam == EnumBeamType.SOLID) {
             if (prevDepthMask) GlStateManager.depthMask(false);

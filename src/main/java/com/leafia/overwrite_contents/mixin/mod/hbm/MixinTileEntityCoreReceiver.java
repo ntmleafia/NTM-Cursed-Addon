@@ -5,11 +5,11 @@ import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.ExplosionLarge;
 import com.hbm.interfaces.ILaserable;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
-import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.Tuple.Pair;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
@@ -20,6 +20,7 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
+import com.leafia.settings.AddonConfig;
 import com.llib.LeafiaLib.NumScale;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -141,7 +142,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			}
 			if (!world.getBlockState(offs).getMaterial().isReplaceable()) break;
 		}*/
-		core = getCore(TileEntityCoreEmitter.range);
+		core = getCore(AddonConfig.dfcComponentRange);
 		IMixinTileEntityCore mcore = (IMixinTileEntityCore)core;
 		if (core != null)
 			mcore.getDFCAbsorbers().add((TileEntityCoreReceiver) (Object) this);
@@ -264,7 +265,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			case 0: joules = (long)value; break;
 			case 1: power = (long)value; break;
 			case 2: level = (double)value; break;
-			case 5: tank.setFill((int)value);
+			case 5: tank.setFill((int)value); tank.setTankType(Fluids.CRYOGEL); break;
 			case 4: syncSpk = (long)value; break;
 		}
 	}

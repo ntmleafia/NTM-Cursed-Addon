@@ -34,6 +34,7 @@ public class AddonItems {
     public static final Item ams_focus_limiter = new LCEItemLens(2500000000L, 1.5F, 1.75F, 0.8F, "ams_focus_limiter").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
     public static final Item ams_focus_booster = new LCEItemLens(100000000L, 0.8F, 0.5F, 1.35F, "ams_focus_booster").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
     public static final Item ams_focus_omega = new LCEItemLens(1000000000L, 5.0F, 10.0F, 3.5F, "ams_focus_omega").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item ams_focus_safe = new LCEItemLens(5000000000L, 8F, 4.5F, 0.1F, "ams_focus_safe").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 
     public static final Item wand_v = new ItemWandV("wand_v","wands/wand_v");
 
