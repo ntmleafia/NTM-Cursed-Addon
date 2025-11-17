@@ -66,6 +66,8 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     private BlockPos targetPosition = new BlockPos(0,0,0);
     @Unique
     private RayTraceResult lastRaycast;
+    @Unique
+    private TileEntityCore lastGetCore;
 
     @Unique
     private boolean isActive;
@@ -178,8 +180,9 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     }
 
     //mlbv: intentionally marked this final. overriding may need bridge methods when you need to call super.raycast due to compile-time visibility problems
+    //actually im wrong!
     @Override
-    public final RayTraceResult raycast(long out) {
+    public RayTraceResult raycast(long out) {
         return LeafiaLib.leafiaRayTraceBlocksCustom(world, new Vec3d(pos).add(0.5, 0.5, 0.5), new Vec3d(pos).add(0.5, 0.5, 0.5).add(getDirection().scale(AddonConfig.dfcComponentRange)), (process,config,current) -> {
             if (!world.isRemote) {
                 Vec3d centerVec = current.posIntended.add(new Vec3d(config.pivotAxisFace.getDirectionVec()).scale(0.5)
@@ -287,12 +290,12 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
     @Override
     public TileEntityCore lastGetCore() {
-        return null;
+        return lastGetCore;
     }
 
     @Override
     public void lastGetCore(TileEntityCore core) {
-
+        lastGetCore = core;
     }
 
     @Override

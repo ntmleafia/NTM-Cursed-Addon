@@ -1,7 +1,6 @@
 package com.leafia.init;
 
 import com.hbm.lib.MethodHandleHelper;
-import com.hbm.lib.RefStrings;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
