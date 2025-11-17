@@ -4,7 +4,7 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.CoreComponent;
 import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.TileEntityCoreCreativeEmitter;
+import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CEmitterTE;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,7 @@ public class AddonCoreComponent extends CoreComponent {
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        if (this == AddonBlocks.dfc_cemitter) return new TileEntityCoreCreativeEmitter();
+        if (this == AddonBlocks.dfc_cemitter) return new CEmitterTE();
         else return super.createNewTileEntity(worldIn, meta);
     }
 

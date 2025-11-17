@@ -17,6 +17,7 @@ import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
+import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CEmitterTE;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
@@ -169,10 +170,10 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 	public void render(TileEntityMachineBase te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (!(te instanceof IDFCBase)) return;
 		WaveFrontObjectVAO mdl;
-		/*if (tileEntity instanceof TileEntityCoreCreativeEmitter) {
+		if (te instanceof CEmitterTE) {
 			bindTexture(dfc_cemitter_tex);
-			mdl = ResourceManager.dfc_emitter;
-		} else */if (te instanceof TileEntityCoreEmitter) {
+			mdl = dfc_booster_mdl;
+		} else if (te instanceof TileEntityCoreEmitter) {
 			bindTexture(dfc_booster_tex);
 			mdl = dfc_booster_mdl;
 		} else if (te instanceof TileEntityCoreReceiver) {

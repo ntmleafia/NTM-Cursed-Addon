@@ -12,7 +12,7 @@ import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.TileEntityCoreCreativeEmitter;
+import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
@@ -67,7 +67,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,new DFCComponentRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,new DFCComponentRender());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreCreativeEmitter.class, new RenderCoreComponent());
+        ClientRegistry.bindTileEntitySpecialRenderer(CEmitterTE.class, new DFCComponentRender());
 	}
 	@Override
 	public File getDataDir() {
