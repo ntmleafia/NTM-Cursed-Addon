@@ -3,6 +3,7 @@ package com.leafia.contents.machines.powercores.dfc.components.creativeemitter;
 import com.hbm.lib.MethodHandleHelper;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
+import com.leafia.AddonBase;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import net.minecraft.client.gui.GuiScreen;
@@ -231,6 +232,11 @@ public class TileEntityCoreCreativeEmitter extends TileEntityCoreEmitter impleme
     @Override
     public long getMaxSPK() {
         return Long.MAX_VALUE;
+    }
+
+    @Override
+    public Object getModInstanceForGui() {
+        return AddonBase.instance;
     }
 
     private boolean mhGetIsActive() {

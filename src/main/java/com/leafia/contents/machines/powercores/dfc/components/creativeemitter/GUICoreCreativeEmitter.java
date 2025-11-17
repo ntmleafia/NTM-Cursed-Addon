@@ -2,9 +2,9 @@ package com.leafia.contents.machines.powercores.dfc.components.creativeemitter;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
 import com.hbm.lib.Library;
-import com.hbm.lib.RefStrings;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toserver.AuxButtonPacket;
+import com.leafia.AddonBase;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.llib.math.SIPfx;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class GUICoreCreativeEmitter extends GuiInfoContainer {
 
-    private static final ResourceLocation texture = new ResourceLocation(RefStrings.MODID + ":textures/gui/dfc/gui_cemitter.png");
+    private static final ResourceLocation texture = new ResourceLocation(AddonBase.MODID + ":textures/gui/dfc/gui_cemitter.png");
     protected short saveButtonCoolDown = 0;
     int focused = -1;
     private final TileEntityCoreCreativeEmitter emitter;

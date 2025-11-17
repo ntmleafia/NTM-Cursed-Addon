@@ -1,5 +1,6 @@
 package com.leafia;
 
+import com.hbm.handler.GuiHandler;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +88,7 @@ public class AddonBase {
 
         TEInit.preInit();
         EntityInit.preInit();
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
         proxy.preInit(event);
 
