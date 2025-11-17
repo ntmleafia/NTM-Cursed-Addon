@@ -21,18 +21,4 @@ public class AddonCoreComponent extends CoreComponent {
 		ModBlocks.ALL_BLOCKS.remove(this);
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
-
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        if (this == AddonBlocks.dfc_cemitter) return new CEmitterTE();
-        else return super.createNewTileEntity(worldIn, meta);
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote && !player.isSneaking() && this == AddonBlocks.dfc_cemitter) {
-            FMLNetworkHandler.openGui(player, AddonBase.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
-            return true;
-        } else return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
-    }
 }

@@ -178,9 +178,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			mdl = dfc_booster_mdl;
 		} else if (te instanceof TileEntityCoreReceiver) {
 			bindTexture(dfc_absorber_tex);
-			//if (getWorld().getBlockState(tileEntity.getPos()).getBlock() == ModBlocks.dfc_reinforced)
-			//	mdl = ResourceManager.dfc_reinforced;
-			//else
+			if (getWorld().getBlockState(te.getPos()).getBlock() == AddonBlocks.dfc_reinforced)
+				mdl = dfc_reinforced_mdl;
+			else
 				mdl = dfc_absorber_mdl;
 		} else if (te instanceof TileEntityCoreInjector) {
 			bindTexture(dfc_injector_tex);
@@ -277,10 +277,10 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 					float width = (float) Math.max(1, Math.log10(((TileEntityCoreEmitter) te).prev) - 6) / 8F;
 					int colorA = 0x401500;
 					int colorB = 0x5B1D00;
-					/*if (te instanceof TileEntityCoreCreativeEmitter) {
+					if (te instanceof CEmitterTE) {
 						colorA = 0x281332;
 						colorB = 0x110165;
-					}*/
+					}
 					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.STRAIGHT, EnumBeamType.SOLID, colorA, 0x7F7F7F, 0, 1, 0F, 2, width);
 					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorA, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
 					LCEBeamPronter.prontBeam(new Vec3d(0, 0, -range), EnumWaveType.RANDOM, EnumBeamType.SOLID, colorB, 0x7F7F7F, (int) te.getWorld().getTotalWorldTime() % 1000 + 1, (int) (0.3F * range / width), width * 0.75F, 2, width * 0.5F);
