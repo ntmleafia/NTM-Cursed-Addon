@@ -110,12 +110,22 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 		return "dfc_injector";
 	}
 
+	/**
+	 * @author ntmleafia
+	 * @reason uses different gui
+	 */
 	@Override
+	@Overwrite(remap = false)
 	public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
 		return new CoreInjectorContainer(entityPlayer.inventory,(TileEntityCoreInjector)(IMixinTileEntityInjector)this);
 	}
 
+	/**
+	 * @author ntmleafia
+	 * @reason uses different gui
+	 */
 	@Override
+	@Overwrite(remap = false)
 	@SideOnly(Side.CLIENT)
 	public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
 		return new CoreInjectorGUI(entityPlayer.inventory,(TileEntityCoreInjector)(IMixinTileEntityInjector)this);

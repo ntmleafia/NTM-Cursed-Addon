@@ -15,4 +15,5 @@ public interface IMixinTileEntityCoreReceiver extends IDFCBase, ISPKProvider, IS
 	double joulesPerSec();
 	void sendToPlayer(EntityPlayer player);
 	long syncJoules();
+	long syncSpk();
 }

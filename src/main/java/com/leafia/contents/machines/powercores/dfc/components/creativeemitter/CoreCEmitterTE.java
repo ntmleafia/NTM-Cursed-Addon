@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 
-public class CEmitterTE extends TileEntityCoreEmitter implements IMixinTileEntityCoreEmitter {
+public class CoreCEmitterTE extends TileEntityCoreEmitter implements IMixinTileEntityCoreEmitter {
 
     private static final MethodHandle IS_ACTIVE_GETTER = MethodHandleHelper.findGetter(TileEntityCoreEmitter.class, "isActive", boolean.class);
     private static final MethodHandle IS_ACTIVE_SETTER = MethodHandleHelper.findSetter(TileEntityCoreEmitter.class, "isActive", boolean.class);
@@ -51,7 +51,7 @@ public class CEmitterTE extends TileEntityCoreEmitter implements IMixinTileEntit
     int selecting = 0;
     boolean changed = false;
 
-    public CEmitterTE() {
+    public CoreCEmitterTE() {
         super();
         this.isActiveGetter = IS_ACTIVE_GETTER.bindTo(this);
         this.isActiveSetter = IS_ACTIVE_SETTER.bindTo(this);
@@ -140,12 +140,12 @@ public class CEmitterTE extends TileEntityCoreEmitter implements IMixinTileEntit
 
     @Override
     public Container provideContainer(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        return new CEmitterContainer(player, this);
+        return new CoreCEmitterContainer(player, this);
     }
 
     @SideOnly(Side.CLIENT)
     public GuiScreen provideGUI(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        return new CEmitterGUI(player, this);
+        return new CoreCEmitterGUI(player, this);
     }
 
     @Override

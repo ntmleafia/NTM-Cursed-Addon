@@ -8,10 +8,16 @@ import com.hbm.interfaces.ILaserable;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
+import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
+import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.Tuple.Pair;
+import com.leafia.contents.machines.powercores.dfc.components.absorber.CoreReceiverContainer;
+import com.leafia.contents.machines.powercores.dfc.components.absorber.CoreReceiverGUI;
+import com.leafia.contents.machines.powercores.dfc.components.injector.CoreInjectorContainer;
+import com.leafia.contents.machines.powercores.dfc.components.injector.CoreInjectorGUI;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity.DebrisType;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
@@ -20,10 +26,13 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityInjector;
 import com.leafia.settings.AddonConfig;
 import com.llib.LeafiaLib.NumScale;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -31,6 +40,9 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(value = TileEntityCoreReceiver.class)
-public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver {
+public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver, IGUIProvider {
 	@Shadow(remap = false) public long joules;
 
 	@Shadow(remap = false) public long prevJoules;
@@ -249,6 +261,11 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	}
 
 	@Override
+	public long syncSpk() {
+		return syncSpk;
+	}
+
+	@Override
 	public void sendToPlayer(EntityPlayer player) {
 		LeafiaPacket._start(this)
 				.__write(0,syncJoules)
@@ -335,5 +352,26 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	@Override
 	public String getPacketIdentifier() {
 		return "dfc_absorber";
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason uses different gui
+	 */
+	@Override
+	@Overwrite(remap = false)
+	public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
+		return new CoreReceiverContainer(entityPlayer,(TileEntityCoreReceiver)(IMixinTileEntityCoreReceiver)this);
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason uses different gui
+	 */
+	@Override
+	@Overwrite(remap = false)
+	@SideOnly(Side.CLIENT)
+	public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
+		return new CoreReceiverGUI(entityPlayer,(TileEntityCoreReceiver)(IMixinTileEntityCoreReceiver)this);
 	}
 }

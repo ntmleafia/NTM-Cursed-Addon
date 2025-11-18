@@ -7,12 +7,11 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.sound.LCEAudioWrapperClient;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
-import com.hbm.render.tileentity.RenderCoreComponent;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
@@ -67,7 +66,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,new DFCComponentRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,new DFCComponentRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,new DFCComponentRender());
-        ClientRegistry.bindTileEntitySpecialRenderer(CEmitterTE.class, new DFCComponentRender());
+        ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class, new DFCComponentRender());
 	}
 	@Override
 	public File getDataDir() {

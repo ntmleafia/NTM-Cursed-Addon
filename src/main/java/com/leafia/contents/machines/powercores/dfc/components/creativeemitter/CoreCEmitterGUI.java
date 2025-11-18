@@ -19,16 +19,16 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class CEmitterGUI extends GuiInfoContainer {
+public class CoreCEmitterGUI extends GuiInfoContainer {
 
     private static final ResourceLocation texture = new ResourceLocation(AddonBase.MODID + ":textures/gui/dfc/gui_cemitter.png");
     protected short saveButtonCoolDown = 0;
     int focused = -1;
-    private final CEmitterTE emitter;
+    private final CoreCEmitterTE emitter;
     private final GuiTextField[] fields = new GuiTextField[4];
 
-    public CEmitterGUI(EntityPlayer invPlayer,CEmitterTE tedf) {
-        super(new CEmitterContainer(invPlayer, tedf));
+    public CoreCEmitterGUI(EntityPlayer invPlayer,CoreCEmitterTE tedf) {
+        super(new CoreCEmitterContainer(invPlayer, tedf));
         emitter = tedf;
 
         this.xSize = 176;

@@ -3,15 +3,12 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 import com.hbm.api.item.IDesignatorItem;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.CoreComponent;
-import com.hbm.items.tool.ItemDesignator;
 import com.hbm.lib.HBMSoundHandler;
-import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
-import com.leafia.contents.machines.powercores.dfc.DFCBaseTE;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CoreCEmitterTE;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.MachineTooltip;
 import net.minecraft.block.BlockContainer;
@@ -28,7 +25,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +103,7 @@ public abstract class MixinCoreComponent extends BlockContainer {
 			//cir.setReturnValue(new TileEntityCoreReceiver());
 			//cir.cancel();
 		} else if (this == AddonBlocks.dfc_cemitter) {
-			cir.setReturnValue(new CEmitterTE());
+			cir.setReturnValue(new CoreCEmitterTE());
 			cir.cancel();
 		}
 	}

@@ -43,4 +43,11 @@ dependencies {
     implementation rfg.deobf("curse.maven:opencomputers-223008:6608365")
     implementation files("libs/Computronics-1.12.2-1.6.6-deobf.jar")
     runtimeOnlyNonPublishable rfg.deobf(files("libs/Backups-1.12.2-1.5.7.jar"))
+    /*
+    runtimeOnlyNonPublishable rfg.deobf(files("../RedstoneFlux-1.12-2.1.1.1-universal.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("../ThermalFoundation-1.12.2-2.6.7.1-universal.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("../CoFHCore-1.12.2-4.6.6.1-universal.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("../ThermalExpansion-1.12.2-5.5.7.1-universal.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("../CodeChickenLib-1.12.2-3.2.3.358-universal.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("../CoFHWorld-1.12.2-1.4.0.1-universal.jar"))*/
 }

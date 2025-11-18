@@ -12,16 +12,16 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class CEmitterContainer extends Container {
+public class CoreCEmitterContainer extends Container {
 
     int power;
     int watts;
     int prev;
     boolean isOn;
     FluidTank tank;
-    private final CEmitterTE nukeBoy;
+    private final CoreCEmitterTE nukeBoy;
     private EntityPlayerMP player;
-    public CEmitterContainer(EntityPlayer player,CEmitterTE tedf) {
+    public CoreCEmitterContainer(EntityPlayer player,CoreCEmitterTE tedf) {
         InventoryPlayer invPlayer = player.inventory;
         if (player instanceof EntityPlayerMP) this.player = (EntityPlayerMP) player;
         nukeBoy = tedf;
@@ -59,7 +59,7 @@ public class CEmitterContainer extends Container {
     public void updateProgressBar(int id, int data) {
         if (id == 3) nukeBoy.isOn = data > 0;
         if (id == 1) {
-            if (Minecraft.getMinecraft().currentScreen instanceof CEmitterGUI) {
+            if (Minecraft.getMinecraft().currentScreen instanceof CoreCEmitterGUI) {
                 //((GUICoreCreativeEmitter)Minecraft.getMinecraft().currentScreen).syncTextField(watts);
             }
         }
