@@ -70,7 +70,6 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
     @Override
     public IMixinEntityCloudFleija setAntischrab() {
         this.isAntischrab = true;
-        this.dataManager.set(ANTISCHRAB, true);
         return this;
     }
 
@@ -121,10 +120,9 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
 
     @Inject(method = {"entityInit", "func_70088_a"}, at = @At("TAIL"))
     private void onEntityInit(CallbackInfo ci) {
-        this.dataManager.register(SCALE, 0.0f);
-        this.dataManager.register(TICKRATE, 1.0f);
-        this.dataManager.register(ANTISCHRAB, isAntischrab);
-        this.dataManager.register(FINISHED, false);
+        this.dataManager.register(SCALE_R, 0.0f);
+        this.dataManager.register(TICKRATE_R, 1.0f);
+        this.dataManager.register(FINISHED_R, false);
         if (world.isRemote) {
             spawnParticle(5);
             spawnParticle(4);
@@ -154,10 +152,9 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
     @Unique
     @SideOnly(Side.CLIENT)
     public void remoteUpdate() { // stupid minecraft needs this as separate method
-        isAntischrab = this.dataManager.get(ANTISCHRAB);
-        tickrate = this.dataManager.get(TICKRATE);
+        tickrate = this.dataManager.get(TICKRATE_R);
         remoteTicks += tickrate;
-        float getSc = this.dataManager.get(SCALE);
+        float getSc = this.dataManager.get(SCALE_R);
         if (getSc > this.scale) remoteTicks = 0;
         this.scale = getSc;
         if (world.rand.nextInt(16) == 0) spawnParticle(this.scale * 0.75);
@@ -197,7 +194,7 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
                 if (this.bound == null) tryBindAuto();
             }
             if (this.scale >= this.getMaxAge()) {
-                if (!this.dataManager.get(FINISHED)) this.dataManager.set(FINISHED, true);
+                if (!this.dataManager.get(FINISHED_R)) this.dataManager.set(FINISHED_R, true);
                 finishTimer++;
                 if (finishTimer > (int) Math.ceil(10 + Math.pow(this.getMaxAge(), 0.5)) + 10) this.setDead();
             } else {
@@ -205,14 +202,14 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
             }
             if (bound == null) this.scale++;
             else this.scale += getPreferredSpeedMultiplier((short) Math.ceil(scale / 16));
-            this.dataManager.set(SCALE, scale);
+            this.dataManager.set(SCALE_R, scale);
             int millis = (int) Math.floorMod(System.currentTimeMillis(), 10000L);
             if (lastMillis >= 0) {
                 int elapsed = Math.floorMod(millis - lastMillis, 10000);
                 tickrate2 = tickrate1;
                 tickrate1 = tickrate;
                 tickrate = 50.0f / elapsed;
-                this.dataManager.set(TICKRATE, (tickrate + tickrate1 + tickrate2) / 3);
+                this.dataManager.set(TICKRATE_R, (tickrate + tickrate1 + tickrate2) / 3);
             }
             lastMillis = millis;
         }
@@ -223,6 +220,11 @@ public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IM
 
     @Override
     public boolean isFinished() {
-        return this.dataManager.get(FINISHED);
+        return this.dataManager.get(FINISHED_R);
+    }
+
+    @Override
+    public int getMaxSize() {
+        return getMaxAge();
     }
 }

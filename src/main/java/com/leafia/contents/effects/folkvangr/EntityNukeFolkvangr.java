@@ -148,7 +148,7 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 				}
 			}
 			if ((cloudUUID == null) && (cloudBound != null)) {
-				EntityCloudFleija cloudBoundE = (EntityCloudFleija)cloudBound;
+				Entity cloudBoundE = (Entity)cloudBound;
 				if (cloudBoundE.isEntityAlive() && cloudBoundE.isAddedToWorld()) {
 					cloudUUID = cloudBoundE.getUniqueID();
 				}
@@ -163,24 +163,24 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 			}
 		}
 		if ((cloudUUID != null) && (cloudBound != null)) {
-			EntityCloudFleija cloudBoundE = (EntityCloudFleija)cloudBound;
+			Entity cloudBoundE = (Entity)cloudBound;
 			if (!played) {
-				world.playSound(null,getPosition(),LeafiaSoundEvents.nuke_folkvangr,SoundCategory.BLOCKS,cloudBoundE.getMaxAge(),1);
+				world.playSound(null,getPosition(),LeafiaSoundEvents.nuke_folkvangr,SoundCategory.BLOCKS,cloudBound.getMaxSize(),1);
 				PacketDispatcher.wrapper.sendToAllAround(
 						new CommandLeaf.ShakecamPacket(new String[]{
-								"duration="+cloudBoundE.getMaxAge(),
-								"range="+cloudBoundE.getMaxAge()*2
+								"duration="+cloudBound.getMaxSize(),
+								"range="+cloudBound.getMaxSize()*2
 						}).setPos(getPosition()),
-						new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBoundE.getMaxAge()*2.25)
+						new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBound.getMaxSize()*2.25)
 				);
 				if (cloudBound.getIsAntischrab()) {
 					PacketDispatcher.wrapper.sendToAllAround(
 							new CommandLeaf.ShakecamPacket(new String[]{
 									"type=smooth","duration=2",
 									"speed=8","ease=expoOut","intensity=12",
-									"range="+cloudBoundE.getMaxAge()*2
+									"range="+cloudBound.getMaxSize()*2
 							}).setPos(getPosition()),
-							new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBoundE.getMaxAge()*2.25)
+							new NetworkRegistry.TargetPoint(dimension,posX,posY,posZ,cloudBound.getMaxSize()*2.25)
 					);
 				}
 			}
@@ -189,14 +189,14 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 			double curRange = cloudBound.getScale()/16d;
 			short start = (short)Math.floor(curRange);
 			int destColumn = (int)Math.floor((curRange-Math.floor(curRange))*getRowTotal(start));
-			if (!cloudBoundE.isEntityAlive() || (cloudBound.getScale() > cloudBoundE.getMaxAge())) {
-				start = (short)Math.ceil(cloudBoundE.getMaxAge()/16d);
+			if (!cloudBoundE.isEntityAlive() || (cloudBound.getScale() > cloudBound.getMaxSize())) {
+				start = (short)Math.ceil(cloudBound.getMaxSize()/16d);
 				destColumn = getRowTotal(start);
 				//this.setDead();
-				postEffect = (int)(Math.min(Math.pow(cloudBoundE.getMaxAge()/50d+1,1.25)-1,20*20)*20);
-				vacuumStart = cloudBoundE.getMaxAge();
-				vacuumEnd = cloudBoundE.getMaxAge()*3;
-				vacuumForce = Math.pow(cloudBoundE.getMaxAge()/4d,0.75)/30d;
+				postEffect = (int)(Math.min(Math.pow(cloudBound.getMaxSize()/50d+1,1.25)-1,20*20)*20);
+				vacuumStart = cloudBound.getMaxSize();
+				vacuumEnd = cloudBound.getMaxSize()*3;
+				vacuumForce = Math.pow(cloudBound.getMaxSize()/4d,0.75)/30d;
 				FolkvangrVacuumPacket packet = new FolkvangrVacuumPacket();
 				packet.pos = getPositionVector();
 				packet.postEffect = postEffect;
@@ -240,7 +240,7 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 		}
 	}
 	protected boolean carveChunk(int cx,int cy,int cz) {
-		long radius = ((EntityCloudFleija)cloudBound).getMaxAge();
+		long radius = cloudBound.getMaxSize();
 		//if (getPositionVector().distanceTo(new Vec3d(cx*16+MathHelper.positiveModulo(posX,16),cy*16+MathHelper.positiveModulo(posY,16),cz*16+MathHelper.positiveModulo(posZ,16))) > radius+14) return;
 		ChunkPos chunkPos = new ChunkPos(cx,cz);
 		boolean carved = false; // optimization
@@ -266,7 +266,7 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 		return carved;
 	}
 	protected void processChunk(int x,int z) {
-		int radius = ((EntityCloudFleija)cloudBound).getMaxAge();
+		int radius = cloudBound.getMaxSize();
 		Chunk chunk = world.getChunk(chunkCoordX+x,chunkCoordZ+z);
 		ExtendedBlockStorage[] storage = chunk.getBlockStorageArray();
 		if (

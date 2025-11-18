@@ -227,4 +227,9 @@ public abstract class MixinEntityCloudFleija extends Entity implements IMixinEnt
     public boolean isFinished() {
         return this.dataManager.get(FINISHED);
     }
+
+    @Override
+    public int getMaxSize() {
+        return getMaxAge();
+    }
 }
