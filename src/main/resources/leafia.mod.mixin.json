@@ -8,7 +8,8 @@
     "hbm.MixinFolderButton",
     "hbm.MixinItemRenderLaserDetonator",
     "hbm.MixinParticleRBMKMush",
-    "hbm.MixinRenderTorex"
+    "hbm.MixinRenderTorex",
+    "hbm.MixinFluidTankNTM"
   ],
   "mixins": [
     "hbm.MixinCoreComponent",

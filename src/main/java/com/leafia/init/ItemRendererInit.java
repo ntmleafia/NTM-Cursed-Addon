@@ -33,6 +33,8 @@ public class ItemRendererInit {
 		fix(AddonItems.ams_focus_limiter);
 		fix(AddonItems.ams_focus_omega);
 		fix(AddonItems.ams_focus_safe);
+
+		fix(AddonItems.fuzzy_identifier);
 	}
 	private static void register(boolean doFix,Item item,ItemRenderBase renderer) { if (doFix) fixFuckingLocations.add(item); renderers.put(item,renderer); }
 	private static void register(boolean doFix,Block block,ItemRenderBase renderer) { if (doFix) fixFuckingLocations.add(Item.getItemFromBlock(block)); renderers.put(Item.getItemFromBlock(block),renderer); }

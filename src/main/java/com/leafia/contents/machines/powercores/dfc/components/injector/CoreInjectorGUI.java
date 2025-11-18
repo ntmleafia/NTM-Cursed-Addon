@@ -20,7 +20,7 @@ public class CoreInjectorGUI extends GuiInfoContainer {
 	private TileEntityCoreInjector injector;
 	
 	public CoreInjectorGUI(InventoryPlayer invPlayer,TileEntityCoreInjector tedf) {
-		super(new ContainerCoreInjector(invPlayer, tedf));
+		super(new CoreInjectorContainer(invPlayer, tedf));
 		injector = tedf;
 		
 		this.xSize = 176;

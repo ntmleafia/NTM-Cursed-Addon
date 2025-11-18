@@ -2,6 +2,7 @@ package com.leafia.dev.custompacket;
 
 import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
 import com.hbm.packet.PacketDispatcher;
+import com.leafia.contents.gear.utility.ItemFuzzyIdentifier.FuzzyIdentifierPacket;
 import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -27,6 +28,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 	public enum CustomPacketType { // add your packets here, that's literally all registering you have to do!
 		NONE,
 		VISUALIZER_TRACE(new VisualizerPacket()),
+		FUZZY_IDENTIFIER(new FuzzyIdentifierPacket()),
 		DFC_SHOCK(new DFCShockPacket()),
 		EXPLOSION_NT(new ExplosionNTSyncPacket())
 		;

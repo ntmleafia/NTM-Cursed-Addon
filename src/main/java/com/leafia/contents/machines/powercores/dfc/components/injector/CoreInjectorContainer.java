@@ -1,11 +1,13 @@
 package com.leafia.contents.machines.powercores.dfc.components.injector;
 
+import com.hbm.inventory.SlotTakeOnly;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class CoreInjectorContainer extends Container {
 
@@ -14,6 +16,10 @@ public class CoreInjectorContainer extends Container {
 	public CoreInjectorContainer(InventoryPlayer invPlayer,TileEntityCoreInjector tedf) {
 		
 		nukeBoy = tedf;
+		this.addSlotToContainer(new SlotItemHandler(nukeBoy.inventory, 0, 15, 16));
+		this.addSlotToContainer(new SlotTakeOnly(nukeBoy.inventory, 1, 15, 52));
+		this.addSlotToContainer(new SlotItemHandler(nukeBoy.inventory, 2, 146, 17));
+		this.addSlotToContainer(new SlotTakeOnly(nukeBoy.inventory, 3, 146, 53));
 		
 		for(int i = 0; i < 3; i++)
 		{

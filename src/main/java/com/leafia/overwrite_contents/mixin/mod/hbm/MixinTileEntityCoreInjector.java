@@ -1,7 +1,8 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.api.fluid.IFluidStandardReceiver;
-import com.hbm.config.MachineConfig;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;

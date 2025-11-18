@@ -10,6 +10,9 @@ import com.hbm.render.item.ItemRenderBase;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.gear.IADSWeapon;
+import com.leafia.contents.gear.utility.FuzzyIdentifierBakedModel;
+import com.leafia.contents.gear.utility.FuzzyIdentifierRender;
+import com.leafia.contents.gear.utility.ItemFuzzyIdentifier;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
@@ -67,6 +70,14 @@ public class LeafiaClientListener {
 			IRegistry<ModelResourceLocation,IBakedModel> reg = evt.getModelRegistry();
 			for(Entry<Item,ItemRenderBase> entry : ItemRendererInit.renderers.entrySet()){
 				swapModels(entry.getKey(), reg);
+			}
+			{
+				Object object = evt.getModelRegistry().getObject(ItemFuzzyIdentifier.fuzzyModel);
+				if (object instanceof IBakedModel) {
+					IBakedModel model = (IBakedModel) object;
+					FuzzyIdentifierRender.INSTANCE.itemModelFuzzy = model;
+					evt.getModelRegistry().putObject(ItemFuzzyIdentifier.fuzzyModel,new FuzzyIdentifierBakedModel());
+				}
 			}
 		}
 		@SubscribeEvent(priority = EventPriority.LOWEST)
