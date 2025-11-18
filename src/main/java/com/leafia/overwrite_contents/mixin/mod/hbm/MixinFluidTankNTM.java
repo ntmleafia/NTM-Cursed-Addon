@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = FluidTankNTM.class)
 public class MixinFluidTankNTM {
-	@Shadow private @NotNull FluidType type;
+	@Shadow(remap = false) private @NotNull FluidType type;
 	@Unique boolean lastClicked = false;
 	@Inject(method = "renderTankInfo",at = @At(value = "INVOKE", target = "Lcom/hbm/inventory/fluid/FluidType;addInfo(Ljava/util/List;)V",remap = false),remap = false)
 	void onRenderTankInfo(GuiInfoContainer gui,int mouseX,int mouseY,int x,int y,int width,int height,CallbackInfo ci) {

@@ -272,15 +272,12 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 	}
 
 
-	/**
-	 * @author ntmleafia
-	 * @reason LCE moment
-	 */
-	@Override
-	@Overwrite(remap = false)
-	public String getComponentName() {
-		return "dfc_communicator";
-	}
+	/*
+	@Inject(method = "getComponentName",at = @At(value = "HEAD"),cancellable = true,remap = false)
+	public void onGetComponentName(CallbackInfoReturnable<String> cir) {
+		cir.setReturnValue("dfc_communicator");
+		cir.cancel();
+	}*/
 
 	@Callback
 	public Object[] analyze(Context context, Arguments args) {
