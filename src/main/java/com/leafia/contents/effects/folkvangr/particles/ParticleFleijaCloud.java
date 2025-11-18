@@ -1,6 +1,5 @@
 package com.leafia.contents.effects.folkvangr.particles;
 
-import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.lib.RefStrings;
 import com.hbm.render.NTMRenderHelper;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
@@ -29,12 +28,12 @@ public class ParticleFleijaCloud extends Particle {
 	double mySpeed = 1;
 	void updatePosition() {
 		double s = cloud.getScale()*1.4;
-		this.posX = ((EntityCloudFleija)cloud).posX+lookVector.x*s+rightVector.x*s;
-		this.posY = ((EntityCloudFleija)cloud).posY+lookVector.y*s+rightVector.y*s;
-		this.posZ = ((EntityCloudFleija)cloud).posZ+lookVector.z*s+rightVector.z*s;
+		this.posX = ((Entity)cloud).posX+lookVector.x*s+rightVector.x*s;
+		this.posY = ((Entity)cloud).posY+lookVector.y*s+rightVector.y*s;
+		this.posZ = ((Entity)cloud).posZ+lookVector.z*s+rightVector.z*s;
 	}
 	public ParticleFleijaCloud(World world,Vec3d forward,Vec3d right,IMixinEntityCloudFleija cloud) {
-		super(world, ((EntityCloudFleija)cloud).posX, ((EntityCloudFleija)cloud).posY, ((EntityCloudFleija)cloud).posZ);
+		super(world, ((Entity)cloud).posX, ((Entity)cloud).posY, ((Entity)cloud).posZ);
 		this.particleScale = 3;
 		this.particleRed = this.particleGreen = this.particleBlue = 0.9F + world.rand.nextFloat() * 0.05F;
 		this.canCollide = false;
@@ -54,7 +53,7 @@ public class ParticleFleijaCloud extends Particle {
 
 	@Override
 	public void onUpdate() {
-		if (((EntityCloudFleija)cloud).isDead) {
+		if (((Entity)cloud).isDead) {
 			// again, not worth the effort      world.spawnParticle(new ParticleFleijaVacuum(world,posX,posY,posZ,3,rand.nextFloat()*0.1f+0.1f,new VacuumInstance()));
 			this.setExpired();
 			return;
