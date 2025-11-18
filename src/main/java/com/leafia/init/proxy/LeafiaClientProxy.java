@@ -7,12 +7,14 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.sound.LCEAudioWrapperClient;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
+import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.items.ModItems;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
+import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudRainbow;
 import com.leafia.contents.gear.utility.FuzzyIdentifierRender;
 import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
@@ -57,6 +59,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
         ModelLoader.setCustomStateMapper(AddonBlocks.door_fuckoff, new StateMap.Builder().ignore(BlockDoor.POWERED).build());
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleija.class, LCERenderCloudFleija.FACTORY);
+		RenderingRegistry.registerEntityRenderingHandler(EntityCloudFleijaRainbow.class, LCERenderCloudRainbow.FACTORY);
 		RenderingRegistry.registerEntityRenderingHandler(LCETorex.class, LCETorexRender.FACTORY);
 
 		RenderingRegistry.registerEntityRenderingHandler(AbsorberShrapnelEntity.class, AbsorberShrapnelRender.FACTORY);

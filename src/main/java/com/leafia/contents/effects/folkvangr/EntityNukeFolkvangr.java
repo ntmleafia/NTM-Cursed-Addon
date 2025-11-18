@@ -69,7 +69,7 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 		this.cloudBound = cloud;
 		if (cloud == null) {
 			if (lastCloud != null) {
-				EntityCloudFleija lastCloudE = (EntityCloudFleija)lastCloud;
+				Entity lastCloudE = (Entity)lastCloud;
 				if (lastCloudE.isEntityAlive() && lastCloudE.isAddedToWorld()) {
 					if (lastCloud.getBound() == null) {
 						if (lastCloudE.ticksExisted < 5) {

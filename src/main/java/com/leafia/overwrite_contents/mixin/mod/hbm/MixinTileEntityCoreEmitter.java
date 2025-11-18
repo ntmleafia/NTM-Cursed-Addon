@@ -250,12 +250,12 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         });
     }
 
-    @Inject(method = "readFromNBT",at = @At("HEAD"))
+    @Inject(method = {"readFromNBT","func_145839_a"},at = @At("HEAD"))
     public void onReadFromNBT(NBTTagCompound compound,CallbackInfo ci) {
         readTargetPos(compound);
     }
 
-    @Inject(method = "writeToNBT",at = @At("HEAD"))
+    @Inject(method = {"writeToNBT","func_189515_b"},at = @At("HEAD"))
     public void onWriteToNBT(NBTTagCompound compound,CallbackInfoReturnable<NBTTagCompound> cir) {
         writeTargetPos(compound);
     }

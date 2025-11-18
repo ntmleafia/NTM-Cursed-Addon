@@ -226,12 +226,12 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 		return maxPower;
 	}
 
-	@Inject(method = "readFromNBT",at = @At("HEAD"))
+	@Inject(method = {"readFromNBT","func_145839_a"},at = @At("HEAD"))
 	public void onReadFromNBT(NBTTagCompound compound,CallbackInfo ci) {
 		readTargetPos(compound);
 	}
 
-	@Inject(method = "writeToNBT",at = @At("HEAD"))
+	@Inject(method = {"writeToNBT","func_189515_b"},at = @At("HEAD"))
 	public void onWriteToNBT(NBTTagCompound compound,CallbackInfoReturnable<NBTTagCompound> cir) {
 		writeTargetPos(compound);
 	}
@@ -272,13 +272,13 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 	}
 
 
-	/*
 	@Inject(method = "getComponentName",at = @At(value = "HEAD"),cancellable = true,remap = false)
 	public void onGetComponentName(CallbackInfoReturnable<String> cir) {
 		cir.setReturnValue("dfc_communicator");
 		cir.cancel();
-	}*/
+	}
 
+	@Optional.Method(modid = "opencomputers")
 	@Callback
 	public Object[] analyze(Context context, Arguments args) {
 		TileEntityCore core = getCore();
@@ -298,6 +298,7 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 		return new Object[]{"COULDN'T CONNECT TO THE CORE"};
 	}
 
+	@Optional.Method(modid = "opencomputers")
 	@Callback(doc = "durability()->(lensDurability: int, maximum: int) - Returns currently installed lens' durability, or 0 if missing.")
 	public Object[] durability(Context context,Arguments args) {
 		ItemStack stack = inventory.getStackInSlot(0);

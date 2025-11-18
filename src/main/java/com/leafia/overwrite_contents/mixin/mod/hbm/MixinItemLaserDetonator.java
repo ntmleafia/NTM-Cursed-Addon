@@ -47,7 +47,7 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 	}
 
 	/**
-	 * @author Leafia
+	 * @author ntmleafia
 	 * @reason item.detonator_laser.desc2
 	 */
 	@Overwrite
@@ -63,7 +63,7 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 	}
 
 	/**
-	 * @author Leafia
+	 * @author ntmleafia
 	 * @reason ability to detonate from 512 blocks away
 	 */
 	@Overwrite

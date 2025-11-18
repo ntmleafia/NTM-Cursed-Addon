@@ -5,17 +5,18 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(MOD)",
   "client": [
+    "hbm.MixinFluidTankNTM",
     "hbm.MixinFolderButton",
     "hbm.MixinItemRenderLaserDetonator",
     "hbm.MixinParticleRBMKMush",
-    "hbm.MixinRenderTorex",
-    "hbm.MixinFluidTankNTM"
+    "hbm.MixinRenderTorex"
   ],
   "mixins": [
     "hbm.MixinCoreComponent",
     "hbm.MixinCoreCore",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityCloudFleija",
+    "hbm.MixinEntityCloudFleijaRainbow",
     "hbm.MixinEntityDebrisBase",
     "hbm.MixinEntityGrenadeASchrab",
     "hbm.MixinEntityNukeExplosionMK3",

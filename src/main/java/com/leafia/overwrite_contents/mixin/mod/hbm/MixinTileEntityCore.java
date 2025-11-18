@@ -5,6 +5,7 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.blocks.machine.MachineFieldDisturber;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
+import com.hbm.forgefluid.FFUtils;
 import com.hbm.handler.ArmorUtil;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
@@ -185,6 +186,34 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		componentPositions.clear();
 		if (destroyed) return;
 		if (!world.isRemote) tickServer(); else tickClient();
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason do the nbt thingy
+	 */
+	@Override
+	@Overwrite
+	public void readFromNBT(NBTTagCompound compound) {
+		this.tanks[0].readFromNBT(compound, "fuel1");
+		this.tanks[1].readFromNBT(compound, "fuel2");
+		temperature = compound.getDouble("temperature");
+		containedEnergy = compound.getDouble("energy");
+		super.readFromNBT(compound);
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason do the nbt thingy
+	 */
+	@Override
+	@Overwrite
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		this.tanks[0].writeToNBT(compound, "fuel1");
+		this.tanks[1].writeToNBT(compound, "fuel2");
+		compound.setDouble("temperature",temperature);
+		compound.setDouble("energy",containedEnergy);
+		return super.writeToNBT(compound);
 	}
 
 

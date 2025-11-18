@@ -94,7 +94,7 @@ public abstract class MixinCoreComponent extends BlockContainer {
 		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 
-	@Inject(method = "createNewTileEntity",at = @At(value = "HEAD"),remap = false,cancellable = true)
+	@Inject(method = {"createNewTileEntity","func_149915_a"},at = @At(value = "HEAD"),cancellable = true)
 	public void onCreateNewTileEntity(World worldIn,int meta,CallbackInfoReturnable<TileEntity> cir) {
 		if (this == AddonBlocks.dfc_reinforced) {
 			cir.setReturnValue(new TileEntityCoreReceiver());

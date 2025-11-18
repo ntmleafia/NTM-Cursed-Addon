@@ -51,7 +51,7 @@ public class MixinItemRenderLaserDetonator extends TEISRBase {
 			.setScale(1.01).setPosition(-3.35,1,-0.9).setRotation(-14,1,-5);
 
 	/**
-	 * @author Leafia
+	 * @author ntmleafia
 	 * @reason ADS view.
 	 */
 	@Overwrite

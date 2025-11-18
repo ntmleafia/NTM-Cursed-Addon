@@ -2,6 +2,7 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.CompatibilityConfig;
 import com.hbm.entity.effect.EntityCloudFleija;
+import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.items.ModItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaAntischrabA;
@@ -12,9 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -32,8 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr.getPreferredSpeedMultiplier;
 
-@Mixin(value = EntityCloudFleija.class)
-public abstract class MixinEntityCloudFleija extends Entity implements IMixinEntityCloudFleija {
+@Mixin(value = EntityCloudFleijaRainbow.class)
+public abstract class MixinEntityCloudFleijaRainbow extends Entity implements IMixinEntityCloudFleija {
     @Shadow(remap = false)
     public float scale;
     @Unique
@@ -55,7 +53,7 @@ public abstract class MixinEntityCloudFleija extends Entity implements IMixinEnt
     @Unique
     int finishTimer = 0;
 
-    public MixinEntityCloudFleija(World worldIn) {
+    public MixinEntityCloudFleijaRainbow(World worldIn) {
         super(worldIn);
     }
 
