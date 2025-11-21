@@ -124,8 +124,8 @@ public class CoreExchangerGUI extends LCEGuiInfoContainer {
 			drawTexturedModalRect(guiLeft+81,guiTop+68,176,0,32,14);
 		for (GuiTextField field : fields)
 			field.drawTextBox();
-		te.input.renderTank(guiLeft+24, guiTop+31, zLevel, 16, 52);
-		te.output.renderTank(guiLeft+136, guiTop+31, zLevel, 16, 52);
+		te.input.renderTank(guiLeft+24, guiTop+31+52, zLevel, 16, 52);
+		te.output.renderTank(guiLeft+136, guiTop+31+52, zLevel, 16, 52);
 		updateTextBoxes();
 	}
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {

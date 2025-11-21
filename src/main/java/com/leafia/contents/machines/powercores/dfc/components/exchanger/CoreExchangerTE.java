@@ -1,5 +1,6 @@
 package com.leafia.contents.machines.powercores.dfc.components.exchanger;
 
+import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.api.fluid.IFluidStandardSender;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
@@ -25,10 +26,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBase, ITickable, IGUIProvider, IFluidStandardSender {
+public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBase, ITickable, IGUIProvider, IFluidStandardSender, IFluidStandardReceiver {
 	public FluidTankNTM input = new FluidTankNTM(Fluids.COOLANT,2560_000);
 	public FluidTankNTM output = new FluidTankNTM(Fluids.COOLANT_HOT,2560_000);
 	protected BlockPos targetPosition = new BlockPos(0,0,0);
@@ -152,6 +154,7 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
 
             if (timer >= tickDelay) {
                 timer = 0;
+	            this.subscribeToAllAround(input.getTankType(), this);
 
                 FluidType inType  = input.getTankType();
                 FluidType outType = output.getTankType();
@@ -175,7 +178,8 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
                                     input.setFill(availableIn - drain);
                                     output.fill(outType, fill, true);
                                     //mlbv: why did you /20 here but not in maxDrain calculation? probably a bug, removed.
-                                    mixin.setDFCTemperature(Math.max(mixin.getDFCTemperature() - drain * heatAmt / mbPerCelsius, 0.0));
+	                                //ntmleafia: because if i divide maxDrain by 20 it just rounds down to 0 and doesn't work well
+                                    mixin.setDFCTemperature(Math.max(mixin.getDFCTemperature() - drain * heatAmt / mbPerCelsius /20, 0.0));
                                 }
                             }
                         }
@@ -282,5 +286,10 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
 	@Override
 	public FluidTankNTM[] getAllTanks() {
 		return new FluidTankNTM[]{input,output};
+	}
+
+	@Override
+	public @NotNull FluidTankNTM[] getReceivingTanks() {
+		return new FluidTankNTM[]{input};
 	}
 }

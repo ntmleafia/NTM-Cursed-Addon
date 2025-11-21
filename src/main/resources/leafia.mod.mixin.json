@@ -26,14 +26,17 @@
     "hbm.MixinItemCell",
     "hbm.MixinItemDesignatorRange",
     "hbm.MixinItemLaserDetonator",
+    "hbm.MixinModEventHandler",
     "hbm.MixinModItems",
     "hbm.MixinPacketDispatcher",
+    "hbm.MixinTileEntityChungus",
     "hbm.MixinTileEntityCore",
     "hbm.MixinTileEntityCoreEmitter",
     "hbm.MixinTileEntityCoreInjector",
     "hbm.MixinTileEntityCoreReceiver",
     "hbm.MixinTileEntityCoreStabilizer",
-    "hbm.MixinTileEntityCrateTungsten"
+    "hbm.MixinTileEntityCrateTungsten",
+    "hbm.MixinTileEntityMachineBase"
   ],
   "server": [
   ],

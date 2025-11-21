@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm;required:mixinbooter")
+@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:hbm@[1.1.3.0,);required:mixinbooter")
 public class AddonBase {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
