@@ -1,7 +1,7 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.blocks.machine.CoreCore;
-import com.leafia.dev.MachineTooltip;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

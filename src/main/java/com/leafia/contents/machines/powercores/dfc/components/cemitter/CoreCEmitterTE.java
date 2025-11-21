@@ -1,4 +1,4 @@
-package com.leafia.contents.machines.powercores.dfc.components.creativeemitter;
+package com.leafia.contents.machines.powercores.dfc.components.cemitter;
 
 import com.hbm.lib.MethodHandleHelper;
 import com.hbm.tileentity.machine.TileEntityCore;

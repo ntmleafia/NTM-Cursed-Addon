@@ -1,4 +1,4 @@
-package com.leafia.contents.machines.powercores.dfc.components.creativeemitter;
+package com.leafia.contents.machines.powercores.dfc.components.cemitter;
 
 import com.hbm.inventory.gui.GuiInfoContainer;
 import com.hbm.lib.Library;

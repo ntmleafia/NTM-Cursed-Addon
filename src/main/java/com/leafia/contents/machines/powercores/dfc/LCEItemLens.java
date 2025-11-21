@@ -40,7 +40,7 @@ public class LCEItemLens extends ItemLens {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add(TextFormatting.YELLOW+ I18nUtil.resolveKey("desc.fieldmodifier")+" " + (fieldMod >= 1 ? "§a+" : "§c") + (Math.round(fieldMod * 1000) * .10 - 100) + "%");
         tooltip.add(TextFormatting.YELLOW+I18nUtil.resolveKey("desc.powdrainmodifier")+" " + (drainMod >= 1 ? "§c+" : "§a") + (Math.round(drainMod * 1000) * .10 - 100) + "%");
-        tooltip.add(TextFormatting.YELLOW+I18nUtil.resolveKey("desc.energymodifier")+" " + (energyMod > 1 ? "§6+" : ("§8"+(energyMod<=1 ? "+" : ""))) + (Math.round(energyMod * 1000) * .10 - 100) + "%");
+        tooltip.add(TextFormatting.YELLOW+I18nUtil.resolveKey("desc.energymodifier")+" " + (energyMod > 1 ? "§6+" : ("§8"+(energyMod==1 ? "+" : ""))) + (Math.round(energyMod * 1000) * .10 - 100) + "%");
 
     }
 }

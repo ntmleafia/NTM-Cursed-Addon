@@ -1,4 +1,4 @@
-package com.leafia.contents.machines.powercores.dfc.components.creativeemitter;
+package com.leafia.contents.machines.powercores.dfc.components.cemitter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

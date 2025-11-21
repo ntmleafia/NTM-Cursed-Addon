@@ -1,4 +1,4 @@
-package com.leafia.dev;
+package com.leafia.dev.machine;
 
 import com.hbm.util.I18nUtil;
 import net.minecraft.util.text.TextFormatting;

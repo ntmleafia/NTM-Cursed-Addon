@@ -8,9 +8,10 @@ import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CoreCEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
 import com.leafia.dev.LeafiaDebug;
-import com.leafia.dev.MachineTooltip;
+import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -100,8 +101,8 @@ public abstract class MixinCoreComponent extends BlockContainer {
 			cir.setReturnValue(new TileEntityCoreReceiver());
 			cir.cancel();
 		} else if (this == AddonBlocks.dfc_exchanger) {
-			//cir.setReturnValue(new TileEntityCoreReceiver());
-			//cir.cancel();
+			cir.setReturnValue(new CoreExchangerTE());
+			cir.cancel();
 		} else if (this == AddonBlocks.dfc_cemitter) {
 			cir.setReturnValue(new CoreCEmitterTE());
 			cir.cancel();

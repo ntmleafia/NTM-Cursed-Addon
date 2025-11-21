@@ -16,7 +16,8 @@ import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
-import com.leafia.contents.machines.powercores.dfc.components.creativeemitter.CoreCEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
+import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
@@ -187,9 +188,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 		} else if (te instanceof TileEntityCoreStabilizer) {
 			bindTexture(dfc_stabilizer_tex);
 			mdl = dfc_stabilizer_mdl;
-		/*} else if (tileEntity instanceof DFCExchangerTE) {
+		} else if (te instanceof CoreExchangerTE) {
 			bindTexture(dfc_exchanger_tex);
-			mdl = dfc_exchanger_mdl;*/
+			mdl = dfc_exchanger_mdl;
 		} else return;
 		GL11.glPushMatrix();
 		GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
@@ -340,8 +341,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				}
 			}
 		}
-		/*if (te instanceof DFCExchangerTE) {
-			DFCExchangerTE exchanger = (DFCExchangerTE) te;
+		if (te instanceof CoreExchangerTE) {
 			//int range = injector.beam;
 
 			if (range > 0) {
@@ -354,7 +354,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lx, ly);
 			}
 			bindTexture(dfc_exchanger_tex);
-		}*/
+		}
 
 		GlStateManager.enableLighting();
 		GL11.glPopMatrix();
