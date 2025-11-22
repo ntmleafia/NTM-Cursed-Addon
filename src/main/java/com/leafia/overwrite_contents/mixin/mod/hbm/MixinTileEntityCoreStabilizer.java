@@ -308,4 +308,42 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 		}
 		return new Object[]{0, 0};
 	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "setLevel(newLevel: number)->(previousLevel: number)")
+	public Object[] setLevel(Context context, Arguments args) {
+		Object[] prev = new Object[]{watts};
+		watts = MathHelper.clamp(args.checkInteger(0), 1, 100);
+		return prev;
+	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "getLevel()->(level: number)")
+	public Object[] getLevel(Context context, Arguments args) {
+		return new Object[]{watts};
+	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "validate()->(success: boolean) - Whether the stabilizer is working or not")
+	public Object[] validate(Context context, Arguments args) {
+		return new Object[]{isOn};
+	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "getPower(); returns the current power level - long")
+	public Object[] getPower(Context context, Arguments args) {
+		return new Object[]{power};
+	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "getMaxPower(); returns the maximum power level - long")
+	public Object[] getMaxPower(Context context, Arguments args) {
+		return new Object[]{getMaxPower()};
+	}
+
+	@Optional.Method(modid = "opencomputers")
+	@Callback(doc = "getChargePercent(); returns the charge in percent - double")
+	public Object[] getChargePercent(Context context, Arguments args) {
+		return new Object[]{100D * getPower() / (double) getMaxPower()};
+	}
 }
