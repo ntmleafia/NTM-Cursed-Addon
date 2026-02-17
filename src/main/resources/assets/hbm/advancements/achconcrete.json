@@ -1,0 +1,46 @@
+{
+  "parent": "hbm:achtechnetium",
+  "display": {
+    "icon": {
+      "item": "hbm:concrete"
+    },
+    "title": {
+      "translate": "achievement.concrete"
+    },
+    "description": {
+      "translate": "achievement.concrete.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_concrete_smooth": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:concrete_smooth"
+          }
+        ]
+      }
+    },
+    "crafting_hbm_concrete_asbestos": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:concrete_asbestos"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_concrete_smooth",
+      "crafting_hbm_concrete_asbestos"
+    ]
+  ]
+}

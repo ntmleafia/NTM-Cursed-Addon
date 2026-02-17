@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "leafia:blocks/leafia/radio/radio_torch_icon"
+    }
+}

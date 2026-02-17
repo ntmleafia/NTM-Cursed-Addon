@@ -1,0 +1,6 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "leafia:items/leafia/textured_rods/rod_dg_omega"
+	}
+}

@@ -1,5 +1,6 @@
 package com.leafia.init;
 
+import com.hbm.lib.HBMSoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -24,6 +25,7 @@ public class LeafiaSoundEvents {
 	public static SoundEvent pwrRodStart;
 	public static SoundEvent pwrRodLoop;
 	public static SoundEvent pwrRodStop;
+	public static SoundEvent pwrElement;
 
 	public static SoundEvent machineDestroyed;
 	public static SoundEvent machineExplode;
@@ -64,6 +66,10 @@ public class LeafiaSoundEvents {
 	public static SoundEvent actualexplosion;
 	public static SoundEvent glitch_alpha10302;
 
+	public static SoundEvent advisor_activate;
+	public static SoundEvent advisor_warning;
+
+	public static SoundEvent fuckingfortnite;
 
 	public static void init() {
 		mukeExplosion = register("weapon.mukeExplosion");
@@ -78,6 +84,7 @@ public class LeafiaSoundEvents {
 		pwrRodStart = register("external.pwrcontrolstart");
 		pwrRodLoop = register("external.pwrcontrol");
 		pwrRodStop = register("external.pwrcontrolstop");
+		pwrElement = register("external.pwrelement");
 
 		machineDestroyed = register("external.machineDestroyed");
 		machineExplode = register("external.machineExplode");
@@ -124,6 +131,27 @@ public class LeafiaSoundEvents {
 				register("external.furnacestressed04"),
 				register("external.furnacestressed05"),
 				register("external.furnacestressed06")
+		};
+
+		advisor_activate = register("item.advisor_activate");
+		advisor_warning = register("item.advisor_warning");
+
+		fuckingfortnite = register("external.fuckingfortnite");
+
+		// replace 1.7.10 geiger sounds with alcater one
+		HBMSoundHandler.geiger1 = register("item.geiger1");
+		HBMSoundHandler.geiger2 = register("item.geiger2");
+		HBMSoundHandler.geiger3 = register("item.geiger3");
+		HBMSoundHandler.geiger4 = register("item.geiger4");
+		HBMSoundHandler.geiger5 = register("item.geiger5");
+		HBMSoundHandler.geiger6 = register("item.geiger6");
+		HBMSoundHandler.geigerSounds = new SoundEvent[]{
+				HBMSoundHandler.geiger1,
+				HBMSoundHandler.geiger2,
+				HBMSoundHandler.geiger3,
+				HBMSoundHandler.geiger4,
+				HBMSoundHandler.geiger5,
+				HBMSoundHandler.geiger6
 		};
 	}
 

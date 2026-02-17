@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achburnerpress",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_difurnace_off"
+    },
+    "title": {
+      "translate": "achievement.blastFurnace"
+    },
+    "description": {
+      "translate": "achievement.blastFurnace.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_difurnace_off": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_difurnace_off"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_difurnace_off"
+    ]
+  ]
+}

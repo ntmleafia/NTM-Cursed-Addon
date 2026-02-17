@@ -2,6 +2,7 @@ package com.leafia.contents.machines.reactors.pwr;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.fluid.CoriumFinite;
+import com.hbm.config.MobConfig;
 import com.hbm.explosion.ExplosionNT;
 import com.hbm.explosion.ExplosionNT.ExAttrib;
 import com.hbm.explosion.ExplosionNukeGeneric;
@@ -11,15 +12,20 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.inventory.fluid.trait.FT_Heatable;
+import com.hbm.inventory.fluid.trait.FT_Heatable.HeatingStep;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Gaseous;
+import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Liquid;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.lib.HBMSoundHandler;
+import com.hbm.main.AdvancementManager;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.util.Tuple.Pair;
+import com.hbm.util.Tuple.Triplet;
 import com.leafia.CommandLeaf;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.LegacyBlocks;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
@@ -36,6 +42,7 @@ import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import com.leafia.init.AddonAdvancements;
 import com.leafia.init.LeafiaSoundEvents;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.exceptions.messages.TextWarningLeafia;
@@ -57,6 +64,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -81,7 +89,6 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 	public int coolantId = Fluids.COOLANT.getID();
 	public int compression = 0;
 	//public double heat = 20;
-	public int lastTickDrain;
 	public int coriums = 0;
 	public double masterControl = 0.25;
 	public final Map<String, Double> controlDemand = new HashMap<>();
@@ -191,22 +198,25 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				coolantId = type.getID();
 		}
 	}
+	public double multiplier = 1;
 	boolean updateCoolantType(int coolantId) {
 		FluidType coolant = Fluids.fromID(coolantId);
 		if (!coolant.equals(Fluids.NONE)) {
-			Pair<FluidType,FluidType> hots = getBoiledCoolant(coolant);
+			this.coolantId = coolantId;
+			Triplet<FluidType,FluidType,Double> hots = getBoiledCoolant(coolant);
 			if (hots != null) {
 				if (tankTypes[0] != coolant)
 					tanks[2].setFill(0);
-				if (tankTypes[1] != hots.getKey())
+				if (tankTypes[1] != hots.getX())
 					tanks[2].setFill(0);
-				if (tankTypes[2] != hots.getKey())
+				if (tankTypes[2] != hots.getX())
 					tanks[2].setFill(0);
 				tankTypes[0] = coolant;
-				tankTypes[1] = hots.getKey();
-				tankTypes[2] = hots.getValue();
+				tankTypes[1] = hots.getX();
+				tankTypes[2] = hots.getY();
 				for (int i = 0; i < 3; i++)
 					tanks[i].setTankType(tankTypes[i]);
+				multiplier = hots.getZ();
 				resizeTanks(lastChannels,lastConductors);
 					/*
 					Fluid hotter = hot;
@@ -233,10 +243,10 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 	public void invalidate(World world) {
 		if (!(world instanceof WorldServer)) return;
 		BlockPos checkPos = companion.getPos();
-		((PWRComponentEntity) companion).assignCore(null);
+		//((PWRComponentEntity) companion).assignCore(null); how many hours was I smoking my tail when I was coding this?
 		world.getMinecraftServer().addScheduledTask(() -> {
 			if (world.getBlockState(checkPos).getBlock() instanceof CoriumFinite)
-				this.explode(world, null,null);
+				this.explode(world, null,null,1);
 		});
 	}
 
@@ -290,8 +300,8 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 	public int lastConductors = 0;
 	public void resizeTanks(int channels, int conductors) {
 		tanks[0] = resizeTank(tanks[0], 3200 * channels); // coolant
-		tanks[1] = resizeTank(tanks[1], 3200 * (int)(channels/(tankTypes[1].hasTrait(FT_Gaseous.class) ? 1.5 : 1))); // hot coolant
-		tanks[2] = resizeTank(tanks[2], toughness/(tankTypes[1].hasTrait(FT_Gaseous.class) ? 10 : 1)); // emergency buffer
+		tanks[1] = resizeTank(tanks[1], 3200 * (int)Math.ceil(channels/(tankTypes[1].hasTrait(FT_Gaseous.class) ? 1.5 : 1)*multiplier)); // hot coolant
+		tanks[2] = resizeTank(tanks[2], (int)Math.ceil(toughness/(float)(tankTypes[1].hasTrait(FT_Gaseous.class) ? 10 : 1)*multiplier)); // emergency buffer
 		tanks[3] = resizeTank(tanks[3], 25600 * conductors); // water
 		tanks[4] = resizeTank(tanks[4], 12800 * conductors); // steam
 	}
@@ -302,18 +312,31 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		return null;
 	}
 
-	Pair<FluidType,FluidType> getBoiledCoolant(FluidType f) {
+	double getBoilRatio(FluidType f) {
+		if (f.hasTrait(FT_Heatable.class)) {
+			HeatingStep step = f.getTrait(FT_Heatable.class).getFirstStep();
+			return step.amountProduced/(double)step.amountReq;
+		}
+		return 0;
+	}
+
+	Triplet<FluidType,FluidType,Double> getBoiledCoolant(FluidType f) {
 		FluidType hot = getBoilFluid(f);
+		double mul = 1;
 		if (hot == null) return null;
 		FluidType secondhot = getBoilFluid(f);
+		mul *= getBoilRatio(f);
+		double mul2 = mul;
 		while (true) {
 			FluidType hotter = getBoilFluid(hot);
 			if (hotter != null) {
+				mul = mul2;
+				mul2 *= getBoilRatio(hot);
 				secondhot = hot;
 				hot = hotter;
 			} else break;
 		}
-		return new Pair<>(secondhot,hot);
+		return new Triplet<>(secondhot,hot,mul);
 	};
 
 	public PWRData readFromNBT(NBTTagCompound nbt) {
@@ -324,7 +347,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		tankTypes[0] = Fluids.COOLANT;
 		tankTypes[1] = Fluids.COOLANT_HOT;
 		tankTypes[2] = AddonFluids.COOLANT_MAL;
-		if (nbt.hasKey("coolantName")) {
+		if (nbt.hasKey("coolantId")) {
 			coolantId = nbt.getInteger("coolantId");
 			updateCoolantType(coolantId);
 		}
@@ -493,9 +516,11 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				if (stack != null && stack2 != null) {
 					int boilAmt = Math.min(stack.amount * conversionRate, stack2.amount);
 					int division = (int) Math.pow(10, compression);
-					int filled = tanks[4].fill(tankTypes[4], boilAmt * 10 / division, true);
-					tanks[1].setFill(Math.max(tanks[1].getFill()-(Math.min(boilAmt, filled * division / 10) / conversionRate),0));
-					tanks[3].setFill(Math.max(tanks[3].getFill()-(Math.min(boilAmt, filled * division / 10)),0));
+					int filled = tanks[4].fill(tankTypes[4], boilAmt * 100 / division, true);
+					int drained = (Math.min(boilAmt, filled * division / 100) / conversionRate);
+					tanks[1].setFill(Math.max(tanks[1].getFill()-drained,0));
+					tanks[0].fill(tankTypes[0],(int)(drained/multiplier),true);
+					tanks[3].setFill(Math.max(tanks[3].getFill()-(Math.min(boilAmt, filled * division / 100)),0));
 				}
 			}
 			LeafiaPacket._start(companion).__write(30, new int[]{
@@ -515,9 +540,11 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 	}
 
 	int boilingAccum = 0;
+	public static final double transferMultiplier = 12;
+	public static final int boilingDivision = 48;
 
 	public void spendCoolant(double cooled, @Nullable ItemStack stack) {
-		double drainD = cooled * 8;
+		double drainD = cooled * transferMultiplier/multiplier;
 		int drain = (int) Math.floor(drainD);///12500*tanks[0].getMaxFill());
 
 		double accum = drainD - drain;
@@ -526,10 +553,11 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		spendAccum -= add;
 		drain += add;
 
+		drain = (int)((int)(drain*multiplier)/multiplier);
+
 		FluidStack fs = tanks[0].drain(drain, true);
 		if (fs != null) {
-			int drained = fs.amount;
-			lastTickDrain = drained;
+			int drained = (int)(fs.amount*multiplier);
 			for (int tank = 1; drained > 0; tank++) {
 				switch (tank) {
 					case 1: {
@@ -538,17 +566,17 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 					}
 					break;
 					case 2: {
-						int fill = drained / 4;
-						boilingAccum += Math.floorMod(drained, 4);
-						int fillAdd = boilingAccum / 4;
+						int fill = drained / boilingDivision;
+						boilingAccum += Math.floorMod(drained, boilingDivision);
+						int fillAdd = boilingAccum / boilingDivision;
 						boilingAccum -= fillAdd;
 						int filled = tanks[tank].fill(tankTypes[tank], fill + fillAdd, true);
-						drained -= filled * 4;
+						drained -= filled * boilingDivision;
 					}
 					break;
 					default:
 						if (tanks[2].getFill() >= tanks[2].getMaxFill())
-							explode(getWorld(), stack, null); // Blowout
+							explode(getWorld(), stack, null,0); // Blowout
 						return;
 				}
 			}
@@ -615,12 +643,12 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			for (BlockPos member : members) {
 				Block block = world.getBlockState(member).getBlock();
 				if (block instanceof PWRChannelBlock || block instanceof PWRConductorBlock) {
-					world.setBlockToAir(member);
+					world.setBlockState(member,ModBlocks.gas_radon_dense.getDefaultState());
 					for (EnumFacing face : EnumFacing.values()) {
 						BlockPos offs = member.offset(face);
 						if (world.isValid(offs) && world.getBlockState(offs).getBlock() instanceof PWRComponentBlock) {
 							if (world.rand.nextInt(5) == 0)
-								world.setBlockToAir(offs);
+								world.setBlockState(offs,ModBlocks.gas_radon.getDefaultState());
 						}
 					}
 				}
@@ -631,7 +659,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		protected void explodeLv2() {
 			for (BlockPos member : members) {
 				if (world.getBlockState(member).getBlock() instanceof PWRComponentBlock)
-					world.setBlockToAir(member);
+					world.setBlockState(member,ModBlocks.gas_radon_dense.getDefaultState());
 			}
 			world.newExplosion(null, centerPoint.x + 0.5, centerPoint.y + 0.5, centerPoint.z + 0.5, 24.0F, true, true);
 		}
@@ -654,6 +682,12 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 					plr.sendMessage(new TextComponentString("  z: " + minZ + " : " + maxZ));
 				}
 			}
+			List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(centerPoint)).grow(100));
+			if (tankTypes[1].equals(Fluids.ULTRAHOTSTEAM))for (EntityPlayer player : players)
+				AdvancementManager.grantAchievement(player,AddonAdvancements.nukebwr);
+			else if (tankTypes[1].hasTrait(FT_Liquid.class))for (EntityPlayer player : players)
+				AdvancementManager.grantAchievement(player,AddonAdvancements.nukepwr);
+
 			// mmm this is gonna be crispy computer
 			growMembers(growMembers(growMembers(growMembers(members))));
 
@@ -680,7 +714,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				if (block instanceof PWRElementBlock) {
 					//world.newExplosion(null,member.getX()+0.5,member.getY()+0.5,member.getZ()+0.5,11,true,true);
 					//world.setBlockState(member,ModBlocks.corium_block.getDefaultState());
-					world.setBlockToAir(member);
+					world.setBlockState(member,ModBlocks.gas_meltdown.getDefaultState());
 					continue;
 				}
 				//Block fuckyou = Blocks.BLACK_GLAZED_TERRACOTTA;
@@ -762,7 +796,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 							entitiesToSpawn.add(debris);
 						}
 					}
-					world.setBlockToAir(pos);
+					world.setBlockState(pos,ModBlocks.gas_radon_dense.getDefaultState());
 				}
 			}
 			// TODO: add cam shake
@@ -777,7 +811,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			nt.overrideResolution(32);
 			nt.explode();
 			double shakeIntensity = toughness / 10_000d;
-			PacketDispatcher.wrapper.sendToAllAround(
+			PacketThreading.createSendToAllTrackingThreadedPacket(
 					new CommandLeaf.ShakecamPacket(new String[]{
 							"type=smooth",
 							"preset=PWR_NEAR",
@@ -787,7 +821,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 					}).setPos(new BlockPos(centerPoint)),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), centerPoint.x + 0.5, centerPoint.y + 0.5, centerPoint.z + 0.5, reactorSize * 4.25)
 			);
-			PacketDispatcher.wrapper.sendToAllAround(
+			PacketThreading.createSendToAllTrackingThreadedPacket(
 					new CommandLeaf.ShakecamPacket(new String[]{
 							"type=smooth",
 							"preset=PWR_FAR",
@@ -811,15 +845,17 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			for (BlockPos member : allDebris) {
 				IBlockState state = getBlockLv3(member, placeMap, world);
 				Block block = state.getBlock();
-				SoundType soundType = block.getSoundType();
-				Material material = block.getMaterial(state);
 				Vec3d ray = new Vec3d(member).add(0.5, 0.5, 0.5).subtract(centerPoint);
 
 				if (block instanceof PWRControlBlock) {
 					world.setBlockState(member, ModBlocks.block_electrical_scrap.getDefaultState());
 					antiPlaceSet.add(member);
+					state = ModBlocks.block_electrical_scrap.getDefaultState();
+					block = state.getBlock();
 					//continue;
 				}
+				SoundType soundType = block.getSoundType();
+				Material material = block.getMaterial(state);
 				double heatBase = MathHelper.clamp(Math.pow(MathHelper.clamp(1 - ray.length() / (reactorSize / 2), 0, 1), 0.45) * 8, 0, 7);
 				int heat = (int) heatBase;
 				int heatRand = world.rand.nextInt(3);
@@ -919,24 +955,24 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 						if (block instanceof BlockGrass)
 							world.setBlockState(member, ModBlocks.waste_earth.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockGravel)
-							world.setBlockState(member, ModBlocks.waste_gravel.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_gravel.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockDirt || block == Blocks.FARMLAND)
-							world.setBlockState(member, ModBlocks.waste_dirt.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_dirt.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockSnow)
-							world.setBlockState(member, ModBlocks.waste_snow.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_snow.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockSnowBlock)
-							world.setBlockState(member, ModBlocks.waste_snow_block.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_snow_block.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockMycelium)
 							world.setBlockState(member, ModBlocks.waste_mycelium.getStateFromMeta(Math.min(heat, 6)));
 						//else if (block instanceof BlockRedSandstone)
 						//	world.setBlockState(member, ModBlocks.waste_sandstone_red.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockSandStone)
-							world.setBlockState(member, ModBlocks.waste_sandstone.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_sandstone.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockHardenedClay || block instanceof BlockStainedHardenedClay)
-							world.setBlockState(member, ModBlocks.waste_terracotta.getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, LegacyBlocks.waste_terracotta.getStateFromMeta(Math.min(heat, 6)));
 						else if (block instanceof BlockSand) {
 							BlockSand.EnumType meta = state.getValue(BlockSand.VARIANT);
-							world.setBlockState(member, ((meta == BlockSand.EnumType.SAND) ? ModBlocks.waste_sand : ModBlocks.waste_sand_red).getStateFromMeta(Math.min(heat, 6)));
+							world.setBlockState(member, ((meta == BlockSand.EnumType.SAND) ? LegacyBlocks.waste_sand : LegacyBlocks.waste_sand_red).getStateFromMeta(Math.min(heat, 6)));
 						} else {
 							int level = -1;
 							if (block == Blocks.COBBLESTONE || block == Blocks.STONE || block instanceof BlockStone)
@@ -974,7 +1010,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		}
 	}
 
-	public void explode(World world, @Nullable ItemStack prevStack,@Nullable LeafiaRodItem doNuke) {
+	public void explode(World world, @Nullable ItemStack prevStack,@Nullable LeafiaRodItem doNuke,int forceLevel) {
 		if (exploded) return;
 		exploded = true;
 		explodeWorld = world;
@@ -1015,12 +1051,21 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		}
 
 		PWRExplosion boom = new PWRExplosion(world, centerPoint, minX, minY, minZ, maxX, maxY, maxZ);
-		if (toughness >= 15_000)
-			boom.explodeLv3();
-		else if (toughness >= 10_000)
-			boom.explodeLv2();
-		else
-			boom.explodeLv1();
+		if (forceLevel == 0) {
+			if (toughness >= 15_000)
+				boom.explodeLv3();
+			else if (toughness >= 10_000)
+				boom.explodeLv2();
+			else
+				boom.explodeLv1();
+		} else {
+			if (forceLevel == 1)
+				boom.explodeLv1();
+			if (forceLevel == 2)
+				boom.explodeLv2();
+			if (forceLevel == 3)
+				boom.explodeLv3();
+		}
 
 		boolean nope = true;
         /*
@@ -1038,6 +1083,14 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			doNuke.nuke(world,new BlockPos(centerPoint));
 		ExplosionNukeGeneric.waste(world, (int) centerPoint.x, (int) centerPoint.y, (int) centerPoint.z, 35);
 		ChunkRadiationManager.proxy.incrementRad(world, new BlockPos(centerPoint), 3000F, 4000F);
+
+		List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(new BlockPos(centerPoint)).grow(100));
+
+		if(MobConfig.enableElementals) {
+			for(EntityPlayer player : players) {
+				player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG).setBoolean("radMark", true);
+			}
+		}
 	}
 
 	public static LeafiaPacket addDataToPacket(LeafiaPacket packet, @Nullable PWRData self) {
@@ -1053,7 +1106,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			return null;
 	}
 
-	void sendControlPositions() {
+	public void sendControlPositions() {
 		LeafiaPacket._start(companion)
 				.__write(29, writeControlPositions())
 				.__write(28, masterControl)
@@ -1144,7 +1197,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		addDataToPacket(LeafiaPacket._start(companion), this).__sendToClient(plr);
 	}
 
-	void manipulateRod(String name) {
+	public void manipulateRod(String name) {
 		for (BlockPos pos : controls) {
 			TileEntity entity = getWorld().getTileEntity(pos);
 			if (entity instanceof PWRControlTE) {

@@ -1,0 +1,29 @@
+{
+  "parent": "leafia:root_misc",
+  "display": {
+    "icon": {
+      "item": "hbm:fluid_icon",
+      "data": 34
+    },
+    "title": {
+      "translate": "achievement.tasteofblood"
+    },
+    "description": {
+      "translate": "achievement.tasteofblood.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

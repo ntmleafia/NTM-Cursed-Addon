@@ -49,7 +49,7 @@ public class AmatNet extends NodeNet<IFluidReceiverMK2,IFluidProviderMK2,AmatNod
 		if (!isConnectedToAnywhere(provider)) return false;
 		if (power > 0 && type.hasTrait(FT_Magnetic.class)) return false;
 		if (provider instanceof TileEntity te) {
-			te.getWorld().newExplosion(null,te.getPos().getX(),te.getPos().getY(),te.getPos().getZ(),5,true,true);
+			// fuck off te.getWorld().newExplosion(null,te.getPos().getX(),te.getPos().getY(),te.getPos().getZ(),5,true,true);
 			return true;
 		}
 		return false;
@@ -94,7 +94,6 @@ public class AmatNet extends NodeNet<IFluidReceiverMK2,IFluidProviderMK2,AmatNod
 
 	public void setupFluidProviders() {
 		ObjectIterator<Entry<IFluidProviderMK2>> iterator = providerEntries.object2LongEntrySet().fastIterator();
-
 		while(iterator.hasNext()) {
 			Object2LongMap.Entry<IFluidProviderMK2> entry = iterator.next();
 			if(currentTime - entry.getLongValue() > timeout || isBadLink(entry.getKey()) || checkExplode(entry.getKey())) {

@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nullable;
 
 public class FFDuctTE extends TileEntity implements ITickable, IFFConductor, LeafiaPacketReceiver {
-	protected FluidType type = Fluids.NONE;
+	public FluidType type = Fluids.NONE;
 	protected FFNode node;
 
 	@Override

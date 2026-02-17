@@ -1,0 +1,8 @@
+{
+	"parent": "block/orientable",
+	"textures": {
+		"top": "hbm:blocks/brick_concrete",
+		"front": "leafia:blocks/pwr/reactor_hatch_alt",
+		"side": "hbm:blocks/brick_concrete"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"ctm": {
+		"ctm_version": 1,
+		"type": "CTM",
+		"textures": [
+			"leafia:blocks/leafia/sealed_network/audio/cable_audio_ctm_rad"
+		]
+	}
+}

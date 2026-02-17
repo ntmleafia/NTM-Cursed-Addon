@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:achrbmk",
+  "display": {
+    "icon": {
+      "item": "hbm:debris_fuel"
+    },
+    "title": {
+      "translate": "achievement.RBMKBoom"
+    },
+    "description": {
+      "translate": "achievement.RBMKBoom.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

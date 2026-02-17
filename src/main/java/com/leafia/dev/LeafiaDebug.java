@@ -1,5 +1,6 @@
 package com.leafia.dev;
 
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.items.ModItems;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.gear.wands.ItemWandV;
@@ -11,6 +12,7 @@ import com.leafia.dev.LeafiaDebug.Tracker.LeafiaTrackerPacket;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
+import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.passive.rendering.TopRender.Highlight;
@@ -60,23 +62,44 @@ public class LeafiaDebug {
 			}
 		}
 	}
+	public static void debugMat(World world,FiaMatrix mat,float duration,int color,String... message) {
+		if (world.isRemote) {
+			Highlight highlight = new Highlight();
+			Vec3d size = new Vec3d(0.125,0.125,0.125);
+			highlight.setArea(mat.position.subtract(size),mat.position.add(size));
+			highlight.ray = mat.frontVector;
+			highlight.textSize /= 4;
+			highlight.label = message;
+			highlight.lifetime = duration;
+			highlight.setColor(color);
+			highlight.show();
+		}
+	}
 	public static void debugPos(World world,BlockPos pos,float duration,int color,String... message) {
-		LeafiaTrackerPacket packet = null;
-		for (EntityPlayer plr : world.playerEntities) {
-			if (plr.getHeldItem(EnumHand.OFF_HAND).getItem() == AddonItems.wand_v || plr.getHeldItem(EnumHand.MAIN_HAND).getItem() == AddonItems.wand_v) {
-				if (packet == null) {
-					packet = new LeafiaTrackerPacket();
-					packet.mode = Action.SHOW_BOX;
-					packet.writer = (buf)->{
-						buf.writeFloat(duration);
-						buf.writeInt(color);
-						buf.writeByte(message.length);
-						for (String s : message)
-							buf.writeFifthString(new FifthString(s));
-						buf.writeVec3i(pos);
-					};
+		if (world.isRemote) {
+			Highlight highlight = new Highlight(pos);
+			highlight.setColor(color);
+			highlight.label = message;
+			highlight.lifetime = duration;
+			highlight.show();
+		} else {
+			LeafiaTrackerPacket packet = null;
+			for (EntityPlayer plr : world.playerEntities) {
+				if (plr.getHeldItem(EnumHand.OFF_HAND).getItem() == AddonItems.wand_v || plr.getHeldItem(EnumHand.MAIN_HAND).getItem() == AddonItems.wand_v) {
+					if (packet == null) {
+						packet = new LeafiaTrackerPacket();
+						packet.mode = Action.SHOW_BOX;
+						packet.writer = (buf)->{
+							buf.writeFloat(duration);
+							buf.writeInt(color);
+							buf.writeByte(message.length);
+							for (String s : message)
+								buf.writeFifthString(new FifthString(s));
+							buf.writeVec3i(pos);
+						};
+					}
+					LeafiaPacket._sendToClient(packet,plr);
 				}
-				LeafiaPacket._sendToClient(packet,plr);
 			}
 		}
 	}
@@ -434,16 +457,6 @@ public class LeafiaDebug {
 					highlight.colorTop = calculateColor(entry.getValue());
 				}
 			}
-			public static void localTick(EntityPlayer player) {
-				/*
-				boolean show = player.getHeldItemOffhand().getItem() == AddonItems.wand_v || player.getHeldItemMainhand().getItem() == AddonItems.wand_v;
-				for (Highlight subHighlight : TrackerLocal.subHighlights) {
-					if (subHighlight.getVisibility()) {
-						if (!show) subHighlight.hide();
-					} else if (show)
-						subHighlight.show();
-				}*/ // i changed my mind
-			}
 		}
 		public static void notifySubjectMapChanges(boolean remote) {
 			LeafiaTrackerPacket packet = new LeafiaTrackerPacket();
@@ -456,7 +469,7 @@ public class LeafiaDebug {
 					buf.writeUTF8String(entry.getValue());
 				}
 			};
-			PacketDispatcher.wrapper.sendToAll(packet);
+			PacketThreading.createSendToAllThreadedPacket(packet);
 		}
 		public static void notifySelectionChange() {
 			LeafiaTrackerPacket packet = new LeafiaTrackerPacket();
@@ -468,7 +481,7 @@ public class LeafiaDebug {
 					buf.writeInt(selected.getZ());
 				}
 			};
-			PacketDispatcher.wrapper.sendToAll(packet);
+			PacketThreading.createSendToAllThreadedPacket(packet);
 		}
 		public static void changeSide(boolean remote) {
 			ItemWandV.remote = remote;
@@ -477,7 +490,7 @@ public class LeafiaDebug {
 			packet.writer = (buf)->{
 				buf.writeBoolean(remote);
 			};
-			PacketDispatcher.wrapper.sendToAll(packet);
+			PacketThreading.createSendToAllThreadedPacket(packet);
 		}
 		enum Action {
 			NONE,

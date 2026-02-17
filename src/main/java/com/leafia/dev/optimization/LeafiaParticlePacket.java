@@ -1,6 +1,7 @@
 package com.leafia.dev.optimization;
 
 import com.custom_hbm.effectNT.EffectNT;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.PacketDispatcher;
 import com.hbm.particle.ParticleRBMKMush;
@@ -11,6 +12,7 @@ import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinParticleRBMKMush;
 import com.leafia.unsorted.ParticleFireK;
 import com.leafia.unsorted.ParticleFireLavaK;
+import com.leafia.unsorted.ParticleFlash;
 import com.leafia.unsorted.ParticleSpark;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaSet;
@@ -331,6 +333,42 @@ public class LeafiaParticlePacket extends RecordablePacket {
 			}
 		}
 	}
+	public static class FlashParticle extends LeafiaParticle {
+		public int ticksIn = 5;
+		public int ticksOut = 10;
+		public float scale = 10;
+		public FlashParticle() { }
+		public FlashParticle(int ticksIn,int ticksOut,float scale) {
+			this.ticksIn = ticksIn;
+			this.ticksOut = ticksOut;
+			this.scale = scale;
+		}
+		@Override
+		protected LeafiaParticle fromBits(LeafiaBuf buf,NBTTagCompound nbt) {
+			return new FlashParticle(buf.readShort(),buf.readShort(),buf.readFloat());
+		}
+		@Override
+		protected void toBits(LeafiaBuf buf) {
+			buf.writeShort(ticksIn);
+			buf.writeShort(ticksOut);
+			buf.writeFloat(scale);
+		}
+		@Override
+		@SideOnly(Side.CLIENT)
+		protected void emit(NBTTagCompound nbt) {
+			World world = Minecraft.getMinecraft().world;
+			ParticleFlash particle = new ParticleFlash(
+					world,
+					nbt.getDouble("posX"),
+					nbt.getDouble("posY"),
+					nbt.getDouble("posZ"),
+					scale,
+					ticksIn,
+					ticksOut
+			);
+			Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+		}
+	}
 
 
 
@@ -436,7 +474,7 @@ public class LeafiaParticlePacket extends RecordablePacket {
 		public double getDefaultRange() { return 340; }
 		public final void emit(Vec3d pos,Vec3d motion,int dimension) { emit(pos,motion,dimension,getDefaultRange()); }
 		public final void emit(Vec3d pos,Vec3d motion,int dimension,double range) {
-			PacketDispatcher.wrapper.sendToAllAround(packet(pos,motion),new TargetPoint(dimension,pos.x,pos.y,pos.z,range));
+			PacketThreading.createSendToAllTrackingThreadedPacket(packet(pos,motion),new TargetPoint(dimension,pos.x,pos.y,pos.z,range));
 		}
 		public final void emitLocal(Vec3d pos,Vec3d motion) {
 			NBTTagCompound nbt = new NBTTagCompound();

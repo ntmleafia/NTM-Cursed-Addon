@@ -2,6 +2,7 @@ package com.leafia.contents.machines.powercores.dfc.render;
 
 
 import com.hbm.main.ResourceManager;
+import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.RenderSparks;
 import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.render.loader.HFRWavefrontObject;
@@ -10,6 +11,7 @@ import com.hbm.render.misc.BeamPronter;
 import com.hbm.render.misc.BeamPronter.EnumBeamType;
 import com.hbm.render.misc.BeamPronter.EnumWaveType;
 import com.hbm.tileentity.machine.TileEntityCore;
+import com.leafia.AddonBase;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
@@ -142,7 +144,8 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
 		GlStateManager.disableLighting();
 		GlStateManager.enableCull();
-		GlStateManager.disableTexture2D();
+		//GlStateManager.disableTexture2D();
+		NTMRenderHelper.bindTexture(AddonBase.solid);
 
 		GL11.glScalef(0.25F, 0.25F, 0.25F);
 		float brightness = (float) Math.pow(mixin.getDFCTemperature() / 100d, 1.5);
@@ -156,7 +159,7 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		ResourceManager.sphere_uv.renderAll();
 		GlStateManager.disableBlend();
 
-		GlStateManager.enableTexture2D();
+		//GlStateManager.enableTexture2D();
 		GlStateManager.enableLighting();
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 
@@ -388,7 +391,7 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		RenderHelper.disableStandardItemLighting();
 
 		Random random = new Random(432L);
-		GlStateManager.disableTexture2D();
+		//GlStateManager.disableTexture2D();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
@@ -426,7 +429,7 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		GlStateManager.disableBlend();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.enableTexture2D();
+		//GlStateManager.enableTexture2D();
 		GlStateManager.enableAlpha();
 		RenderHelper.enableStandardItemLighting();
 	}

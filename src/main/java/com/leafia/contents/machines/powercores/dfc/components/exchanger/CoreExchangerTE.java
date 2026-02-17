@@ -21,7 +21,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,6 +38,10 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
 	protected BlockPos targetPosition = new BlockPos(0,0,0);
 	int inAmt = 1;
 	int outAmt = 1;
+
+	public AxisAlignedBB getRenderBoundingBox() {
+		return TileEntity.INFINITE_EXTENT_AABB;
+	}
 
     private static Quartet<Integer, FluidType, Integer, Integer> getBoiledFluid(FluidType f, int compression) {
         int comp = 0;

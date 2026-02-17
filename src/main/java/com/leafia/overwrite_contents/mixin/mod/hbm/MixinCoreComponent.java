@@ -4,6 +4,7 @@ import com.hbm.api.item.IDesignatorItem;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.CoreComponent;
 import com.hbm.lib.HBMSoundHandler;
+import com.hbm.lib.InventoryHelper;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
@@ -107,5 +108,11 @@ public abstract class MixinCoreComponent extends BlockContainer {
 			cir.setReturnValue(new CoreCEmitterTE());
 			cir.cancel();
 		}
+	}
+
+	@Override
+	public void breakBlock(World worldIn,BlockPos pos,IBlockState state) {
+		InventoryHelper.dropInventoryItems(worldIn, pos, worldIn.getTileEntity(pos));
+		super.breakBlock(worldIn,pos,state);
 	}
 }

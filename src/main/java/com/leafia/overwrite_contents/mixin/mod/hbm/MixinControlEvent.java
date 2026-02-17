@@ -18,5 +18,8 @@ public class MixinControlEvent {
 		register(new ControlEvent("set_stabilizer_level").setVar("level",0));
 		register(new ControlEvent("torch_set_state").setVar("isOn", 0));
 		register(new ControlEvent("pwr_ctrl_set_level").setVar("level", 0));
+		register(new ControlEvent("lftr_ctrl_set_level").setVar("level", 0));
+		register(new ControlEvent("pwr_computer_set_master").setVar("level", 0));
+		register(new ControlEvent("pwr_computer_set_level").setVar("name","").setVar("level", 0));
 	}
 }

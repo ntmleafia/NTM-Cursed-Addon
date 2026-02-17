@@ -41,7 +41,7 @@ public class FuzzyIdentifierRender extends TileEntityItemStackRenderer {
 			return;
 		final double HALF_A_PIXEL = 0.03125;
 		final double PIX = 0.0625;
-		FluidType fluid = ItemFuzzyIdentifier.getType(itemStackIn);
+		FluidType fluid = FuzzyIdentifierItem.getType(itemStackIn);
 		TextureAtlasSprite fluidIcon = getTextureFromFluid(fluid.getFF());
 		LCERenderHelper.bindBlockTexture();
 		boolean fuzzy = true;

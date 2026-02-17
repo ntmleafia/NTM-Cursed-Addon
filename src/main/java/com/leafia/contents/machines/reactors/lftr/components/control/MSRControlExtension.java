@@ -1,5 +1,6 @@
 package com.leafia.contents.machines.reactors.lftr.components.control;
 
+import com.hbm.blocks.ITooltipProvider;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.generic.BlockPipe;
 import com.leafia.contents.AddonBlocks;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MSRControlExtension extends BlockPipe {
+public class MSRControlExtension extends BlockPipe implements ITooltipProvider {
 	public MSRControlExtension(Material mat,String s) {
 		super(mat,s);
 		ModBlocks.ALL_BLOCKS.remove(this);
@@ -22,6 +23,7 @@ public class MSRControlExtension extends BlockPipe {
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
 		MachineTooltip.addMultiblock(tooltip);
 		MachineTooltip.addModular(tooltip);
+		addStandardInfo(tooltip);
 		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 }

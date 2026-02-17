@@ -3,9 +3,12 @@ package com.leafia.contents.machines.reactors.pwr.blocks.components.control;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.AddonBlocks;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import static com.leafia.init.ResourceInit.getVAO;
@@ -21,6 +24,13 @@ public class PWRControlRender extends TileEntitySpecialRenderer<PWRControlTE> {
 	@Override
 	public boolean isGlobalRenderer(PWRControlTE entity) {
 		return true;
+	}
+
+	public void setLight(World world,BlockPos pos) {
+		int light = world.getCombinedLight(pos, 0);
+		int lx = light & 0xFFFF;
+		int ly = light >> 16;
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lx, ly);
 	}
 
 	@Override
@@ -43,6 +53,7 @@ public class PWRControlRender extends TileEntitySpecialRenderer<PWRControlTE> {
 		GL11.glPushMatrix();
 		bindTexture(side);
 		for (int i = 1; i <= entity.height; i++) {
+			setLight(entity.getWorld(),entity.getPos().down(i-1));
 			mesh.renderPart("FrameSide");
 			GL11.glTranslated(0,-1,0);
 		}
@@ -50,6 +61,7 @@ public class PWRControlRender extends TileEntitySpecialRenderer<PWRControlTE> {
 		GL11.glPushMatrix();
 		bindTexture(top);
 		for (int i = 1; i <= entity.height; i++) {
+			setLight(entity.getWorld(),entity.getPos().down(i-1));
 			mesh.renderPart("FrameEnd");
 			if (i == 1)
 				mesh.renderPart("FrameEndTop");
@@ -63,12 +75,14 @@ public class PWRControlRender extends TileEntitySpecialRenderer<PWRControlTE> {
 		GL11.glPushMatrix();
 		bindTexture(side);
 		for (int i = 1; i <= entity.height; i++) {
+			setLight(entity.getWorld(),entity.getPos().down(i-1).up((int)(entity.position*entity.height)));
 			mesh.renderPart("RodsSide");
 			GL11.glTranslated(0,-1,0);
 		}
 		GL11.glPopMatrix();
 		GL11.glPushMatrix();
 		for (int i = 1; i <= entity.height; i++) {
+			setLight(entity.getWorld(),entity.getPos().down(i-1).up((int)(entity.position*entity.height)));
 			if ((MathHelper.positiveModulo(entity.position*entity.height,1) != 0) || (entity.position*entity.height-i+1 > 0)) {
 				if (side == oldSide)
 					bindTexture(side);

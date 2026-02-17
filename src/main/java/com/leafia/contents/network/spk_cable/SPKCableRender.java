@@ -3,8 +3,10 @@ package com.leafia.contents.network.spk_cable;
 import com.custom_hbm.render.misc.LCEBeamPronter;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumBeamType;
 import com.custom_hbm.render.misc.LCEBeamPronter.EnumWaveType;
+import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.render.misc.BeamPronter;
+import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.network.spk_cable.SPKCableTE.EffectLink;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConnector;
@@ -115,7 +117,9 @@ public class SPKCableRender extends TileEntitySpecialRenderer<SPKCableTE> {
 				LeafiaGls.inLocalSpace(()->{
 					double offset = 3/16d;
 					LeafiaGls.translate(look.scale(offset));
+					NTMRenderHelper.bindTexture(AddonBase.solid_e);
 					LCEBeamPronter.prontBeam(
+							false,
 							look.scale(distance-offset*(link.nonCable ? 1 : 2)),
 							EnumWaveType.RANDOM,EnumBeamType.SOLID,
 							0x64001e,0x9A9A9A,

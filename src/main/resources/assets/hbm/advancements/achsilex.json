@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achacidizer",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_silex"
+    },
+    "title": {
+      "translate": "achievement.SILEX"
+    },
+    "description": {
+      "translate": "achievement.SILEX.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_silex": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_silex"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_silex"
+    ]
+  ]
+}

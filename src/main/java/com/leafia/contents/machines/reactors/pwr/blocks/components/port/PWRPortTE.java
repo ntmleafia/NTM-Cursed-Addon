@@ -5,65 +5,13 @@ import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.leafia.contents.machines.reactors.pwr.PWRData;
-import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentEntity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRAssignableEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
-public class PWRPortTE extends TileEntity implements PWRComponentEntity, IFluidStandardReceiverMK2, IFluidStandardSenderMK2, ITickable {
-	BlockPos corePos = null;
-	@Override
-	public void setCoreLink(@Nullable BlockPos pos) {
-		corePos = pos;
-	}
-
-	@Nullable
-	@Override
-	public PWRData getLinkedCore() {
-		return PWRComponentEntity.getCoreFromPos(world,corePos);
-	}
-
-	@Override
-	public void assignCore(@Nullable PWRData data) {}
-	@Override
-	public PWRData getCore() { return null; }
-	@Nullable
-	PWRData gatherData() {
-		if (this.corePos != null) {
-			TileEntity entity = world.getTileEntity(corePos);
-			if (entity != null) {
-				if (entity instanceof PWRComponentEntity) {
-					return ((PWRComponentEntity) entity).getCore();
-				}
-			}
-		}
-		return null;
-	}
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("corePosX"))
-			corePos = new BlockPos(
-					compound.getInteger("corePosX"),
-					compound.getInteger("corePosY"),
-					compound.getInteger("corePosZ")
-			);
-		super.readFromNBT(compound);
-	}
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		if (corePos != null) {
-			compound.setInteger("corePosX",corePos.getX());
-			compound.setInteger("corePosY",corePos.getY());
-			compound.setInteger("corePosZ",corePos.getZ());
-		}
-		return super.writeToNBT(compound);
-	}
-
+public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardReceiverMK2, IFluidStandardSenderMK2, ITickable {
 	@Override
 	public @NotNull FluidTankNTM[] getReceivingTanks() {
 		PWRData core = getLinkedCore();
@@ -109,6 +57,7 @@ public class PWRPortTE extends TileEntity implements PWRComponentEntity, IFluidS
 
 	@Override
 	public void update() {
+		super.update();
 		if (!world.isRemote) {
 			PWRData core = getLinkedCore();
 			if (core != null) {
@@ -120,6 +69,16 @@ public class PWRPortTE extends TileEntity implements PWRComponentEntity, IFluidS
 				}
 			}
 		}
+	}
+
+	@Override
+	public String getPacketIdentifier() {
+		return "PWR_PORT";
+	}
+
+	@Override
+	public void onPlayerValidate(EntityPlayer plr) {
+
 	}
 
 	/*

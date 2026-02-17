@@ -1,0 +1,28 @@
+{
+  "parent": "leafia:openpwr",
+  "display": {
+    "icon": {
+      "item": "hbm:debris_metal"
+    },
+    "title": {
+      "translate": "advancement.leafia.nukepwr"
+    },
+    "description": {
+      "translate": "advancement.leafia.nukepwr.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

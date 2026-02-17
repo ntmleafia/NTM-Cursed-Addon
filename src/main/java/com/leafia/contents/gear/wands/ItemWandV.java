@@ -7,6 +7,7 @@ import com.hbm.particle.bullet_hit.ParticleDecalFlow;
 import com.hbm.render.util.BakedModelUtil;
 import com.hbm.render.util.BakedModelUtil.DecalType;
 import com.hbm.util.I18nUtil;
+import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.items.itembase.AddonItemBaked;
@@ -19,6 +20,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -39,65 +42,88 @@ public class ItemWandV extends AddonItemBaked {
 	public ItemWandV(String s,String texture) {
 		super(s,texture);
 	}
-	
+
+	public enum DebuggerMode {
+		DEFAULT_TRACKER,
+		PWR_SET_CORE,
+		PWR_PRINT_CORE
+	}
+
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		Block b = world.getBlockState(pos).getBlock();
-
-		if(!world.isRemote)
-		{
-
-			if(player.isSneaking()){
-				RayTraceResult pos1 = Library.rayTrace(player, 500, 1);
-				if(pos1 != null && pos1.typeOfHit == RayTraceResult.Type.BLOCK) {
-					/*
-					int x = pos1.getBlockPos().getX();
-					int z = pos1.getBlockPos().getZ();
-					int y = world.getHeight(x, z);
-					world.setBlockState(new BlockPos(x, y, z), Blocks.CHEST.getDefaultState());
-					((TileEntityChest)world.getTileEntity(new BlockPos(x, y, z))).setLootTable(LootTableList.CHESTS_SIMPLE_DUNGEON, world.rand.nextLong());
-
-					//new Ruin001().generate_r0(world, world.rand, x, y - 8, z);
-					//CellularDungeonFactory.jungle.generate(world, x, y, z, world.rand);
-					//CellularDungeonFactory.jungle.generate(world, x, y + 4, z, world.rand);
-					//CellularDungeonFactory.jungle.generate(world, x, y + 8, z, world.rand);
-					 */
-					Tracker.selected = pos1.getBlockPos();
-					LeafiaDebug.flagDebug();
-					LeafiaMap<BlockPos,String> subjects = Tracker.getSubjects();
-					if (!subjects.containsKey(pos1.getBlockPos())) {
-						subjects.put(pos1.getBlockPos(),Character.toString((char)(97+ subjects.size())));
-						Tracker.notifySubjectMapChanges(remote);
-						LeafiaDebug.debugLog(world,"Added "+(remote ? "remote" : "server")+" watch \""+ subjects.get(pos1.getBlockPos())+"\"");
-					} else {
-						LeafiaDebug.debugLog(world,"Selected "+(remote ? "remote" : "server")+" watch \""+ subjects.get(pos1.getBlockPos())+"\"");
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItem() instanceof ItemWandV wandV) {
+			switch(getMode(stack)) {
+				case PWR_PRINT_CORE -> {
+					if (!world.isRemote) {
+						TileEntity te = world.getTileEntity(pos);
+						if (te != null) {
+							NBTTagCompound lol = te.writeToNBT(new NBTTagCompound());
+							if (lol.hasKey("corePosX"))
+								LeafiaDebug.debugPos(world,new BlockPos(lol.getInteger("corePosX"),lol.getInteger("corePosY"),lol.getInteger("corePosZ")),3,0x00FFFF,"Core");
+						}
 					}
-					Tracker.notifySelectionChange();
 				}
-			} else {
-				pos = player.getPosition().down();
-				IBlockState state = world.getBlockState(pos);
-				Block block = state.getBlock();
-				Material mat = state.getMaterial();
-				LeafiaDebug.debugPos(world,pos,15,0x40FF00,
-						TextFormatting.GREEN+"BLK: !isPassable: "+pfx(!block.isPassable(world,pos)),
-						"BLK: isCollidable: "+pfx(block.isCollidable()),
-						"BLK: isNormalCube: "+pfx(block.isNormalCube(state,world,pos)),
-						TextFormatting.YELLOW+"-----------",
-						"STAT: isFullBlock: "+pfx(state.isFullBlock()),
-						"STAT: isFullCube: "+pfx(state.isFullCube()),
-						"STAT: isNormalCube: "+pfx(state.isOpaqueCube()),
-						"STAT: isBlockNormalCube: "+pfx(state.isBlockNormalCube()),
-						"STAT: isOpaqueCube: "+pfx(state.isOpaqueCube()),
-						TextFormatting.GREEN+"BLK: !isTranslucent: "+pfx(!state.isTranslucent()),
-						"STAT: renderType: "+state.getRenderType().name(),
-						TextFormatting.YELLOW+"-----------",
-						"MAT: isOpaque: "+pfx(mat.isOpaque()),
-						"MAT: isSolid: "+pfx(mat.isSolid())
-				);
+				case PWR_SET_CORE -> {
+					if (!world.isRemote) {
+						PWRDiagnosis.cleanup();
+						PWRDiagnosis diagnosis = new PWRDiagnosis(world,pos);
+						diagnosis.forcedCorePos = pos;
+						diagnosis.addPosition(pos);
+						player.sendMessage(new TextComponentString("PWR core set!"));
+					}
+				}
+				case DEFAULT_TRACKER -> {
+					if(!world.isRemote) {
+						if(player.isSneaking()){
+							RayTraceResult pos1 = Library.rayTrace(player, 500, 1);
+							if(pos1 != null && pos1.typeOfHit == RayTraceResult.Type.BLOCK) {
+								Tracker.selected = pos1.getBlockPos();
+								LeafiaDebug.flagDebug();
+								LeafiaMap<BlockPos,String> subjects = Tracker.getSubjects();
+								if (!subjects.containsKey(pos1.getBlockPos())) {
+									subjects.put(pos1.getBlockPos(),Character.toString((char)(97+ subjects.size())));
+									Tracker.notifySubjectMapChanges(remote);
+									LeafiaDebug.debugLog(world,"Added "+(remote ? "remote" : "server")+" watch \""+ subjects.get(pos1.getBlockPos())+"\"");
+								} else {
+									LeafiaDebug.debugLog(world,"Selected "+(remote ? "remote" : "server")+" watch \""+ subjects.get(pos1.getBlockPos())+"\"");
+								}
+								Tracker.notifySelectionChange();
+							}
+						} else {
+							pos = player.getPosition().down();
+							IBlockState state = world.getBlockState(pos);
+							Block block = state.getBlock();
+							Material mat = state.getMaterial();
+							LeafiaDebug.debugPos(world,pos,15,0x40FF00,
+									"CLASS: "+block.getClass().getSimpleName(),
+									"REGISTRY: "+block.getRegistryName(),
+									TextFormatting.YELLOW+"-----------",
+									TextFormatting.GREEN+"BLK: !isPassable: "+pfx(!block.isPassable(world,pos)),
+									"BLK: isCollidable: "+pfx(block.isCollidable()),
+									"BLK: isNormalCube: "+pfx(block.isNormalCube(state,world,pos)),
+									TextFormatting.YELLOW+"-----------",
+									"STAT: isFullBlock: "+pfx(state.isFullBlock()),
+									"STAT: isFullCube: "+pfx(state.isFullCube()),
+									"STAT: isNormalCube: "+pfx(state.isOpaqueCube()),
+									"STAT: isBlockNormalCube: "+pfx(state.isBlockNormalCube()),
+									"STAT: isOpaqueCube: "+pfx(state.isOpaqueCube()),
+									//TextFormatting.GREEN+"BLK: !isTranslucent: "+pfx(!state.isTranslucent()),
+									"STAT: renderType: "+state.getRenderType().name(),
+									TextFormatting.YELLOW+"-----------",
+									"MAT: isOpaque: "+pfx(mat.isOpaque()),
+									"MAT: isSolid: "+pfx(mat.isSolid()),
+									TextFormatting.YELLOW+"-----------",
+									"META: "+block.getMetaFromState(state)
+							);
+						}
+					} else {
+						clickClient(world, player, pos, hitX, hitY, hitZ);
+					}
+					MainRegistry.time = System.currentTimeMillis();
+				}
 			}
-		} else {
-			clickClient(world, player, pos, hitX, hitY, hitZ);
 		}
 		
 		/*int x = pos.getX();
@@ -110,8 +136,7 @@ public class ItemWandV extends AddonItemBaked {
 		((TileEntitySafe) world.getTileEntity(new BlockPos(x, y, z))).setPins(rand.nextInt(999) + 1);
 		((TileEntitySafe) world.getTileEntity(new BlockPos(x, y, z))).setMod(1);
 		((TileEntitySafe) world.getTileEntity(new BlockPos(x, y, z))).lock();*/
-		
-		MainRegistry.time = System.currentTimeMillis();
+
 		
 		return EnumActionResult.SUCCESS;
 	}
@@ -157,17 +182,39 @@ public class ItemWandV extends AddonItemBaked {
 		}
 		return super.itemInteractionForEntity(stack, playerIn, target, hand);
 	}
+
+	public DebuggerMode getMode(ItemStack stack) {
+		NBTTagCompound nbt = stack.getTagCompound();
+		if (nbt == null) nbt = new NBTTagCompound();
+		int mode = nbt.getInteger("mode");
+		return DebuggerMode.values()[mode];
+	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		if(player.isSneaking()) {
-			if(world.isRemote)
-				player.sendMessage(new TextComponentString(MainRegistry.x + " " + MainRegistry.y + " " + MainRegistry.z));
-			else if (Tracker.selected != null) {
-				LeafiaDebug.flagDebug();
-				Tracker.selected = null;
-				LeafiaDebug.debugLog(world,"Unselected watch");
-				Tracker.notifySelectionChange();
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItem() instanceof ItemWandV wandV) {
+			if(player.isSneaking() && getMode(stack).equals(DebuggerMode.DEFAULT_TRACKER)) {
+				if(world.isRemote)
+					player.sendMessage(new TextComponentString(MainRegistry.x + " " + MainRegistry.y + " " + MainRegistry.z));
+				else if (Tracker.selected != null) {
+					LeafiaDebug.flagDebug();
+					Tracker.selected = null;
+					LeafiaDebug.debugLog(world,"Unselected watch");
+					Tracker.notifySelectionChange();
+				}
+			} else {
+				if (!world.isRemote) {
+					NBTTagCompound nbt = stack.getTagCompound();
+					if (nbt == null) nbt = new NBTTagCompound();
+					int mode = nbt.getInteger("mode")+1;
+					if (mode >= DebuggerMode.values().length)
+						mode = 0;
+					nbt.setInteger("mode",mode);
+					player.sendMessage(new TextComponentString("Set mode "+DebuggerMode.values()[mode].name()));
+					stack.setTagCompound(nbt);
+					player.inventoryContainer.detectAndSendChanges();
+				}
 			}
 		}
 		

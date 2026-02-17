@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.reactors.lftr.components.plug;
 
 import com.hbm.blocks.ILookOverlay;
+import com.hbm.blocks.ITooltipProvider;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.BlockMachineBase;
 import com.hbm.handler.radiation.RadiationSystemNT;
@@ -13,8 +14,10 @@ import com.leafia.contents.fluids.traits.FT_LFTRCoolant;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityTEBase;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay, IRadResistantBlock {
+public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay, IRadResistantBlock, ITooltipProvider {
 	public MSRPlugBlock(Material materialIn,String s) {
 		super(materialIn,0,s);
 		ModBlocks.ALL_BLOCKS.remove(this);
@@ -42,18 +45,19 @@ public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay, IRad
 
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
 		super.onBlockAdded(worldIn, pos, state);
 	}
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
 		super.breakBlock(worldIn, pos, state);
 	}
 	@Override
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
 		MachineTooltip.addMultiblock(tooltip);
 		MachineTooltip.addModular(tooltip);
+		addStandardInfo(tooltip);
 		super.addInformation(stack,worldIn,tooltip,flagIn);
 		tooltip.add("§2[" + I18nUtil.resolveKey("trait.radshield") + "]");
 	}
@@ -98,6 +102,11 @@ public class MSRPlugBlock extends BlockMachineBase implements ILookOverlay, IRad
 				texts.add(TextFormatting.DARK_RED+I18nUtil.resolveKey("tile.msr_plug.molten"));
 		}
 		MSRTEBase.appendPrintHook(texts,world,x,y,z);
+		LeafiaGls.pushMatrix();
+		LeafiaGls.scale(0.5);
+		ScaledResolution resolution = event.getResolution();
+		LeafiaGls.translate(resolution.getScaledHeight_double(),resolution.getScaledHeight_double()/2,0);
 		ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xFF55FF, 0x3F153F, texts);
+		LeafiaGls.popMatrix();
 	}
 }

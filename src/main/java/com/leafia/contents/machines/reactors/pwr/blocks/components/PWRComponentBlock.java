@@ -12,7 +12,9 @@ public interface PWRComponentBlock {
     default boolean shouldRenderOnGUI() {
         return false;
     }
+	/// Only control rods and elements may return false. Basically if the TE is stacked or not
     boolean tileEntityShouldCreate(World world,BlockPos pos);
+	/// Get this TileEntity as PWR component
     @Nullable
     default PWRComponentEntity getPWR(World world,BlockPos pos) {
         if (!tileEntityShouldCreate(world,pos)) return null;
@@ -24,7 +26,9 @@ public interface PWRComponentBlock {
         }
         return null;
     };
+	/// getPWR but as TileEntity (is this even necessary)
     @Nullable
+    @Deprecated
     default TileEntity getEntity(World world,BlockPos pos) {
         if (!tileEntityShouldCreate(world,pos)) return null;
         TileEntity entity = world.getTileEntity(pos);
@@ -35,6 +39,7 @@ public interface PWRComponentBlock {
         }
         return null;
     };
+	/// Start diagnosis (DOES NOT WORK ON CLIENT)
     default void beginDiagnosis(World world,BlockPos pos,BlockPos trigger) {
         if (world.isRemote) return;
         PWRDiagnosis.cleanup();

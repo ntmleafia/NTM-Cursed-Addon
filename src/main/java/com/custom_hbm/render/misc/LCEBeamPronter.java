@@ -23,8 +23,13 @@ import java.util.Random;
 
 // BeamPronter with better RANDOM beam
 public class LCEBeamPronter {
-
+    /// Don't use this, it'll not work well with shaders
+    @Deprecated
     public static void prontBeam(Vec3d skeleton, EnumWaveType wave, EnumBeamType beam, int outerColor, int innerColor, int start, int segments, float spinRadius, int layers, float thickness) {
+        prontBeam(true,skeleton,wave,beam,outerColor,innerColor,start,segments,spinRadius,layers,thickness);
+    }
+
+    public static void prontBeam(boolean shouldDisableTexture2D, Vec3d skeleton, EnumWaveType wave, EnumBeamType beam, int outerColor, int innerColor, int start, int segments, float spinRadius, int layers, float thickness) {
 
         GlStateManager.pushMatrix();
 
@@ -47,7 +52,7 @@ public class LCEBeamPronter {
         GlStateManager.rotate(sYaw, 0, 1F, 0);
         GlStateManager.rotate(sPitch - 90, 1F, 0, 0);
 
-        if (prevTex2D) GlStateManager.disableTexture2D();
+        if (prevTex2D && shouldDisableTexture2D) GlStateManager.disableTexture2D();
         if (prevLighting) GlStateManager.disableLighting();
         if (!prevDepthMask) GlStateManager.depthMask(true);
         //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
@@ -166,7 +171,7 @@ public class LCEBeamPronter {
         }
         GlStateManager.depthMask(prevDepthMask);
         if (prevLighting) GlStateManager.enableLighting();
-        if (prevTex2D) GlStateManager.enableTexture2D();
+        if (prevTex2D && shouldDisableTexture2D) GlStateManager.enableTexture2D();
 
         GlStateManager.popMatrix();
     }

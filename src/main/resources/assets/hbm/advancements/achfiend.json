@@ -1,0 +1,23 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:shimmer_sledge"
+		},
+		"title": {
+			"translate": "hbm.achievement.fiend"
+		},
+		"description": {
+			"translate": "hbm.achievement.fiend.desc"
+		},
+		"frame": "challenge"
+	},
+	"parent": "leafia:root_misc",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 10
+    }
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achbismuth",
+  "display": {
+    "icon": {
+      "item": "hbm:iter"
+    },
+    "title": {
+      "translate": "achievement.fusion"
+    },
+    "description": {
+      "translate": "achievement.fusion.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_struct_iter_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:struct_iter_core"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_struct_iter_core"
+    ]
+  ]
+}

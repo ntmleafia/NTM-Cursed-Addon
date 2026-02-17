@@ -1,0 +1,29 @@
+{
+  "parent": "hbm:achwatz",
+  "display": {
+    "icon": {
+      "item": "forge:bucketfilled",
+      "nbt": "{FluidName:\"mud_fluid\",Amount:1000}"
+    },
+    "title": {
+      "translate": "achievement.watzBoom"
+    },
+    "description": {
+      "translate": "achievement.watzBoom.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

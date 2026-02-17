@@ -1,0 +1,22 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:coin_maskman"
+		},
+		"title": {
+			"translate": "achievement.bossMaskman"
+		},
+		"description": {
+			"translate": "achievement.bossMaskman.desc"
+		}
+	},
+	"parent": "hbm:root",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 80
+    }
+}

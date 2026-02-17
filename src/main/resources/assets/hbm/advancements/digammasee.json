@@ -1,0 +1,29 @@
+{
+  "parent": "hbm:achomega12",
+  "display": {
+    "icon": {
+      "item": "hbm:achievement_icon",
+      "data": 3
+    },
+    "title": {
+      "translate": "achievement.digammaSee"
+    },
+    "description": {
+      "translate": "achievement.digammaSee.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "leafia:progress_refinery",
+  "display": {
+    "icon": {
+      "item": "hbm:ingot_polymer"
+    },
+    "title": {
+      "translate": "achievement.polymer"
+    },
+    "description": {
+      "translate": "achievement.polymer.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_ingot_polymer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:ingot_polymer"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_ingot_polymer"
+    ]
+  ]
+}

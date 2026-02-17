@@ -8,6 +8,7 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
+import com.hbm.tileentity.network.TileEntityPipeBaseNT;
 import com.hbm.uninos.GenNode;
 import com.hbm.uninos.UniNodespace;
 import com.hbm.util.Compat;
@@ -15,87 +16,109 @@ import com.leafia.contents.network.pipe_amat.AmatDuctTE;
 import com.leafia.contents.network.pipe_amat.uninos.AmatNet;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AmatDuctChargerTE extends TileEntity implements ITickable, IEnergyReceiverMK2, LeafiaPacketReceiver, IFluidProviderMK2 {
-	boolean loaded = true;
+public class AmatDuctChargerTE extends AmatDuctTE implements ITickable, IEnergyReceiverMK2 {
 	long power = 0;
 	public static long maxPower = 10000;
-	FluidType filter = Fluids.NONE;
 
 	@Override
 	public void update() {
-		if (!world.isRemote) {
-			List<AmatNet> blacklist = new ArrayList<>();
+		if(!world.isRemote) {
 			for (EnumFacing facing : EnumFacing.values()) {
 				BlockPos offset = pos.offset(facing);
 				ForgeDirection dir = ForgeDirection.getOrientation(facing);
 				trySubscribe(world,offset,dir);
-				TileEntity te = Compat.getTileStandard(world,offset.getX(),offset.getY(),offset.getZ());
-				if (te instanceof AmatDuctTE duct) {
-					if (duct.canConnect(filter,dir)) {
-						GenNode<AmatNet> node = UniNodespace.getNode(world,offset,AmatNet.getProvider(filter));
-						if(node != null && node.net != null) {
-							if (!blacklist.contains(node.net)) {
-								blacklist.add(node.net);
-								long demand = AmatNet.maxPower-node.net.power;
-								long transfer = Math.min(power,demand);
-								if (transfer > 0) {
-									power -= transfer;
-									node.net.power += transfer;
-								}
-							}
+				//System.out.println(power);
+			}
+			if (canUpdate()) {
+				if (this.node == null || this.node.expired) {
+
+					if (this.shouldCreateNode()) {
+						this.node = UniNodespace.getNode(world,pos,AmatNet.getProvider(type));
+
+						if (this.node == null || this.node.expired) {
+							this.node = this.createNodeAmat(type);
+							UniNodespace.createNode(world,this.node);
 						}
+					}
+				}
+				if (node != null && node.net != null) {
+					long demand = AmatNet.maxPower-node.net.power;
+					long transfer = Math.min(power,demand);
+					if (transfer > 0) {
+						power -= transfer;
+						node.net.power += transfer;
 					}
 				}
 			}
 			LeafiaPacket._start(this).__write(31,power).__sendToAffectedClients();
 		}
 	}
+	@Override
+	public void invalidate() {
+		super.invalidate();
+
+		if(!world.isRemote) {
+			if(this.node != null) {
+				UniNodespace.destroyNode(world, pos, AmatNet.getProvider(type));
+			}
+		}
+	}
 
 	public void sendTypeUpdatePacket() {
-		LeafiaPacket._start(this).__write(30,filter.getID()).__sendToAffectedClients();
+		LeafiaPacket._start(this).__write(30,type.getID()).__sendToAffectedClients();
 	}
 	public void setType(FluidType type) {
-		filter = type;
+		FluidType prev = this.type;
+		this.type = type;
+		this.markDirty();
+
+		if (world instanceof WorldServer) {
+			IBlockState state = world.getBlockState(pos);
+			world.notifyBlockUpdate(pos, state, state, 3);
+			world.markBlockRangeForRenderUpdate(pos, pos);
+		}
+
+		UniNodespace.destroyNode(world, pos, AmatNet.getProvider(prev));
+
+		if(this.node != null) {
+			this.node = null;
+		}
 		sendTypeUpdatePacket();
 	}
 	public FluidType getType() {
-		return filter;
+		return type;
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setLong("power",power);
-		compound.setInteger("filter",filter.getID());
+		compound.setInteger("filter",type.getID());
 		return super.writeToNBT(compound);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		filter = Fluids.fromID(compound.getInteger("filter"));
+		type = Fluids.fromID(compound.getInteger("filter"));
 		power = compound.getLong("power");
 	}
 
 	@Override
 	public double affectionRange() {
-		return LeafiaPacketReceiver.super.affectionRange();
-	}
-
-	@Override
-	public void onChunkUnload() {
-		loaded = false;
-		super.onChunkUnload();
+		return super.affectionRange();
 	}
 
 	@Override
@@ -114,11 +137,6 @@ public class AmatDuctChargerTE extends TileEntity implements ITickable, IEnergyR
 	}
 
 	@Override
-	public boolean isLoaded() {
-		return loaded;
-	}
-
-	@Override
 	public String getPacketIdentifier() {
 		return "AMAT_CHRGR";
 	}
@@ -128,7 +146,7 @@ public class AmatDuctChargerTE extends TileEntity implements ITickable, IEnergyR
 		if (key == 31)
 			power = (long)value;
 		else if (key == 30)
-			filter = Fluids.fromID((int)value);
+			type = Fluids.fromID((int)value);
 	}
 
 	@Override
@@ -136,17 +154,6 @@ public class AmatDuctChargerTE extends TileEntity implements ITickable, IEnergyR
 
 	@Override
 	public void onPlayerValidate(EntityPlayer plr) {
-		LeafiaPacket._start(this).__write(30,filter.getID()).__sendToClient(plr);
-	}
-
-	@Override
-	public void useUpFluid(FluidType fluidType,int i,long l) { }
-	@Override
-	public long getFluidAvailable(FluidType fluidType,int i) {
-		return 0;
-	}
-	@Override
-	public FluidTankNTM[] getAllTanks() {
-		return new FluidTankNTM[0];
+		LeafiaPacket._start(this).__write(30,type.getID()).__sendToClient(plr);
 	}
 }

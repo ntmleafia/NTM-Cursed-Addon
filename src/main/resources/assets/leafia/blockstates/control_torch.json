@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=up":  { "model": "leafia:radio_torch_lit" },
+        "facing=east":  { "model": "leafia:radio_torch_wall_lit" },
+        "facing=south":  { "model": "leafia:radio_torch_wall_lit", "y": 90 },
+        "facing=west":  { "model": "leafia:radio_torch_wall_lit", "y": 180 },
+        "facing=north":  { "model": "leafia:radio_torch_wall_lit", "y": 270 }
+    }
+}

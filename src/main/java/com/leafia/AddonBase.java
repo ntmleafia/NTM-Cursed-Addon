@@ -1,28 +1,29 @@
 package com.leafia;
 
 import com.hbm.handler.GuiHandler;
-import com.hbm.inventory.fluid.Fluids;
-import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.items.machine.ItemBatteryPack;
+import com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack;
+import com.hbm.packet.PacketDispatcher;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.AddonFluids.AddonFF;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.control.battery.AddonEnumBatteryPack;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.potion.LeafiaPotion;
-import com.leafia.dev.NTMFNBT;
+import com.leafia.database.AirDetonationMissiles;
 import com.leafia.init.*;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.proxy.LeafiaServerProxy;
-import com.leafia.init.recipes.AddonChemplantRecipes;
-import com.leafia.init.recipes.AddonGasCentRecipes;
+import com.leafia.init.recipes.*;
 import com.leafia.overwrite_contents.asm.TransformerCoreLeafia;
 import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.settings.AddonConfig;
+import com.leafia.unsorted.AddonGuiHandler;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -33,13 +34,14 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[1.2.3.4,);required:mixinbooter")
+@Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
+		dependencies = "required-after:hbm@[2.0.0.0];required:mixinbooter;after:ntmspace")
 public class AddonBase {
 
 	public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
@@ -78,9 +80,13 @@ public class AddonBase {
 		// register to the event bus so that we can listen to events
 		MinecraftForge.EVENT_BUS.register(this);
 
-		Configuration config = new Configuration(new File(proxy.getDataDir().getPath() + "/config/hbm/leafia.cfg"));
-		config.load();
-		AddonConfig.loadFromConfig(config);
+		for (EnumBatteryPack value : EnumBatteryPack.values()) {
+			System.out.println("ENUM: "+value.name()+", ORDINAL: "+value.ordinal());
+		}
+
+		_initClass(AddonConfig.class);
+
+		PacketDispatcher.LISTENERS.add(new AddonPacketRegister());
 
 		for (Class<?> cl : LeafiaServerListener.class.getClasses()) {
 			try {
@@ -103,6 +109,7 @@ public class AddonBase {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		proxy.preInit(event);
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance,new AddonGuiHandler());
 
 		LCEItemCatalyst.registerMeltingPoints();
 
@@ -133,6 +140,7 @@ public class AddonBase {
 	public void init(FMLInitializationEvent event) {
 		AddonHazards.register();
 		AddonNodesRegister.register();
+		AirDetonationMissiles.init();
 		if (TransformerCoreLeafia.loadFailed != null)
 			TransformerCoreLeafia.loadFailed.run();
 	}
@@ -141,10 +149,17 @@ public class AddonBase {
 	// postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
 	public void postInit(FMLPostInitializationEvent event) {
 		AddonFF.setFromRegistry();
-		AddonChemplantRecipes.register();
-		AddonGasCentRecipes.register();
+		ArmorInit.postInit();
 		if (TransformerCoreLeafia.loadFailed != null)
 			TransformerCoreLeafia.loadFailed.run();
+	}
+
+	public static void registerSerializable() {
+		AddonChemplantRecipes.register();
+		AddonAssemblerRecipes.register();
+		AddonGasCentRecipes.register();
+		AddonElectrolyzerRecipes.register();
+		AddonPyroOvenRecipes.register();
 	}
 
 	@EventHandler
@@ -152,6 +167,8 @@ public class AddonBase {
 		proxy.onLoadComplete(evt);
 		if (TransformerCoreLeafia.loadFailed != null)
 			TransformerCoreLeafia.loadFailed.run();
+		FalloutConfigInit.onInit();
+
         /*
         FluidTankNTM tankNTM = new FluidTankNTM(Fluids.CRYOGEL,1000);
         NBTTagCompound nbt = new NBTTagCompound();
@@ -166,5 +183,6 @@ public class AddonBase {
 	// register server commands in this event handler (Remove if not needed)
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandLeaf());
+		AddonAdvancements.init(event.getServer());
 	}
 }

@@ -1,0 +1,46 @@
+{
+  "parent": "leafia:progress_steel",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_assembly_machine"
+    },
+    "title": {
+      "translate": "achievement.assembly"
+    },
+    "description": {
+      "translate": "achievement.assembly.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_assembly_machine": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_assembly_machine"
+          }
+        ]
+      }
+    },
+    "crafting_hbm_machine_assembler": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_assembler"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_assembly_machine",
+      "crafting_hbm_machine_assembler"
+    ]
+  ]
+}

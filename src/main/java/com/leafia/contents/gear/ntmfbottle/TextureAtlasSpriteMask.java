@@ -102,8 +102,17 @@ public class TextureAtlasSpriteMask extends TextureAtlasSprite {
 				for (int x = 0; x < width; x++) {
 					int maskPixel = maskImg.getRGB(x, y);
 					int texPixel = texImg.getRGB(x, y);
-					boolean isTransparent = (maskPixel&0xFF000000) == 0;
-					baseFrameData[0][y*width+x] = isTransparent ? maskPixel : texPixel;
+					//boolean isTransparent = (maskPixel&0xFF000000) == 0;
+					float mR = (maskPixel>>>16&0xFF)/255f;
+					float mG = (maskPixel>>>8&0xFF)/255f;
+					float mB = (maskPixel&0xFF)/255f;
+					float mA = (maskPixel>>>24&0xFF)/255f;
+					float tR = (texPixel>>>16&0xFF)/255f;
+					float tG = (texPixel>>>8&0xFF)/255f;
+					float tB = (texPixel&0xFF)/255f;
+					float tA = (texPixel>>>24&0xFF)/255f;
+					int color = ((int)(mR*255*tR)<<16)|((int)(mG*255*tG)<<8)|((int)(mB*255*tB))|((int)(mA*255*tA)<<24);
+					baseFrameData[0][y*width+x] = color;//isTransparent ? maskPixel : texPixel;
 				}
 			}
 		}

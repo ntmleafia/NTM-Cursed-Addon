@@ -1,7 +1,6 @@
 package com.leafia.contents.machines.misc.heatex.container;
 
-import com.hbm.inventory.SlotBattery;
-import com.hbm.inventory.SlotTakeOnly;
+import com.hbm.inventory.slot.SlotBattery;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexTE;
 import com.leafia.dev.container_utility.LeafiaItemTransferable;
 import net.minecraft.entity.player.EntityPlayer;

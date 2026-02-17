@@ -11,11 +11,15 @@ import com.hbm.lib.InventoryHelper;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlBlock;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.unsorted.ParticleBalefire;
 import com.leafia.unsorted.ParticleBalefireLava;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -38,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 
 public class PWRElementBlock extends BlockMachineBase implements ITooltipProvider, ILookOverlay, PWRComponentBlock {
+	public static final PropertyBool stacked = PropertyBool.create("stacked");
 	public PWRElementBlock(String s) {
 		super(Material.IRON,-1,s);
 		this.setTranslationKey("lwr_element");
@@ -67,8 +72,18 @@ public class PWRElementBlock extends BlockMachineBase implements ITooltipProvide
 	public void neighborChanged(IBlockState state,World worldIn,BlockPos pos,Block blockIn,BlockPos fromPos) { // Fired only on server
 		super.neighborChanged(state,worldIn,pos,blockIn,fromPos);
 		check(worldIn,pos);
+		updateState(state,worldIn,pos);
 		beginDiagnosis(worldIn,pos,fromPos);
 	}
+
+	@Override
+	public void onBlockAdded(World worldIn,BlockPos pos,IBlockState state) {
+		super.onBlockAdded(worldIn,pos,state);
+		updateState(state,worldIn,pos);
+		if (!worldIn.isRemote)
+			LeafiaPassiveServer.queueFunction(()->beginDiagnosis(worldIn,pos,pos));
+	}
+
 	@Override
 	public void addInformation(ItemStack stack,@Nullable World player,List<String> tooltip,ITooltipFlag advanced) {
 		MachineTooltip.addMultiblock(tooltip);
@@ -80,13 +95,47 @@ public class PWRElementBlock extends BlockMachineBase implements ITooltipProvide
 	}
 	@Override
 	public TileEntity createNewTileEntity(World worldIn,int meta) {
+		if (meta >= 1)
+			return new PWRProxyTE();
 		return new PWRElementTE();
+	}
+
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this,stacked);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(stacked) ? 1 : 0;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		if (meta >= 1)
+			return this.getDefaultState().withProperty(stacked,true);
+		else
+			return this.getDefaultState().withProperty(stacked,false);
+	}
+
+	public void updateState(IBlockState state,World worldIn,BlockPos pos) {
+		if (worldIn.isRemote) return;
+		boolean shouldCreateTEbefore = !state.getValue(stacked);
+		boolean shouldCreateTE = tileEntityShouldCreate(worldIn,pos);
+		if (shouldCreateTE != shouldCreateTEbefore)
+			worldIn.setBlockState(pos,getDefaultState().withProperty(stacked,!shouldCreateTE));
+		// break itself if its combined with other rod types
+		if (worldIn.getBlockState(pos.up()).getBlock() instanceof PWRElementBlock && !state.getBlock().equals(worldIn.getBlockState(pos.up()).getBlock())) {
+			//	|| worldIn.getBlockState(pos.down()).getBlock() instanceof PWRControlBlock && !state.getBlock().equals(worldIn.getBlockState(pos.down()).getBlock())) {
+			worldIn.destroyBlock(pos,true);
+		}
 	}
 
 	public BlockPos getTopElement(World world,BlockPos pos) {
 		BlockPos upPos = pos.up();
 		while (world.isValid(upPos)) {
-			if (world.getBlockState(upPos).getBlock() instanceof PWRElementBlock) {
+			IBlockState state = world.getBlockState(upPos);
+			if (state.getBlock() instanceof PWRElementBlock && state.getBlock().equals(world.getBlockState(pos).getBlock())) {
 				pos = upPos;
 			} else break;
 			upPos = pos.up();

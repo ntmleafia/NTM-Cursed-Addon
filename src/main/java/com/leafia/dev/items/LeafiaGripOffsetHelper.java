@@ -24,7 +24,7 @@ import java.util.Map;
  * <h3>HOW TO MOVE OFFSETS IN-GAME:</h3>
  * Enable <b>debug</b> static variable in this class. That's it.
  * <br>Controls are arrows, IJKL, ctrl+up/down, ctrl+I/K, and space.
- * <br>Hold ALT for smaller increments.
+ * <br>Hold TAB for smaller increments.
  * <br>Keep in mind that offsets are not automatically saved, and you have to write scale, position and rotations manually via code.
  * <br>FIRST_PERSON_LEFT_HAND is affected by FIRST_PERSON_RIGHT_HAND, and THIRD_PERSON_LEFT_HAND is affected by THIRD_PERSON_RIGHT_HAND.
  * <br><br>

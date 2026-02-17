@@ -1,6 +1,6 @@
 package com.leafia.contents.machines.reactors.lftr.components.element;
 
-import com.hbm.blocks.ModBlocks;
+import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.util.Tuple.Pair;
@@ -8,9 +8,11 @@ import com.leafia.contents.AddonFluids;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
+import com.leafia.contents.machines.reactors.pwr.blocks.PWRReflectorBlock;
 import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.math.FiaMatrix;
+import com.leafia.passive.LeafiaPassiveServer;
 import com.llib.group.LeafiaMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -32,6 +34,14 @@ public class MSRElementTE extends MSRTEBase {
 	public enum MSRByproduct {
 		th232(
 				1,
+				new Pair<>("pa233",1d)
+		),
+		pa233(
+				1,
+				new Pair<>("pa234",1d)
+		),
+		pa233_decay(
+				1,
 				new Pair<>("u233",1d)
 		),
 		u233(
@@ -49,48 +59,132 @@ public class MSRElementTE extends MSRTEBase {
 		th232(
 				new Item[]{},
 				new String[]{OreDictManager.TH232.nugget()},
-				"(x÷2)^0.6/B",
-				(x)->Math.pow(x/2,0.6),
-				100000000d,
-				MSRByproduct.th232
+				"x^0.3/B",
+				(x)->Math.pow(x,0.3),
+				0.3,
+				MSRByproduct.th232,
+				30000000d
+		),
+		pa233(
+				new Item[]{},
+				new String[]{},
+				"x^0.3/B",
+				(x)->Math.pow(x,0.3),
+				1,
+				MSRByproduct.pa233,
+				1000000d,
+				0.0003,
+				MSRByproduct.pa233_decay
 		),
 		u233(
 				new Item[]{},
 				new String[]{OreDictManager.U233.nugget()},
-				"(x×3)^0.6/B",
-				(x)->Math.pow(x*3,0.65),
-				600000000d,
-				MSRByproduct.u233
+				"x^0.85/B",
+				(x)->Math.pow(x,0.85),
+				1,
+				MSRByproduct.u233,
+				600000000d
 		),
 		u235(
 				new Item[]{},
 				new String[]{OreDictManager.U235.nugget()},
-				"(x×3)^0.6/B",
-				(x)->Math.pow(x*3,0.6)
+				"x^0.75/B",
+				(x)->Math.pow(x,0.75),
+				1
+		),
+		pa234(
+				new Item[]{},
+				new String[]{},
+				"x^0.15/B",
+				(x)->Math.pow(x,0.15),
+				1
 		);
 		final public Item[] items;
 		final public String[] dicts;
 		final public String funcString;
 		final public Function<Double,Double> function;
-		final public double life;
+		final public double decayRate;
+		final public MSRByproduct decayProduct;
+		final public double heatPerFlux;
 		final public MSRByproduct byproduct;
-		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function) {
+		final double life;
+		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function,double heatPerFlux) {
 			this.items = items;
 			this.dicts = dicts;
 			this.funcString = funcString;
 			this.function = function;
-			life = 0;
+			this.heatPerFlux = heatPerFlux;
 			byproduct = null;
+			this.decayRate = 0;
+			this.decayProduct = null;
+			this.life = 0;
 		}
-		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function,double life,MSRByproduct byproduct) {
+		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function,double heatPerFlux,MSRByproduct byproduct,double life) {
 			this.items = items;
 			this.dicts = dicts;
 			this.funcString = funcString;
 			this.function = function;
-			this.life = life;
 			this.byproduct = byproduct;
+			this.heatPerFlux = heatPerFlux;
+			this.decayRate = 0;
+			this.decayProduct = null;
+			this.life = life;
+		}
+		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function,double heatPerFlux,double decayRate,MSRByproduct decayProduct) {
+			this.items = items;
+			this.dicts = dicts;
+			this.funcString = funcString;
+			this.function = function;
+			this.heatPerFlux = heatPerFlux;
+			this.decayRate = decayRate;
+			this.decayProduct = decayProduct;
+			byproduct = null;
+			this.life = 0;
+		}
+		MSRFuel(Item[] items,String[] dicts,String funcString,Function<Double,Double> function,double heatPerFlux,MSRByproduct byproduct,double life,double decayRate,MSRByproduct decayProduct) {
+			this.items = items;
+			this.dicts = dicts;
+			this.funcString = funcString;
+			this.function = function;
+			this.byproduct = byproduct;
+			this.heatPerFlux = heatPerFlux;
+			this.decayRate = decayRate;
+			this.decayProduct = decayProduct;
+			this.life = life;
 		}
 	}
+	void decay() {
+		double B = tank.getFluidAmount()/1000d;
+		FluidStack stack = tank.getFluid();
+		if (stack != null) {
+			NBTTagCompound nbt = nbtProtocol(stack.tag);
+			Map<String,Double> mixture = readMixture(nbt);
+			for (Entry<String,Double> entry : mixture.entrySet()) {
+				// entry.getValue() doesn't work because the mixture changes concurrently
+				double mix = mixture.get(entry.getKey());
+				if (mix <= 0) continue;
+				try {
+					MSRFuel type = MSRFuel.valueOf(entry.getKey());
+					//if (entry.getKey().equals("u233")) {
+					//LeafiaDebug.debugLog(world,"U233: "+tempAdd);
+					//}
+					if (type.decayProduct != null) {
+						double addAmt = type.decayRate*mix*B*0.05;
+						;
+						for (Pair<String,Double> byproduct : type.decayProduct.byproducts)
+							addMixture(mixture,byproduct.getKey(),/*mix* what was my peanut brain cooking while i was coding ts*/addAmt/type.byproduct.division);
+						double perc = mix-addAmt;
+						mixture.put(entry.getKey(),perc);
+						if (perc <= 0)
+							mixture.remove(entry.getKey());
+					}
+				} catch (IllegalArgumentException ignored) {
+				}
+			}
+			nbt.setTag("itemMixture",writeMixture(mixture));
+		}
+	}
+
 	Block getBlockArbitrary(BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
@@ -122,8 +216,8 @@ public class MSRElementTE extends MSRTEBase {
 
 	MSRElementTE getReactionTarget(BlockPos pos) {
 		Block block = getBlockArbitrary(pos);
-		//if (block instanceof PWRReflectorBlock)
-		//	return this;
+		if (block instanceof PWRReflectorBlock)
+			return this;
 		if (world.getTileEntity(pos) instanceof MSRElementTE te)
 			return te;
 		return null;
@@ -135,7 +229,6 @@ public class MSRElementTE extends MSRTEBase {
 		else
 			mixture.put(fuelType,amt);
 	}
-
 	void react(MSRElementTE te,double distance,double multiplier) {
 		double B = te.tank.getFluidAmount()/2000d+tank.getFluidAmount()/2000d;
 		FluidStack stack0 = tank.getFluid();
@@ -143,7 +236,9 @@ public class MSRElementTE extends MSRTEBase {
 		if (stack0 != null) {
 			double y = 0;
 			NBTTagCompound nbt = nbtProtocol(stack0.tag);
-			double curRestriction = restriction;
+			double curRestriction = Math.max(restriction,te.restriction);
+			multiplier *= (1-curRestriction);
+			multiplier /= distance/2;
 			if (stack1 != null) {
 				Map<String,Double> mixture = readMixture(nbt);
 				for (Entry<String,Double> entry : mixture.entrySet()) {
@@ -152,12 +247,12 @@ public class MSRElementTE extends MSRTEBase {
 					if (mix <= 0) continue;
 					try {
 						MSRFuel type = MSRFuel.valueOf(entry.getKey());
-						double tempAdd = type.function.apply(nbtProtocol(stack1.tag).getDouble("heat")+getBaseTemperature(AddonFluids.fromFF(stack0.getFluid())))*mix*B;
+						double tempAdd = type.function.apply(nbtProtocol(stack1.tag).getDouble("heat")+getBaseTemperature(AddonFluids.fromFF(stack0.getFluid())))*mix*B*multiplier;
 						y += tempAdd;
 						if (type.byproduct != null) {
 							double addAmt = tempAdd/type.life;
 							for (Pair<String,Double> byproduct : type.byproduct.byproducts)
-								addMixture(mixture,byproduct.getKey(),/*mix* what was my peanut brain cooking while i was coding ts*/addAmt/type.byproduct.division);
+								addMixture(mixture,byproduct.getKey(),addAmt/type.byproduct.division);
 							double perc = mix-addAmt;
 							mixture.put(entry.getKey(),perc);
 							if (perc <= 0)
@@ -165,17 +260,16 @@ public class MSRElementTE extends MSRTEBase {
 						}
 					} catch (IllegalArgumentException ignored) {}
 				}
-				curRestriction = Math.max(curRestriction,te.restriction);
+				//curRestriction = Math.max(curRestriction,te.restriction);
 				nbt.setTag("itemMixture",writeMixture(mixture));
 			}
-			y *= (1-curRestriction);
 			double heat = nbt.getDouble("heat");
-			y /= distance/2;
-			y *= multiplier;
 			double heatMg = y-heat;
 			heat += Math.pow(Math.abs(heatMg),0.2)*Math.signum(heatMg);
 			nbt.setDouble("heat",heat);
 			stack0.tag = nbt;
+			double rad = Math.pow(heatMg,0.65)/2;
+			//ChunkRadiationManager.proxy.incrementRad(world,pos,(float)rad/8,(float)rad);
 		}
 	}
 
@@ -250,6 +344,7 @@ public class MSRElementTE extends MSRTEBase {
 				control = null;
 				restriction = 0;
 			}*/
+			decay();
 			reactCorners();
 			for (EnumFacing face : EnumFacing.values())
 				reactLine(face);

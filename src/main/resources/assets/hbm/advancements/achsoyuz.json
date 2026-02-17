@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:achspace",
+  "display": {
+    "icon": {
+      "item": "minecraft:baked_potato"
+    },
+    "title": {
+      "translate": "achievement.soyuz"
+    },
+    "description": {
+      "translate": "achievement.soyuz.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

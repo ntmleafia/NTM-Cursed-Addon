@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Random;
+
 public class LeafiaRodRender extends TileEntityItemStackRenderer {
 
 	public static final LeafiaRodRender INSTANCE = new LeafiaRodRender();
@@ -157,7 +159,7 @@ public class LeafiaRodRender extends TileEntityItemStackRenderer {
 			}
 		}
 	}
-	
+	static final Random shake = new Random();
 	@Override
 	public void renderByItem(ItemStack stack) {
 
@@ -169,6 +171,9 @@ public class LeafiaRodRender extends TileEntityItemStackRenderer {
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 
 		LeafiaRodItem rod = LeafiaRodItem.fromResourceMap.get(stack.getItem().getRegistryName().getPath());
+
+		if (rod.functionId.equals("dgomega"))
+			GL11.glTranslated(shake.nextGaussian()*0.025,shake.nextGaussian()*0.025,0);
 
 		ItemStack renderStack = new ItemStack(rod.baseItem, 1, rod.baseMeta);
 		IBakedModel submodel = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(renderStack, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player);
@@ -663,7 +668,7 @@ public class LeafiaRodRender extends TileEntityItemStackRenderer {
 					GlStateManager.disableLighting();
 					float col = (float) Math.min(opacity, 1F);
 					GlStateManager.color(col,col,col,col);
-					IBakedModel overlay = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(new ItemStack(LeafiaRods.leafRod, 1, 15), Minecraft.getMinecraft().world, null);
+					IBakedModel overlay = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(new ItemStack(LeafiaRods.leafRod, 1, rod.functionId.contains("balefire") ? 14 : 15), Minecraft.getMinecraft().world, null);
 					TextureAtlasSprite icon = overlay.getParticleTexture();
 					float up = icon.getInterpolatedV(16);
 					float down = icon.getInterpolatedV(0);

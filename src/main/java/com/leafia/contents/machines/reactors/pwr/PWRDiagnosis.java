@@ -42,6 +42,8 @@ public class PWRDiagnosis {
 	// This set is cleared every world tick
 	public static final Set<BlockPos> preventScan = new HashSet<>();
 
+	public BlockPos forcedCorePos = null;
+
 	public final boolean isMeltdown;
 	public static final Set<PWRDiagnosis> ongoing = new HashSet<>();
 	private static boolean cleanupInProgress = false; // idk if this is necessary but I hate crashes so much so have this anyway
@@ -211,8 +213,17 @@ public class PWRDiagnosis {
 					// then allow it to be assigned as core
 					TileEntity entity = world.getTileEntity(pos);
 					if (entity != null) {
-						if (entity instanceof ITickable) // only assign tickable entities as a core
-							potentialPos.add(pos);
+						// only assign tickable entities as a core
+						// actually only assign entities explicitly stated as assignable
+						if (entity instanceof PWRComponentEntity component && component.canAssignCore()) {
+							boolean doNotAdd = false;
+							if (forcedCorePos != null) {
+								if (!pos.equals(forcedCorePos))
+									doNotAdd = true;
+							}
+							if (!doNotAdd)
+								potentialPos.add(pos);
+						}
 					}
 					if (pwr instanceof PWRElementBlock) {
 						fuelPositions.add(pos);
@@ -305,7 +316,7 @@ public class PWRDiagnosis {
 					if (link != null) {
 						if (!members.contains(link.corePos)) {
 							if (isMeltdown) {
-								link.explode(world,null,null);
+								link.explode(world,null,null,1);
 								return;
 							}
 						}
@@ -329,21 +340,21 @@ public class PWRDiagnosis {
 					core.members = blockPos;
 					core.controls = controlPositions;
 					core.fuels = fuelPositions;
-				}
-				if (!world.isRemote) {
-					core.coriums = this.coriums.size();
-					float avg = sumHardness/Math.max(divide,1);
-					float hardness = avg*0.8f+maxHardness*0.2f;
-					core.toughness = (int)(Math.pow(hardness,0.25)*4800);
-					core.lastChannels = channels.size();
-					core.lastConductors = conductors;
-					core.resizeTanks(channels.size(),conductors);
-					gridFill();
-					LeafiaSet<BlockPos> projection = new LeafiaSet<>();
-					for (Entry<Pair<Integer,Integer>,Pair<Integer,Boolean>> entry : projected.entrySet())
-						projection.add(new BlockPos(entry.getKey().getKey(),entry.getValue().getKey(),entry.getKey().getValue()));
-					core.projection = projection;
-					core.onDiagnosis(world);
+					if (!world.isRemote) {
+						core.coriums = this.coriums.size();
+						float avg = sumHardness/Math.max(divide,1);
+						float hardness = avg*0.8f+maxHardness*0.2f;
+						core.toughness = (int)(Math.pow(hardness,0.25)*4800);
+						core.lastChannels = channels.size();
+						core.lastConductors = conductors;
+						core.resizeTanks(channels.size(),conductors);
+						gridFill();
+						LeafiaSet<BlockPos> projection = new LeafiaSet<>();
+						for (Entry<Pair<Integer,Integer>,Pair<Integer,Boolean>> entry : projected.entrySet())
+							projection.add(new BlockPos(entry.getKey().getKey(),entry.getValue().getKey(),entry.getKey().getValue()));
+						core.projection = projection;
+						core.onDiagnosis(world);
+					}
 				}
 			}
 		}

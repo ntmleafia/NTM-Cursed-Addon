@@ -1,6 +1,6 @@
 package com.leafia.contents.machines.powercores.dfc.components.injector;
 
-import com.hbm.inventory.SlotTakeOnly;
+import com.hbm.inventory.slot.SlotTakeOnly;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

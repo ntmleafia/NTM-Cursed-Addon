@@ -53,6 +53,9 @@ public final class KillMethodTransformer implements IClassTransformer {
 		killNames("com.hbm.tileentity.machine.TileEntityCoreStabilizer",
 				"getEnergyInfo","getInput","getDurability","getInfo","setInput"
 		);
+		killNames("com.hbm.tileentity.machine.TileEntityReactorZirnox",
+				"setActive","isActive"
+		);
 	}
 
 	private void killSig(String owner, MethodSig... sigs) {

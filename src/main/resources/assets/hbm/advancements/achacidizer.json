@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achdesh",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_crystallizer"
+    },
+    "title": {
+      "translate": "achievement.acidizer"
+    },
+    "description": {
+      "translate": "achievement.acidizer.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_crystallizer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_crystallizer"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_crystallizer"
+    ]
+  ]
+}

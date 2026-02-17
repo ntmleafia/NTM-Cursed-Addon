@@ -1,0 +1,28 @@
+{
+  "parent": "leafia:root_misc",
+  "display": {
+    "icon": {
+      "item": "hbm:achievement_icon"
+    },
+    "title": {
+      "translate": "achievement.gofish"
+    },
+    "description": {
+      "translate": "achievement.gofish.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "leafia:leafia/radio/radio_torch",
+    "textures": {
+        "torch": "leafia:blocks/leafia/radio/radio_torch_on"
+    }
+}

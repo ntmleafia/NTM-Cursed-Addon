@@ -110,10 +110,13 @@ public class LeafiaColor { // Color utility for doing complex color mixing
 	 * @return Color code in Inverse-ARGB format
 	 */
 	public int toInARGB() {
-		return (int)(Math.round(red*255)<<0_20|Math.round(green*255)<<0_10|Math.round(blue*255)|Math.round(255-alpha*255)<<0_30);
+		return (int)(clamp(Math.round(red*255))<<0_20|clamp(Math.round(green*255))<<0_10|clamp(Math.round(blue*255))|clamp(Math.round(255-alpha*255))<<0_30);
 	}
 	public int toARGB() {
-		return (int)(Math.round(red*255)<<0_20|Math.round(green*255)<<0_10|Math.round(blue*255)|Math.round(alpha*255)<<0_30);
+		return (int)(clamp(Math.round(red*255))<<0_20|clamp(Math.round(green*255))<<0_10|clamp(Math.round(blue*255))|clamp(Math.round(alpha*255))<<0_30);
+	}
+	int clamp(long v) {
+		return (int)Math.max(Math.min(v,255),0);
 	}
 
 	/**

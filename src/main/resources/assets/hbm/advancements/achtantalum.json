@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achchemplant",
+  "display": {
+    "icon": {
+      "item": "hbm:gem_tantalium"
+    },
+    "title": {
+      "translate": "achievement.tantalum"
+    },
+    "description": {
+      "translate": "achievement.tantalum.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_gem_tantalium": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:gem_tantalium"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_gem_tantalium"
+    ]
+  ]
+}

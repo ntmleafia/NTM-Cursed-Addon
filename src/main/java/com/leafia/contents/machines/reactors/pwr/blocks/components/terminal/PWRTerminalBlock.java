@@ -5,12 +5,15 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.BlockMachineBase;
 import com.hbm.handler.radiation.RadiationSystemNT;
 import com.hbm.interfaces.IRadResistantBlock;
+import com.hbm.main.AdvancementManager;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentEntity;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.init.AddonAdvancements;
+import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,8 +30,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class PWRTerminalBlock extends BlockMachineBase implements ITooltipProvider, PWRComponentBlock, IRadResistantBlock {
-	public PWRTerminalBlock() {
-		super(Material.IRON,0,"lwr_terminal");
+	public PWRTerminalBlock(String s) {
+		super(Material.IRON,0,s);
 		this.setTranslationKey("lwr_terminal");
 		this.setCreativeTab(MainRegistry.machineTab);
 		ModBlocks.ALL_BLOCKS.remove(this);
@@ -37,13 +40,15 @@ public class PWRTerminalBlock extends BlockMachineBase implements ITooltipProvid
 
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
 		super.onBlockAdded(worldIn, pos, state);
+		if (!worldIn.isRemote)
+			LeafiaPassiveServer.queueFunction(()->beginDiagnosis(worldIn,pos,pos));
 	}
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		RadiationSystemNT.markChunkForRebuild(worldIn, pos);
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
 		super.breakBlock(worldIn, pos, state);
 	}
 
@@ -68,8 +73,12 @@ public class PWRTerminalBlock extends BlockMachineBase implements ITooltipProvid
 	@Override
 	public boolean onBlockActivated(World world,BlockPos pos,IBlockState state,EntityPlayer player,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
 		PWRComponentEntity entity = getPWR(world,pos);
-		if (entity != null && entity.getLinkedCore() != null) {
-			return super.onBlockActivated(world,pos,state,player,hand,facing,hitX,hitY,hitZ);
+		if (entity instanceof PWRTerminalTE terminal) {
+			if (terminal.getLinkedCore() != null) {
+				if (!world.isRemote)
+					AdvancementManager.grantAchievement(player,AddonAdvancements.openpwr);
+				return super.onBlockActivated(world,pos,state,player,hand,facing,hitX,hitY,hitZ);
+			}
 		}
 		return false;
 	}

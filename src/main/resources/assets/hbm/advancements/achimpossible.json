@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:root",
+  "display": {
+    "icon": {
+      "item": "hbm:nothing"
+    },
+    "title": {
+      "translate": "achievement.impossible"
+    },
+    "description": {
+      "translate": "achievement.impossible.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

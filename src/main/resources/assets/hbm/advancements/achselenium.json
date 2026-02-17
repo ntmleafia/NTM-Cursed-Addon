@@ -1,0 +1,33 @@
+{
+  "parent": "leafia:progress_adv",
+  "display": {
+    "icon": {
+      "item": "hbm:ingot_starmetal"
+    },
+    "title": {
+      "translate": "achievement.selenium"
+    },
+    "description": {
+      "translate": "achievement.selenium.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_table": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:ingot_starmetal"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 70
+  }
+}

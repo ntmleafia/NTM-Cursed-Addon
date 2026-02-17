@@ -2,24 +2,19 @@ package com.leafia.contents.machines.reactors.lftr.processing.separator.containe
 
 import com.hbm.capability.NTMFluidCapabilityHandler;
 import com.hbm.inventory.FluidContainerRegistry;
-import com.hbm.inventory.SlotBattery;
-import com.hbm.inventory.SlotCraftingOutput;
-import com.hbm.inventory.SlotNonRetarded;
+import com.hbm.inventory.slot.SlotCraftingOutput;
+import com.hbm.inventory.slot.SlotNonRetarded;
 import com.hbm.inventory.container.ContainerBase;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.items.machine.ItemBlueprints;
 import com.hbm.items.machine.ItemMachineUpgrade;
 import com.hbm.lib.Library;
-import com.hbm.util.InventoryUtil;
-import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorTE;
-import com.leafia.dev.container_utility.LeafiaItemTransferable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class SaltSeparatorContainer extends ContainerBase {
 
@@ -73,7 +68,7 @@ public class SaltSeparatorContainer extends ContainerBase {
 					return ItemStack.EMPTY;
 				}
 			} else {
-				if(Library.isItemCanStoreEnergy(slotOriginal)) {
+				if(Library.isBattery(slotOriginal)) {
 					if(!this.mergeItemStack(slotStack, 0, 1, false)) return ItemStack.EMPTY;
 				} else if(slotOriginal.getItem() instanceof ItemBlueprints) {
 					if(!this.mergeItemStack(slotStack, 1, 2, false)) return ItemStack.EMPTY;

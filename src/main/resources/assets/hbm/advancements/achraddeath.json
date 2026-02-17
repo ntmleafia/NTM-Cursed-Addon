@@ -1,0 +1,23 @@
+{
+	"display": {
+		"icon": {
+			"item": "skull"
+		},
+		"title": {
+			"translate": "achievement.radDeath"
+		},
+		"description": {
+			"translate": "achievement.radDeath.desc"
+		},
+		"frame": "challenge"
+	},
+	"parent": "hbm:achradpoison",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 7
+    }
+}

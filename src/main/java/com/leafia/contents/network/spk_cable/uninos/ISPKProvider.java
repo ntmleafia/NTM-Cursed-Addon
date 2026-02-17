@@ -30,6 +30,8 @@ public interface ISPKProvider extends ISPKHandler {
         return this.getMaxSPK();
     }
 
+    long getNetRemaining();
+
     /**
      * Attempts to provide SPK to a target tile entity at specific coordinates.
      *
@@ -58,7 +60,7 @@ public interface ISPKProvider extends ISPKHandler {
 
         if (targetTE instanceof ISPKReceiver rec && targetTE != this) {
             if (rec.canConnectSPK(dirOpposite) && rec.isInputPreferrable(dirOpposite)) {
-                long canProvide = Math.min(this.getSPK(), this.getSPKProviderSpeed());
+                long canProvide = Math.min(this.getNetRemaining(), this.getSPKProviderSpeed());
                 long canReceive = Math.min(rec.getMaxSPK() - rec.getSPK(), rec.getSPKReceiverSpeed());
                 long toTransfer = Math.min(canProvide, canReceive);
 

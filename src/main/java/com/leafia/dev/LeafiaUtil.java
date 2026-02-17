@@ -1,6 +1,8 @@
 package com.leafia.dev;
 
 import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.TileEntityProxyBase;
 import com.leafia.contents.network.FFNBT;
@@ -13,10 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -24,8 +23,11 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public class LeafiaUtil {
 	public static int colorFromTextFormat(TextFormatting formatting) {
@@ -252,5 +254,138 @@ public class LeafiaUtil {
 			sending.drain(amount,true);
 			return toFill;
 		}
+	}
+
+	public static boolean setTypeExcluding(FluidTankNTM tank,int in,int out,@NotNull IItemHandler slots,FluidType... excludeTypes) {
+
+		if (!slots.getStackInSlot(in).isEmpty() && slots.getStackInSlot(in).getItem() instanceof IItemFluidIdentifier id) {
+
+			if (in == out) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				for (FluidType excludeType : excludeTypes) {
+					if (excludeType.equals(newType))
+						return false;
+				}
+
+				if (tank.getTankType() != newType) {
+					tank.setTankType(newType);
+					tank.setFill(0);
+					return true;
+				}
+
+			} else if (slots.getStackInSlot(out).isEmpty()) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				for (FluidType excludeType : excludeTypes) {
+					if (excludeType.equals(newType))
+						return false;
+				}
+
+				if (tank.getTankType() != newType) {
+					tank.setTankType(newType);
+					slots.insertItem(out, slots.getStackInSlot(in).copy(), false);
+					slots.getStackInSlot(in).shrink(1);
+					tank.setFill(0);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	public static boolean setTypeOnly(FluidTankNTM tank,int in,int out,@NotNull IItemHandler slots,FluidType... allowedTypes) {
+
+		if (!slots.getStackInSlot(in).isEmpty() && slots.getStackInSlot(in).getItem() instanceof IItemFluidIdentifier id) {
+
+			if (in == out) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				boolean allow = false;
+				for (FluidType usableType : allowedTypes) {
+					if (usableType.equals(newType)) {
+						allow = true;
+						break;
+					}
+				}
+
+				if (tank.getTankType() != newType && allow) {
+					tank.setTankType(newType);
+					tank.setFill(0);
+					return true;
+				}
+
+			} else if (slots.getStackInSlot(out).isEmpty()) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				boolean allow = false;
+				for (FluidType usableType : allowedTypes) {
+					if (usableType.equals(newType)) {
+						allow = true;
+						break;
+					}
+				}
+
+				if (tank.getTankType() != newType && allow) {
+					tank.setTankType(newType);
+					slots.insertItem(out, slots.getStackInSlot(in).copy(), false);
+					slots.getStackInSlot(in).shrink(1);
+					tank.setFill(0);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	public static boolean setTypeBy(FluidTankNTM tank,int in,int out,@NotNull IItemHandler slots,Function<FluidType,Boolean> processor,FluidType... excludeTypes) {
+
+		if (!slots.getStackInSlot(in).isEmpty() && slots.getStackInSlot(in).getItem() instanceof IItemFluidIdentifier id) {
+
+			if (in == out) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				if (!processor.apply(newType)) return false;
+				for (FluidType excludeType : excludeTypes) {
+					if (excludeType.equals(newType))
+						return false;
+				}
+
+				if (tank.getTankType() != newType) {
+					tank.setTankType(newType);
+					tank.setFill(0);
+					return true;
+				}
+
+			} else if (slots.getStackInSlot(out).isEmpty()) {
+				FluidType newType = id.getType(null, 0, 0, 0, slots.getStackInSlot(in));
+				if (!processor.apply(newType)) return false;
+				for (FluidType excludeType : excludeTypes) {
+					if (excludeType.equals(newType))
+						return false;
+				}
+
+				if (tank.getTankType() != newType) {
+					tank.setTankType(newType);
+					slots.insertItem(out, slots.getStackInSlot(in).copy(), false);
+					slots.getStackInSlot(in).shrink(1);
+					tank.setFill(0);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	/// I think there's a better way to do this but since I'm retarded here we are
+	public static String getFormatDecimal(double value,int minDecimals,int maxDecimals) {
+		value -= Math.floor(value);
+		String s = Double.toString(value);
+		if (s.endsWith(".0")) s = s.substring(0,s.length()-2);
+		boolean startCounting = false;
+		int decimals = 0;
+		for (char c : s.toCharArray()) {
+			if (c == '.')
+				startCounting = true;
+			else if (startCounting)
+				decimals++;
+		}
+		decimals = MathHelper.clamp(decimals,minDecimals,maxDecimals);
+		return "1."+decimals+"f";
 	}
 }

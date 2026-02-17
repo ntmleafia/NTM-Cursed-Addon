@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.other;
 
 import com.hbm.entity.effect.EntityNukeTorex;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.packet.PacketDispatcher;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityNukeTorex;
 import com.leafia.overwrite_contents.packets.TorexPacket;
@@ -58,7 +59,7 @@ public class TorexSpawner {
 		}
 		packet.nbt = nbt;
 		double amp = torex.getScale()*100;
-		PacketDispatcher.wrapper.sendToAllAround(packet,new NetworkRegistry.TargetPoint(
+		PacketThreading.createSendToAllTrackingThreadedPacket(packet,new NetworkRegistry.TargetPoint(
 						torex.dimension,
 						packet.x,
 						packet.y,
@@ -66,6 +67,6 @@ public class TorexSpawner {
 						200+amp+Math.pow(amp,0.8)*8
 				)
 		);
-		//PacketDispatcher.wrapper.sendToDimension(packet,torex.dimension);
+		//PacketThreading.createSendToDimensionThreadedPacket(packet,torex.dimension);
 	}
 }

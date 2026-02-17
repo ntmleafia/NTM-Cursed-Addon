@@ -1,7 +1,6 @@
 package com.leafia.contents.machines.processing.mixingvat.container;
 
-import com.hbm.inventory.SlotCraftingOutput;
-import com.hbm.inventory.SlotTakeOnly;
+import com.hbm.inventory.slot.SlotTakeOnly;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatTE;
 import com.leafia.dev.container_utility.LeafiaItemTransferable;
 import net.minecraft.entity.player.EntityPlayer;

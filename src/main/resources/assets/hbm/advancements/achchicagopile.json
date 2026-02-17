@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achcentrifuge",
+  "display": {
+    "icon": {
+      "item": "hbm:pile_rod_plutonium"
+    },
+    "title": {
+      "translate": "achievement.chicagoPile"
+    },
+    "description": {
+      "translate": "achievement.chicagoPile.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_billet_pu_mix": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:billet_pu_mix"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_billet_pu_mix"
+    ]
+  ]
+}

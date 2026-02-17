@@ -1,0 +1,32 @@
+{
+    "display": {
+        "icon": {
+            "item": "hbm:key_red"
+        },
+        "title": {
+            "translate": "advancement.leafia.root_misc"
+        },
+        "description": {
+            "translate": "advancement.leafia.root_misc.desc"
+        },
+        "background": "hbm:textures/blocks/brick_base.png",
+        "show_toast": false,
+        "announce_to_chat": false,
+        "hidden": false
+    },
+    "criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "minecraft:crafting_table"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 7
+    }
+}

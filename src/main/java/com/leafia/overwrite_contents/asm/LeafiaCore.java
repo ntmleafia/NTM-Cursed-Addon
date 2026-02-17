@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
-@IFMLLoadingPlugin.TransformerExclusions({"com.leafia.overwrite_contents.asm"})
+@IFMLLoadingPlugin.TransformerExclusions({"com.leafia.overwrite_contents.asm","com.leafia.settings"})
 @IFMLLoadingPlugin.SortingIndex(1001) //mlbv: run it early but keep it after the 1000 srg transformer
 public class LeafiaCore implements IFMLLoadingPlugin {
 

@@ -1,0 +1,28 @@
+{
+  "parent": "leafia:root_misc",
+  "display": {
+    "icon": {
+      "item": "leafia:advisor"
+    },
+    "title": {
+      "translate": "advancement.leafia.loseadvisor"
+    },
+    "description": {
+      "translate": "advancement.leafia.loseadvisor.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

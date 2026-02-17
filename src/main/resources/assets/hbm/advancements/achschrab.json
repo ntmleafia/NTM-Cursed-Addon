@@ -1,0 +1,46 @@
+{
+  "parent": "hbm:achmanhattan",
+  "display": {
+    "icon": {
+      "item": "hbm:ingot_schrabidium"
+    },
+    "title": {
+      "translate": "achievement.schrab"
+    },
+    "description": {
+      "translate": "achievement.schrab.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_ingot_schrabidium": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:ingot_schrabidium"
+          }
+        ]
+      }
+    },
+    "crafting_hbm_nugget_schrabidium": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:nugget_schrabidium"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_ingot_schrabidium",
+      "crafting_hbm_nugget_schrabidium"
+    ]
+  ]
+}

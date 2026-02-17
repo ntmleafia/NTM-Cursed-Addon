@@ -1,0 +1,28 @@
+{
+  "parent": "leafia:root_misc",
+  "display": {
+    "icon": {
+      "item": "hbm:canister_napalm"
+    },
+    "title": {
+      "translate": "achievement.inferno"
+    },
+    "description": {
+      "translate": "achievement.inferno.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

@@ -1,0 +1,6 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "leafia:items/leafia/rod_leafia_overlay_draconic"
+	}
+}

@@ -14,23 +14,31 @@ import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaMap;
 import com.llib.group.LeafiaSet;
 import com.llib.math.range.RangeInt;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.*;
@@ -444,9 +452,14 @@ public class PWRTerminalUI extends LCEGuiInfoContainer {
 		LeafiaGls.resetEffects();
 		LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
 		for (int i = -1; i < rodPositions.length; i++) {
-			if (((i < 0) ? core.masterControl : rodPositions[i]) > 0)
+			if (((i < 0) ? core.masterControl : rodPositions[i]) > 0) {
+				LeafiaGls.color(1,1,1,0.1F);
+				drawTexturedModalRect(guiLeft+244+19*i+9,guiTop+containerOffset+7,192,190,6,8);
+				LeafiaGls.color(1,1,1,0.2F);
 				drawTexturedModalRect(guiLeft+244+19*i+9-16,guiTop+containerOffset+7-15,153,190,38,38);
+			}
 		}
+		LeafiaGls.color(1,1,1,1F);
 		LeafiaGls._pop();
 	}
 	int getContainerX() {
@@ -514,6 +527,22 @@ public class PWRTerminalUI extends LCEGuiInfoContainer {
 
 	boolean hoverNoOffset(int rectX,int rectY,int rectWidth,int rectHeight,int pointX,int pointY) {
 		return pointX >= rectX && pointX <= rectX+rectWidth && pointY >= rectY && pointY <= rectY+rectHeight;
+	}
+
+	void bindByIconName(String resource) {
+		// convert format like "hbm:         blocks/brick_concrete    "
+		//                  to "hbm:textures/blocks/brick_concrete.png"
+		Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(resource.replaceFirst("(\\w+:)?(.*)","$1textures/$2.png")));
+	}
+
+	void tryBindQuads(IBakedModel baked,IBlockState display,EnumFacing face) {
+		try {
+			List<BakedQuad> quads = baked.getQuads(display,face,0);
+			if (quads.size() > 0)
+				bindByIconName(quads.get(0).getSprite().getIconName());
+			else
+				bindByIconName(baked.getParticleTexture().getIconName());
+		} catch (IllegalArgumentException ignored) {} // FUCK YOUU
 	}
 
 	@Override
@@ -617,6 +646,14 @@ public class PWRTerminalUI extends LCEGuiInfoContainer {
 			if (position > 0)
 				drawTexturedModalRect(x+9,y,192,190,6,8);
 		}
+		LeafiaGls._push();
+		LeafiaGls.resetEffects();
+		LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+		for (int i = -1; i < rodPositions.length; i++) {
+			if (((i < 0) ? core.masterControl : rodPositions[i]) > 0)
+				drawTexturedModalRect(guiLeft+244+19*i+9-16,guiTop+containerOffset+7-15,153,190,38,38);
+		}
+		LeafiaGls._pop();
 
 		LeafiaGls.scale(calculatedScale,calculatedScale,1);
 		for (Entry<ColumnPos,EdgeTile> entry : edgeTileMap.entrySet()) {
@@ -630,6 +667,7 @@ public class PWRTerminalUI extends LCEGuiInfoContainer {
 				break;
 			}
 			ColumnPos cpos = new ColumnPos(pos).subtract(rangeX.min,rangeZ.min);
+			IBlockState state = core.getWorld().getBlockState(worldPos);
 			if (fuels.contains(worldPos)) {
 				// Slot
 				drawTexturedModalRect(getSlotX(cpos),getSlotY(cpos),191,120,18,18);
@@ -638,10 +676,28 @@ public class PWRTerminalUI extends LCEGuiInfoContainer {
 				drawTexturedModalRect(getSlotX(cpos),getSlotY(cpos),172,120,18,18);
 				TileEntity entity = core.getWorld().getTileEntity(worldPos);
 				if (entity instanceof PWRControlTE) {
-					PWRControlTE control = (PWRControlTE)entity;
-					int level = (int)Math.min(Math.floor(control.position*5),4);
+					PWRControlTE control = (PWRControlTE) entity;
+					int level = (int) Math.min(Math.floor(control.position*5),4);
 					drawTexturedModalRect(getSlotX(cpos)+5,getSlotY(cpos)+5,153+level*8,181,8,8);
 				}
+			} else if (!state.getBlock().getRenderType(state).equals(EnumBlockRenderType.INVISIBLE)) {
+				int slotX = getSlotX(cpos);
+				int slotY = getSlotY(cpos);
+				drawTexturedModalRect(slotX,slotY,210,120,18,18);
+				IBakedModel baked = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
+				//bindByIconName(baked.getParticleTexture().getIconName());
+				tryBindQuads(baked,state,EnumFacing.UP);
+				Tessellator tessellator = Tessellator.getInstance();
+				BufferBuilder buf = tessellator.getBuffer();
+				buf.begin(GL11.GL_QUADS,DefaultVertexFormats.POSITION_TEX);
+				float sc = 10/16f;
+				float offs = 3/16f;
+				buf.pos(slotX+3,slotY+3+12,zLevel).tex(offs,offs+sc).endVertex();
+				buf.pos(slotX+3+12,slotY+3+12,zLevel).tex(offs+sc,offs+sc).endVertex();
+				buf.pos(slotX+3+12,slotY+3,zLevel).tex(offs+sc,offs).endVertex();
+				buf.pos(slotX+3,slotY+3,zLevel).tex(offs,offs).endVertex();
+				tessellator.draw();
+				tex.bindTexture(texture);
 			} else {
 				// None
 				drawTexturedModalRect(getSlotX(cpos),getSlotY(cpos),172,120,18,18);

@@ -1,5 +1,6 @@
 package com.leafia.eventbuses;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
 import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
 import com.hbm.hazard.HazardEntry;
@@ -7,34 +8,48 @@ import com.hbm.hazard.HazardSystem;
 import com.hbm.lib.HBMSoundHandler;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.potion.LeafiaPotion;
-import com.leafia.dev.hazards.types.HazardTypeSharpEdges;
+import com.leafia.init.hazards.types.HazardTypeSharpEdges;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.unsorted.IEntityCustomCollision;
 import com.leafia.init.LeafiaDamageSource;
+import com.leafia.unsorted.LeafiaBlockReplacer;
+import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaMap;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.chunk.BlockStatePaletteHashMap;
+import net.minecraft.world.chunk.BlockStatePaletteLinear;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IBlockStatePalette;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +57,53 @@ import java.util.Random;
 
 public class LeafiaServerListener {
 	public static class HandlerServer {
+		static Field wasPickedUp;
+		static {
+			try {
+				wasPickedUp = EntityItem.class.getDeclaredField("addon_wasPickedUp");
+			} catch (NoSuchFieldException e) {
+				throw new LeafiaDevFlaw(e);
+			}
+		}
+		@SubscribeEvent
+		public void replaceBlocks(ChunkEvent.Load evt) {
+			Chunk chunk = evt.getChunk();
+			for (ExtendedBlockStorage storage : chunk.getBlockStorageArray())
+				replacePalette(storage);
+		}
+		public static void replacePalette(ExtendedBlockStorage storage) {
+			if (storage == null || storage.data == null || storage.data.palette == null) return;
+			IBlockStatePalette palette = storage.data.palette;
+			if (palette instanceof BlockStatePaletteHashMap map) {
+				for (IBlockState state : map.statePaletteMap) {
+					try {
+						//System.out.println("STATE/HASH: "+state);
+						if (state.getBlock().getClass().getSimpleName().equals("BlockDummyAir")) {
+							int id = map.statePaletteMap.getId(state);
+							map.statePaletteMap.put(LeafiaBlockReplacer.replaceBlock(state),id);
+						}
+					} catch (NullPointerException ignored) {}
+				}
+			} else if (palette instanceof BlockStatePaletteLinear linear) {
+				for (int i = 0; i < linear.states.length; i++) {
+					try {
+						//System.out.println("STATE/LINEAR: "+linear.states[i]);
+						if (linear.states[i].getBlock().getClass().getSimpleName().equals("BlockDummyAir"))
+							linear.states[i] = LeafiaBlockReplacer.replaceBlock(linear.states[i]);
+					} catch (NullPointerException ignored) {}
+				}
+			} else {
+				throw new LeafiaDevFlaw("Impossible case ("+palette.getClass().getName()+")");
+			}
+		}
+		@SubscribeEvent
+		public void onEntityItemPickup(EntityItemPickupEvent evt) {
+			try {
+				wasPickedUp.set(evt.getItem(),true);
+			} catch (IllegalAccessException e) {
+				throw new LeafiaDevFlaw(e);
+			}
+		}
 		@SubscribeEvent
 		public void worldTick(WorldTickEvent evt) {
 			if (evt.world != null && !evt.world.isRemote) {
@@ -53,6 +115,11 @@ public class LeafiaServerListener {
 				if (evt.phase == Phase.END)
 					LeafiaPassiveServer.onTick(evt.world);
 			}
+		}
+		@SubscribeEvent
+		public void soundRegistering(RegistryEvent.Register<SoundEvent> evt) {
+			for (SoundEvent e : LeafiaSoundEvents.ALL_SOUNDS)
+				evt.getRegistry().register(e);
 		}
 	}
 	public static class Unsorted {

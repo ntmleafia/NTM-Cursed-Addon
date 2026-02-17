@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achcentrifuge",
+  "display": {
+    "icon": {
+      "item": "hbm:ingot_desh"
+    },
+    "title": {
+      "translate": "achievement.desh"
+    },
+    "description": {
+      "translate": "achievement.desh.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_ingot_desh": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:ingot_desh"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_ingot_desh"
+    ]
+  ]
+}

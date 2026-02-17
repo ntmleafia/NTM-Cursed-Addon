@@ -30,4 +30,7 @@ public interface PWRComponentEntity {
     void assignCore(@Nullable PWRData data);
     PWRData getCore();
     default void onDiagnosis() {};
+    default boolean canAssignCore() {
+        return false;
+    }
 }

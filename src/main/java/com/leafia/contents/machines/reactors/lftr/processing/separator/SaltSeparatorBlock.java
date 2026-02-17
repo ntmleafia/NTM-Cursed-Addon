@@ -32,7 +32,6 @@ public class SaltSeparatorBlock extends BlockDummyable {
 
 	@Override
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
-		MachineTooltip.addWIP(tooltip);
 		tooltip.add("Yes, yes, I know this is just a sloppy recolor.");
 		tooltip.add("I can't fucking make the texture for a new model ok?");
 		super.addInformation(stack,worldIn,tooltip,flagIn);

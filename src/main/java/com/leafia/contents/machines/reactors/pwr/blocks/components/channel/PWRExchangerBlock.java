@@ -4,8 +4,10 @@ import com.hbm.blocks.ITooltipProvider;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.dev.blocks.blockbase.AddonBlockBase;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +21,14 @@ public class PWRExchangerBlock extends AddonBlockBase implements ITooltipProvide
         super(Material.IRON,"lwr_exchanger");
         setSoundType(SoundType.METAL);
     }
+
+	@Override
+	public void onBlockAdded(World worldIn,BlockPos pos,IBlockState state) {
+		super.onBlockAdded(worldIn,pos,state);
+		if (!worldIn.isRemote)
+			LeafiaPassiveServer.queueFunction(()->beginDiagnosis(worldIn,pos,pos));
+	}
+
     @Override
     public void addInformation(ItemStack stack,@Nullable World player,List<String> tooltip,ITooltipFlag advanced) {
         MachineTooltip.addMultiblock(tooltip);

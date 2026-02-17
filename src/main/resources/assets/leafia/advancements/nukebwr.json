@@ -1,0 +1,28 @@
+{
+  "parent": "leafia:openpwr",
+  "display": {
+    "icon": {
+      "item": "hbm:fluid_icon"
+    },
+    "title": {
+      "translate": "advancement.leafia.nukebwr"
+    },
+    "description": {
+      "translate": "advancement.leafia.nukebwr.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

@@ -40,12 +40,6 @@ public abstract class FFDuctUtilityBase extends AddonBlockContainer implements I
 	}
 
 	@Override
-	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
-		MachineTooltip.addWIP(tooltip);
-		super.addInformation(stack,worldIn,tooltip,flagIn);
-	}
-
-	@Override
 	public boolean onBlockActivated(World worldIn,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
 		ItemStack stack = playerIn.getHeldItem(hand);
 		if (stack.getItem() instanceof IItemFluidIdentifier identifier) {

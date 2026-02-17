@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achrbmk",
+  "display": {
+    "icon": {
+      "item": "hbm:watz"
+    },
+    "title": {
+      "translate": "achievement.watz"
+    },
+    "description": {
+      "translate": "achievement.watz.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_struct_watz_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:struct_watz_core"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_struct_watz_core"
+    ]
+  ]
+}

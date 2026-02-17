@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.GeneralConfig;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IBomb;
 import com.hbm.interfaces.IHoldableWeapon;
 import com.hbm.items.ModItems;
@@ -92,7 +93,7 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 		if (ray != null) {
 			BlockPos pos = ray.getBlockPos();
 			Vec3 vec = Vec3.createVectorHelper(pos.getX() + 0.5 - rayStart.x,pos.getY() + 0.5 - rayStart.y,pos.getZ() + 0.5 - rayStart.z);
-			PacketDispatcher.wrapper.sendToAllAround(
+			PacketThreading.createSendToAllTrackingThreadedPacket(
 					new LaserDetonatorPacket().set(new Vec3(rayStart),vec),
 					new NetworkRegistry.TargetPoint(player.dimension,pos.getX(),pos.getY(),pos.getZ(),distance * 2)
 			);

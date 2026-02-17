@@ -1,13 +1,22 @@
 package com.leafia.contents.machines.reactors.pwr.blocks.components.element;
 
+import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.interfaces.IRadResistantBlock;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.DataValue;
+import com.hbm.inventory.control_panel.DataValueFloat;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.fluid.trait.FT_PWRModerator;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Gaseous;
 import com.hbm.lib.InventoryHelper;
 import com.hbm.tileentity.TileEntityInventoryBase;
 import com.hbm.util.I18nUtil;
+import com.leafia.AddonBase;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.machines.reactors.pwr.PWRData;
 import com.leafia.contents.machines.reactors.pwr.blocks.PWRReflectorBlock;
@@ -19,6 +28,7 @@ import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRCo
 import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import com.leafia.init.LeafiaSoundEvents;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaMap;
 import com.llib.group.LeafiaSet;
@@ -32,6 +42,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
@@ -45,11 +56,17 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class PWRElementTE extends TileEntityInventoryBase implements PWRComponentEntity, ITickable, LeafiaPacketReceiver {
+public class PWRElementTE extends TileEntityInventoryBase implements PWRComponentEntity, ITickable, LeafiaPacketReceiver, IControllable {
 	public static LeafiaMap<PWRElementTE,LeafiaSet<BlockPos>> listeners = new LeafiaMap<>();
 	BlockPos corePos = null;
 	PWRData data = null;
 	int height = 1;
+	LCEAudioWrapper sound = null;
+
+	@Override
+	public boolean canAssignCore() {
+		return true;
+	}
 
 	LeafiaSet<BlockPos> listenPositions() {
 		if (this.isInvalid()) return new LeafiaSet<>(); // dummy set
@@ -84,6 +101,17 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 		Tracker._endProfile(this);
 		return height;
 	}
+
+	@Override
+	public BlockPos getControlPos() {
+		return pos;
+	}
+
+	@Override
+	public World getControlWorld() {
+		return world;
+	}
+
 	static abstract class MapConsumer {
 		int i = 0;
 		abstract HeatRetrival accept(BlockPos fuelPos,Map<BlockPos,Pair<RangeDouble,RangeDouble>> controls,Set<RangeDouble> areas);
@@ -508,7 +536,12 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 						if (items != null) {
 							Tracker._endProfile(this);
 							double value = rod.getFlux(items.getStackInSlot(0))*(1-retrival.moderation)+rod.getFlux(items.getStackInSlot(0),true)*retrival.moderation;
-							Tracker._tracePosition(this,pos,value);
+							Tracker._tracePosition(this,pos,value,"moderation: "+retrival.moderation);
+							if (data != null) {
+								FluidType type = Fluids.fromID(data.coolantId);
+								if (type.hasTrait(FT_PWRModerator.class))
+									value *= type.getTrait(FT_PWRModerator.class).getMultiplier();
+							}
 							return value;
 						}
 					}
@@ -521,6 +554,13 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 
 	public PWRElementTE() {
 		super(1);
+		this.inventory = new ItemStackHandler(1) {
+			@Override
+			protected void onContentsChanged(int slot) {
+				super.onContentsChanged(slot);
+				markDirty();
+			}
+		};
 	}
 
 	public void connectUpper() { // For clients, called only on validate()
@@ -637,14 +677,28 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 	@Override
 	public void invalidate() {
 		listeners.remove(this);
+		if (sound != null)
+			sound.stopSound();
+		sound = null;
+		ControlEventSystem.get(world).removeControllable(this);
 		super.invalidate();
 		if (this.data != null)
 			this.data.invalidate(world);
 	}
 
 	@Override
+	public void onChunkUnload() {
+		if (sound != null) {
+			sound.stopSound();
+		}
+		sound = null;
+		super.onChunkUnload();
+	}
+
+	@Override
 	public void validate() {
 		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
 		//if (world.isRemote) { // so long lol
 		//if (!compound.hasKey("_isSyncSignal")) {
 		//LeafiaPacket._validate(this);
@@ -692,20 +746,40 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 	public void update() {
 		if (this.data != null)
 			this.data.update();
-		if (!world.isRemote) {
+		if (world.isRemote) {
+			ItemStack stack = this.inventory.getStackInSlot(0);
+			boolean play = false;
+			if (!stack.isEmpty()) {
+				if (stack.getItem() instanceof LeafiaRodItem) {
+					NBTTagCompound nbt = stack.getTagCompound();
+					if (nbt != null && nbt.getDouble("incoming") > 0)
+						play = true;
+				}
+			}
+			if (play && sound == null) {
+				sound = AddonBase.proxy.getLoopedSound(LeafiaSoundEvents.pwrElement,SoundCategory.BLOCKS,pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,0.0175f,1);
+				sound.startSound();
+			} else if (!play && sound != null) {
+				sound.stopSound();
+				sound = null;
+			}
+		} else {
 			ItemStack stack = this.inventory.getStackInSlot(0);
 			if (!stack.isEmpty()) {
 				if (stack.getItem() instanceof LeafiaRodItem) {
+					Tracker._startProfile(this,"update");
 					int height = getHeight();
 					double coolin = 0;
 					PWRData gathered = gatherData();
 					double coolantTemp = 400;
+					double required = 0;
 					if (gathered != null) {
 						// DONE PROBABLY: make it detect only nearby channels
 						// DONE PROBABLY: exchangers would increase coolant consumption rate
 						coolin = Math.pow(gathered.tanks[0].getFluidAmount()/(double)Math.max(gathered.tanks[0].getCapacity(),1),0.4)
 								;//*(gathered.tanks[0].getCapacity()/1250d);
 						coolantTemp = gathered.tankTypes[1].temperature;
+						required = 1/gathered.multiplier/(PWRData.transferMultiplier/gathered.multiplier);
 					}
 					LeafiaRodItem rod = (LeafiaRodItem)(stack.getItem());
 					double heatDetection = 0;
@@ -720,7 +794,7 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 					//double coolingCap = MathHelper.clamp(heat,20,400+Math.pow(Math.max(heat-400,0),0.5));
 
 
-					rod.HeatFunction(stack,true,heatDetection,channelScale*coolin,400,400*exchangerScale);
+					rod.HeatFunction(stack,true,heatDetection,channelScale*coolin,coolantTemp,400*exchangerScale,required,Math.pow(height,0.25));
 					double rad = Math.pow(heatDetection,0.65)/2;
 					ChunkRadiationManager.proxy.incrementRad(world,pos,(float)rad/8,(float)rad);
 					//DONE PROBABLY: add neutron radiations to indicate emitted chunk radiations
@@ -728,10 +802,11 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 					rod.decay(stack,inventory,0);
 					NBTTagCompound data = stack.getTagCompound();
 					double cooled = 0;
+					Tracker._endProfile(this);
 					if (data != null) {
 						if (data.getBoolean("nuke")) {
 							if (gathered != null)
-								gathered.explode(world,stack,rod);
+								gathered.explode(world,stack,rod,1);
 							inventory.setStackInSlot(0,ItemStack.EMPTY);
 							return;
 						} else if (data.getInteger("spillage") > 100) {
@@ -739,9 +814,11 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 								if (gathered != null)
 									gathered.explode(world,stack);
 							} else */
-							if (gathered != null && gathered.tankTypes[1].hasTrait(FT_Gaseous.class))
-								gathered.explode(world,stack,null);
-							else {
+							if (gathered != null && gathered.tankTypes[1].hasTrait(FT_Gaseous.class)) {
+								for (int i = 0; i < height; i++)
+									world.setBlockState(pos.down(height),ModBlocks.corium_block.getDefaultState());
+								gathered.explode(world,stack,null,0);
+							} else {
 								//inventory.setStackInSlot(0,ItemStack.EMPTY);
 								//world.destroyBlock(pos,false);
 								BlockPos pos = this.pos.down(height);
@@ -792,7 +869,7 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 
 	@Override
 	public String getPacketIdentifier() {
-		return "PWRElement";
+		return "PWR_ELEMENT";
 	}
 	public LeafiaPacket generateSyncPacket() {
 		NBTTagCompound nbt = writeToNBT(new NBTTagCompound());
@@ -868,5 +945,17 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 			PWRData.addDataToPacket(packet,this.data);
 		}
 		packet.__sendToClient(plr);
+	}
+	@Override
+	public Map<String,DataValue> getQueryData() {
+		Map<String,DataValue> map = new HashMap<>();
+		map.put("temperature",new DataValueFloat(20));
+		ItemStack stack = inventory.getStackInSlot(0);
+		if (stack.getItem() instanceof LeafiaRodItem) {
+			NBTTagCompound tag = stack.getTagCompound();
+			if (tag != null)
+				map.put("temperature",new DataValueFloat((float)tag.getDouble("heat")));
+		}
+		return map;
 	}
 }

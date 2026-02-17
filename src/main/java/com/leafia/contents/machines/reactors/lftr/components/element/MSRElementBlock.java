@@ -1,14 +1,17 @@
 package com.leafia.contents.machines.reactors.lftr.components.element;
 
 import com.hbm.blocks.ILookOverlay;
+import com.hbm.blocks.ITooltipProvider;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MSRElementBlock extends BlockContainer implements ILookOverlay {
+public class MSRElementBlock extends BlockContainer implements ILookOverlay, ITooltipProvider {
 	public MSRElementBlock(Material m,String s) {
 		super(m);
 		this.setTranslationKey(s);
@@ -35,6 +38,7 @@ public class MSRElementBlock extends BlockContainer implements ILookOverlay {
 		MachineTooltip.addMultiblock(tooltip);
 		MachineTooltip.addModular(tooltip);
 		MachineTooltip.addNuclear(tooltip);
+		addStandardInfo(tooltip);
 		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 	@Override
@@ -50,7 +54,11 @@ public class MSRElementBlock extends BlockContainer implements ILookOverlay {
 	public void printHook(RenderGameOverlayEvent.Pre event,World world,int x,int y,int z) {
 		List<String> texts = new ArrayList<>();
 		MSRTEBase.appendPrintHook(texts,world,x,y,z);
-
+		LeafiaGls.pushMatrix();
+		LeafiaGls.scale(0.5);
+		ScaledResolution resolution = event.getResolution();
+		LeafiaGls.translate(resolution.getScaledHeight_double(),resolution.getScaledHeight_double()/2,0);
 		ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xFF55FF, 0x3F153F, texts);
+		LeafiaGls.popMatrix();
 	}
 }

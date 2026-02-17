@@ -35,7 +35,7 @@ public class AmatDuctChargerBlock extends AddonBlockBaked implements ITileEntity
 			return;
 
 		List<String> text = new ArrayList<>();
-		text.add("&[" + charger.filter.getColor() + "&]" + charger.filter.getLocalizedName());
+		text.add("&[" + charger.getType().getColor() + "&]" + charger.getType().getLocalizedName());
 		text.add(I18nUtil.resolveKey("tile.amat_duct.power",charger.power+" HE"));
 		ILookOverlay.printGeneric(pre, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
 	}

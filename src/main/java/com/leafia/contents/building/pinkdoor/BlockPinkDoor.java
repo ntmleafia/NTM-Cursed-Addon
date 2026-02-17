@@ -147,7 +147,7 @@ public class BlockPinkDoor extends BlockModDoor implements IBomb {
 	@Override
 	public BombReturnCode explode(World world,BlockPos pos,Entity detonator) {
 		world.setBlockToAir(pos);
-		/*PacketDispatcher.wrapper.sendToAllAround(
+		/*PacketThreading.createSendToAllTrackingThreadedPacket(
 				new CommandLeaf.ShakecamPacket(new String[]{
 						"type=smooth",
 						"preset=RUPTURE",

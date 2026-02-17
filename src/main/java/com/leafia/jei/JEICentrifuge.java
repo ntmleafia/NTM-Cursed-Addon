@@ -31,7 +31,7 @@ public class JEICentrifuge implements IRecipeCategory<Recipe> {
 				List<ItemStack> stacks = entry.getKey().getStackList();
 				if (stacks.size() > 1)
 					recipes.add(new Recipe(stacks,Arrays.asList(entry.getValue())));
-				else
+				else if (stacks.size() == 1)
 					recipes.add(new Recipe(stacks.get(0),Arrays.asList(entry.getValue())));
 			}
 			return recipes;

@@ -1,0 +1,35 @@
+{
+  "parent": "leafia:root_misc",
+  "display": {
+    "icon": {
+      "item": "hbm:battery_potatos"
+    },
+    "title": {
+      "translate": "achievement.potato"
+    },
+    "description": {
+      "translate": "achievement.potato.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_battery_potatos": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:battery_potatos"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_battery_potatos"
+    ]
+  ]
+}

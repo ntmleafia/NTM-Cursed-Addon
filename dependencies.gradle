@@ -38,12 +38,17 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
+    compileOnly('appeng:ae2-uel:v0.56.7') { transitive false } // or CE won't compile
     //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7142756")
-    implementation rfg.deobf(files("libs/NTM-CE-1.12.2-1.2.3.4.jar")) // nightly-2025-12-17
+    implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7594131") // 2.0.0.0
+    //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7594200") // java25
     implementation rfg.deobf("curse.maven:opencomputers-223008:6608365")
     implementation files("libs/Computronics-1.12.2-1.6.6-deobf.jar")
     runtimeOnlyNonPublishable rfg.deobf(files("libs/Backups-1.12.2-1.5.7.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("libs/worldedit-forge-mc1.12.2-6.1.10-dist (1).jar"))
+	runtimeOnlyNonPublishable rfg.deobf(files("libs/extrautils2-1.12-1.9.9.jar"))
+    runtimeOnlyNonPublishable rfg.deobf(files("libs/CTM-MC1.12.2-1.0.2.31.jar"))
+	//runtimeOnlyNonPublishable rfg.deobf(files("libs/NBTTooltipViewer-1.0.jar"))
     /*
     runtimeOnlyNonPublishable rfg.deobf(files("../RedstoneFlux-1.12-2.1.1.1-universal.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("../ThermalFoundation-1.12.2-2.6.7.1-universal.jar"))

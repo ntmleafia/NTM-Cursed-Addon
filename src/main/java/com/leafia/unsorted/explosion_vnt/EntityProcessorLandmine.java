@@ -16,9 +16,9 @@ public class EntityProcessorLandmine extends EntityProcessorCrossSmooth {
 	@Override
 	public void attackEntity(Entity entity,ExplosionVNT source,float amount) {
 		if (entity.isEntityAlive()) {
-			if (source.exploder == entity) {
+			//if (source.exploder == entity) { tf was this for
 				amount *= 0.5F;
-			}
+			//}
 
 			DamageSource dmg = LeafiaDamageSource.mine;
 			if (!(entity instanceof EntityLivingBase)) {

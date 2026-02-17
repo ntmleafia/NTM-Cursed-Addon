@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:achgascent",
+  "display": {
+    "icon": {
+      "item": "hbm:nuke_boy"
+    },
+    "title": {
+      "translate": "achievement.manhattan"
+    },
+    "description": {
+      "translate": "achievement.manhattan.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

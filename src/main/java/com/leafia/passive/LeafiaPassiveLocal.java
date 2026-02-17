@@ -1,6 +1,6 @@
 package com.leafia.passive;
 
-import com.hbm.tileentity.machine.TileEntityCore;
+import com.leafia.contents.gear.advisor.AdvisorItem.Warns;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.eventbuses.LeafiaClientListener.Digamma;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
@@ -22,7 +22,6 @@ public class LeafiaPassiveLocal {
 	public static LeafiaSet<IMixinTileEntityCore> trackingCores = new LeafiaSet<>();
 
 	public static void onTick(World world) {
-		//TrackerLocal.localTick(Minecraft.getMinecraft().player);
 		Digamma.update();
 		for (Runnable callback : queue)
 			callback.run();
@@ -50,6 +49,7 @@ public class LeafiaPassiveLocal {
 				RecordablePacket.bytesUsageMin = 0;
 			}
 		}
+		Warns.preTick();
 	}
 	public static void queueFunctionPost(Runnable callback) {
 		queue.add(callback);

@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.interfaces.ILaserable;
+import com.hbm.inventory.recipes.DFCRecipes;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IBufPacketReceiver;
 import com.hbm.tileentity.IGUIProvider;
@@ -43,9 +44,10 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
     // Smelting fix..?
     @Redirect(method = "addEnergy",at = @At(value = "INVOKE", target = "Lcom/hbm/inventory/recipes/DFCRecipes;getOutput(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"),require = 1,remap = false)
     public ItemStack onGetOutput(ItemStack key,@Local(name = "result") ItemStack result) {
-        if (key == null)
+        ItemStack output = DFCRecipes.getOutput(key);
+        if (output == null)
             return result;
-        return key;
+        return output;
     }
 
     @Override

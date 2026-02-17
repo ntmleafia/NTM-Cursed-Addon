@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Fluids.class)
 public class MixinFluids {
-	@Inject(method = "initForgeFluidCompat",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fluids/FluidRegistry;registerFluid(Lnet/minecraftforge/fluids/Fluid;)Z", shift = Shift.AFTER),remap = false,require = 1)
+	@Inject(method = "registerForgeFluidCompat",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fluids/FluidRegistry;registerFluid(Lnet/minecraftforge/fluids/Fluid;)Z", shift = Shift.AFTER),remap = false,require = 1)
 	private static void onInitForgeFluidCompat(CallbackInfo ci,@Local(type = FluidType.class) FluidType fluid) {
 		AddonFluids.addCompatFluid(fluid);
 	}
-	@Redirect(method = "initForgeFluidCompat",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fluids/FluidRegistry;getFluid(Ljava/lang/String;)Lnet/minecraftforge/fluids/Fluid;"),remap = false,require = 1)
+	@Redirect(method = "alreadyRegistered",at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fluids/FluidRegistry;getFluid(Ljava/lang/String;)Lnet/minecraftforge/fluids/Fluid;"),remap = false,require = 1)
 	private static Fluid onGetFF(String s,@Local(type = FluidType.class) FluidType fluid) {
 		Fluid existingFluid = FluidRegistry.getFluid(s);
 		if (existingFluid != null)

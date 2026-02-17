@@ -1,10 +1,14 @@
 package com.leafia.contents.potion;
 
+import com.leafia.contents.gear.advisor.AdvisorItem;
+import com.leafia.contents.gear.advisor.AdvisorItem.AdvisorWarningPacket;
+import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
 import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
@@ -41,6 +45,10 @@ public class LeafiaPotion extends Potion {
 			level = Math.min(effect.getAmplifier() + 1,maxLevel);
 		}
 		entity.addPotionEffect(new PotionEffect(skindamage,450*20,level,false,false));
+		if (entity instanceof EntityPlayer player) {
+			if (level > 0)
+				LeafiaCustomPacket.__start(new AdvisorWarningPacket(level)).__sendToClient(player);
+		}
 	}
 
 	/**
@@ -73,7 +81,7 @@ public class LeafiaPotion extends Potion {
 	public String getName() {
 		if (this == frigid)
 			return MobEffects.SLOWNESS.getName();
-		return super.getName();
+		return "potion."+super.getName();
 	}
 
 	PotionEffect lastEffect = null;
@@ -111,6 +119,7 @@ public class LeafiaPotion extends Potion {
 
 	public void performEffect(EntityLivingBase entity,int level) {
 		if (this == skindamage && !entity.world.isRemote) {
+			if (level > 2) level = 2; // foolproof
 			if (entity.getRNG().nextInt(50-level*20) == 0) {
 				Sweat particle = new Sweat(entity,Blocks.REDSTONE_BLOCK.getDefaultState(),1);
 				particle.emit(new Vec3d(entity.posX,entity.posY,entity.posZ),Vec3d.ZERO,entity.dimension);

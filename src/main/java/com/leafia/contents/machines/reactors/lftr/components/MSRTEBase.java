@@ -1,7 +1,12 @@
 package com.leafia.contents.machines.reactors.lftr.components;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.generic.BlockMeta;
 import com.hbm.forgefluid.FFUtils;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.DataValue;
+import com.hbm.inventory.control_panel.DataValueFloat;
+import com.hbm.inventory.control_panel.IControllable;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonFluids;
@@ -28,11 +33,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaPacketReceiver {
+public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaPacketReceiver, IControllable {
 	public FluidTank tank = new FluidTank(1000);
 	public static double getBaseTemperature(FluidType fluidType) {
 		return fluidType.temperature;
@@ -70,6 +76,12 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 		}
 		return 0;
 	}
+	/// automatically sets itemMixture tag
+	public static NBTTagCompound writeMixture(Map<String,Double> mixture,NBTTagCompound nbt) {
+		nbt.setTag("itemMixture",writeMixture(mixture));
+		return nbt;
+	}
+	/// do setTag with name itemMixture with return value of this
 	public static NBTTagList writeMixture(Map<String,Double> mixture) {
 		NBTTagList list = new NBTTagList();
 		for (Entry<String,Double> entry : mixture.entrySet()) {
@@ -87,6 +99,7 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 		NBTTagCompound target = nbtProtocol(stack1.tag);
 		Map<String,Double> mixture0 = readMixture(compound);
 		Map<String,Double> mixture1 = readMixture(target);
+		/*
 		for (String fluid : mixture0.keySet()) {
 			double amount0 = mixture0.get(fluid);
 			double amount1 = 0;
@@ -100,9 +113,25 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 				mixture0.put(fluid,amount0);
 				mixture1.put(fluid,amount1);
 			}
+		}*/
+		Map<String,Double> mixture2 = new LeafiaMap<>();
+		int sum = stack0.amount+stack1.amount;
+		if (stack0.amount > 0) {
+			for (Entry<String,Double> entry : mixture0.entrySet()) {
+				double amount = 0;
+				amount += entry.getValue()*stack0.amount/sum;
+				mixture2.put(entry.getKey(),amount);
+			}
 		}
-		compound.setTag("itemMixture",writeMixture(mixture0));
-		target.setTag("itemMixture",writeMixture(mixture1));
+		if (stack1.amount > 0) {
+			for (Entry<String,Double> entry : mixture1.entrySet()) {
+				double amount = mixture2.getOrDefault(entry.getKey(),0d);
+				amount += entry.getValue()*stack1.amount/sum;
+				mixture2.put(entry.getKey(),amount);
+			}
+		}
+		compound.setTag("itemMixture",writeMixture(mixture2));
+		target.setTag("itemMixture",writeMixture(mixture2));
 		double heatTransfer = compound.getDouble("heat")-target.getDouble("heat");
 		//if (heatTransfer > 0) {
 			heatTransfer /= div * 2;
@@ -184,12 +213,12 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 			if (tank.getFluid() != null) {
 				FluidStack stack = tank.getFluid();
 				NBTTagCompound nbt = nbtProtocol(stack.tag);
-				nbt.setDouble("heat",Math.max(0,nbt.getDouble("heat")-1));
+				nbt.setDouble("heat",Math.max(0,nbt.getDouble("heat")*0.99)); // passive cooling
 				stack.tag = nbt;
 				if (nbt.getDouble("heat") >= 6000-getBaseTemperature(AddonFluids.fromFF(stack.getFluid()))) {
 					if (world.rand.nextInt(350) == 0) {
 						world.playEvent(2001,pos,Block.getStateId(world.getBlockState(pos)));
-						world.setBlockState(pos,ModBlocks.block_corium.getDefaultState());
+						world.setBlockState(pos,ModBlocks.sellafield.getDefaultState().withProperty(BlockMeta.META,5));
 						return;
 					}
 				}
@@ -214,4 +243,40 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 	public void onReceivePacketServer(byte key,Object value,EntityPlayer plr) { }
 	@Override
 	public void onPlayerValidate(EntityPlayer plr) { }
+
+	public BlockPos getControlPos() {
+		return pos;
+	}
+
+	public World getControlWorld() {
+		return world;
+	}
+
+	@Override
+	public void invalidate() {
+		ControlEventSystem.get(world).removeControllable(this);
+		super.invalidate();
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
+	}
+
+	@Override
+	public Map<String,DataValue> getQueryData() {
+		Map<String,DataValue> mop = new HashMap<>();
+		mop.put("amount",new DataValueFloat(tank.getFluidAmount()));
+		mop.put("capacity",new DataValueFloat(tank.getCapacity()));
+		float heat = 20;
+		if (tank.getFluid() != null) {
+			FluidStack stack = tank.getFluid();
+			heat = (float)getBaseTemperature(AddonFluids.fromFF(stack.getFluid()));
+			if (stack.tag != null)
+				heat += (float)stack.tag.getDouble("heat");
+		}
+		mop.put("temperature",new DataValueFloat(heat));
+		return mop;
+	}
 }

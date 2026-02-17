@@ -44,6 +44,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -362,7 +363,7 @@ public class AmatDuctStandard extends AmatDuctBase implements IDynamicModels, IL
 		if (duct.ductPower >= 0) {
 			text.add(I18nUtil.resolveKey("tile.amat_duct.power",duct.ductPower+" HE"));
 			for (String s : I18nUtil.resolveKey("tile.amat_duct.warn").split("\\$"))
-				text.add("&["+0xFF0000+"&]"+s);
+				text.add(/*"&["+0xFF0000+"&]"*/TextFormatting.GOLD+s);
 		}
 		ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xffff00, 0x404000, text);
 	}

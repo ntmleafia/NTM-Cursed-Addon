@@ -3,6 +3,7 @@ package com.leafia.contents.network.ff_duct.utility.pump;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.util.I18nUtil;
+import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.uninos.IFFProvider;
 import com.leafia.contents.network.ff_duct.uninos.IFFReceiver;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityBase;
@@ -77,7 +78,12 @@ public class FFPumpTE extends FFDuctUtilityTEBase implements ITickable, IFluidHa
 							tryProvide(tank,world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
 						else
 							trySubscribe(tank,new FluidStack(getType().getFF(),0),world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
+						return;
 					}
+				}
+				if (ahead instanceof FFDuctTE && behind instanceof FFDuctTE) {
+					tryProvide(tank,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
+					trySubscribe(tank,new FluidStack(getType().getFF(),0),world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
 				}
 			}
 		}

@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:achfusion",
+  "display": {
+    "icon": {
+      "item": "hbm:powder_balefire"
+    },
+    "title": {
+      "translate": "achievement.meltdown"
+    },
+    "description": {
+      "translate": "achievement.meltdown.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

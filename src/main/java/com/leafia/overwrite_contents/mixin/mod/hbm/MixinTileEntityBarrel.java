@@ -13,17 +13,20 @@ import com.hbm.uninos.UniNodespace;
 import com.leafia.contents.network.pipe_amat.uninos.AmatNet;
 import com.leafia.contents.network.pipe_amat.uninos.AmatNode;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
 
 @Mixin(value = TileEntityBarrel.class)
 public abstract class MixinTileEntityBarrel extends TileEntityMachineBase implements IFluidStandardTransceiverMK2 {
@@ -72,21 +75,55 @@ public abstract class MixinTileEntityBarrel extends TileEntityMachineBase implem
 		return IFluidStandardTransceiverMK2.super.canConnect(type,dir);
 	}
 
-	@Inject(method = "update",at = @At(value = "INVOKE", target = "Lcom/hbm/tileentity/machine/TileEntityBarrel;getConPos()[Lcom/hbm/lib/DirPos;",remap=false),require = 1)
+	@Unique protected FluidType lastTypeAmat;
+	@Unique protected AmatNode amat;
+	@Unique protected AmatNode createAmatNode(FluidType type) {
+		DirPos[] conPos = getConPos();
+
+		HashSet<BlockPos> posSet = new HashSet<>();
+		posSet.add(pos);
+		for(DirPos pos : conPos) {
+			ForgeDirection dir = pos.getDir();
+			posSet.add(new BlockPos(pos.getPos().getX() - dir.offsetX, pos.getPos().getY() - dir.offsetY, pos.getPos().getZ() - dir.offsetZ));
+		}
+
+		return new AmatNode(AmatNet.getProvider(type), posSet.toArray(new BlockPos[posSet.size()])).setConnections(conPos);
+	}
+
+	@Inject(method = "update",at = @At(value = "INVOKE", target = "Lcom/hbm/inventory/fluid/tank/FluidTankNTM;unloadTank(IILnet/minecraftforge/items/IItemHandler;)Z",shift = Shift.AFTER,remap=false),require = 1)
 	public void onOnUpdate(CallbackInfo ci) {
-		for(DirPos pos : this.getConPos()) {
-			AmatNode dirNode = (AmatNode)UniNodespace.getNode(world, pos.getPos(),AmatNet.getProvider(tankNew.getTankType()));
-
-			if(mode == 2) {
-				tryProvide(tankNew, world, pos.getPos(), pos.getDir());
-			} else {
-				if(dirNode != null && dirNode.hasValidNet()) dirNode.net.removeProvider(this);
+		if (mode == 1) {
+			if (amat == null || amat.expired || tankNew.getTankType() != lastTypeAmat) {
+				amat = UniNodespace.getNode(world,pos,AmatNet.getProvider(tankNew.getTankType()));
+				if (amat == null || amat.expired || tankNew.getTankType() != lastTypeAmat) {
+					amat = createAmatNode(tankNew.getTankType());
+					UniNodespace.createNode(world,amat);
+					lastTypeAmat = tankNew.getTankType();
+				}
 			}
+			if (amat != null && amat.hasValidNet()) {
+				amat.net.addProvider(this);
+				amat.net.addReceiver(this);
+			}
+		} else {
+			if (amat != null) {
+				UniNodespace.destroyNode(world,pos,AmatNet.getProvider(tankNew.getTankType()));
+				amat = null;
+			}
+			for(DirPos pos : this.getConPos()) {
+				AmatNode dirNode = (AmatNode)UniNodespace.getNode(world, pos.getPos(),AmatNet.getProvider(tankNew.getTankType()));
 
-			if(mode == 0) {
-				if(dirNode != null && dirNode.hasValidNet()) dirNode.net.addReceiver(this);
-			} else {
-				if(dirNode != null && dirNode.hasValidNet()) dirNode.net.removeReceiver(this);
+				if(mode == 2) {
+					tryProvide(tankNew, world, pos.getPos(), pos.getDir());
+				} else {
+					if(dirNode != null && dirNode.hasValidNet()) dirNode.net.removeProvider(this);
+				}
+
+				if(mode == 0) {
+					if(dirNode != null && dirNode.hasValidNet()) dirNode.net.addReceiver(this);
+				} else {
+					if(dirNode != null && dirNode.hasValidNet()) dirNode.net.removeReceiver(this);
+				}
 			}
 		}
 	}

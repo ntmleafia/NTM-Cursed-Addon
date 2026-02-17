@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.reactors.lftr.components.control;
 
 import com.hbm.blocks.generic.BlockPipe;
+import com.hbm.inventory.control_panel.*;
 import com.leafia.contents.AddonBlocks.LFTR;
 import com.leafia.contents.machines.reactors.lftr.components.element.MSRElementTE;
 import com.leafia.dev.LeafiaDebug.Tracker;
@@ -15,8 +16,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
-public class MSRControlTE extends TileEntity implements ITickable, LeafiaPacketReceiver {
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MSRControlTE extends TileEntity implements ITickable, LeafiaPacketReceiver, IControllable {
 	public double insertion = 0;
 	public double targetInsertion = 0;
 	public int length = 0;
@@ -119,13 +126,6 @@ public class MSRControlTE extends TileEntity implements ITickable, LeafiaPacketR
 	}
 
 	@Override
-	public void invalidate() {
-		//if (!(world.getBlockState(pos).getBlock() instanceof MSRControlBlock))
-		//	clearTEs(); fuck off asshole
-		super.invalidate();
-	}
-
-	@Override
 	public void onReceivePacketLocal(byte key,Object value) {
 		switch(key) {
 			case 0:
@@ -137,4 +137,48 @@ public class MSRControlTE extends TileEntity implements ITickable, LeafiaPacketR
 	public void onReceivePacketServer(byte key,Object value,EntityPlayer plr) { }
 	@Override
 	public void onPlayerValidate(EntityPlayer plr) { }
+
+	@Override
+	public BlockPos getControlPos() {
+		return pos;
+	}
+
+	@Override
+	public World getControlWorld() {
+		return world;
+	}
+
+	@Override
+	public void validate(){
+		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
+	}
+
+	@Override
+	public void invalidate(){
+		//if (!(world.getBlockState(pos).getBlock() instanceof MSRControlBlock))
+		//	clearTEs(); fuck off asshole
+		super.invalidate();
+		ControlEventSystem.get(world).removeControllable(this);
+	}
+
+	@Override
+	public void receiveEvent(BlockPos from,ControlEvent e) {
+		if (e.name.equals("lftr_ctrl_set_level")) {
+			double position = MathHelper.clamp(e.vars.get("level").getNumber()/100d,0,1);
+			targetInsertion = length-position*length;
+		}
+	}
+	@Override
+	public Map<String,DataValue> getQueryData() {
+		Map<String,DataValue> map = new HashMap<>();
+		double position = length > 0 ? 1-insertion/length : 0;
+		map.put("level",new DataValueFloat((float)(position*100)));
+		return map;
+	}
+
+	@Override
+	public List<String> getInEvents() {
+		return Collections.singletonList("lftr_ctrl_set_level");
+	}
 }

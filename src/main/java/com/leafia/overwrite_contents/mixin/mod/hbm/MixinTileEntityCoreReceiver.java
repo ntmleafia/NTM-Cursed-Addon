@@ -5,10 +5,7 @@ import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.ExplosionLarge;
 import com.hbm.interfaces.ILaserable;
-import com.hbm.inventory.control_panel.ControlEvent;
-import com.hbm.inventory.control_panel.DataValue;
-import com.hbm.inventory.control_panel.DataValueFloat;
-import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.*;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
@@ -25,6 +22,7 @@ import com.leafia.contents.machines.powercores.dfc.components.injector.CoreInjec
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity.DebrisType;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
+import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.NTMFNBT;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.math.FiaMatrix;
@@ -32,11 +30,13 @@ import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityInjector;
+import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.settings.AddonConfig;
 import com.llib.LeafiaLib.NumScale;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -64,15 +64,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
+@Optional.InterfaceList({@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")})
 @Mixin(value = TileEntityCoreReceiver.class)
-public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver, IGUIProvider, IControllable {
+public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver, IGUIProvider, IControllable, SimpleComponent {
 	@Shadow(remap = false) public long joules;
 
 	@Shadow(remap = false) public long prevJoules;
 
+	@Unique public long netRemaining = 0;
+
 	@Shadow(remap = false) public long power;
 	@Shadow(remap = false) public FluidTankNTM tank;
 	@Unique public TileEntityCore core = null;
+
+	@Unique public long fuck_you = 0;
+	@Unique public long throughputLimit = 0;
 
 	@Unique public double level = 1;
 
@@ -152,6 +158,8 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	public void update() {
 		core = null;
 		EnumFacing facing = getFront();
+		throughputLimit = fuck_you;
+		fuck_you = 0;
 		/*
 		EnumFacing facing = EnumFacing.getFront(this.getBlockMetadata());
 		for(int i = 1; i <= TileEntityCoreEmitter.range; i++) {
@@ -211,9 +219,12 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
                         // FIXME: can't rely on this to calculate the transfer amount, the net update is independent of this
                         totalTransfer += tryProvideSPK(target.getKey(), ForgeDirection.getOrientation(target.getValue()), transfer, false);
                     }
-                    power -= totalTransfer * 5000L;
+                    power -= Math.max(this.power-totalTransfer * 5000L,0);
 				}
 			}
+			netRemaining = power / 5000L;
+
+			LeafiaDebug.debugLog(world,power);
 
 			if (joules > 0) {
 
@@ -244,12 +255,20 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	public void onReadFromNBT(NBTTagCompound compound,CallbackInfo ci) {
 		readTargetPos(compound);
 		level = compound.getDouble("level");
+		// big bruh
+		this.power = compound.getLong("power");
+		this.joules = compound.getLong("joules");
+		this.tank.readFromNBT(compound, "tank");
 	}
 
 	@Inject(method = "writeToNBT",at = @At("HEAD"),require = 1)
 	public void onWriteToNBT(NBTTagCompound compound,CallbackInfoReturnable<NBTTagCompound> cir) {
 		writeTargetPos(compound);
 		compound.setDouble("level",level);
+		// big bruh
+		compound.setLong("power", this.power);
+		compound.setLong("joules", this.joules);
+		this.tank.writeToNBT(compound, "tank");
 	}
 
 	// cleitn sht
@@ -271,9 +290,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	}
 
 	@Override
-	public long syncSpk() {
-		return syncSpk;
-	}
+	public long syncSpk() { return syncSpk; }
 
 	@Override
 	public void sendToPlayer(EntityPlayer player) {
@@ -323,24 +340,45 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
     }
 
     @Override
-    public long getSPK() {
-        return syncJoules;
-    }
+    public long getSPK() { return joules; }
+
+	@Override
+	public long getNetRemaining() { return netRemaining; }
 
     @Override
     public void setSPK(long power) {
         this.joules = power;
     }
 	long cableTransfer = 0;
+
+	@Override
+	public void usePower(long power) {
+		IEnergyProviderMK2.super.usePower(power);
+		fuck_you += power;
+		netRemaining = this.power / 5000L;
+	}
+
+	@Override
+	public void setPower(long power) {
+		this.power = power;
+		netRemaining = this.power / 5000L;
+	}
+
 	@Override
 	public void setTransferredSpk(long power) {
 		cableTransfer += power;
+		LeafiaPassiveServer.queueFunction(()->this.power = Math.max(this.power-power*5000,0));
 	}
 
 	@Override
     public long getMaxSPK() {
         return Long.MAX_VALUE;
     }
+
+	@Override
+	public long getSPKProviderSpeed() {
+		return Math.max(syncJoules-throughputLimit/5000,0);
+	}
 
 	@Unique private BlockPos targetPosition = new BlockPos(0,0,0);
 	@Unique public TileEntityCore lastGetCore = null;
@@ -421,6 +459,18 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	@Override
 	public List<String> getInEvents() {
 		return Collections.singletonList("set_absorber_level");
+	}
+
+	@Override
+	public void validate(){
+		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
+	}
+
+	@Override
+	public void invalidate(){
+		super.invalidate();
+		ControlEventSystem.get(world).removeControllable(this);
 	}
 
 	// OC //

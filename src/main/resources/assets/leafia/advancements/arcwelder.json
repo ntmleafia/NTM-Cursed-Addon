@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:machine_arc_welder"
+		},
+		"title": {
+			"translate": "advancement.leafia.arcwelder"
+		},
+		"description": {
+			"translate": "advancement.leafia.arcwelder.desc"
+		}
+	},
+	"parent": "leafia:progress_oil_1",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:machine_arc_welder"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 47
+    }
+}

@@ -3,7 +3,7 @@
 	"defaults": {
 		"textures": {},
 		"custom": { "flip-v": true },
-		"model": "leafia:msr_control_extension.obj"
+		"model": "hbm:msr_control_extension.obj"
 	},
 	"variants": {
 		"axis=x": [{ "x": 90, "y": 90 }],

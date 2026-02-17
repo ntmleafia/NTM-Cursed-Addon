@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achgascent",
+  "display": {
+    "icon": {
+      "item": "leafia:leafia_rod_meu235"
+    },
+    "title": {
+      "translate": "advancement.leafia.genericfuel"
+    },
+    "description": {
+      "translate": "advancement.leafia.genericfuel.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_leafia_generic_u235": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "leafia:leafia_rod_meu235"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_leafia_generic_u235"
+    ]
+  ]
+}

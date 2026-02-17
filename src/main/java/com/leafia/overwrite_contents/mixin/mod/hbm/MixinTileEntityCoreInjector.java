@@ -4,6 +4,7 @@ import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
@@ -16,6 +17,7 @@ import com.leafia.settings.AddonConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +43,13 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 		super(scount);
 	}
 
+	public FluidType getFluid(int slot) {
+		ItemStack stack = inventory.getStackInSlot(slot);
+		if (stack.getItem() instanceof IItemFluidIdentifier identifier)
+			return identifier.getType(world,pos.getX(),pos.getY(),pos.getZ(),stack);
+		return Fluids.NONE;
+	}
+
 	/**
 	 * @author ntmleafia
 	 * @reason asjdkjflkdjslkg
@@ -52,8 +61,11 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 		if (!world.isRemote) {
 			this.subscribeToAllAround(this.tanks[0].getTankType(), this);
 			this.subscribeToAllAround(this.tanks[1].getTankType(), this);
-			this.tanks[0].setType(0, 1, this.inventory);
-			this.tanks[1].setType(2, 3, this.inventory);
+
+			if (!getFluid(0).equals(tanks[1].getTankType()))
+				this.tanks[0].setType(0, 1, this.inventory);
+			if (!getFluid(2).equals(tanks[0].getTankType()))
+				this.tanks[1].setType(2, 3, this.inventory);
 			LeafiaPacket._start(this).__write(31,targetPosition).__sendToAffectedClients();
 			if (core != null) {
 				for(int t = 0; t < 2; ++t) {

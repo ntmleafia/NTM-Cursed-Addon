@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achpolymer",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_centrifuge"
+    },
+    "title": {
+      "translate": "achievement.centrifuge"
+    },
+    "description": {
+      "translate": "achievement.centrifuge.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_centrifuge": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_centrifuge"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_centrifuge"
+    ]
+  ]
+}

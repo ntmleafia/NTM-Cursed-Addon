@@ -48,7 +48,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
                 continue;
             }
 
-            long src = Math.min(prov.getSPK(), prov.getSPKProviderSpeed());
+            long src = Math.min(prov.getNetRemaining(), prov.getSPKProviderSpeed());
             if (src > 0) {
                 providers.add(new Tuple.ObjectLongPair<>(prov, src));
                 powerAvailable += src;
@@ -117,7 +117,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
             Tuple.ObjectLongPair<ISPKProvider> selected = providers.get(rand.nextInt(providers.size()));
             ISPKProvider scapegoat = selected.getKey();
 
-            long toUse = Math.min(leftover, scapegoat.getSPK());
+            long toUse = Math.min(leftover, scapegoat.getNetRemaining());
             scapegoat.setTransferredSpk(toUse);
             leftover -= toUse;
         }

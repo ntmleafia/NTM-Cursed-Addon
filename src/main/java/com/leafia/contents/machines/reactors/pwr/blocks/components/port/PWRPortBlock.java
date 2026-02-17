@@ -7,8 +7,10 @@ import com.hbm.main.MainRegistry;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,6 +34,13 @@ public class PWRPortBlock extends BlockRadResistant implements ITooltipProvider,
         addStandardInfo(tooltip);
         super.addInformation(stack,player,tooltip,advanced);
     }
+
+	@Override
+	public void onBlockAdded(World worldIn,BlockPos pos,IBlockState state) {
+		super.onBlockAdded(worldIn,pos,state);
+		if (!worldIn.isRemote)
+			LeafiaPassiveServer.queueFunction(()->beginDiagnosis(worldIn,pos,pos));
+	}
 
     @Override
     public boolean tileEntityShouldCreate(World world,BlockPos pos) {

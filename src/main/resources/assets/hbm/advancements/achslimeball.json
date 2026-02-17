@@ -1,0 +1,36 @@
+{
+  "parent": "hbm:root",
+  "display": {
+    "icon": {
+      "item": "hbm:achievement_icon",
+      "data": 1
+    },
+    "title": {
+      "translate": "achievement.slimeball"
+    },
+    "description": {
+      "translate": "achievement.slimeball.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_minecraft_slime_ball": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:slime_ball"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_minecraft_slime_ball"
+    ]
+  ]
+}

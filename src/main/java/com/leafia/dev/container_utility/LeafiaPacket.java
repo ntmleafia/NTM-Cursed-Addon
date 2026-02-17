@@ -1,6 +1,8 @@
 package com.leafia.dev.container_utility;
 
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.packet.PacketDispatcher;
+import com.hbm.packet.threading.ThreadedPacket;
 import com.hbm.util.Tuple.Pair;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -337,13 +339,13 @@ public class LeafiaPacket extends RecordablePacket {
 
     public void __sendToAll() {
         if (onSending()) return;
-        PacketDispatcher.wrapper.sendToAll(this);
+	    PacketThreading.createSendToAllThreadedPacket(this);
     }
 
     @Deprecated
     public void __sendToAllInDimension() {
         if (onSending()) return;
-        PacketDispatcher.wrapper.sendToDimension(this, dimension);
+	    PacketThreading.createSendToDimensionThreadedPacket(this, dimension);
     }
 
     public void __sendToAffectedClients() {
@@ -362,12 +364,12 @@ public class LeafiaPacket extends RecordablePacket {
 
     public void __sendToServer() {
         if (onSending()) return;
-        PacketDispatcher.wrapper.sendToServer(this);
+	    PacketThreading.createSendToServerThreadedPacket(this);
     }
 
     public void __sendToClients(double range) {
         if (onSending()) return;
-        PacketDispatcher.wrapper.sendToAllAround(this, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
+	    PacketThreading.createSendToAllTrackingThreadedPacket(this, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
     }
 
     public void __sendToClient(EntityPlayer player) {
@@ -375,11 +377,11 @@ public class LeafiaPacket extends RecordablePacket {
         _sendToClient(this, player);
     }
 
-    public static void _sendToClient(IMessage message, EntityPlayer player) {
+    public static void _sendToClient(ThreadedPacket message,EntityPlayer player) {
         if (player instanceof EntityPlayerMP)
-            PacketDispatcher.wrapper.sendTo(message, (EntityPlayerMP) player);
+	        PacketThreading.createSendToThreadedPacket(message, (EntityPlayerMP) player);
         else
-            PacketDispatcher.wrapper.sendToAll(message);
+	        PacketThreading.createSendToAllThreadedPacket(message);
     }
 
     public static class Handler implements IMessageHandler<LeafiaPacket, IMessage> {

@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:machine_soldering_station"
+		},
+		"title": {
+			"translate": "advancement.leafia.soldering"
+		},
+		"description": {
+			"translate": "advancement.leafia.soldering.desc"
+		}
+	},
+	"parent": "leafia:progress_oil_1",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:machine_soldering_station"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 47
+    }
+}

@@ -1,0 +1,24 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:coin_creeper"
+		},
+		"title": {
+			"translate": "achievement.bossCreeper"
+		},
+		"description": {
+			"translate": "achievement.bossCreeper.desc"
+		},
+      "frame": "challenge",
+      "hidden": true
+	},
+	"parent": "hbm:achmanhattan",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 30
+    }
+}

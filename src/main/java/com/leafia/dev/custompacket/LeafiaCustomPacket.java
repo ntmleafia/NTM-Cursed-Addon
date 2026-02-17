@@ -1,8 +1,13 @@
 package com.leafia.dev.custompacket;
 
 import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.packet.PacketDispatcher;
-import com.leafia.contents.gear.utility.ItemFuzzyIdentifier.FuzzyIdentifierPacket;
+import com.hbm.packet.threading.ThreadedPacket;
+import com.leafia.contents.gear.advisor.AdvisorItem;
+import com.leafia.contents.gear.utility.FuzzyIdentifierItem.FuzzyIdentifierPacket;
+import com.leafia.contents.gear.utility.FuzzyIdentifierItem.FuzzyIdentifierResponsePacket;
+import com.leafia.contents.machines.elevators.car.ElevatorEntity.*;
 import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -30,7 +35,17 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		VISUALIZER_TRACE(new VisualizerPacket()),
 		FUZZY_IDENTIFIER(new FuzzyIdentifierPacket()),
 		DFC_SHOCK(new DFCShockPacket()),
-		EXPLOSION_NT(new ExplosionNTSyncPacket())
+		EXPLOSION_NT(new ExplosionNTSyncPacket()),
+		FUZZY_RESPONSE(new FuzzyIdentifierResponsePacket()),
+		ADVISOR_WARNING(new AdvisorItem.AdvisorWarningPacket()),
+		ELEVATOR_BUTTON_SYNC(new EvButtonSyncPacket()),
+		ELEVATOR_BUTTON_ENABLED_SYNC(new EvButtonEnablePacket()),
+		ELEVATOR_BUTTON_CLICK_SYNC(new EvButtonClickPacket()),
+		ELEVATOR_BUTTON_CLICKED(new EvButtonInteractPacket()),
+		ELEVATOR_BUTTON_MODIFY(new EvButtonModifyPacket()),
+		ELEVATOR_SPECIAL_SYNC(new EvSpecialFloorsSyncPacket()),
+		ELEVATOR_SYNC_REQUEST(new EvSyncRequestPacket()),
+		ELEVATOR_INVENTORY_SYNC(new EvInventorySyncPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }
@@ -51,29 +66,29 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		throw new LeafiaDevFlaw("Encoder "+encoder.getClass().getSimpleName()+" isn't registered to enum CustomPacketType");
 	}
 	public void __sendToAll() {
-		PacketDispatcher.wrapper.sendToAll(this);
+		PacketThreading.createSendToAllThreadedPacket(this);
 	}
 	public void __sendToAllAround(int dim,BlockPos pos,double range) {
-		PacketDispatcher.wrapper.sendToAllAround(this,new TargetPoint(dim,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,range));
+		PacketThreading.createSendToAllTrackingThreadedPacket(this,new TargetPoint(dim,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,range));
 	}
 	public void __sendToAllAround(int dim,Vec3d pos,double range) {
-		PacketDispatcher.wrapper.sendToAllAround(this,new TargetPoint(dim,pos.x,pos.y,pos.z,range));
+		PacketThreading.createSendToAllTrackingThreadedPacket(this,new TargetPoint(dim,pos.x,pos.y,pos.z,range));
 	}
 	@Deprecated
 	public void __sendToAllInDimension(int dimension) {
-		PacketDispatcher.wrapper.sendToDimension(this,dimension);
+		PacketThreading.createSendToDimensionThreadedPacket(this,dimension);
 	}
 	public void __sendToServer() {
-		PacketDispatcher.wrapper.sendToServer(this);
+		PacketThreading.createSendToServerThreadedPacket(this);
 	}
 	public void __sendToClient(EntityPlayer player) {
 		_sendToClient(this,player);
 	}
-	public static void _sendToClient(IMessage message,EntityPlayer player) {
+	public static void _sendToClient(ThreadedPacket message,EntityPlayer player) {
 		if (player instanceof EntityPlayerMP)
-			PacketDispatcher.wrapper.sendTo(message,(EntityPlayerMP)player);
+			PacketThreading.createSendToThreadedPacket(message,(EntityPlayerMP)player);
 		else
-			PacketDispatcher.wrapper.sendToAll(message);
+			PacketThreading.createSendToAllThreadedPacket(message);
 	}
 	@Override
 	public void fromBits(LeafiaBuf buf) {

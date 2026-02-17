@@ -1,0 +1,22 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:coin_radiation"
+		},
+		"title": {
+			"translate": "achievement.bossMeltdown"
+		},
+		"description": {
+			"translate": "achievement.bossMeltdown.desc"
+		}
+	},
+	"parent": "leafia:nukepwr",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 40
+    }
+}

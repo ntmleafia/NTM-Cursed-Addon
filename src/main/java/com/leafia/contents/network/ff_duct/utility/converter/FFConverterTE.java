@@ -63,9 +63,9 @@ public class FFConverterTE extends FFDuctUtilityTEBase implements ITickable, IFl
 			if (state.getBlock() instanceof FFConverterBlock) {
 				EnumFacing facing = state.getValue(FFDuctUtilityBase.FACING);
 				tryProvide(ff,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
-				if (ntmf.getFill() > 0)
-					tryProvide(ntmf,world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
-				else
+				//if (ntmf.getFill() > 0)
+				//	tryProvide(ntmf,world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
+				//else
 					trySubscribe(getType(),world,pos.offset(facing,-1),ForgeDirection.getOrientation(facing.getOpposite()));
 			}
 		}

@@ -13,6 +13,8 @@
   "external.pwrcontrol": {"category": "block", "sounds": [{"name": "leafia:external/stormworks_hingepivot4_loop", "stream": false}]},
   "external.pwrcontrolstop": {"category": "block", "sounds": [{"name": "leafia:external/stormworks_hingepivot4_end", "stream": false}]},
 
+  "external.pwrelement": {"category": "block", "sounds": [{"name": "leafia:external/stormworks_nuclear_hum", "stream": false}]},
+
   "external.machineDestroyed": {"category": "block", "sounds": [{"name": "leafia:external/apeboss_death", "stream": false}]},
   "external.machineExplode": {"category": "block", "sounds": [{"name": "leafia:external/mech_explosion", "stream": false}]},
 
@@ -52,5 +54,17 @@
   "external.overload": { "category": "block", "sounds": ["leafia:external/1205987156"]},
   "external.longexplosion": { "category": "block", "sounds": ["leafia:external/178962800"]},
   "external.actualexplosion": { "category": "block", "sounds": ["leafia:external/169628396"]},
-  "external.glitch_alpha10302": { "category": "block", "sounds": ["leafia:external/glitch_alpha10302"]}
+  "external.glitch_alpha10302": { "category": "block", "sounds": ["leafia:external/glitch_alpha10302"]},
+
+  "item.geiger1": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger1", "stream": false}]},
+  "item.geiger2": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger2", "stream": false}]},
+  "item.geiger3": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger3", "stream": false}]},
+  "item.geiger4": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger4_a", "stream": false},{"name": "leafia:tool/geiger4_b", "stream": false},{"name": "leafia:tool/geiger4_c", "stream": false},{"name": "leafia:tool/geiger4_d", "stream": false},{"name": "leafia:tool/geiger4_e", "stream": false},{"name": "leafia:tool/geiger4_f", "stream": false}]},
+  "item.geiger5": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger5_a", "stream": false},{"name": "leafia:tool/geiger5_b", "stream": false},{"name": "leafia:tool/geiger5_c", "stream": false},{"name": "leafia:tool/geiger5_d", "stream": false}]},
+  "item.geiger6": {"subtitle": "subtitles.item.geiger", "category": "player", "sounds": [{"name": "leafia:tool/geiger6_a", "stream": false},{"name": "leafia:tool/geiger6_b", "stream": false},{"name": "leafia:tool/geiger6_c", "stream": false},{"name": "leafia:tool/geiger6_d", "stream": false},{"name": "leafia:tool/geiger6_e", "stream": false},{"name": "leafia:tool/geiger6_f", "stream": false}]},
+
+  "item.advisor_activate": { "category": "player", "sounds": ["leafia:tool/advisor_activate"]},
+  "item.advisor_warning": { "category": "player", "sounds": ["leafia:tool/advisor_warning"]},
+
+  "external.fuckingfortnite": { "category": "block", "sounds": ["leafia:external/ecr_startup"]}
 }

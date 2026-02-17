@@ -55,4 +55,8 @@ public abstract class AddonBlockDummyable extends BlockDummyable {
 	public boolean canEntitySpawn(IBlockState state,Entity entityIn) {
 		return false;
 	}
+
+	/// Dimensions: Up, Down, Forward, Backward, Left, Right
+	@Override
+	public abstract int[] getDimensions();
 }

@@ -1,0 +1,12 @@
+{
+	"variants": {
+		"layers=1":  { "model": "leafia:ash_balefire2" },
+		"layers=2":  { "model": "leafia:ash_balefire4" },
+		"layers=3":  { "model": "leafia:ash_balefire6" },
+		"layers=4":  { "model": "leafia:ash_balefire8" },
+		"layers=5":  { "model": "leafia:ash_balefire10" },
+		"layers=6":  { "model": "leafia:ash_balefire12" },
+		"layers=7":  { "model": "leafia:ash_balefire14" },
+		"layers=8":  { "model": "leafia:ash_balefire" }
+	}
+}

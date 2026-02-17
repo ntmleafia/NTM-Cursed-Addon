@@ -1,5 +1,9 @@
 package com.leafia.contents.machines.reactors.lftr.components.ejector;
 
+import com.hbm.blocks.ITooltipProvider;
+import com.hbm.handler.radiation.RadiationSystemNT;
+import com.hbm.interfaces.IRadResistantBlock;
+import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.BlockContainer;
@@ -23,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MSREjectorBlock extends BlockContainer {
+public class MSREjectorBlock extends BlockContainer implements ITooltipProvider, IRadResistantBlock {
 
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -35,10 +39,22 @@ public class MSREjectorBlock extends BlockContainer {
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
 	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
+		super.onBlockAdded(worldIn, pos, state);
+	}
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
+		super.breakBlock(worldIn, pos, state);
+	}
+	@Override
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
 		MachineTooltip.addMultiblock(tooltip);
 		MachineTooltip.addModular(tooltip);
+		addStandardInfo(tooltip);
 		super.addInformation(stack,worldIn,tooltip,flagIn);
+		tooltip.add("§2[" + I18nUtil.resolveKey("trait.radshield") + "]");
 	}
 
 	@Override

@@ -2,6 +2,9 @@ package com.leafia.contents.machines.reactors.lftr.components.control;
 
 import com.hbm.api.block.IToolable;
 import com.hbm.blocks.ILookOverlay;
+import com.hbm.blocks.ITooltipProvider;
+import com.hbm.handler.radiation.RadiationSystemNT;
+import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.items.tool.ItemTooling;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.util.I18nUtil;
@@ -28,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MSRControlBlock extends BlockContainer implements ILookOverlay {
+public class MSRControlBlock extends BlockContainer implements ILookOverlay, IRadResistantBlock, ITooltipProvider {
 
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -40,10 +43,22 @@ public class MSRControlBlock extends BlockContainer implements ILookOverlay {
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
 	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
+		super.onBlockAdded(worldIn, pos, state);
+	}
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		RadiationSystemNT.markSectionForRebuild(worldIn, pos);
+		super.breakBlock(worldIn, pos, state);
+	}
+	@Override
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
 		MachineTooltip.addMultiblock(tooltip);
 		MachineTooltip.addModular(tooltip);
+		addStandardInfo(tooltip);
 		super.addInformation(stack,worldIn,tooltip,flagIn);
+		tooltip.add("§2[" + I18nUtil.resolveKey("trait.radshield") + "]");
 	}
 
 	@Override

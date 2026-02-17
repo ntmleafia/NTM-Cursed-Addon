@@ -1,27 +1,37 @@
 package com.leafia.contents;
 
+import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.blocks.generic.BlockModDoor;
 import com.hbm.items.ModItems;
 import com.hbm.main.MainRegistry;
 import com.leafia.AddonBase;
+import com.leafia.contents.bomb.missile.customnuke.CustomNukeMissileItem;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
+import com.leafia.contents.gear.advisor.AdvisorItem;
 import com.leafia.contents.gear.ntmfbottle.ItemNTMFBottle;
-import com.leafia.contents.gear.utility.ItemFuzzyIdentifier;
+import com.leafia.contents.gear.utility.FuzzyIdentifierItem;
 import com.leafia.contents.gear.wands.ItemWandV;
+import com.leafia.contents.machines.elevators.car.chips.EvChipItem;
+import com.leafia.contents.machines.elevators.car.styles.EvStyleItem;
+import com.leafia.contents.machines.elevators.items.EvSpawnItem;
+import com.leafia.contents.machines.elevators.items.WeightSpawnItem;
 import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
 import com.leafia.contents.machines.powercores.dfc.LCEItemLens;
-import com.leafia.contents.machines.reactors.lftr.processing.separator.recipes.icon.SaltSeparatorRecipeIcon;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisEntity.DebrisType;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisItem;
-import com.leafia.dev.hazards.ItemRads;
+import com.leafia.dev.items.itembase.AddonItemHazardBaked;
+import com.leafia.init.hazards.ItemRads;
 import com.leafia.dev.items.itembase.AddonItemBaked;
 import net.minecraft.block.Block;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +60,7 @@ public class AddonItems {
 	public static final Item ams_focus_safe = new LCEItemLens(5000000000L, 8F, 4.5F, 0.1F, "ams_focus_safe").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 
     public static final Item wand_v = new ItemWandV("wand_v","wands/wand_v");
-	public static final Item fuzzy_identifier = new ItemFuzzyIdentifier("fuzzy_identifier").setMaxStackSize(1).setCreativeTab(MainRegistry.consumableTab);
+	public static final Item fuzzy_identifier = new FuzzyIdentifierItem("fuzzy_identifier").setMaxStackSize(1).setCreativeTab(MainRegistry.consumableTab);
 
 	public static class LeafiaRods {
 		public static final Item leafRod = new LeafiaRodItem.EmptyLeafiaRod().setCreativeTab(MainRegistry.controlTab);
@@ -103,7 +113,7 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodTHMEU
-				= new LeafiaRodItem("ThMEU",60000, 3350)
+				= new LeafiaRodItem("ThMEU",350000, 3350)
 				.setAppearance(ModItems.billet_thorium_fuel, BILLET, FUEL)
 				.setDecayProduct("depletedthorium")
 				.addRad(ItemRads.thoriumFuel)
@@ -219,11 +229,14 @@ public class AddonItems {
 		public static final Item
 				leafRodLEAus
 				= new LeafiaRodItem("LEAus",550000, 7029)
+				.setDecayProduct("heaus")
+				.setEmission(0.3)
 				.setAppearance(ModItems.billet_australium_lesser, BILLET, ISOTOPE)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEAus
 				= new LeafiaRodItem("HEAus",550000, 5211)
+				.setEmission(1.2)
 				.setAppearance(ModItems.billet_australium_greater, BILLET, ISOTOPE)
 				.setCreativeTab(MainRegistry.controlTab);
 		/*public static final Item
@@ -249,12 +262,12 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodPu238Be
-				= new LeafiaRodItem("Pu-238Be",200000, 1287)
+				= new LeafiaRodItem("Pu-238Be",200000, 2744)
 				.setAppearance(ModItems.billet_pu238be, BILLET, SOURCE)
 				.setModerated()
 				.addRad(ItemRads.plutonium238be)
 				.setCreativeTab(MainRegistry.controlTab);
-		public static final Item
+		/*public static final Item
 				leafRodFlashgold
 				= new LeafiaRodItem("Flashgold",1800000, 5000)
 				.setAppearance(ModItems.billet_balefire_gold, BILLET, RAW)
@@ -265,8 +278,8 @@ public class AddonItems {
 				= new LeafiaRodItem("Flashlead",2200000, 5050)
 				.setAppearance(ModItems.billet_flashlead, BILLET, RAW)
 				.addRad(ItemRads.flashlead)
-				.setCreativeTab(MainRegistry.controlTab);
-		public static final Item
+				.setCreativeTab(MainRegistry.controlTab);*/
+		/*public static final Item
 				leafRodBi209ZFB
 				= new LeafiaRodItem("Bi-209 ZFB",180000, 2744)
 				.setAppearance(ModItems.billet_zfb_bismuth, BILLET, BREEDER)
@@ -283,7 +296,7 @@ public class AddonItems {
 				= new LeafiaRodItem("Am-242 ZFB",180000, 3744)
 				.setAppearance(ModItems.billet_zfb_am_mix, BILLET, BREEDER)
 				.addRad(ItemRads.americium242zfb)
-				.setCreativeTab(MainRegistry.controlTab);
+				.setCreativeTab(MainRegistry.controlTab);*/
 		// normal rods-based
 		public static final Item
 				leafRodPu238
@@ -351,6 +364,7 @@ public class AddonItems {
 				leafRodLead
 				= new LeafiaRodItem("Lead",99999999, 0)
 				.setAppearance(ModItems.ingot_lead, BILLET, RAW)
+				.setDecayProduct("pb209")
 				.addToxic(2)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
@@ -378,16 +392,16 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodTh232
-				= new LeafiaRodItem("Th-232",450000, 3510)
+				= new LeafiaRodItem("Th-232",90000, 3510)
 				.setDecayProduct("thmeu")
 				.setAppearance(ModItems.billet_th232, BILLET, RAW)
 				.addRad(ItemRads.thorium232)
 				.setCreativeTab(MainRegistry.controlTab);
-		public static final Item
+		/*public static final Item
 				leafRodBi209
 				= new LeafiaRodItem("Bi-209",0, 0)
 				.setAppearance(ModItems.billet_bismuth, BILLET, RAW)
-				.setCreativeTab(MainRegistry.controlTab);
+				.setCreativeTab(MainRegistry.controlTab);*/
 		public static final Item
 				leafRodGold198
 				= new LeafiaRodItem("Au-198",900000, 3850)
@@ -407,6 +421,40 @@ public class AddonItems {
 				= new LeafiaRodItem("Debug",0, 0)
 				.setAppearance(ModItems.wand_d, BILLET, UNSTABLE)
 				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodDyatlov
+				= new LeafiaRodItem("Potential Instant Blowout Applicator",95000000, 650000000)
+				.setAppearance(ModItems.meltdown_tool, BILLET, UNSTABLE)
+				.setCreativeTab(MainRegistry.controlTab);
+
+		public static final Item
+				leafRodYharonite
+				= new LeafiaRodItem("Yh-XXX",666666, 3200)
+				.setAppearance(ModItems.billet_yharonite, BILLET, FUEL)
+				//.setDecayProduct("depleteduranium")
+				//.addRad(ItemRads.uraniumFuel)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodDGOmega
+				= new LeafiaRodItem("DG-OMEGA",Double.MAX_VALUE, 1916169)
+				.setSpecialRodModel().setBaseItem(ModItems.particle_digamma)
+				.setReactivity(2)
+				.addDigamma(0.333)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodKys
+				= new LeafiaRodItem("Kys-3000",Double.MAX_VALUE, 22) {
+					@Override
+					public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+						tooltip.add("Inspired by Quasar!");
+						tooltip.add("Corrstud will pay their life for this very rod.");
+						super.addInformation(stack,worldIn,tooltip,flagIn);
+					}
+				}
+				.setAppearance(AddonItems.billet_kys, BILLET, UNSTABLE)
+				.setEmission(114)
+				.setReactivity(514)
+				.setCreativeTab(null);
 		static {
 			LeafiaRodItem.confirmDecayProducts();
 		}
@@ -417,6 +465,44 @@ public class AddonItems {
 	public static final Item pwr_piece = new PWRDebrisItem("lwr_piece",DebrisType.CONCRETE);
 	public static final Item pwr_shrapnel = new PWRDebrisItem("lwr_shrapnel",DebrisType.SHRAPNEL);
 	public static final Item pwr_shard = new PWRDebrisItem("lwr_shard",DebrisType.BLANK).disableCrafting();
+
+	public static final Item ingot_potassium = new AddonItemBaked("ingot_potassium","leafia/ingots/ingot_potassium").setCreativeTab(MainRegistry.partsTab);
+	public static final Item ingot_rubidium = new AddonItemBaked("ingot_rubidium","leafia/ingots/ingot_rubidium").setCreativeTab(MainRegistry.partsTab);
+	public static final Item ingot_francium = new AddonItemBaked("ingot_francium","leafia/ingots/ingot_francium").setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item billet_kys = new AddonItemHazardBaked("billet_kys","leafia/billets/billet_kys") {
+		@Override
+		public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+			super.addInformation(stack,worldIn,tooltip,flagIn);
+			tooltip.add("Inspired by Quasar!");
+			tooltip.add("Corrstud will pay their life for this very billet.");
+		}
+	}.addCryogenic(5).setCreativeTab(null);
+
+	public static final Item advisor = new AdvisorItem("advisor").setCreativeTab(MainRegistry.consumableTab);
+
+	public static final Item missile_customnuke = new CustomNukeMissileItem("missile_customnuke").setCreativeTab(MainRegistry.missileTab);
+
+	//public static final Item addon_battery_pack = new AddonBatteryPackItem("addon_battery_pack");
+
+	public static final Item component_limiter = new AddonItemBaked("component_limiter").setCreativeTab(MainRegistry.partsTab);
+	public static final Item component_emitter = new AddonItemBaked("component_emitter").setCreativeTab(MainRegistry.partsTab);
+	public static final Item supercooler = new AddonItemBaked("supercooler").setCreativeTab(MainRegistry.partsTab);
+
+	public static class ElevatorStyles {
+		public static final List<EvStyleItem> styleItems = new ArrayList<>();
+		public static final Item s6chip = new EvChipItem("ev_chip_s6","leafia/elevators/chip_s6");
+		public static final Item skyliftchip = new EvChipItem("ev_chip_skylift","leafia/elevators/chip_skylift");
+		public static final Item s6floor = new EvStyleItem("ev_s6floor");
+		public static final Item s6ceiling = new EvStyleItem("ev_s6ceiling");
+		public static final Item s6door = new EvStyleItem("ev_s6door");
+		public static final Item s6wall = new EvStyleItem("ev_s6wall");
+		public static final Item s6window = new EvStyleItem("ev_s6window");
+		public static final Item skyliftdoor = new EvStyleItem("ev_skyliftdoor");
+	}
+
+	public static final Item ev_spawn = new EvSpawnItem("ev_spawn");
+	public static final Item weight_spawn = new WeightSpawnItem("weight_spawn");
 
 	private static void modifyItemParams() {
 		ModItems.pwr_fuel.setCreativeTab(null);
@@ -446,6 +532,8 @@ public class AddonItems {
 					}
 				};
 				ForgeRegistries.ITEMS.register(item.setRegistryName(block.getRegistryName()));
+			} else if (block instanceof ICustomBlockItem) {
+				((ICustomBlockItem) block).registerItem();
 			} else {
 				ForgeRegistries.ITEMS.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
 			}

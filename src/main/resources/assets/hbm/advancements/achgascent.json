@@ -1,0 +1,35 @@
+{
+  "parent": "hbm:achdesh",
+  "display": {
+    "icon": {
+      "item": "hbm:ingot_uranium_fuel"
+    },
+    "title": {
+      "translate": "achievement.gasCent"
+    },
+    "description": {
+      "translate": "achievement.gasCent.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_gascent": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_gascent"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_gascent"
+    ]
+  ]
+}

@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:machine_shredder"
+		},
+		"title": {
+			"translate": "advancement.leafia.shredder"
+		},
+		"description": {
+			"translate": "advancement.leafia.shredder.desc"
+		}
+	},
+	"parent": "hbm:achassembly",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:machine_shredder"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 47
+    }
+}

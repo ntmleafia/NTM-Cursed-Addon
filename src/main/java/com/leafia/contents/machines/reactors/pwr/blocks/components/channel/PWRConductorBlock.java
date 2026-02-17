@@ -5,7 +5,9 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.dev.blocks.blockbase.AddonBlockBase;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +22,14 @@ public class PWRConductorBlock extends AddonBlockBase implements ITooltipProvide
         this.setTranslationKey("lwr_conductor");
         this.setSoundType(AddonBlocks.PWR.soundTypePWRTube);
     }
+
+	@Override
+	public void onBlockAdded(World worldIn,BlockPos pos,IBlockState state) {
+		super.onBlockAdded(worldIn,pos,state);
+		if (!worldIn.isRemote)
+			LeafiaPassiveServer.queueFunction(()->beginDiagnosis(worldIn,pos,pos));
+	}
+
     @Override
     public boolean shouldRenderOnGUI() {
         return true;

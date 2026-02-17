@@ -2,6 +2,7 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.custom_hbm.contents.torex.LCETorex;
 import com.hbm.entity.effect.EntityNukeTorex;
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IConstantRenderer;
 import com.hbm.main.ServerProxy;
 import com.hbm.packet.PacketDispatcher;
@@ -186,7 +187,7 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
 		}
 		packet.nbt = nbt;
 		double amp = torex.getScale()*100;
-		PacketDispatcher.wrapper.sendToAllAround(packet,new NetworkRegistry.TargetPoint(
+		PacketThreading.createSendToAllTrackingThreadedPacket(packet,new NetworkRegistry.TargetPoint(
 						torex.dimension,
 						packet.x,
 						packet.y,

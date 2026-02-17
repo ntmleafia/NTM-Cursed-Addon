@@ -1,5 +1,7 @@
 package com.leafia.contents.control.fuel.nuclearfuel;
 
+import com.custom_hbm.contents.torex.LCETorex;
+import com.hbm.capability.HbmLivingProps;
 import com.hbm.config.BombConfig;
 import com.hbm.config.GeneralConfig;
 import com.hbm.entity.effect.EntityCloudFleija;
@@ -10,26 +12,31 @@ import com.hbm.entity.logic.EntityNukeExplosionMK5;
 import com.hbm.explosion.ExplosionNukeGeneric;
 import com.hbm.handler.ArmorUtil;
 import com.hbm.handler.radiation.ChunkRadiationManager;
+import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.interfaces.IHasCustomModel;
 import com.hbm.items.ModItems;
-import com.hbm.items.special.ItemCustomLore;
 import com.hbm.lib.Library;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonItems.LeafiaRods;
-import com.leafia.dev.hazards.ItemRads.MultiRadContainer;
+import com.leafia.init.hazards.ItemRads.MultiRadContainer;
 import com.leafia.dev.items.itembase.AddonItemBase;
 import com.leafia.dev.items.itembase.AddonItemHazardBase;
+import com.leafia.init.hazards.types.radiation.Neutrons;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityNukeExploisonMK5;
 import com.llib.LeafiaLib;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -38,6 +45,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +176,25 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				world.spawnEntity(bf);
 				break;
 			}
+			case "dgomega": {
+				try {
+					for (Entity entity : world.loadedEntityList) {
+						if (entity instanceof EntityLivingBase living) {
+							Vec3d entityPos = new Vec3d(living.posX,living.posY,living.posZ);
+							Vec3d myPos = new Vec3d(x,y,z);
+							double distance = entityPos.distanceTo(myPos);
+							double dg = HbmLivingProps.getDigamma(living);
+							double level = Math.max(dg,Math.min(50-distance/20,9.99999999));
+							HbmLivingProps.setDigamma(living,level);
+						}
+					}
+				} catch (ConcurrentModificationException ignored) {} // fuck off
+				LCETorex.statFacDigamma(world,x,y,z,50);
+				EntityNukeExplosionMK5 mk5 = EntityNukeExplosionMK5.statFac(world,50,x,y,z);
+				((IMixinEntityNukeExploisonMK5)mk5).setDigammaFallout();
+				world.spawnEntity(mk5);
+				break;
+			}
 			case "sa326": {
 				EntityNukeExplosionMK3 entity = new EntityNukeExplosionMK3(world);
 				entity.posX = x;
@@ -243,7 +270,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 	}
 	double lastY = 0;
 	/**
-	 * Do nuclear fissions
+	 * Does nuclear fissions
 	 * @param stack The fuel rod stack to cause fission reaction
 	 * @param updateHeat true for fission reaction, false for item tooltip
 	 * @param x Incoming heat
@@ -253,6 +280,32 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 	 * @return Tooltip message
 	 */
 	public String HeatFunction(@Nullable ItemStack stack, boolean updateHeat, double x, double cool, double desiredTemp, double coolingRate) {
+		return HeatFunction(stack,updateHeat,x,cool,desiredTemp,coolingRate,0);
+	}
+	/**
+	 * Does nuclear fissions
+	 * @param stack The fuel rod stack to cause fission reaction
+	 * @param updateHeat true for fission reaction, false for item tooltip
+	 * @param x Incoming heat
+	 * @param cool Should represent coolant %, range 0~1
+	 * @param desiredTemp Temperature of coolant
+	 * @param coolingRate Temperature of hot coolant
+	 * @return Tooltip message
+	 */
+	public String HeatFunction(@Nullable ItemStack stack, boolean updateHeat, double x, double cool, double desiredTemp, double coolingRate, double minimumRequired) {
+		return HeatFunction(stack,updateHeat,x,cool,desiredTemp,coolingRate,minimumRequired,1);
+	}
+	/**
+	 * Does nuclear fissions
+	 * @param stack The fuel rod stack to cause fission reaction
+	 * @param updateHeat true for fission reaction, false for item tooltip
+	 * @param x Incoming heat
+	 * @param cool Should represent coolant %, range 0~1
+	 * @param desiredTemp Temperature of coolant
+	 * @param coolingRate Temperature of hot coolant
+	 * @return Tooltip message
+	 */
+	public String HeatFunction(@Nullable ItemStack stack, boolean updateHeat, double x, double cool, double desiredTemp, double coolingRate, double minimumRequired, double heatMultiplier) {
 		NBTTagCompound data = null;
 		String flux = TextFormatting.RED+"0°C"+TextFormatting.YELLOW;
 		String temp = TextFormatting.GOLD+"ERROR°C"+TextFormatting.YELLOW;
@@ -270,24 +323,29 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		double tempx = heat-20;
 		double y = 0; // x = 20+~~
 		switch(functionId) {
-				// DEPLETED
+			// DEPLETED
 			case "depleteduranium": case "depletedmox":
 				y = 80-20;
-				n = "80";
+				n = "80-20";
 				disableDecay = true;
 				break;
 			case "depletedplutonium":
 				y = 90-20;
-				n = "90";
+				n = "90-20";
 				disableDecay = true;
 				break;
 			case "depletedthorium":
 				y = 60-20;
-				n = "60";
+				n = "60-20";
+				disableDecay = true;
+				break;
+			case "depletedschrabidium":
+				y = 100-20;
+				n = "100-20";
 				disableDecay = true;
 				break;
 
-				// URANIUM
+			// URANIUM
 			case "meu235": case "nu": case "u238":
 				y = Math.pow(x*8,0.56)*3;
 				n = "("+flux+"×8)^0.56×3 "+TextFormatting.DARK_GREEN+"(FINE)";
@@ -301,7 +359,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				n = "("+flux+"×8)^0.56×2 "+TextFormatting.DARK_GREEN+"(FINE)";
 				break;
 
-				// THORIUM
+			// THORIUM
 			case "th232":
 				y = Math.pow(x*4,0.35)*3;
 				n = "("+flux+"×4)^0.35×3 "+TextFormatting.DARK_AQUA+"(LIKE, REALLY POOR)";
@@ -311,7 +369,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				n = "("+flux+"×64)^0.35×3 "+TextFormatting.DARK_AQUA+"(POOR)";
 				break;
 
-				// PLUTONIUM
+			// PLUTONIUM
 			case "lepu239": case "mepu239": case "npu": case "pu240":
 				y = Math.pow(x*8,0.6)*3;
 				n = "("+flux+"×8)^0.6×3 "+TextFormatting.DARK_GREEN+"(FINE)";
@@ -321,7 +379,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				n = "("+flux+"×8)^0.6×3 "+TextFormatting.DARK_GREEN+"(FINE)";
 				break;
 
-				// AMERICIUM
+			// AMERICIUM
 			case "leam242": case "meam242": case "heam242":
 				y = Math.pow(x*8,0.64)*3;
 				n = "("+flux+"×8)^0.64×3 "+TextFormatting.GOLD+"(RISKY)";
@@ -331,31 +389,31 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				n = "("+flux+"×8)^0.64×3 "+TextFormatting.GOLD+"(RISKY)";
 				break;
 
-				// NEPTUNIUM
+			// NEPTUNIUM
 			case "menp237": case "henp237":
 				y = Math.pow(x*8,0.52)*3;
 				n = "("+flux+"×8)^0.52×3 "+TextFormatting.DARK_GREEN+"(FINE)";
 				break;
 
-				// SCHRABIDIUM
+			// SCHRABIDIUM
 			case "lesa326": case "mesa326": case "hesa326": case "sa326": case "sa327":
 				y = Math.pow(x,0.65)*12+Math.pow(Math.max(x-2500,0)/1600,3);
 				n = ""+flux+"^0.65×12 "+TextFormatting.GOLD+"(RISKY)";
 				break;
 
-				// RADIUM
+			// RADIUM
 			case "ra226be":
 				y = 300/(1+Math.pow(Math.E,-0.02*x))-150;
 				n = "300/(1+e^(-0.02×"+flux+"))-150 "+TextFormatting.DARK_AQUA+"(POOR)";
 				break;
 
-				// OTHER
+			// OTHER
 			case "potentialinstantblowoutapplicator":
 				y = Math.tan(Math.min(heat/400,0.5)*Math.PI)+x/4;
 				n = "tan(min("+temp+"/400,0.5)*PI)\n + "+flux+"/4 "+TextFormatting.DARK_RED+"(JUST NO)";
 				break;
 
-				// B.F.
+			// B.F.
 			case "balefire":
 				y = 100*Math.pow(x/1000-2,3)-500*Math.pow(x/1000-2,2)+x/600+2800;
 				n = "100(("+flux+"/1000-2)³)-500(("+flux+"/1000-2)²)+"+flux+"/600+2800 "+TextFormatting.RED+"(DANGEROUS)";
@@ -366,10 +424,53 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				n = "100(("+flux+"/1000-1)³)-500(("+flux+"/1000-1)²)+("+flux+"+1000)/600+2800 "+TextFormatting.RED+"(DANGEROUS)";
 				break;
 
+			// COPY OLD SHIT
+			case "po210": case "po210be":
+				y = 700+Math.pow(x*2,0.69);
+				n = "700 + ("+flux+"×2)^0.69 "+TextFormatting.GOLD+"(RISKY)";
+				break;
+			case "au198":
+				y = 1580+Math.pow(x,0.75)*2.5;
+				n = "1580 + "+flux+"^0.75 * 2.5 "+TextFormatting.GOLD+"(RISKY)";
+				break;
+			case "pb209":
+				y = 2300+x*0.4;
+				n = "2300 + "+flux+"×0.4 "+TextFormatting.DARK_RED+"(DANGEROUS)";
+				break;
+
+			// SOME RUSHED CRAP
+			case "pu238": case "pu238be":
+				y = 1330+Math.pow(x*2,0.62);
+				n = "1330 + ("+flux+"*2)^0.62 "+TextFormatting.GOLD+"(RISKY)";
+				break;
+
+
+			case "leaus": case "heaus":
+				y = Math.pow(x*5,0.65)*2;
+				n = "("+flux+"×5)^0.65×2 "+TextFormatting.DARK_GREEN+"(FINE)";
+				break;
+
 			case "debug":
 				y = Math.max(heat,0)+Math.sqrt(x);
 				n = temp+"+20+√"+flux+TextFormatting.GRAY+" (DEBUG)";
 				disableDecay = true;
+				break;
+
+			// YHARONITE
+			case "yhxxx":
+				y = Math.pow(x,0.75)*8;
+				n = ""+flux+"^0.75×8 "+TextFormatting.RED+"(DANGEROUS)";
+				disableDecay = true;
+				break;
+			// DIGAMMA
+			case "dgomega":
+				y = Math.pow(1.01916169,x);
+				n = "1.01916169^"+flux+" "+TextFormatting.DARK_RED+"(JUST NO)";
+				disableDecay = true;
+				break;
+			case "kys3000":
+				y = Math.tan(x);
+				n = "tan("+flux+") "+TextFormatting.LIGHT_PURPLE+"(KYS)";
 				break;
 		}
 		lastY = y;
@@ -408,26 +509,37 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				double curDepletion = data.getDouble("depletion") + Math.max(heatMg/2+Math.pow(x,0.95)/2000, 0); // +y is preferred but it doesnt really work with inert materials like lithium soo
 				data.setDouble("depletion", curDepletion);
 			}
-			double newTemp = heat+heatMg;
-			if (heatMg*2 > decay)
-				decay += (heatMg*2-decay)*0.01;
+			if (heatMg > 0)
+				heatMg *= heatMultiplier;
+			double decayBase = Math.min(heatMg/2,x);
+			if (decayBase > decay)
+				decay += (decayBase-decay)*0.01;
 			if (disableDecay) decay = 0;
 			decay *= 0.99992694932; // this is f*cked lmao //0.99854;
 			data.setDouble("decay",decay);
-			newTemp += decay * Math.pow(Math.max(1-Math.max(newTemp,20)/1300,0),0.2);
+			double fuckoff = 1-Math.pow(Math.min(decay*20/12,1),0.5);
+			if (heatMg < 0)
+				heatMg *= fuckoff;
+			double newTemp = heat+heatMg+Math.max(decay-Math.max(heatMg,0),0);
+			if (Double.isNaN(newTemp))
+				newTemp = Double.MAX_VALUE;
+			//newTemp += decay * Math.pow(Math.max(1-Math.max(newTemp,20)/1300,0),0.2); old algorithm
 			double cooled = (
 					Math.pow(
 							Math.max(newTemp-desiredTemp,0)+1,
 							Math.pow(coolingRate,0.5)/100
 					)-1
 			)*cool;
+			if (cooled < minimumRequired) cooled = 0;
 			double newCooledTemp = Math.max(newTemp-cooled,-273.15/*20*/);
 			data.setDouble("cooled",cooled);
+			if (Double.isNaN(newCooledTemp))
+				newCooledTemp = Double.MAX_VALUE;
 			data.setDouble(
 					"heat",
 					newCooledTemp
 			);
-			if (newCooledTemp >= 100000)
+			if (newCooledTemp >= 10_000_000) // make it hotter
 				data.setBoolean("nuke",true); // new update
 			if (!meltdown && (meltingPoint != 0)) {
 				int timer = data.getInteger("generosityTimer");
@@ -467,7 +579,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		if(stack.getItem() instanceof LeafiaRodItem otherRod) {
 			double compat = 0.5;
 			if (this.splitWithAny || otherRod.splitIntoFast == this.splitWithFast)
-				compat = 2;
+				compat = 3;
 			compat = compat * otherRod.emission * this.reactivity;
 			NBTTagCompound data = stack.getTagCompound();
 			if (data != null)
@@ -481,7 +593,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		if(stack.getItem() instanceof LeafiaRodItem otherRod) {
 			double compat = 0.5;
 			if (this.splitWithAny || (moderated != this.splitWithFast))
-				compat = 1;
+				compat = 3;
 			compat = compat * otherRod.emission * this.reactivity;
 			NBTTagCompound data = stack.getTagCompound();
 			if (data != null)
@@ -548,7 +660,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 			decay = data.getDouble("decay");
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-			list.add(TextFormatting.YELLOW + "Heat Function");
+			list.add(TextFormatting.YELLOW + I18nUtil.resolveKey("item.leafiarod.heatfunc_shift"));
 			for (String s : graph)
 				list.add("  "+funcColor+s);
 		} else {
@@ -558,31 +670,31 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				list.add(TextFormatting.DARK_GREEN + "["+(int)Math.max(Math.ceil((1-depletion/life)*100),0)+"%]");
 			if (newFuel != null) {
 				if (newFuel instanceof LeafiaRodItem)
-					list.add(TextFormatting.DARK_GRAY + "  Decays into: " + TextFormatting.GRAY + ((LeafiaRodItem)newFuel).label);
+					list.add(TextFormatting.DARK_GRAY + "  " + I18nUtil.resolveKey("item.leafiarod.decays",((LeafiaRodItem)newFuel).label));
 				else
-					list.add(TextFormatting.DARK_GRAY + "  Decays into: " + TextFormatting.GRAY + I18nUtil.resolveKey(newFuel.getTranslationKey()+".name"));
+					list.add(TextFormatting.DARK_GRAY + "  " + I18nUtil.resolveKey("item.leafiarod.decays",I18nUtil.resolveKey(newFuel.getTranslationKey()+".name")));
 			}
 			if (life != 0) {
-				list.add(TextFormatting.DARK_GREEN + "  Life: About "+life+"°C");
-				list.add(TextFormatting.GOLD + "  Fission Product Decay Heat: +"+String.format("%01.3f",decay*20)+"°C/s");
+				list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",life+"°C"));
+				list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",decay*20)+"°C/s"));
 			}
 			if (emission != 1)
-				list.add(TextFormatting.AQUA+"  Emission "+formatHeatMultiplier(emission));
+				list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.reac.out",formatHeatMultiplier(emission)));
 			if (reactivity != 1)
-				list.add(TextFormatting.AQUA+"  Reactivity "+formatHeatMultiplier(reactivity));
+				list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.reac.in",formatHeatMultiplier(reactivity)));
 			if (splitWithAny)
-				list.add(TextFormatting.AQUA + "  Prefers all neutrons");
+				list.add(TextFormatting.AQUA + "  "+I18nUtil.resolveKey("item.leafiarod.pref.all"));
 			else if (splitWithFast)
-				list.add(TextFormatting.LIGHT_PURPLE + "  Prefers fast neutrons");
+				list.add(TextFormatting.LIGHT_PURPLE + "  "+I18nUtil.resolveKey("item.leafiarod.pref.fast"));
 			if (!splitIntoFast)
-				list.add(TextFormatting.AQUA + "  Moderated");
+				list.add(TextFormatting.AQUA + "  "+I18nUtil.resolveKey("item.leafiarod.moderated"));
 			super.addInformation(stack,worldIn,list,flagIn);
 			list.add("");
-			list.add(TextFormatting.YELLOW + "Heat Function: "+item.HeatFunction(stack,false,0,0,0,0));
-			list.add(TextFormatting.GOLD + "Temperature: "+String.format("%01.1f",heat)+"°C");
+			list.add(TextFormatting.YELLOW + I18nUtil.resolveKey("item.leafiarod.heatfunc",item.HeatFunction(stack,false,0,0,0,0)));
+			list.add(TextFormatting.GOLD + I18nUtil.resolveKey("item.leafiarod.temp",String.format("%01.1f",heat)+"°C"));
 		}
 		if (meltingPoint != 0) {
-			list.add(TextFormatting.DARK_RED + "Melting Point: "+String.format("%01.1f",meltingPoint));
+			list.add(TextFormatting.DARK_RED + I18nUtil.resolveKey("item.leafiarod.meltingpt",String.format("%01.1f",meltingPoint)));
 			double percent = heat/meltingPoint;
 			int barLength = 60;
 			String bar = "";
@@ -604,28 +716,55 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				status = -1;
 			if (meltdown)
 				status = 3;
-			switch(status) {
-				case 0:
-					list.add(TextFormatting.LIGHT_PURPLE+"["+bar+TextFormatting.LIGHT_PURPLE+"]");
-					list.add(TextFormatting.LIGHT_PURPLE+"  SUBOPTIMAL");
-					break;
-				case 1:
-					list.add(TextFormatting.GREEN+"["+bar+TextFormatting.GREEN+"]");
-					list.add(TextFormatting.GREEN+"  OPTIMAL");
-					break;
-				case 2:
-					list.add(TextFormatting.RED+"["+bar+TextFormatting.RED+"]");
-					list.add(TextFormatting.RED+"  OVERHEAT");
-					break;
-				case 3:
-					list.add(TextFormatting.DARK_RED+"["+bar+TextFormatting.DARK_RED+"]");
-					meltdownFlash = Math.floorMod(meltdownFlash+1,20);
-					list.add((meltdownFlash >= 11) ? "" : TextFormatting.DARK_RED +"  MELTDOWN");
-					break;
-				case -1:
-					list.add(TextFormatting.DARK_AQUA+"["+TextFormatting.DARK_GRAY+bar+TextFormatting.DARK_AQUA+"]");
-					list.add(TextFormatting.AQUA+"  FRIGID");
-					break;
+			if (functionId.equals("dgomega")) {
+
+				switch(status) {
+					case 0:
+						list.add(TextFormatting.RED+"["+bar+TextFormatting.RED+"]");
+						list.add(TextFormatting.RED+"  "+I18nUtil.resolveKey("item.leafiarod.status.1dg"));
+						break;
+					case 1:
+						list.add(TextFormatting.DARK_RED+"["+bar+TextFormatting.DARK_RED+"]");
+						list.add(TextFormatting.DARK_RED+"  "+I18nUtil.resolveKey("item.leafiarod.status.2dg"));
+						break;
+					case 2:
+						list.add(TextFormatting.GRAY+"["+bar+TextFormatting.GRAY+"]");
+						list.add(TextFormatting.GRAY+"  "+I18nUtil.resolveKey("item.leafiarod.status.3dg"));
+						break;
+					case 3:
+						list.add(TextFormatting.GRAY+"["+bar+TextFormatting.GRAY+"]");
+						meltdownFlash = Math.floorMod(meltdownFlash+1,20);
+						list.add((meltdownFlash >= 11) ? "" : TextFormatting.GRAY +"  "+I18nUtil.resolveKey("item.leafiarod.status.4dg"));
+						break;
+					case -1:
+						list.add(TextFormatting.DARK_GREEN+"["+TextFormatting.DARK_GRAY+bar+TextFormatting.DARK_GREEN+"]");
+						list.add(TextFormatting.GREEN+"  "+I18nUtil.resolveKey("item.leafiarod.status.0dg"));
+						break;
+				}
+			} else {
+				switch(status) {
+					case 0:
+						list.add(TextFormatting.LIGHT_PURPLE+"["+bar+TextFormatting.LIGHT_PURPLE+"]");
+						list.add(TextFormatting.LIGHT_PURPLE+"  "+I18nUtil.resolveKey("item.leafiarod.status.1"));
+						break;
+					case 1:
+						list.add(TextFormatting.GREEN+"["+bar+TextFormatting.GREEN+"]");
+						list.add(TextFormatting.GREEN+"  "+I18nUtil.resolveKey("item.leafiarod.status.2"));
+						break;
+					case 2:
+						list.add(TextFormatting.RED+"["+bar+TextFormatting.RED+"]");
+						list.add(TextFormatting.RED+"  "+I18nUtil.resolveKey("item.leafiarod.status.3"));
+						break;
+					case 3:
+						list.add(TextFormatting.DARK_RED+"["+bar+TextFormatting.DARK_RED+"]");
+						meltdownFlash = Math.floorMod(meltdownFlash+1,20);
+						list.add((meltdownFlash >= 11) ? "" : TextFormatting.DARK_RED +"  "+I18nUtil.resolveKey("item.leafiarod.status.4"));
+						break;
+					case -1:
+						list.add(TextFormatting.DARK_AQUA+"["+TextFormatting.DARK_GRAY+bar+TextFormatting.DARK_AQUA+"]");
+						list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.status.0"));
+						break;
+				}
 			}
 		}
 	}
@@ -657,6 +796,16 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		if (nextItem != null)
 			entity.replaceItemInInventory(itemSlot,nextItem);
 	}
+
+	@Override
+	public int getRGBDurabilityForDisplay(ItemStack stack) {
+		double green = 255;
+		NBTTagCompound data = stack.getTagCompound();
+		if (data != null)
+			green = Math.pow(MathHelper.clamp(1-data.getDouble("depletion")/life,0,1),1.25)*155+100;
+		return ((int)green)<<8;
+	}
+
 	protected String[] graph = new String[0];
 	protected String funcColor = "";
 	public LeafiaRodItem(String s,double heatGenerated,double meltingPoint) {
@@ -686,8 +835,24 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 
 		this.setContainerItem(LeafiaRods.leafRod);
 
+		addRad(emptyRad);
+		addModifier(Neutrons.class,genericRodRadModifier);
+
 		detonate(null,null);
 	}
+	static final MultiRadContainer emptyRad = new MultiRadContainer(0,0,0,0,0);
+	static final IHazardModifier genericRodRadModifier = (stack,entityLivingBase,baseLevel)->{
+		double add = 0;
+		if (baseLevel < 0)
+			baseLevel = 0;
+		NBTTagCompound nbt = stack.getTagCompound();
+		if (nbt != null) {
+			if (nbt.hasKey("incoming"))
+				add = Math.pow(nbt.getDouble("incoming"),0.65)/2;
+		}
+		return baseLevel+add;
+	};
+
 	public LeafiaRodItem setAppearance(Item baseItem,ItemType baseItemType,Purity purity) {
 		return setAppearance(baseItem,0,baseItemType,purity);
 	}
@@ -710,7 +875,10 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 
 	@Override
 	public AddonItemHazardBase addRad(MultiRadContainer container) {
-		return super.addRad(container.multiply(0.5));
+		container = container.copy().multiply(0.5);
+		if (container.neutrons == 0)
+			container.neutrons = -1;
+		return super.addRad(container);
 	}
 
 	public static void confirmDecayProducts() {

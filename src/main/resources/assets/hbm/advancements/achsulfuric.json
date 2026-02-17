@@ -1,0 +1,29 @@
+{
+  "parent": "hbm:achslimeball",
+  "display": {
+    "icon": {
+      "item": "hbm:achievement_icon",
+      "data": 2
+    },
+    "title": {
+      "translate": "achievement.sulfuric"
+    },
+    "description": {
+      "translate": "achievement.sulfuric.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}

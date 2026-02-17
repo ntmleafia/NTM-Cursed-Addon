@@ -6,52 +6,43 @@ import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IGUIProvider;
 import com.leafia.contents.machines.reactors.pwr.PWRData;
-import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentEntity;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRAssignableEntity;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.contents.machines.reactors.pwr.container.PWRTerminalContainer;
 import com.leafia.contents.machines.reactors.pwr.container.PWRTerminalUI;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
-public class PWRTerminalTE extends TileEntity implements PWRComponentEntity, LeafiaPacketReceiver, IGUIProvider, IFluidStandardReceiverMK2, IFluidStandardSenderMK2, ITickable {
+public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketReceiver, IGUIProvider, IFluidStandardReceiverMK2, IFluidStandardSenderMK2, ITickable {
 	//static {
 	//	MainRegistry.registerTileEntities.put(TileEntityPWRTerminal.class,"pwr_terminal"); // didnt work. I hate this game
 	//}
-	BlockPos corePos = null;
-	@Override
-	public void setCoreLink(@Nullable BlockPos pos) {
-		corePos = pos;
+
+
+	public PWRData getLinkedCoreDiagnosis() {
+		PWRData data = getLinkedCore();
+		if (data == null) {
+			Block block = world.getBlockState(pos).getBlock();
+			if (block instanceof PWRComponentBlock pwr) {
+				pwr.beginDiagnosis(world,pos,pos);
+				data = getLinkedCore();
+			}
+		}
+		return data;
 	}
 
-	@Nullable
-	@Override
-	public PWRData getLinkedCore() {
-		return PWRComponentEntity.getCoreFromPos(world,corePos);
-	}
-
-	@Override
-	public void assignCore(@Nullable PWRData data) {}
-	@Override
-	public PWRData getCore() { return null; }
-	@Nullable
+	/*@Nullable
 	PWRData gatherData() {
 		if (this.corePos != null) {
 			TileEntity entity = world.getTileEntity(corePos);
@@ -62,26 +53,7 @@ public class PWRTerminalTE extends TileEntity implements PWRComponentEntity, Lea
 			}
 		}
 		return null;
-	}
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("corePosX"))
-			corePos = new BlockPos(
-					compound.getInteger("corePosX"),
-					compound.getInteger("corePosY"),
-					compound.getInteger("corePosZ")
-			);
-		super.readFromNBT(compound);
-	}
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		if (corePos != null) {
-			compound.setInteger("corePosX",corePos.getX());
-			compound.setInteger("corePosY",corePos.getY());
-			compound.setInteger("corePosZ",corePos.getZ());
-		}
-		return super.writeToNBT(compound);
-	}
+	}*/
 	@Override
 	public void onDiagnosis() {
 		LeafiaPacket._start(this).__write(0,corePos).__sendToAffectedClients();
@@ -134,10 +106,11 @@ public class PWRTerminalTE extends TileEntity implements PWRComponentEntity, Lea
 
 	@Override
 	public String getPacketIdentifier() {
-		return "PWRTerminal";
+		return "PWR_TERMINAL";
 	}
 	@Override
 	public void onReceivePacketLocal(byte key,Object value) {
+		super.onReceivePacketLocal(key,value);
 		if (key == 0) {
 			//if (value.equals(false))
 			//	corePos = null;
@@ -146,17 +119,13 @@ public class PWRTerminalTE extends TileEntity implements PWRComponentEntity, Lea
 		}
 	}
 	@Override
-	public void onReceivePacketServer(byte key,Object value,EntityPlayer plr) {
-
-	}
-	@Override
 	public void onPlayerValidate(EntityPlayer plr) {
 		LeafiaPacket._start(this).__write(0,/*(corePos == null) ? false : */corePos).__sendToClient(plr);
 	}
 
 	@Override
 	public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
-		PWRData core = getLinkedCore();
+		PWRData core = getLinkedCoreDiagnosis();
 		if (core != null)
 			return new PWRTerminalContainer(entityPlayer.inventory,this,core);
 		return null;
@@ -165,7 +134,7 @@ public class PWRTerminalTE extends TileEntity implements PWRComponentEntity, Lea
 	@Override
 	@SideOnly(Side.CLIENT)
 	public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
-		PWRData core = getLinkedCore();
+		PWRData core = getLinkedCoreDiagnosis();
 		if (core != null)
 			return new PWRTerminalUI(entityPlayer.inventory,this,core);
 		return null;

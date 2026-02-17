@@ -4,6 +4,7 @@ import com.custom_hbm.contents.torex.LCETorex.Cloudlet;
 
 import com.hbm.main.MainRegistry;
 import com.hbm.render.amlfrom1710.Vec3;
+import com.leafia.AddonBase;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.effects.LeafiaShakecam;
@@ -297,6 +298,7 @@ public class LCETorexRender extends Render<LCETorex> {
 		double intensity = (cloud.ticksExisted + interp) / flashDuration * 2;
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
 		GL11.glPushMatrix();
+		bindTexture(AddonBase.solid_e);
 		if (intensity < 1) {
 			LeafiaEase ease = new LeafiaEase(Ease.QUAD,Direction.O);
 			intensity = ease.get(intensity);
@@ -331,7 +333,7 @@ public class LCETorexRender extends Render<LCETorex> {
 		RenderHelper.disableStandardItemLighting();
 
         Random random = new Random(432L);
-        GlStateManager.disableTexture2D();
+        //GlStateManager.disableTexture2D();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
@@ -369,7 +371,7 @@ public class LCETorexRender extends Render<LCETorex> {
         GlStateManager.disableBlend();
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableTexture2D();
+        //GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();
         RenderHelper.enableStandardItemLighting();
 	}

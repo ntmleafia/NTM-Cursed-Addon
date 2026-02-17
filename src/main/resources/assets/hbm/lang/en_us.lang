@@ -1,3 +1,4 @@
+achievement.watz=
 container.dfcEmitter=
 container.dfcReceiver=
 item.ams_focus_blank.name=
@@ -5,5 +6,11 @@ item.ams_focus_booster.name=
 item.ams_focus_limiter.name=
 item.ams_focus_omega.name=
 item.ams_lens.name=
+tile.ams_base.name=
+tile.ams_emitter.name=
+tile.ams_limiter.name=
 tile.dfc_emitter.name=
 tile.dfc_receiver.name=
+tile.fluid_switch.name=
+tile.fluid_valve.name=
+tile.fluid_duct_gauge.name=

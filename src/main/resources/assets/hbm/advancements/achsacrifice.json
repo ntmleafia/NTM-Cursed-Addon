@@ -1,0 +1,23 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:burnt_bark"
+		},
+		"title": {
+			"translate": "hbm.achievement.sacrifice"
+		},
+		"description": {
+			"translate": "hbm.achievement.sacrifice.desc"
+		},
+		"frame": "challenge"
+	},
+	"parent": "leafia:root_misc",
+	"criteria": {
+		"impossible": {
+			"trigger": "minecraft:impossible"
+		}
+	},
+    "rewards": {
+        "experience": 70
+    }
+}

@@ -1,5 +1,6 @@
 package com.custom_hbm.contents.torex;
 
+import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IConstantRenderer;
 import com.hbm.items.ModItems;
 import com.hbm.packet.PacketDispatcher;
@@ -167,7 +168,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 								calculationFinished = true;
 							TorexFinishPacket packet = new TorexFinishPacket();
 							packet.uuid = this.getUniqueID();
-							PacketDispatcher.wrapper.sendToAll(packet);
+							PacketThreading.createSendToAllThreadedPacket(packet);
 						}
 					}
 				}
@@ -401,6 +402,12 @@ public class LCETorex extends Entity implements IConstantRenderer {
 				(nr2 + (nr1 - nr2) * interp),
 				(ng2 + (ng1 - ng2) * interp),
 				(nb2 + (nb1 - nb2) * interp));
+		}
+		if (type == 2) {
+			return Vec3.createVectorHelper(
+					(bg2 + (bg1 - bg2) * interp),
+					(bb2 + (bb1 - bb2) * interp),
+					(bb2 + (bb1 - bb2) * interp));
 		}
 		return Vec3.createVectorHelper(
 			(br2 + (br1 - br2) * interp),
@@ -746,7 +753,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		torex.writeEntityToNBT(nbt);
 		packet.nbt = nbt;
 		double amp = torex.getScale()*100;
-		PacketDispatcher.wrapper.sendToAllAround(packet,new NetworkRegistry.TargetPoint(
+		PacketThreading.createSendToAllTrackingThreadedPacket(packet,new NetworkRegistry.TargetPoint(
 						torex.dimension,
 						packet.x,
 						packet.y,
@@ -754,7 +761,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 						200+amp+Math.pow(amp,0.8)*8
 				)
 		);
-		//PacketDispatcher.wrapper.sendToDimension(packet,torex.dimension);
+		//PacketThreading.createSendToDimensionThreadedPacket(packet,torex.dimension);
 	}
 	
 	public static void statFac(World world, double x, double y, double z, float scale) {
@@ -773,6 +780,16 @@ public class LCETorex extends Entity implements IConstantRenderer {
 	}
 	public static void statFacBale(World world, double x, double y, double z, float scale, boolean sound) {
 		LCETorex torex = new LCETorex(world).setScale(MathHelper.clamp(scale * 0.01F, 0.25F, 5F)).setType(1);
+		torex.setPosition(x, y, z);
+		torex.sound = sound;
+		spawnTorex(world,torex);
+	}
+
+	public static void statFacDigamma(World world, double x, double y, double z, float scale) {
+		statFacDigamma(world,x,y,z,scale,true);
+	}
+	public static void statFacDigamma(World world, double x, double y, double z, float scale, boolean sound) {
+		LCETorex torex = new LCETorex(world).setScale(MathHelper.clamp(scale * 0.01F, 0.25F, 5F)).setType(2);
 		torex.setPosition(x, y, z);
 		torex.sound = sound;
 		spawnTorex(world,torex);

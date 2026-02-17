@@ -1,0 +1,35 @@
+{
+  "parent": "leafia:progress_anvil",
+  "display": {
+    "icon": {
+      "item": "hbm:machine_press"
+    },
+    "title": {
+      "translate": "achievement.burnerPress"
+    },
+    "description": {
+      "translate": "achievement.burnerPress.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "crafting_hbm_machine_press": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hbm:machine_press"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafting_hbm_machine_press"
+    ]
+  ]
+}

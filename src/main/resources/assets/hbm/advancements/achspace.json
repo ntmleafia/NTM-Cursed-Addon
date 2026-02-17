@@ -1,0 +1,28 @@
+{
+  "parent": "hbm:achwatz",
+  "display": {
+    "icon": {
+      "item": "hbm:missile_soyuz"
+    },
+    "title": {
+      "translate": "achievement.space"
+    },
+    "description": {
+      "translate": "achievement.space.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ]
+}
