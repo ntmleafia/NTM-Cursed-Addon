@@ -194,8 +194,8 @@ public class PWRElementBlock extends BlockMachineBase implements ITooltipProvide
 	}
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void printHook(RenderGameOverlayEvent.Pre event,World world,int x,int y,int z) {
-		BlockPos pos = getTopElement(world,new BlockPos(x,y,z));
+	public void printHook(RenderGameOverlayEvent.Pre event,World world,BlockPos pos) {
+		pos = getTopElement(world,pos);
 		if (world.getBlockState(pos.up()).getBlock() instanceof PWRElementBlock)
 			return;
 		TileEntity entity = world.getTileEntity(pos);

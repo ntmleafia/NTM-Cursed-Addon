@@ -1,0 +1,5 @@
+{
+	"variants": {
+		"normal": { "model": "leafia:lwr_signal" }
+	}
+}

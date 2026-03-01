@@ -2,23 +2,26 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.interfaces.ILaserable;
 import com.hbm.inventory.recipes.DFCRecipes;
+import com.hbm.items.ModItems;
+import com.hbm.items.weapon.ItemCrucible;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IBufPacketReceiver;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.machine.TileEntityCrate;
 import com.hbm.tileentity.machine.TileEntityCrateTungsten;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TileEntityCrateTungsten.class)
@@ -31,8 +34,52 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
     @Shadow(remap = false)
     public long joules;
 
-    @Shadow(remap = false)
-    public abstract void addEnergy(World world, BlockPos pos, long energy, EnumFacing dir);
+    //@Shadow(remap = false)
+    //public abstract void addEnergy(World world, BlockPos pos, long energy, EnumFacing dir);
+
+    @Unique
+    public int leafia$heatTimer;
+
+    /**
+     * @author ntmleafia
+     * @reason i preferred Extended algorithm
+     */
+    @Overwrite(remap = false)
+    public void addEnergy(World gay,BlockPos pos,long energy,EnumFacing dir) {
+        leafia$heatTimer = 5;
+
+        for(int i = 0; i < inventory.getSlots(); i++) {
+
+            if(inventory.getStackInSlot(i).isEmpty())
+                continue;
+
+            ItemStack result = FurnaceRecipes.instance().getSmeltingResult(inventory.getStackInSlot(i));
+
+            long requiredEnergy = DFCRecipes.getRequiredFlux(inventory.getStackInSlot(i));
+            int count = inventory.getStackInSlot(i).getCount();
+            requiredEnergy *= 0.9D;
+            if(requiredEnergy > -1 && energy > requiredEnergy){
+                if(0.001D > count * world.rand.nextDouble() * ((double)requiredEnergy/(double)energy)){
+                    ItemStack check = DFCRecipes.getOutput(inventory.getStackInSlot(i));
+                    if (check != null && check != ItemStack.EMPTY)
+                        result = check;
+                }
+            }
+
+            if(inventory.getStackInSlot(i).getItem() == ModItems.crucible && ItemCrucible.getCharges(inventory.getStackInSlot(i)) < 3 && energy > 10000000)
+                ItemCrucible.charge(inventory.getStackInSlot(i));
+
+            if(result != null && !result.isEmpty()){
+                int size = inventory.getStackInSlot(i).getCount();
+
+                if(result.getCount() * size <= result.getMaxStackSize()) {
+                    inventory.setStackInSlot(i, result.copy());
+                    inventory.getStackInSlot(i).setCount(inventory.getStackInSlot(i).getCount()*size);
+                }
+            }
+        }
+        joules = energy;
+    }
 
     @Inject(method = "update()V", at = @At(value = "FIELD", target = "Lcom/hbm/tileentity/machine/TileEntityCrateTungsten;heatTimer:I", ordinal = 0, shift = At.Shift.BEFORE, remap = false),require = 1)
     public void onUpdate(CallbackInfo ci) {
@@ -41,6 +88,7 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
         }
     }
 
+    /*
     // Smelting fix..?
     @Redirect(method = "addEnergy",at = @At(value = "INVOKE", target = "Lcom/hbm/inventory/recipes/DFCRecipes;getOutput(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"),require = 1,remap = false)
     public ItemStack onGetOutput(ItemStack key,@Local(name = "result") ItemStack result) {
@@ -48,7 +96,7 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
         if (output == null)
             return result;
         return output;
-    }
+    }*/
 
     @Override
     public long transferSPK(long power, boolean simulate) {

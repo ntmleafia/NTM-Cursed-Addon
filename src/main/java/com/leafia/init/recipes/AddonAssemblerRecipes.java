@@ -180,6 +180,9 @@ public class AddonAssemblerRecipes {
 	public static void replaceOutput(String entry,ItemStack... outputs) {
 		GenericRecipe recipe = INSTANCE.recipeNameMap.get(entry);
 		if (recipe != null) {
+			int count = recipe.outputItem[0].getSingle().getCount();
+			for (ItemStack output : outputs)
+				output.setCount(count);
 			recipe.outputItems(outputs);
 		} else
 			throw new LeafiaDevFlaw("Could not find recipe \""+entry+"\" to replace");

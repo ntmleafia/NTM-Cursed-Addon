@@ -71,6 +71,7 @@ public class EvStyleItemRender extends TEISRBase {
 	@Override
 	public void renderByItem(ItemStack itemStackIn) {
 		LeafiaGls.pushMatrix();
+		LeafiaGripOffsetHelper.fixGrip(type);
 		Item item0 = itemStackIn.getItem();
 		if (item0 instanceof EvStyleItem) {
 			EvStyleItem item = (EvStyleItem)item0;

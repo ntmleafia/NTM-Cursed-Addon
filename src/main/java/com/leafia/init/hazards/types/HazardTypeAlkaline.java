@@ -1,5 +1,6 @@
 package com.leafia.init.hazards.types;
 
+import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.hazard.type.IHazardType;
 import com.hbm.util.ContaminationUtil;
@@ -131,11 +132,11 @@ public class HazardTypeAlkaline implements IHazardType {
 				break;
 			case 6:
 				world.newExplosion(null,x,y,z,6,true,true);
-				ContaminationUtil.radiate(world,x,y,z,9,20);
+				ChunkRadiationManager.proxy.incrementRad(world,new BlockPos(x,y,z),40);
 				add = 1000;
 				break;
 		}
-		if (damage > 0)
+		if (damage+add > 0)
 			nbt.setInteger("damage",damage+add);
 		else
 			nbt.removeTag("damage");

@@ -1,6 +1,7 @@
 package com.leafia.unsorted;
 
 import com.hbm.blocks.generic.BlockMeta;
+import com.hbm.util.CompatBlockReplacer;
 import com.leafia.contents.AddonBlocks.LegacyBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
@@ -16,7 +17,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class LeafiaBlockReplacer {
-	public static final Map<String,Block> replacementMap = new HashMap<>();
+	public static final Map<String,Block> replacementMap = CompatBlockReplacer.replacementMap;//new HashMap<>();
 	public static IBlockState withProperties(Block newBlock,IBlockState missingBlock) {
 		/*IBlockState state = newBlock.getDefaultState();
 		for (IProperty<?> property : missingBlock.getPropertyKeys())
@@ -24,10 +25,21 @@ public class LeafiaBlockReplacer {
 		return state;*/
 		return newBlock.getStateFromMeta(missingBlock.getBlock().getMetaFromState(missingBlock));
 	}
-	public interface SpecialReplacer extends BiFunction<String,IBlockState,IBlockState> { }
-	public static final Map<String,SpecialReplacer> specialReplacer = new HashMap<>();
-	static {
-		SpecialReplacer wasteReplacer = (reg,state)->{
+	//public interface SpecialReplacer extends BiFunction<String,IBlockState,IBlockState> { }
+	public static final Map<String,BiFunction<String, IBlockState, IBlockState>> specialReplacer = CompatBlockReplacer.specialReplacer;
+	public static void addReplacementMap() {
+		replacementMap.remove("hbm:waste_ice");
+		replacementMap.remove("hbm:waste_snow");
+		replacementMap.remove("hbm:waste_snow_block");
+		replacementMap.remove("hbm:waste_dirt");
+		replacementMap.remove("hbm:waste_gravel");
+		replacementMap.remove("hbm:waste_sand");
+		replacementMap.remove("hbm:waste_sandstone");
+		replacementMap.remove("hbm:waste_sand_red");
+		replacementMap.remove("hbm:waste_red_sandstone");
+		replacementMap.remove("hbm:waste_terracotta");
+
+		BiFunction<String, IBlockState, IBlockState> wasteReplacer = (reg,state)->{
 			Block newBlock = null;
 			IBlockState vanillaBlock = null;
 			switch(reg) {
@@ -78,6 +90,7 @@ public class LeafiaBlockReplacer {
 		replacementMap.put("hbm:ore_coal_oil",LegacyBlocks.ore_coal_oil);
 		replacementMap.put("hbm:ore_coal_oil_burning",LegacyBlocks.ore_coal_oil_burning);
 	}
+	/*
 	public static IBlockState replaceBlock(IBlockState missingBlock) {
 		ResourceLocation reg = missingBlock.getBlock().getRegistryName();
 		//System.out.println("LEAFIA: Replacing block "+reg.toString());
@@ -94,7 +107,7 @@ public class LeafiaBlockReplacer {
 	/// thanks https://forums.minecraftforge.net/topic/117047-copy-all-property-values-from-one-blockstate-to-another/
 	static <T extends Comparable<T>> IBlockState copyProperty(IBlockState from,IBlockState to,IProperty<T> property) {
 		return from.withProperty(property,from.getValue(property));
-	}
+	}*/
 	/*
 	public static final MethodHandle add = MethodHandleHelper.findVirtual(ForgeRegistry.class,"add",MethodType.methodType(int.class,int.class,IForgeRegistryEntry.class));
 	public static void replace(ResourceLocation key,int id,ForgeRegistry<? extends IForgeRegistryEntry<?>> reg) {

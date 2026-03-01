@@ -162,8 +162,8 @@ public class PWRControlBlock extends AddonBlockBase implements ITooltipProvider,
 	}
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void printHook(RenderGameOverlayEvent.Pre event,World world,int x,int y,int z) {
-		BlockPos pos = getTopControl(world,new BlockPos(x,y,z));
+	public void printHook(RenderGameOverlayEvent.Pre event,World world,BlockPos pos) {
+		pos = getTopControl(world,pos);
 		if (world.getBlockState(pos.up()).getBlock() instanceof PWRControlBlock)
 			return;
 		TileEntity entity = world.getTileEntity(pos);

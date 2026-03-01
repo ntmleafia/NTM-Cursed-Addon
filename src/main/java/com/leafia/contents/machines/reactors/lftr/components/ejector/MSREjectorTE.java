@@ -27,6 +27,7 @@ public class MSREjectorTE extends MSRTEBase implements IFluidHandler, IFFProvide
 	}
 	@Override
 	public void update() {
+		super.update();
 		//fillFluid(pos.add(getDirection().getDirectionVec()),tank);
 		if (!world.isRemote)
 			tryProvide(tank,world,pos.offset(getDirection()),ForgeDirection.getOrientation(getDirection()));
@@ -47,6 +48,10 @@ public class MSREjectorTE extends MSRTEBase implements IFluidHandler, IFFProvide
 		return (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.equals(getDirection()))) || super.hasCapability(capability, facing);
 	}
 	@Override
+	public FluidTank getSendingTank(FluidStack stack) {
+		return tank;
+	}
+	@Override
 	public IFluidTankProperties[] getTankProperties() {
 		return tank.getTankProperties();
 	}
@@ -64,6 +69,6 @@ public class MSREjectorTE extends MSRTEBase implements IFluidHandler, IFFProvide
 	}
 	@Override
 	public String getPacketIdentifier() {
-		return "MSREjector";
+		return "LFTR_EJECTOR";
 	}
 }

@@ -75,6 +75,11 @@ public class DebugSourceTE extends TileEntity implements ITickable, IFFProvider,
 	public void onPlayerValidate(EntityPlayer plr) { }
 
 	@Override
+	public FluidTank getSendingTank(FluidStack stack) {
+		return zaza;
+	}
+
+	@Override
 	public IFluidTankProperties[] getTankProperties() {
 		return zaza.getTankProperties();
 	}

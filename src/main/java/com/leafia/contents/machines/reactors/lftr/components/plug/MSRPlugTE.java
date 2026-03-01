@@ -84,6 +84,10 @@ public class MSRPlugTE extends MSRTEBase implements IFluidHandler, IFFReceiver, 
 			return 0;
 	}
 	@Override
+	public FluidTank getSendingTank(FluidStack stack) {
+		return null;
+	}
+	@Override
 	public @Nullable FluidStack drain(FluidStack resource,boolean doDrain) {
 		return null;
 	}
@@ -93,7 +97,7 @@ public class MSRPlugTE extends MSRTEBase implements IFluidHandler, IFFReceiver, 
 	}
 	@Override
 	public String getPacketIdentifier() {
-		return "MSRPlug";
+		return "LFTR_PLUG";
 	}
 	/*@Override
 	public void sendFluids() {

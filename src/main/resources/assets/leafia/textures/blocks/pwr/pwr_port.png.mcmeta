@@ -4,6 +4,14 @@
         "type":"CTM",
         "textures":[
             "leafia:blocks/pwr/pwr_casing_port_ct"
-        ]
+        ],
+        "extra": {
+            "connect_to": [
+                { "block": "leafia:lwr_terminal" },
+                { "block": "leafia:lwr_port" },
+                { "block": "leafia:lwr_signal" },
+                { "block": "leafia:lwr_casing" }
+            ]
+        }
     }
 }

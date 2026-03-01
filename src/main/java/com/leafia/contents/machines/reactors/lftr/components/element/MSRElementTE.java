@@ -72,8 +72,8 @@ public class MSRElementTE extends MSRTEBase {
 				(x)->Math.pow(x,0.3),
 				1,
 				MSRByproduct.pa233,
-				1000000d,
-				0.0003,
+				10000d,
+				0.03,
 				MSRByproduct.pa233_decay
 		),
 		u233(
@@ -105,6 +105,7 @@ public class MSRElementTE extends MSRTEBase {
 		final public Function<Double,Double> function;
 		final public double decayRate;
 		final public MSRByproduct decayProduct;
+		/// scrapped
 		final public double heatPerFlux;
 		final public MSRByproduct byproduct;
 		final double life;
@@ -331,7 +332,7 @@ public class MSRElementTE extends MSRTEBase {
 
 	@Override
 	public String getPacketIdentifier() {
-		return "MSRElement";
+		return "LFTR_FUEL";
 	}
 	public BlockPos control = null;
 	public double restriction = 0;

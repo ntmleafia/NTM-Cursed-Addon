@@ -71,14 +71,9 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 
 	@Shadow(remap = false) public long prevJoules;
 
-	@Unique public long netRemaining = 0;
-
 	@Shadow(remap = false) public long power;
 	@Shadow(remap = false) public FluidTankNTM tank;
 	@Unique public TileEntityCore core = null;
-
-	@Unique public long fuck_you = 0;
-	@Unique public long throughputLimit = 0;
 
 	@Unique public double level = 1;
 
@@ -158,8 +153,34 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	public void update() {
 		core = null;
 		EnumFacing facing = getFront();
-		throughputLimit = fuck_you;
-		fuck_you = 0;
+		long remaining = power / 5000L;
+		long totalTransfer = 0;
+		if (remaining > 0) {
+			List<Pair<TileEntity, EnumFacing>> targets = new ArrayList<>();
+			//for (EnumFacing outFace : EnumFacing.VALUES) {
+			//if (outFace.equals(facing)) continue;
+			{
+				EnumFacing outFace = facing.getOpposite();
+				BlockPos target = pos.offset(outFace);
+				ForgeDirection dir = ForgeDirection.getOrientation(outFace);
+
+				tryProvideSPK(world, target, dir, false);
+
+				//TileEntity te = world.getTileEntity(target);
+				//tryLinkSPK(world, target, te, dir);
+				//if (te instanceof ISPKReceiver receiver && receiver.isInputPreferrable(dir))
+				//	targets.add(new Pair<>(te, outFace));
+			}
+			/*
+			if (!targets.isEmpty()) {
+				long transfer = remaining / (long) targets.size();
+				for (Pair<TileEntity, EnumFacing> target : targets) {
+					// FIXME: can't rely on this to calculate the transfer amount, the net update is independent of this
+					totalTransfer += tryProvideSPK(target.getKey(), ForgeDirection.getOrientation(target.getValue()), transfer, false);
+				}
+				power -= Math.max(this.power-totalTransfer * 5000L,0);
+			}*/
+		}
 		/*
 		EnumFacing facing = EnumFacing.getFront(this.getBlockMetadata());
 		for(int i = 1; i <= TileEntityCoreEmitter.range; i++) {
@@ -197,32 +218,6 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 			for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				this.tryProvide(this.world, this.pos.getX() + dir.offsetX, this.pos.getY() + dir.offsetY, this.pos.getZ() + dir.offsetZ, dir);
 			}
-
-			long remaining = power / 5000L;
-			long totalTransfer = 0;
-			if (remaining > 0) {
-				List<Pair<TileEntity, EnumFacing>> targets = new ArrayList<>();
-				//for (EnumFacing outFace : EnumFacing.VALUES) {
-					//if (outFace.equals(facing)) continue;
-				{
-					EnumFacing outFace = facing.getOpposite();
-                    BlockPos target = pos.offset(outFace);
-                    ForgeDirection dir = ForgeDirection.getOrientation(outFace);
-                    TileEntity te = world.getTileEntity(target);
-                    tryLinkSPK(world, target, te, dir);
-					if (te instanceof ISPKReceiver receiver && receiver.isInputPreferrable(dir))
-                        targets.add(new Pair<>(te, outFace));
-				}
-				if (!targets.isEmpty()) {
-					long transfer = remaining / (long) targets.size();
-					for (Pair<TileEntity, EnumFacing> target : targets) {
-                        // FIXME: can't rely on this to calculate the transfer amount, the net update is independent of this
-                        totalTransfer += tryProvideSPK(target.getKey(), ForgeDirection.getOrientation(target.getValue()), transfer, false);
-                    }
-                    power -= Math.max(this.power-totalTransfer * 5000L,0);
-				}
-			}
-			netRemaining = power / 5000L;
 
 			LeafiaDebug.debugLog(world,power);
 
@@ -343,7 +338,7 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
     public long getSPK() { return joules; }
 
 	@Override
-	public long getNetRemaining() { return netRemaining; }
+	public long getSendable() { return power/5000; }
 
     @Override
     public void setSPK(long power) {
@@ -352,33 +347,21 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	long cableTransfer = 0;
 
 	@Override
-	public void usePower(long power) {
-		IEnergyProviderMK2.super.usePower(power);
-		fuck_you += power;
-		netRemaining = this.power / 5000L;
-	}
-
-	@Override
 	public void setPower(long power) {
 		this.power = power;
-		netRemaining = this.power / 5000L;
 	}
 
 	@Override
 	public void setTransferredSpk(long power) {
 		cableTransfer += power;
-		LeafiaPassiveServer.queueFunction(()->this.power = Math.max(this.power-power*5000,0));
+		this.power = Math.max(this.power-power*5000,0);
+		//LeafiaPassiveServer.queueFunction(()->this.power = Math.max(this.power-power*5000,0));
 	}
 
 	@Override
     public long getMaxSPK() {
         return Long.MAX_VALUE;
     }
-
-	@Override
-	public long getSPKProviderSpeed() {
-		return Math.max(syncJoules-throughputLimit/5000,0);
-	}
 
 	@Unique private BlockPos targetPosition = new BlockPos(0,0,0);
 	@Unique public TileEntityCore lastGetCore = null;

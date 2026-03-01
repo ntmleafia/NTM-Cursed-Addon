@@ -132,9 +132,11 @@ public abstract class MixinEntityFalloutRain extends EntityExplosionChunkloading
 				}
 			}
 			if (!transformed && digammaFallout && LeafiaUtil.isSolidVisibleCube(world.getBlockState(new BlockPos(x,y,z))) && world.rand.nextInt(80)+20 >= Math.pow(distPercent/100,4)*100) {
-				IBlockState result = ModBlocks.ash_digamma.getDefaultState();
-				updates.put(Library.blockPosToLong(x,y,z),result);
-				solidDepth++;
+				if (y > 0) {
+					IBlockState result = ModBlocks.ash_digamma.getDefaultState();
+					updates.put(Library.blockPosToLong(x,y,z),result);
+					solidDepth++;
+				}
 				transformed = true;
 			}
 

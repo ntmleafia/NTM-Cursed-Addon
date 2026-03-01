@@ -29,8 +29,8 @@ public class AmatDuctChargerBlock extends AddonBlockBaked implements ITileEntity
 		return new AmatDuctChargerTE();
 	}
 	@Override
-	public void printHook(Pre pre,World world,int x,int y,int z) {
-		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
+	public void printHook(Pre pre,World world,BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
 		if (!(te instanceof AmatDuctChargerTE charger))
 			return;
 

@@ -508,8 +508,8 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 					getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 2.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
 				}
 			}
-			if (tanks[3].getMaxFill() > 0) {
-				int conversionRate = 8;
+			if (tanks[3].getMaxFill() > 0 && coolantId == Fluids.COOLANT.getID()) {
+				int conversionRate = 16;
 				int consumption = (int) Math.round(Math.pow(tanks[1].getFill() / (double) Math.max(tanks[3].getMaxFill(), 1) * 4, 0.4) * 80 * conversionRate);
 				FluidStack stack = tanks[1].drain(consumption / conversionRate, false);
 				FluidStack stack2 = tanks[3].drain(consumption, false);
@@ -540,8 +540,8 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 	}
 
 	int boilingAccum = 0;
-	public static final double transferMultiplier = 12;
-	public static final int boilingDivision = 48;
+	public static final double transferMultiplier = 16;
+	public static final int boilingDivision = 96;
 
 	public void spendCoolant(double cooled, @Nullable ItemStack stack) {
 		double drainD = cooled * transferMultiplier/multiplier;

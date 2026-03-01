@@ -36,6 +36,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -44,6 +45,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class LeafiaDebug {
+	public static final boolean isDevEnv;
+	static {
+		isDevEnv = Paths.get(".").toAbsolutePath().toString().replace("\\","/").contains("run/client");
+		System.out.println("isDevEnv: "+isDevEnv);
+	}
+
 	static boolean flagDebugger = false;
 	public static void flagDebug() { flagDebugger = true; }
 	public static void debugLog(World world,Object text) {

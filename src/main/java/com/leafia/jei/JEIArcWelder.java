@@ -2,6 +2,7 @@ package com.leafia.jei;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.handler.jei.JEIConfig;
+import com.hbm.handler.jei.JeiRecipes;
 import com.hbm.inventory.RecipesCommon.AStack;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.recipes.ArcWelderRecipes;
@@ -146,6 +147,8 @@ public class JEIArcWelder implements IRecipeCategory<Recipe> {
 		stacks.init(1,true,38+18-1,11-1);
 		stacks.init(2,true,38+18*2-1,11-1);
 		stacks.init(3,false,128-1,11-1);
+		stacks.init(4,true,1,37);
 		stacks.set(ingredients);
+		stacks.set(4,JeiRecipes.getBatteries());
 	}
 }

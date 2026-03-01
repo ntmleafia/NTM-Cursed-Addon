@@ -127,8 +127,8 @@ public class MSRControlBlock extends BlockContainer implements ILookOverlay, IRa
 	}
 
 	@Override
-	public void printHook(Pre event,World world,int x,int y,int z) {
-		TileEntity te = world.getTileEntity(new BlockPos(x,y,z));
+	public void printHook(Pre event,World world,BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof MSRControlTE control) {
 			List<String> texts = new ArrayList<>();
 			texts.add(I18nUtil.resolveKey("tile.msr_control.insertion",String.format("%01.2f",control.insertion)));

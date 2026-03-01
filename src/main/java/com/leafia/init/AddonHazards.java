@@ -40,6 +40,15 @@ public class AddonHazards {
 		//Map<String,Float> fuck = dictMap.get(OreDictManager.CO60);
 		//System.out.println(fuck);
 
+		for (Entry<String,Object> e : AddonOreDictHazards.matList.entrySet()) { // FUCK OFF dude
+			Map<String,Float> map = AddonOreDictHazards.dictMap.get(e.getValue());
+			for (Entry<String,Float> entry : AddonOreDictHazards.prefixToHazMultMap.entrySet()) {
+				map.putIfAbsent(entry.getKey()+e.getKey(),entry.getValue()); // fuck off man
+				if (entry.getKey().equals("plateTriple"))
+					map.putIfAbsent("plateSextuple"+e.getKey(),entry.getValue()*2); // seriously fuck off man
+			}
+		}
+
 		ItemRads.actinium227.register(OreDictManager.AC227);
 		ItemRads.americium241.register(OreDictManager.AM241);
 		ItemRads.americium242.register(OreDictManager.AM242);
@@ -104,6 +113,12 @@ public class AddonHazards {
 
 		registerHazard(OreDictManager.OSMIRIDIUM,new HazardEntry(DIGAMMA,0.004));
 		HazardSystem.register(AddonBlocks.block_welded_osmiridium,makeData(DIGAMMA,0.04f));
+
+		registerHazard(AddonOreDict.XN,new HazardEntry(DIGAMMA,0.004));
+		ItemRads.xanaxium.register(AddonOreDict.XN);
+
+		HazardSystem.register(AddonBlocks.block_welded_osmiridium,makeData(DIGAMMA,0.04f));
+		HazardSystem.register(AddonBlocks.block_xanaxium,makeData(DIGAMMA,0.04f));
 
 		for (AddonItemHazardBase hazardItem : AddonItemHazardBase.ALL_HAZARD_ITEMS) {
 			HazardEntry entry_contamination = null;

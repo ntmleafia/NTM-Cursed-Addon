@@ -27,6 +27,7 @@ import com.leafia.contents.machines.elevators.EvShaft;
 import com.leafia.contents.machines.elevators.EvShaftNeo;
 import com.leafia.contents.machines.elevators.car.ElevatorLight;
 import com.leafia.contents.machines.elevators.floors.EvFloor;
+import com.leafia.contents.machines.heat.HeaterRTGBlock;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexBlock;
 import com.leafia.contents.machines.panel.controltorch.ControlTorchBlock;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseBlock;
@@ -60,6 +61,7 @@ import com.leafia.contents.network.computers.cable.ComputerCableBlock;
 import com.leafia.contents.network.ff_duct.FFDuctRadShielded;
 import com.leafia.contents.network.ff_duct.FFDuctStandard;
 import com.leafia.contents.network.ff_duct.utility.converter.FFConverterBlock;
+import com.leafia.contents.network.ff_duct.utility.filter.FFFilterBlock;
 import com.leafia.contents.network.ff_duct.utility.pump.FFPumpBlock;
 import com.leafia.contents.network.fluid.gauges.FluidDuctGauge;
 import com.leafia.contents.network.fluid.valves.FluidDuctValve;
@@ -209,6 +211,7 @@ public class AddonBlocks {
 	public static final Block ff_duct = new FFDuctStandard(Material.IRON, "ff_duct").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
 	public static final Block ff_pump = new FFPumpBlock(Material.IRON,"ff_pump").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
 	public static final Block ff_converter = new FFConverterBlock(Material.IRON,"ff_converter").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
+	public static final Block ff_filter = new FFFilterBlock(Material.IRON,"ff_filter").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.templateTab);
 
 	public static final Block ff_duct_solid_shielded = new FFDuctRadShielded(Material.IRON,"ff_duct_solid_shielded").setHardness(15.0F).setResistance(COMPOUND_MESH.v).setCreativeTab(MainRegistry.templateTab);
 
@@ -315,6 +318,7 @@ public class AddonBlocks {
 	public static final Block ams_limiter = new AMSStabilizerBlock(Material.IRON, "ams_limiter").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
 
 	public static final Block block_welded_osmiridium = new OsmiridiumBlock(Material.IRON,"block_welded_osmiridium").setHardness(15).setResistance(6500000);
+	public static final Block block_xanaxium = new OsmiridiumBlock(Material.IRON,"block_xanaxium").setHardness(15).setResistance(6500000);
 
 	public static final Block broof = new BroofBlock(Material.CARPET,"broof").setHardness(0.1F).setSoundType(SoundType.CLOTH).setCreativeTab(MainRegistry.blockTab);
 
@@ -332,6 +336,8 @@ public class AddonBlocks {
 
 		public static final Block light = new ElevatorLight(Material.AIR,"elevator_light").setCreativeTab(null);
 	}
+
+	public static final Block heater_rt = new HeaterRTGBlock(Material.IRON, "heater_rt").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

@@ -6,7 +6,6 @@ import com.hbm.render.item.TEISRBase;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
 import com.leafia.dev.items.LeafiaGripOffsetHelper;
-import com.leafia.dev.items.LeafiaGripOffsetHelper.LeafiaGripOffset;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.math.LeafiaColor;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -49,6 +48,7 @@ public class AdvisorRender extends TEISRBase {
 	@Override
 	public void renderByItem(ItemStack itemStackIn) {
 		LeafiaGls.pushMatrix();
+		LeafiaGripOffsetHelper.fixGrip(type);
 		LeafiaGls.translate(-0.5,0,0.5);
 		grip.apply(type);
 		{

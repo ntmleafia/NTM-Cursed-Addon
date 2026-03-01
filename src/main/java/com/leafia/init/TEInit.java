@@ -10,6 +10,7 @@ import com.leafia.contents.machines.elevators.EvBufferTE;
 import com.leafia.contents.machines.elevators.EvPulleyTE;
 import com.leafia.contents.machines.elevators.EvShaftTE;
 import com.leafia.contents.machines.elevators.floors.EvFloorTE;
+import com.leafia.contents.machines.heat.HeaterRTGTE;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexTE;
 import com.leafia.contents.machines.panel.controltorch.ControlTorchTE;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseTE;
@@ -36,6 +37,7 @@ import com.leafia.contents.network.computers.audiocable.AudioCableTE;
 import com.leafia.contents.network.computers.cable.ComputerCableTE;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.utility.converter.FFConverterTE;
+import com.leafia.contents.network.ff_duct.utility.filter.FFFilterTE2;
 import com.leafia.contents.network.ff_duct.utility.pump.FFPumpTE;
 import com.leafia.contents.network.fluid.gauges.FluidDuctGaugeTE;
 import com.leafia.contents.network.fluid.valves.FluidDuctValveTE;
@@ -61,6 +63,7 @@ public class TEInit {
 		register(FFDuctTE.class,"ff_duct_te");
 		register(FFPumpTE.class,"ff_pump_te");
 		register(FFConverterTE.class,"ff_converter_te");
+		register(FFFilterTE2.class,"ff_filter_te");
 		register(SaltSeparatorTE.class,"salt_separator_te");
 		register(MSRArbitraryTE.class,"lftr_arbitrary_te");
 		register(MSRControlTE.class,"lftr_control_te");
@@ -94,6 +97,7 @@ public class TEInit {
 		register(EvPulleyTE.class,"ev_pulley_te");
 		register(EvShaftTE.class,"ev_shaft_te");
 		register(EvBufferTE.class,"ev_buffer_te");
+		register(HeaterRTGTE.class,"heater_rt_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

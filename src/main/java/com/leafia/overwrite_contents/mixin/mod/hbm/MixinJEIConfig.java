@@ -42,6 +42,8 @@ public class MixinJEIConfig {
 		addon_categories.add(new JEIHydrotreater(help));
 		addon_categories.add(new JEIArcWelder(help));
 		addon_categories.add(new JEISoldering(help));
+		addon_categories.add(new JEIAcidizer(help));
+		addon_categories.add(new JEIPUREX(help));
 
 		for (IRecipeCategory<? extends IRecipeWrapper> category : addon_categories)
 			instance.addRecipeCategories(category);
@@ -133,5 +135,13 @@ public class MixinJEIConfig {
 	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/SolderingStationRecipeHandler;getRecipes()Ljava/util/List;"),require = 1)
 	public List soldering(SolderingStationRecipeHandler instance) {
 		return JEISoldering.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/CrystallizerRecipeHandler;getRecipes()Ljava/util/List;"),require = 1)
+	public List acidizer(CrystallizerRecipeHandler instance) {
+		return JEIAcidizer.Recipe.buildRecipes();
+	}
+	@Redirect(method = "register",at = @At(value = "INVOKE", target = "Lcom/hbm/handler/jei/PUREXRecipeHandler;getRecipes()Ljava/util/List;"),require = 1)
+	public List purex(PUREXRecipeHandler instance) {
+		return JEIPUREX.Recipe.buildRecipes();
 	}
 }

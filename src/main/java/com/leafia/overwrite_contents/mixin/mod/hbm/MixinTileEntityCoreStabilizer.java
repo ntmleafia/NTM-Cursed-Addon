@@ -90,7 +90,7 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 			this.updateConnections();
 
 			watts = MathHelper.clamp(watts, 1, 100);
-			long demand = (long) Math.pow(watts, 6);
+			long demand = (long) Math.pow(watts, 5);
 			isOn = false;
 
 			//beam = 0;
@@ -122,9 +122,10 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 				if (core != null) {
 					IMixinTileEntityCore mixinTileEntityCore = (IMixinTileEntityCore) core;
 					//core.field += (int)(watts * lens.fieldMod);
+					double eMod = mixinTileEntityCore.getDFCEnergyMod();
 					mixinTileEntityCore.setDFCStabilization(mixinTileEntityCore.getDFCStabilization() + lens.fieldMod * (watts / 100d));
 					mixinTileEntityCore.setDFCStabilizers(mixinTileEntityCore.getDFCStabilizers() + 1);
-					mixinTileEntityCore.setDFCEnergyMod(mixinTileEntityCore.getDFCEnergyMod() * lens.energyMod);
+					mixinTileEntityCore.setDFCEnergyMod(lens.energyMod >= 1 ? eMod + (lens.energyMod-1) : eMod * lens.energyMod);
 					this.power -= (long) (demand * lens.drainMod);
 
 					long dmg = ItemLens.getLensDamage(inventory.getStackInSlot(0));

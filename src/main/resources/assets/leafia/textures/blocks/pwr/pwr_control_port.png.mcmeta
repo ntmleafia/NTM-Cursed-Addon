@@ -1,0 +1,17 @@
+{
+    "ctm":{
+        "ctm_version": 1,
+        "type":"CTM",
+        "textures":[
+            "leafia:blocks/pwr/pwr_control_port_ct"
+        ],
+        "extra": {
+            "connect_to": [
+                { "block": "leafia:lwr_terminal" },
+                { "block": "leafia:lwr_port" },
+                { "block": "leafia:lwr_signal" },
+                { "block": "leafia:lwr_casing" }
+            ]
+        }
+    }
+}

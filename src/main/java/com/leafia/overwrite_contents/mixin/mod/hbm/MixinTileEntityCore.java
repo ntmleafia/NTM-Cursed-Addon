@@ -669,6 +669,16 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		super.invalidate();
 	}
 
+	@Override
+	public void onChunkUnload() {
+		if (client_sfx != null) {
+			client_sfx.stopSound();
+			client_sfx = null;
+			sfxPlaying = false;
+		}
+		super.onChunkUnload();
+	}
+
 	/**
 	 * @author ntmleafia
 	 * @reason yipe yipe

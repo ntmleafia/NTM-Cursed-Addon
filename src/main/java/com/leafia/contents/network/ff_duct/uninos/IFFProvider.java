@@ -44,4 +44,6 @@ public interface IFFProvider extends IFFHandler {
 			}
 		}
 	}
+	/// The corresponding tank for input
+	FluidTank getSendingTank(FluidStack stack);
 }

@@ -175,18 +175,16 @@ public class LeafiaRodRender extends TileEntityItemStackRenderer {
 		if (rod.functionId.equals("dgomega"))
 			GL11.glTranslated(shake.nextGaussian()*0.025,shake.nextGaussian()*0.025,0);
 
-		ItemStack renderStack = new ItemStack(rod.baseItem, 1, rod.baseMeta);
-		IBakedModel submodel = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(renderStack, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player);
-		//Minecraft.getMinecraft().getRenderItem().renderItem(renderStack, submodel);
-
-		TextureAtlasSprite submodelTex = submodel.getParticleTexture();
-
-
-
 		final double HALF_A_PIXEL = 0.03125;
 		LeafiaRodItem.ItemType type = rod.baseItemType;
 
 		if (rod.specialRodModel == null) {
+			ItemStack renderStack = new ItemStack(rod.baseItem, 1, rod.baseMeta);
+			IBakedModel submodel = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(renderStack, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player);
+			//Minecraft.getMinecraft().getRenderItem().renderItem(renderStack, submodel);
+
+			TextureAtlasSprite submodelTex = submodel.getParticleTexture();
+
 			GlStateManager.color(1F, 1F, 1F, 1F);
 			//GlStateManager.disableLighting();
 			GL11.glTranslated(0, 0, 0.5 + HALF_A_PIXEL);

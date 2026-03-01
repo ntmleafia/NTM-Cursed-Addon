@@ -34,6 +34,8 @@ import com.leafia.contents.machines.elevators.floors.EvFloorRender;
 import com.leafia.contents.machines.elevators.floors.EvFloorTE;
 import com.leafia.contents.machines.elevators.weight.EvWeightEntity;
 import com.leafia.contents.machines.elevators.weight.EvWeightRender;
+import com.leafia.contents.machines.heat.HeaterRTGRender;
+import com.leafia.contents.machines.heat.HeaterRTGTE;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexRender;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexTE;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseRender;
@@ -66,6 +68,7 @@ import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisItemRender;
 import com.leafia.contents.machines.reactors.pwr.debris.RenderPWRDebris;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender;
 import com.leafia.contents.network.ff_duct.utility.converter.FFConverterTE;
+import com.leafia.contents.network.ff_duct.utility.filter.FFFilterTE2;
 import com.leafia.contents.network.ff_duct.utility.pump.FFPumpTE;
 import com.leafia.contents.network.fluid.FluidDuctEquipmentRender;
 import com.leafia.contents.network.fluid.gauges.FluidDuctGaugeTE;
@@ -146,6 +149,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			FFDuctUtilityRender ffUtilityRender = new FFDuctUtilityRender();
 			ClientRegistry.bindTileEntitySpecialRenderer(FFPumpTE.class,ffUtilityRender);
 			ClientRegistry.bindTileEntitySpecialRenderer(FFConverterTE.class,ffUtilityRender);
+			ClientRegistry.bindTileEntitySpecialRenderer(FFFilterTE2.class,ffUtilityRender);
 
 			ClientRegistry.bindTileEntitySpecialRenderer(SaltSeparatorTE.class,new SaltSeparatorRender());
 			ClientRegistry.bindTileEntitySpecialRenderer(MSRArbitraryTE.class,new MSRArbitraryRender());
@@ -171,6 +175,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(EvPulleyTE.class, new EvPulleyRender());
 			ClientRegistry.bindTileEntitySpecialRenderer(EvShaftTE.class, new EvShaftRender());
 			ClientRegistry.bindTileEntitySpecialRenderer(EvBufferTE.class, new EvBufferRender());
+
+			ClientRegistry.bindTileEntitySpecialRenderer(HeaterRTGTE.class, new HeaterRTGRender());
 		}
 		AddonJars.initJars();
 	}

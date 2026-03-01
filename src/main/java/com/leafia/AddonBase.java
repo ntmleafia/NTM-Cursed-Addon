@@ -20,6 +20,7 @@ import com.leafia.overwrite_contents.asm.TransformerCoreLeafia;
 import com.leafia.overwrite_contents.other.LCEItemCatalyst;
 import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.AddonGuiHandler;
+import com.leafia.unsorted.LeafiaBlockReplacer;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -41,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.0.0.0];required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.1.0.0,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
 
 	public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);
@@ -150,6 +151,7 @@ public class AddonBase {
 	public void postInit(FMLPostInitializationEvent event) {
 		AddonFF.setFromRegistry();
 		ArmorInit.postInit();
+		LeafiaBlockReplacer.addReplacementMap();
 		if (TransformerCoreLeafia.loadFailed != null)
 			TransformerCoreLeafia.loadFailed.run();
 	}
@@ -160,6 +162,14 @@ public class AddonBase {
 		AddonGasCentRecipes.register();
 		AddonElectrolyzerRecipes.register();
 		AddonPyroOvenRecipes.register();
+		AddonAnvilRecipes.registerSmithingRecipes();
+		AddonAnvilRecipes.registerConstructionRecipes();
+		AddonPUREXRecipes.register();
+		AddonWasteDrumRecipes.register();
+		AddonCentrifugeRecipes.register();
+		AddonArcWelderRecipes.register();
+		AddonDFCRecipes.register();
+		AddonSmeltingRecipes.register();
 	}
 
 	@EventHandler

@@ -2,6 +2,7 @@ package com.leafia.jei;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.handler.jei.JEIConfig;
+import com.hbm.handler.jei.JeiRecipes;
 import com.hbm.inventory.RecipesCommon.AStack;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.recipes.SolderingRecipes;
@@ -166,6 +167,8 @@ public class JEISoldering implements IRecipeCategory<Recipe> {
 		stacks.init(5,true,38+18-1,2+18-1);
 		stacks.init(6,true,38+18*2-1,2+18-1);
 		stacks.init(7,false,128-1,11-1);
+		stacks.init(8,true,1,37);
 		stacks.set(ingredients);
+		stacks.set(8,JeiRecipes.getBatteries());
 	}
 }

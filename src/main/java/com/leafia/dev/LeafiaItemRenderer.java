@@ -73,6 +73,7 @@ public abstract class LeafiaItemRenderer extends ItemRenderBase {
 				buttonPressed = false;
 		}
 		LeafiaGls.pushMatrix();
+		LeafiaGripOffsetHelper.fixGrip(type);
 		if (type.equals(TransformType.GUI)) {
 			LeafiaGls.enableLighting();
 			LeafiaGls.translate(offset,0,-0.01);

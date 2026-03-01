@@ -126,6 +126,11 @@ public class FFConverterTE extends FFDuctUtilityTEBase implements ITickable, IFl
 	}
 
 	@Override
+	public FluidTank getSendingTank(FluidStack stack) {
+		return ff;
+	}
+
+	@Override
 	public IFluidTankProperties[] getTankProperties() {
 		return new IFluidTankProperties[0];
 	}

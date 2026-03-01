@@ -3,6 +3,7 @@ package com.leafia.contents.network.spk_cable.uninos;
 import com.hbm.uninos.INetworkProvider;
 import com.hbm.uninos.NodeNet;
 import com.hbm.util.Tuple;
+import com.llib.exceptions.LeafiaDevFlaw;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
@@ -25,11 +26,15 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
         this.energyTracker = 0;
     }
 
+    @Deprecated
     @Override
     public void update() {
 
         if (providerEntries.isEmpty()) return;
         if (receiverEntries.isEmpty()) return;
+
+        if (true)
+            throw new LeafiaDevFlaw("Deprecated update method of SPKNet called");
 
         final long timestamp = System.currentTimeMillis();
 
@@ -48,7 +53,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
                 continue;
             }
 
-            long src = Math.min(prov.getNetRemaining(), prov.getSPKProviderSpeed());
+            long src = Math.min(prov.getSendable(), prov.getSPKProviderSpeed());
             if (src > 0) {
                 providers.add(new Tuple.ObjectLongPair<>(prov, src));
                 powerAvailable += src;
@@ -117,7 +122,7 @@ public class SPKNet extends NodeNet<ISPKReceiver, ISPKProvider, SPKNode, SPKNet>
             Tuple.ObjectLongPair<ISPKProvider> selected = providers.get(rand.nextInt(providers.size()));
             ISPKProvider scapegoat = selected.getKey();
 
-            long toUse = Math.min(leftover, scapegoat.getNetRemaining());
+            long toUse = Math.min(leftover, scapegoat.getSendable());
             scapegoat.setTransferredSpk(toUse);
             leftover -= toUse;
         }

@@ -19,6 +19,8 @@ public class EntityProcessorLandmine extends EntityProcessorCrossSmooth {
 			//if (source.exploder == entity) { tf was this for
 				amount *= 0.5F;
 			//}
+			if (amount <= 22)
+				amount = Math.min(amount,17);
 
 			DamageSource dmg = LeafiaDamageSource.mine;
 			if (!(entity instanceof EntityLivingBase)) {

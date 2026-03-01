@@ -84,6 +84,8 @@ public class ItemRads {
 	public static MultiRadContainer wasteMOX = waste; // temporary
 	public static MultiRadContainer wasteSchrabidium = waste; // temporary
 
+	public static MultiRadContainer xanaxium = new MultiRadContainer(0,0,0,2.2,0,0,0);
+
 	public static MultiRadContainer bismuth209zfb = uranium235.multiply(0.35f);
 	public static MultiRadContainer plutonium241zfb = plutonium241.multiply(0.5f);
 	public static MultiRadContainer americium242zfb = americiumRG.multiply(0.5f);

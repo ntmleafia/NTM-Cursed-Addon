@@ -151,6 +151,8 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 	public int meltdownPriority = 0;
 
 	public float detonateRadius = 5;
+	/// the fuck is point of this
+	@Deprecated
 	public boolean detonateNuclear = false;
 	public boolean detonateVisualsOnly = false;
 	public String detonateConfiguration = "default";
@@ -234,7 +236,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 					float z = pos.getZ()+0.5f;
 					detonateRadius *= 1.5f;
 					EntityNukeTorex.statFac(world,x,y,z,detonateRadius);
-					if (detonateNuclear && !detonateVisualsOnly)
+					if (!detonateVisualsOnly)
 						world.spawnEntity(EntityNukeExplosionMK5.statFac(world,(int)detonateRadius,x,y,z));
 				}
 				break;
@@ -246,7 +248,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 					float z = pos.getZ()+0.5f;
 					detonateRadius *= 2.5f;
 					EntityNukeTorex.statFacBale(world,x,y,z,detonateRadius);
-					if (detonateNuclear && !detonateVisualsOnly) {
+					if (!detonateVisualsOnly) {
 						EntityBalefire bf = new EntityBalefire(world);
 						bf.posX = x;
 						bf.posY = y;
@@ -325,6 +327,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		switch(functionId) {
 			// DEPLETED
 			case "depleteduranium": case "depletedmox":
+			case "depletednaturaluranium": case "depleteduranium233": case "depleteduranium235": case "depleteduranium238":
 				y = 80-20;
 				n = "80-20";
 				disableDecay = true;
@@ -346,7 +349,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				break;
 
 			// URANIUM
-			case "meu235": case "nu": case "u238":
+			case "meu235": case "nu": //case "u238": thanks grabber for telling me the reality
 				y = Math.pow(x*8,0.56)*3;
 				n = "("+flux+"×8)^0.56×3 "+TextFormatting.DARK_GREEN+"(FINE)";
 				break;
@@ -505,7 +508,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 			//	heatMg = heatMg * Math.max(lerp(1,0,(heatX-meltingPoint)/(Math.pow(meltingPoint,0.75)+200)),0);
 			if (Math.abs(heatMg) < 0.00001)
 				heatMg = 0;
-			if (!meltdown && (heatMg != 0)) {
+			if (!meltdown && (heatMg != 0 || x > 0)) {
 				double curDepletion = data.getDouble("depletion") + Math.max(heatMg/2+Math.pow(x,0.95)/2000, 0); // +y is preferred but it doesnt really work with inert materials like lithium soo
 				data.setDouble("depletion", curDepletion);
 			}
@@ -674,10 +677,11 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				else
 					list.add(TextFormatting.DARK_GRAY + "  " + I18nUtil.resolveKey("item.leafiarod.decays",I18nUtil.resolveKey(newFuel.getTranslationKey()+".name")));
 			}
-			if (life != 0) {
+			if (life != 0)
 				list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",life+"°C"));
+			String fnc = item.HeatFunction(stack,false,0,0,0,0);
+			if (!fnc.equals("0"))
 				list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",decay*20)+"°C/s"));
-			}
 			if (emission != 1)
 				list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.reac.out",formatHeatMultiplier(emission)));
 			if (reactivity != 1)
@@ -690,7 +694,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				list.add(TextFormatting.AQUA + "  "+I18nUtil.resolveKey("item.leafiarod.moderated"));
 			super.addInformation(stack,worldIn,list,flagIn);
 			list.add("");
-			list.add(TextFormatting.YELLOW + I18nUtil.resolveKey("item.leafiarod.heatfunc",item.HeatFunction(stack,false,0,0,0,0)));
+			list.add(TextFormatting.YELLOW + I18nUtil.resolveKey("item.leafiarod.heatfunc",fnc));
 			list.add(TextFormatting.GOLD + I18nUtil.resolveKey("item.leafiarod.temp",String.format("%01.1f",heat)+"°C"));
 		}
 		if (meltingPoint != 0) {
@@ -804,6 +808,12 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 		if (data != null)
 			green = Math.pow(MathHelper.clamp(1-data.getDouble("depletion")/life,0,1),1.25)*155+100;
 		return ((int)green)<<8;
+	}
+
+	/// For updating rods without changing registry name
+	public LeafiaRodItem overrideLabel(String label) {
+		this.label = label;
+		return this;
 	}
 
 	protected String[] graph = new String[0];

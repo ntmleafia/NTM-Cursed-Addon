@@ -1,11 +1,15 @@
 package com.leafia.contents.machines.reactors.lftr.components.ejector;
 
+import com.hbm.blocks.ILookOverlay;
 import com.hbm.blocks.ITooltipProvider;
 import com.hbm.handler.radiation.RadiationSystemNT;
 import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
+import com.leafia.contents.machines.reactors.lftr.components.plug.MSRPlugTE;
 import com.leafia.dev.machine.MachineTooltip;
+import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
@@ -13,6 +17,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -22,12 +27,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MSREjectorBlock extends BlockContainer implements ITooltipProvider, IRadResistantBlock {
+public class MSREjectorBlock extends BlockContainer implements ITooltipProvider, IRadResistantBlock, ILookOverlay {
 
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -96,5 +106,18 @@ public class MSREjectorBlock extends BlockContainer implements ITooltipProvider,
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void printHook(RenderGameOverlayEvent.Pre event,World world,BlockPos pos) {
+		List<String> texts = new ArrayList<>();
+		MSRTEBase.appendPrintHook(texts,world,pos);
+		LeafiaGls.pushMatrix();
+		LeafiaGls.scale(0.5);
+		ScaledResolution resolution = event.getResolution();
+		LeafiaGls.translate(resolution.getScaledHeight_double(),resolution.getScaledHeight_double()/2,0);
+		ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xFF55FF, 0x3F153F, texts);
+		LeafiaGls.popMatrix();
 	}
 }

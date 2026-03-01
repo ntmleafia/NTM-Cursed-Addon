@@ -84,7 +84,7 @@ public class TransformerCoreLeafia implements IClassTransformer {
 			"net.minecraft.world.World",
 			"net.minecraft.block.BlockFire",
 			"<REMOVED>",//"net.minecraftforge.registries.ForgeRegistry"
-			"net.minecraftforge.registries.GameData$BlockCallbacks$BlockDummyAir"
+			"<REMOVED>"//"net.minecraftforge.registries.GameData$BlockCallbacks$BlockDummyAir"
 	};
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBeingTransformed) {

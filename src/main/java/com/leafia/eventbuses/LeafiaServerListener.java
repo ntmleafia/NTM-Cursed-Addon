@@ -65,6 +65,7 @@ public class LeafiaServerListener {
 				throw new LeafiaDevFlaw(e);
 			}
 		}
+		/*
 		@SubscribeEvent
 		public void replaceBlocks(ChunkEvent.Load evt) {
 			Chunk chunk = evt.getChunk();
@@ -95,7 +96,7 @@ public class LeafiaServerListener {
 			} else {
 				throw new LeafiaDevFlaw("Impossible case ("+palette.getClass().getName()+")");
 			}
-		}
+		}*/
 		@SubscribeEvent
 		public void onEntityItemPickup(EntityItemPickupEvent evt) {
 			try {

@@ -51,6 +51,9 @@ public class LeafiaSoundEvents {
 	public static SoundEvent crucifix;
 	public static SoundEvent crucifix_fail;
 	public static SoundEvent crafting_tech1_part;
+	public static SoundEvent arc_welder;
+	public static SoundEvent arc_welder_start;
+	public static SoundEvent arc_welder_stop;
 
 	public static SoundEvent assemblerStart;
 	public static SoundEvent assemblerStop;
@@ -108,6 +111,9 @@ public class LeafiaSoundEvents {
 		crucifix = register("external.lsplash.crucifix");
 		crucifix_fail = register("external.lsplash.crucifix_fail");
 		crafting_tech1_part = register("external.crafting_tech1_part");
+		arc_welder = register("external.arc_welder");
+		arc_welder_start = register("external.arc_welder_start");
+		arc_welder_stop = register("external.arc_welder_stop");
 
 		assemblerStart = register("block.assembler_start");
 		assemblerStop = register("block.assembler_stop");

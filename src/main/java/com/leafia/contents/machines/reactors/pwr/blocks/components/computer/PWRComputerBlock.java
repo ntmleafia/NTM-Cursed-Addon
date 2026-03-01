@@ -5,6 +5,7 @@ import com.hbm.handler.radiation.RadiationSystemNT;
 import com.hbm.interfaces.IRadResistantBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRComponentBlock;
 import com.leafia.dev.blocks.blockbase.AddonBlockBaked;
+import com.leafia.dev.blocks.blockbase.AddonBlockBase;
 import com.leafia.dev.machine.MachineTooltip;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -18,9 +19,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PWRComputerBlock extends AddonBlockBaked implements ITooltipProvider, PWRComponentBlock, IRadResistantBlock, ITileEntityProvider {
+public class PWRComputerBlock extends AddonBlockBase implements ITooltipProvider, PWRComponentBlock, IRadResistantBlock, ITileEntityProvider {
 	public PWRComputerBlock() {
-		super(Material.IRON,"lwr_signal","pwr/pwr_control_port");
+		super(Material.IRON,"lwr_signal");
 	}
 	@Override
 	public void addInformation(ItemStack stack,@javax.annotation.Nullable World player,List<String> tooltip,ITooltipFlag advanced) {

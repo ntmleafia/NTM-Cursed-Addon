@@ -3,6 +3,7 @@ package com.leafia.contents.network.ff_duct.utility.pump;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.util.I18nUtil;
+import com.leafia.contents.AddonFluids;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.uninos.IFFProvider;
 import com.leafia.contents.network.ff_duct.uninos.IFFReceiver;
@@ -63,10 +64,13 @@ public class FFPumpTE extends FFDuctUtilityTEBase implements ITickable, IFluidHa
 					if (behind.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing)) {
 						IFluidHandler handler = behind.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,facing);
 						FluidStack stack = new FluidStack(getType().getFF(),tank.getCapacity()-tank.getFluidAmount());
-						if (tank.fill(handler.drain(stack,false),false) > 0)
-							tank.fill(handler.drain(stack,true),true);
-						tryProvide(tank,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
-						return;
+						FluidStack drainlol = handler.drain(stack,false);
+						if (drainlol != null && AddonFluids.fromFF(drainlol.getFluid()) == getType()) {
+							if (tank.fill(drainlol,false) > 0)
+								tank.fill(handler.drain(stack,true),true);
+							tryProvide(tank,world,pos.offset(facing),ForgeDirection.getOrientation(facing));
+							return;
+						}
 					}
 				}
 				TileEntity ahead = world.getTileEntity(pos.offset(facing));
@@ -134,6 +138,10 @@ public class FFPumpTE extends FFDuctUtilityTEBase implements ITickable, IFluidHa
 
 	@Override
 	public FluidTank getCorrespondingTank(FluidStack stack) {
+		return tank;
+	}
+	@Override
+	public FluidTank getSendingTank(FluidStack stack) {
 		return tank;
 	}
 	@Override

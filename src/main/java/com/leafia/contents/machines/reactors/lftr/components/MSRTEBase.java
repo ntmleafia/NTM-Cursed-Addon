@@ -195,8 +195,8 @@ public abstract class MSRTEBase extends TileEntity implements ITickable, LeafiaP
 		compound.setTag("tank",tank.writeToNBT(new NBTTagCompound()));
 		return super.writeToNBT(compound);
 	}
-	public static void appendPrintHook(List<String> list,World world,int x,int y,int z) {
-		TileEntity entity = world.getTileEntity(new BlockPos(x,y,z));
+	public static void appendPrintHook(List<String> list,World world,BlockPos pos) {
+		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof MSRTEBase msr) {
 			list.add(TextFormatting.GOLD+I18nUtil.resolveKey("tile.msr.status"));
 			if (entity instanceof MSRElementTE element)

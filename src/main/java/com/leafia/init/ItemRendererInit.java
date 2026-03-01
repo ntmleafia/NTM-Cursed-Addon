@@ -24,6 +24,7 @@ import com.leafia.contents.machines.elevators.car.styles.EvStyleItem;
 import com.leafia.contents.machines.elevators.car.styles.EvStyleItemRender;
 import com.leafia.contents.machines.elevators.items.EvSpawnItemRender;
 import com.leafia.contents.machines.elevators.items.WeightSpawnItemRender;
+import com.leafia.contents.machines.heat.HeaterRTGRender;
 import com.leafia.contents.machines.misc.heatex.CoolantHeatexRender;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseRender;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseRender.AMSBaseItemRender;
@@ -70,6 +71,7 @@ public class ItemRendererInit {
 		FFDuctUtilityItemRender ductUtilRenderer = new FFDuctUtilityItemRender();
 		register(AddonBlocks.ff_pump,ductUtilRenderer);
 		register(AddonBlocks.ff_converter,ductUtilRenderer);
+		register(AddonBlocks.ff_filter,ductUtilRenderer);
 
 		register(AddonBlocks.salt_separator,new SaltSeparatorItemRender());
 		register(AddonBlocks.mixingvat,new MixingVatItemRenderNeo());
@@ -107,6 +109,8 @@ public class ItemRendererInit {
 
 		register(AddonItems.ev_spawn,new EvSpawnItemRender());
 		register(AddonItems.weight_spawn,new WeightSpawnItemRender());
+
+		register(AddonBlocks.heater_rt,new HeaterRTGRender());
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

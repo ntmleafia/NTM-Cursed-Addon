@@ -13,8 +13,20 @@ import java.util.Map;
 import java.util.List;
 
 public class _ConfigBuilder {
-	private static final String path = "config/hbm/leafia.lcfg";
-	private static final File file = new File(path);
+	private String path;
+	private File file;
+	public _ConfigBuilder(String name) {
+		name = "config/hbm/" + name + ".lcfg";
+		this.path = name;
+		file = new File(name);
+		createEmptyFile();
+		loadConfig();
+	}
+	public void changePath(String name) {
+		name = "config/hbm/" + name + ".lcfg";
+		this.path = name;
+		file = new File(name);
+	}
 	private Map<String,String> values = new HashMap<>();
 	private Map<String,Integer> lineIndices = new HashMap<>();
 	private List<String> lines = new ArrayList<>();
@@ -40,6 +52,7 @@ public class _ConfigBuilder {
 			super("\uD83C\uDF3F"+s);
 		}
 	}
+	public boolean _autoLineBreak = true;
 	public void _lineBreak() {
 		lines.add("");
 	}
@@ -58,7 +71,8 @@ public class _ConfigBuilder {
 		String value = values.getOrDefault(key,def);
 		readingLine = lineIndices.getOrDefault(key,-1);
 		lines.add(" "+key+": "+value);
-		_lineBreak();
+		if (_autoLineBreak)
+			_lineBreak();
 		return value;
 	}
 	public boolean _boolean(String key,boolean def) {

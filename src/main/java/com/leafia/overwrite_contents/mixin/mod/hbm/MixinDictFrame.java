@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Mixin(value = DictFrame.class)
 public class MixinDictFrame {
@@ -21,7 +22,9 @@ public class MixinDictFrame {
 		for (String mat : this.mats) {
 			for (String prefix : shape.prefixes) {
 				map.put(prefix+mat,hazMult);
+				AddonOreDictHazards.prefixToHazMultMap.putIfAbsent(prefix,hazMult);
 			}
+			AddonOreDictHazards.matList.put(mat,this);
 		}
 	}
 }

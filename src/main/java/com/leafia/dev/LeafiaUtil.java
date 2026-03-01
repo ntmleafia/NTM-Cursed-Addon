@@ -9,9 +9,11 @@ import com.leafia.contents.network.FFNBT;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
 import com.leafia.contents.network.ff_duct.uninos.IFFConnector;
 import com.leafia.contents.network.ff_duct.uninos.IFFHandler;
+import com.leafia.dev.firestorm.IFirestormBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -27,6 +29,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.function.Function;
 
 public class LeafiaUtil {
@@ -387,5 +390,64 @@ public class LeafiaUtil {
 		}
 		decimals = MathHelper.clamp(decimals,minDecimals,maxDecimals);
 		return "1."+decimals+"f";
+	}
+	public static boolean getCanBlockBurn(World worldIn, BlockPos pos)
+	{
+		return pos.getY() >= 0 && pos.getY() < 256 && !worldIn.isBlockLoaded(pos) ? false : worldIn.getBlockState(pos).getMaterial().getCanBurn();
+	}
+	public static boolean isSurroundingBlockFlammable(World worldIn, BlockPos pos)
+	{
+		for (EnumFacing enumfacing : EnumFacing.values())
+		{
+			if (getCanBlockBurn(worldIn, pos.offset(enumfacing)))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	public static void spreadFire(World worldIn,BlockPos pos,int radius) {
+		Random rand = worldIn.rand;
+		if (worldIn.getGameRules().getBoolean("doFireTick")) {
+			int i = rand.nextInt(3);
+
+			if (i > 0) {
+				BlockPos blockpos = pos;
+
+				for (int j = 0; j < i; ++j) {
+					blockpos = blockpos.add(rand.nextInt(radius*2+1)-radius,1,rand.nextInt(radius*2+1)-radius);
+
+					if (blockpos.getY() >= 0 && blockpos.getY() < worldIn.getHeight() && !worldIn.isBlockLoaded(blockpos)) {
+						return;
+					}
+
+					IBlockState block = worldIn.getBlockState(blockpos);
+
+					if (block.getBlock().isAir(block,worldIn,blockpos)) {
+						if (isSurroundingBlockFlammable(worldIn,blockpos)) {
+							worldIn.setBlockState(blockpos,Blocks.FIRE.getDefaultState());
+							return;
+						}
+					} else if (block.getMaterial().blocksMovement()) {
+						return;
+					}
+					IFirestormBlock.ignite(worldIn,blockpos);
+				}
+			} else {
+				for (int k = 0; k < 3; ++k) {
+					BlockPos blockpos1 = pos.add(rand.nextInt(radius*2+1)-radius,0,rand.nextInt(radius*2+1)-radius);
+
+					if (blockpos1.getY() >= 0 && blockpos1.getY() < 256 && !worldIn.isBlockLoaded(blockpos1)) {
+						return;
+					}
+
+					if (worldIn.isAirBlock(blockpos1.up()) && getCanBlockBurn(worldIn,blockpos1)) {
+						worldIn.setBlockState(blockpos1.up(),Blocks.FIRE.getDefaultState());
+					}
+					IFirestormBlock.ignite(worldIn,blockpos1);
+				}
+			}
+		}
 	}
 }

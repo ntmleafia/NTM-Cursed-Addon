@@ -110,8 +110,7 @@ public class MSRArbitraryBlock extends BlockMachineBase implements ITooltipProvi
 	}
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void printHook(RenderGameOverlayEvent.Pre event,World world,int x,int y,int z) {
-		BlockPos pos = new BlockPos(x,y,z);
+	public void printHook(RenderGameOverlayEvent.Pre event,World world,BlockPos pos) {
 		TileEntity entity = world.getTileEntity(pos);
 		if (!(entity instanceof MSRArbitraryTE))
 			return;
@@ -128,7 +127,7 @@ public class MSRArbitraryBlock extends BlockMachineBase implements ITooltipProvi
 			}
 		}
 
-		MSRTEBase.appendPrintHook(texts,world,x,y,z);
+		MSRTEBase.appendPrintHook(texts,world,pos);
 
 		LeafiaGls.pushMatrix();
 		LeafiaGls.scale(0.5);

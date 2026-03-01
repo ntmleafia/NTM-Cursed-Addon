@@ -21,9 +21,12 @@ import com.leafia.contents.machines.powercores.dfc.CrucifixItem;
 import com.leafia.contents.machines.powercores.dfc.LCEItemLens;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisEntity.DebrisType;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisItem;
+import com.leafia.contents.parts.depleteds.AddonDepletedFuelItem;
+import com.leafia.dev.blocks.ICustomItemBlockProvider;
 import com.leafia.dev.items.itembase.AddonItemHazardBaked;
 import com.leafia.init.hazards.ItemRads;
 import com.leafia.dev.items.itembase.AddonItemBaked;
+import com.leafia.settings.AddonConfig;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -74,53 +77,53 @@ public class AddonItems {
 		// rbmk based
 		public static final Item
 				leafRodU38
-				= new LeafiaRodItem("U-238",400000, 2865)
+				= new LeafiaRodItem("U-238",4000000, 0)
 				.setAppearance(ModItems.billet_u238, BILLET, ISOTOPE)
-				.setReactivity(0.3)
-				.setDecayProduct("hepu239")
+				//.setReactivity(0.3)
+				.setDecayProduct("depleteduranium238")
 				.addRad(ItemRads.uranium238)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodNU
-				= new LeafiaRodItem("NU",400000, 2865)
+				= new LeafiaRodItem("NU",4000000, 2865)
 				.setAppearance(ModItems.billet_uranium, BILLET, RAW)
 				.setReactivity(0.4)
-				.setDecayProduct("npu")
+				.setDecayProduct("depletednaturaluranium")
 				.addRad(ItemRads.uranium)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMEU235
-				= new LeafiaRodItem("MEU-235",400000, 2865)
+				= new LeafiaRodItem("MEU-235",4000000, 2865)
 				.setAppearance(ModItems.billet_uranium_fuel, BILLET, FUEL)
 				.setDecayProduct("depleteduranium")
 				.addRad(ItemRads.uraniumFuel)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEU233
-				= new LeafiaRodItem("HEU-233",100000, 2865)
+				= new LeafiaRodItem("HEU-233",1000000, 2865)
 				.setAppearance(ModItems.billet_u233, BILLET, ISOTOPE)
 				.setReactivity(2)
-				.setDecayProduct("heu235")
+				.setDecayProduct("depleteduranium233")
 				.addRad(ItemRads.uranium233)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEU235
-				= new LeafiaRodItem("HEU-235",300000, 2865)
+				= new LeafiaRodItem("HEU-235",3000000, 2865)
 				.setAppearance(ModItems.billet_u235, BILLET, ISOTOPE)
 				.setReactivity(1.75)
-				.setDecayProduct("depleteduranium")
+				.setDecayProduct("depleteduranium235")
 				.addRad(ItemRads.uranium235)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodTHMEU
-				= new LeafiaRodItem("ThMEU",350000, 3350)
+				= new LeafiaRodItem("ThMEU",3500000, 3350)
 				.setAppearance(ModItems.billet_thorium_fuel, BILLET, FUEL)
 				.setDecayProduct("depletedthorium")
 				.addRad(ItemRads.thoriumFuel)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodLEP239
-				= new LeafiaRodItem("LEPu-239",500000, 2744)
+				= new LeafiaRodItem("LEPu-239",5000000, 2744)
 				.setAppearance(ModItems.billet_plutonium_fuel, BILLET, FUEL)
 				.setReactivity(1/1.5)
 				.setDecayProduct("depletedplutonium")
@@ -128,14 +131,14 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMEP239
-				= new LeafiaRodItem("MEPu-239",500000, 2744)
+				= new LeafiaRodItem("MEPu-239",5000000, 2744)
 				.setAppearance(ModItems.billet_pu_mix, BILLET, ISOTOPE)
 				.setDecayProduct("depletedplutonium")
 				.addRad(ItemRads.plutoniumRG)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEP239
-				= new LeafiaRodItem("HEPu-239",500000, 2744)
+				= new LeafiaRodItem("HEPu-239",5000000, 2744)
 				.setAppearance(ModItems.billet_pu239, BILLET, ISOTOPE)
 				.setReactivity(1.25)
 				.setDecayProduct("pu240")
@@ -143,7 +146,7 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEP241
-				= new LeafiaRodItem("HEPu-241",1800000, 2744)
+				= new LeafiaRodItem("HEPu-241",18000000, 2744)
 				.setAppearance(ModItems.billet_pu241, BILLET, ISOTOPE)
 				.setReactivity(1.45)
 				.setDecayProduct("depletedplutonium")
@@ -151,52 +154,52 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodLEA242
-				= new LeafiaRodItem("LEAm-242",1800000, 3986)
+				= new LeafiaRodItem("LEAm-242",18000000, 3986)
 				.setAppearance(ModItems.billet_americium_fuel, BILLET, FUEL)
 				.addRad(ItemRads.americiumFuel)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMEA242
-				= new LeafiaRodItem("MEAm-242",1800000, 3986)
+				= new LeafiaRodItem("MEAm-242",18000000, 3986)
 				.setAppearance(ModItems.billet_am_mix, BILLET, ISOTOPE)
 				.addRad(ItemRads.americiumRG)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEA241
-				= new LeafiaRodItem("HEAm-241",1800000, 3986)
+				= new LeafiaRodItem("HEAm-241",18000000, 3986)
 				.setAppearance(ModItems.billet_am241, BILLET, ISOTOPE)
 				.preferFast()
 				.addRad(ItemRads.americium241)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEA242
-				= new LeafiaRodItem("HEAm-242",1800000, 3986)
+				= new LeafiaRodItem("HEAm-242",18000000, 3986)
 				.setAppearance(ModItems.billet_am242, BILLET, ISOTOPE)
 				.addRad(ItemRads.americium242)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMEN237
-				= new LeafiaRodItem("MENp-237",520000, 2800)
+				= new LeafiaRodItem("MENp-237",5200000, 2800)
 				.setAppearance(ModItems.billet_neptunium_fuel, BILLET, FUEL)
 				.preferAny()
 				.addRad(ItemRads.neptuniumFuel)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEN237
-				= new LeafiaRodItem("HENp-237",320000, 2800)
+				= new LeafiaRodItem("HENp-237",3200000, 2800)
 				.setAppearance(ModItems.billet_neptunium, BILLET, RAW)
 				.preferFast()
 				.addRad(ItemRads.neptunium237)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMOX
-				= new LeafiaRodItem("MOX",600000, 2815)
+				= new LeafiaRodItem("MOX",6000000, 2815)
 				.setAppearance(ModItems.billet_mox_fuel, BILLET, FUEL)
 				.addRad(ItemRads.moxie)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodLES236
-				= new LeafiaRodItem("LESa-326",350000, 2500)
+				= new LeafiaRodItem("LESa-326",3500000, 2500)
 				.setAppearance(ModItems.billet_les, BILLET, FUEL)
 				.setEmission(0.75)
 				.setModerated()
@@ -205,14 +208,14 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodMES326
-				= new LeafiaRodItem("MESa-326",300000, 2750)
+				= new LeafiaRodItem("MESa-326",3000000, 2750)
 				.setAppearance(ModItems.billet_schrabidium_fuel, BILLET, FUEL)
 				.addRad(ItemRads.schrabidiumMedium)
 				.addBlinding()
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHES326
-				= new LeafiaRodItem("HESa-326",250000, 3000)
+				= new LeafiaRodItem("HESa-326",2500000, 3000)
 				.setAppearance(ModItems.billet_hes, BILLET, FUEL)
 				.setEmission(1.25)
 				.addRad(ItemRads.schrabidiumHigh)
@@ -220,7 +223,7 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodSa326
-				= new LeafiaRodItem("Sa-326",200000, 3250)
+				= new LeafiaRodItem("Sa-326",2000000, 3250)
 				.setAppearance(ModItems.billet_schrabidium, BILLET, FUEL)
 				.setEmission(2.25)
 				.addRad(ItemRads.schrabidium326)
@@ -228,14 +231,14 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodLEAus
-				= new LeafiaRodItem("LEAus",550000, 7029)
+				= new LeafiaRodItem("LEAus",5500000, 7029)
 				.setDecayProduct("heaus")
 				.setEmission(0.3)
 				.setAppearance(ModItems.billet_australium_lesser, BILLET, ISOTOPE)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodHEAus
-				= new LeafiaRodItem("HEAus",550000, 5211)
+				= new LeafiaRodItem("HEAus",5500000, 5211)
 				.setEmission(1.2)
 				.setAppearance(ModItems.billet_australium_greater, BILLET, ISOTOPE)
 				.setCreativeTab(MainRegistry.controlTab);
@@ -248,21 +251,21 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);*/
 		public static final Item
 				leafRodRa226Be
-				= new LeafiaRodItem("Ra-226Be",40000, 700)
+				= new LeafiaRodItem("Ra-226Be",400000, 700)
 				.setAppearance(ModItems.billet_ra226be, BILLET, SOURCE)
 				.setModerated()
 				.addRad(ItemRads.radium226be)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodPo210Be
-				= new LeafiaRodItem("Po-210Be",200000, 1287)
+				= new LeafiaRodItem("Po-210Be",2000000, 1287)
 				.setAppearance(ModItems.billet_po210be, BILLET, SOURCE)
 				.setModerated()
 				.addRad(ItemRads.polonium210be)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodPu238Be
-				= new LeafiaRodItem("Pu-238Be",200000, 2744)
+				= new LeafiaRodItem("Pu-238Be",2000000, 2744)
 				.setAppearance(ModItems.billet_pu238be, BILLET, SOURCE)
 				.setModerated()
 				.addRad(ItemRads.plutonium238be)
@@ -300,19 +303,19 @@ public class AddonItems {
 		// normal rods-based
 		public static final Item
 				leafRodPu238
-				= new LeafiaRodItem("Pu-238",350000, 2744)
+				= new LeafiaRodItem("Pu-238",3500000, 2744)
 				.setAppearance(ModItems.billet_pu238, BILLET, ISOTOPE)
 				.addRad(ItemRads.plutonium238)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodPo210
-				= new LeafiaRodItem("Po-210",300000, 1287)
+				= new LeafiaRodItem("Po-210",3000000, 1287)
 				.setAppearance(ModItems.billet_polonium, BILLET, ISOTOPE)
 				.addRad(ItemRads.polonium210)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodSa327
-				= new LeafiaRodItem("Sa-327",800000, 2250)
+				= new LeafiaRodItem("Sa-327",8000000, 2250)
 				.setAppearance(ModItems.billet_solinium, BILLET, RAW)
 				.setEmission(65).setReactivity(1/45d)
 				.addRad(ItemRads.solinium327)
@@ -326,7 +329,7 @@ public class AddonItems {
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
 				leafRodPu240
-				= new LeafiaRodItem("Pu-240",6500000, 2744)
+				= new LeafiaRodItem("Pu-240",65000000, 2744)
 				.setAppearance(ModItems.billet_pu240, BILLET, ISOTOPE)
 				.addRad(ItemRads.plutonium240)
 				.setCreativeTab(MainRegistry.controlTab);
@@ -334,6 +337,31 @@ public class AddonItems {
 				leafRodWasteUranium
 				= new LeafiaRodItem("Depleted Uranium",0, 0)
 				.setAppearance(ModItems.waste_uranium, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteUranium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteUraniumNatural
+				= new LeafiaRodItem("Depleted Natural Uranium",0, 0)
+				.setAppearance(ModItems.waste_natural_uranium, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteUranium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteUranium233
+				= new LeafiaRodItem("Depleted Uranium-233",0, 0)
+				.setAppearance(ModItems.waste_u233, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteUranium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteUranium235
+				= new LeafiaRodItem("Depleted Uranium-235",0, 0)
+				.setAppearance(ModItems.waste_u235, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteUranium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteUranium238
+				= new LeafiaRodItem("Depleted Uranium-238",0, 0)
+				.overrideLabel("Bred Uranium-238")
+				.setAppearance(DepletedFuels.waste_u238, 1, DEPLETED, RAW)
 				.addRad(ItemRads.wasteUranium)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
@@ -386,7 +414,7 @@ public class AddonItems {
 		// new stuff
 		public static final Item
 				leafRodNPu
-				= new LeafiaRodItem("NPu",260000, 2744)
+				= new LeafiaRodItem("NPu",2600000, 2744)
 				.setAppearance(ModItems.billet_plutonium, BILLET, RAW)
 				.addRad(ItemRads.plutonium)
 				.setCreativeTab(MainRegistry.controlTab);
@@ -429,7 +457,7 @@ public class AddonItems {
 
 		public static final Item
 				leafRodYharonite
-				= new LeafiaRodItem("Yh-XXX",666666, 3200)
+				= new LeafiaRodItem("Yh-XXX",6666666, 3200)
 				.setAppearance(ModItems.billet_yharonite, BILLET, FUEL)
 				//.setDecayProduct("depleteduranium")
 				//.addRad(ItemRads.uraniumFuel)
@@ -457,6 +485,7 @@ public class AddonItems {
 				.setCreativeTab(null);
 		static {
 			LeafiaRodItem.confirmDecayProducts();
+			AddonConfig.FuelLives.loadFromConfig();
 		}
 	}
 
@@ -469,6 +498,11 @@ public class AddonItems {
 	public static final Item ingot_potassium = new AddonItemBaked("ingot_potassium","leafia/ingots/ingot_potassium").setCreativeTab(MainRegistry.partsTab);
 	public static final Item ingot_rubidium = new AddonItemBaked("ingot_rubidium","leafia/ingots/ingot_rubidium").setCreativeTab(MainRegistry.partsTab);
 	public static final Item ingot_francium = new AddonItemBaked("ingot_francium","leafia/ingots/ingot_francium").setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item nugget_schraranium = new AddonItemHazardBaked("nugget_schraranium","resources/nuggets/schraranium")/*.addRad(ItemRads.schraranium.copy().multiply(0.1))*/.setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item ingot_xanaxium = new AddonItemBaked("ingot_xanaxium","resources/ingots/xanaxium").setCreativeTab(MainRegistry.partsTab);
+	public static final Item powder_xanaxium = new AddonItemBaked("powder_xanaxium","resources/powders/xanaxium").setCreativeTab(MainRegistry.partsTab);
 
 	public static final Item billet_kys = new AddonItemHazardBaked("billet_kys","leafia/billets/billet_kys") {
 		@Override
@@ -504,6 +538,10 @@ public class AddonItems {
 	public static final Item ev_spawn = new EvSpawnItem("ev_spawn");
 	public static final Item weight_spawn = new WeightSpawnItem("weight_spawn");
 
+	public static class DepletedFuels {
+		public static final Item waste_u238 = new AddonDepletedFuelItem("waste_u238","hbm","waste_uranium");
+	}
+
 	private static void modifyItemParams() {
 		ModItems.pwr_fuel.setCreativeTab(null);
 		ModItems.pwr_fuel_hot.setCreativeTab(null);
@@ -523,7 +561,12 @@ public class AddonItems {
 				ForgeRegistries.ITEMS.register(new ItemBlockHazard(block).setRegistryName(block.getRegistryName()));
 			} else if(block == ModBlocks.block_scrap){
 				ForgeRegistries.ITEMS.register(new ItemBlockScrap(block).setRegistryName(block.getRegistryName()));
-			} else */if(block instanceof BlockModDoor) {
+			} else */
+			if(block instanceof BlockModDoor) {
+			} else if (block instanceof ICustomItemBlockProvider custom) {
+				ItemBlock item = custom.provideItem();
+				if (item != null)
+					ForgeRegistries.ITEMS.register(item.setRegistryName(block.getRegistryName()));
 			} else if (block instanceof SignBlock) {
 				Item item = new ItemBlock(block) {
 					@Override

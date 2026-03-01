@@ -26,9 +26,7 @@ public class DebugSourceBlock extends AddonBlockContainer implements ILookOverla
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
-	@Override
-	public void printHook(Pre pre,World world,int x,int y,int z) {
-		BlockPos pos = new BlockPos(x,y,z);
+	public void printHook(Pre pre,World world,BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof DebugSourceTE tank) {
 			List<String> text = new ArrayList<>();

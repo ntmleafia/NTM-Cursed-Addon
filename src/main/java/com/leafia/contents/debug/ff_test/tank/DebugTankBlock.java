@@ -28,8 +28,7 @@ public class DebugTankBlock extends AddonBlockContainer implements ILookOverlay 
 	}
 
 	@Override
-	public void printHook(Pre pre,World world,int x,int y,int z) {
-		BlockPos pos = new BlockPos(x,y,z);
+	public void printHook(Pre pre,World world,BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof DebugTankTE tank) {
 			List<String> text = new ArrayList<>();

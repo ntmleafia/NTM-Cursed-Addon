@@ -1,15 +1,18 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.inventory.fluid.trait.FT_Combustible;
 import com.hbm.inventory.fluid.trait.FT_Flammable;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Gaseous;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Liquid;
 import com.hbm.modules.machine.ModuleMachineChemplant;
+import com.hbm.tileentity.IRepairable;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityMachineChemicalPlant;
 import com.hbm.util.ParticleUtil;
 import com.leafia.dev.LeafiaDebug;
+import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.firestorm.IFirestormTE;
 import com.leafia.settings.AddonConfig;
 import io.netty.buffer.ByteBuf;
@@ -17,6 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -42,10 +47,10 @@ public abstract class MixinTileEntityMachineChemicalPlant extends TileEntityMach
 
 	@Override
 	public void catchFire() {
-		LeafiaDebug.debugLog(world,"catchFire");
+		//LeafiaDebug.debugLog(world,"catchFire");
 		for (FluidTankNTM tank : getAllTanks()) {
 			if (tank.getTankType().hasTrait(FT_Flammable.class) || tank.getTankType().hasTrait(FT_Combustible.class)) {
-				LeafiaDebug.debugLog(world,"Flammable");
+				//LeafiaDebug.debugLog(world,"Flammable");
 				if (tank.getFill() > 0) {
 					int chance = 200;
 					if (tank.getTankType().hasTrait(FT_Gaseous.class))
@@ -53,9 +58,11 @@ public abstract class MixinTileEntityMachineChemicalPlant extends TileEntityMach
 					boolean willSetOnFire = false;
 					if (tank.getTankType().hasTrait(FT_Liquid.class))
 						willSetOnFire = true;
-					LeafiaDebug.debugLog(world,"Chance: "+chance+", willSetOnFire: "+willSetOnFire);
-					if (world.rand.nextInt(chance) == 0) {
+					//LeafiaDebug.debugLog(world,"Chance: "+chance+", willSetOnFire: "+willSetOnFire);
+					if (world.rand.nextInt(chance/5) == 0) {
 						destroyed = true;
+						for (FluidTankNTM tank2 : getAllTanks())
+							tank2.setFill(0);
 						onFire = willSetOnFire;
 						world.createExplosion(null,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,5,false);
 						break;
@@ -104,7 +111,13 @@ public abstract class MixinTileEntityMachineChemicalPlant extends TileEntityMach
 				ParticleUtil.spawnGasFlame(world,pos.getX()+rand.nextDouble(),pos.getY()+0.5+rand.nextDouble(),pos.getZ()+rand.nextDouble(),rand.nextGaussian()*0.2,0.1,rand.nextGaussian()*0.2);
 				List<Entity> affected = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.getX() - 1.5, pos.getY(), pos.getZ() - 1.5, pos.getX() + 2.5, pos.getY() + 5, pos.getZ() + 2.5));
 				for(Entity e : affected) e.setFire(5);
+				if (world.rand.nextInt(3) == 0)
+					LeafiaUtil.spreadFire(world,pos,4);
 			}
 		}
+	}
+	@Override
+	public void tryExtinguish(World world,int i,int i1,int i2,EnumExtinguishType enumExtinguishType) {
+		onFire = false;
 	}
 }
