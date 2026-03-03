@@ -1,13 +1,75 @@
 # Leafia's Cursed Addon 中文简体语言文件
 
-# 容器名称
-container.coolant_heatex=冷却液热交换器
-container.dfcEmitter=DFC 发射器
-container.dfcReceiver=DFC 接收器
+# 成就
+achievement.watz=Watz发电站
+
+# 进度
+advancement.leafia.arcwelder=还不够大
+advancement.leafia.arcwelder.desc=然后把它焊接起来
+advancement.leafia.crucible=金属熔合
+advancement.leafia.crucible.desc=锻造一个熔炉
+advancement.leafia.genericfuel=强大清洁能源
+advancement.leafia.genericfuel.desc=创建你的第一个MEU核燃料棒组件
+advancement.leafia.loseadvisor=| |i || |_
+advancement.leafia.loseadvisor.desc=失去一个高科技顾问
+advancement.leafia.nukebwr=切尔诺贝利学徒
+advancement.leafia.nukebwr.desc=用BWR（水冷PWR）重现福岛核事故
+advancement.leafia.nukepwr=拆卸小组
+advancement.leafia.nukepwr.desc=你怎么搞砸得这么厉害？
+advancement.leafia.openpwr=我的第一个核反应堆
+advancement.leafia.openpwr.desc=与压水堆互动
+advancement.leafia.root_misc=NTM杂项
+advancement.leafia.root_misc.desc=一堆随机的东西
+advancement.leafia.shredder=双倍矿石！
+advancement.leafia.shredder.desc=组装一个粉碎机
+advancement.leafia.soldering=科技
+advancement.leafia.soldering.desc=锻造一个焊接台
+
+# 罐头厂说明
+cannery.leafia.pwr=压水堆
+cannery.leafia.pwr.0=PWR (LWR) 是一个完全模块化的多方块反应堆。
+cannery.leafia.pwr.1=NTM Cursed中的PWR与原版行为有很大不同。
+cannery.leafia.pwr.2=有3种PWR燃料棒皮肤可供选择。
+cannery.leafia.pwr.3=没有功能差异，但它们有不同的配方。
+cannery.leafia.pwr.4=PWR燃料棒接受通用核燃料物品。
+cannery.leafia.pwr.5=燃料可以直接点击方块或通过终端方块插入。
+cannery.leafia.pwr.6=燃料也可以直接用螺丝刀提取。
+cannery.leafia.pwr.7=PWR燃料棒从§d角落§r获得1/2通量..
+cannery.leafia.pwr.8=..以及从§a4 §a个 §a基本 §a方向§r获得1/(2^(distance/2-1))通量。
+cannery.leafia.pwr.9=PWR控制棒可用于中子路径来控制通量。
+cannery.leafia.pwr.a=铅控制棒更便宜但移动更慢。
+cannery.leafia.pwr.b=PWR冷却通道利用燃料棒的热量来加热冷却液。
+cannery.leafia.pwr.c=它还能减速通过的中子，显著增强裂变反应。
+cannery.leafia.pwr.d=石墨块也可以用来减速中子。
+cannery.leafia.pwr.e=PWR燃料棒可以堆叠以提高燃料效率。
+cannery.leafia.lftr=液态氟化物钍反应堆
+cannery.leafia.lftr.0=LFTR (MSR) 是一个模块化的多方块反应堆。
+cannery.leafia.lftr.1=LFTR使用具有动态混合和温度的液体燃料。
+cannery.leafia.lftr.2=液体会升温，热量可以在冷却液热交换器中消耗。
+cannery.leafia.lftr.3=最初支持的LFTR冷却液不包含任何燃料。
+cannery.leafia.lftr.4=燃料可以用混合桶混合到LFTR冷却液中。
+cannery.leafia.lftr.5=动态混合系统利用NBT，普通流体管道不支持..
+cannery.leafia.lftr.6=..这意味着LFTR、混合桶（核模式）、冷却液热交换器和盐燃料分离厂都需要特殊管道来输送燃料液体。
+cannery.leafia.lftr.7=LFTR反应室从6个基本方向接收通量..
+cannery.leafia.lftr.8=..以及这12个额外位置。
+cannery.leafia.lftr.9=如果超过6000°C，该组件将被销毁。
+cannery.leafia.lftr.a=LFTR控制棒可以粘在反应室的任何侧面来限制裂变反应。
+cannery.leafia.lftr.b=它们可以用主手和副手的螺丝刀手动控制，或通过自定义控制面板控制。
+cannery.leafia.lftr.c=石墨块可以用来减速中子通量以获得更多裂变反应。
+cannery.leafia.lftr.d=PWR中子反射器可以用来将中子反射回反应室本身。
+cannery.leafia.lftr.e=LFTR任意方块会模拟其他方块的行为，同时保留包含燃料并将其转移到相邻组件的能力。
+cannery.leafia.lftr.f=LFTR燃料塞在一侧有一个接受燃料的端口，底部有一个紧急端口。
+cannery.leafia.lftr.g=紧急端口将在4000°C时熔化，以最快速度从反应堆排出（泄漏）燃料。
+cannery.leafia.lftr.h=请记住，如果底部端口被阻挡，排水将不起作用。
 
 # 化学反应
 chem.leafia.flibe=液态氟化物生产
 chem.leafia.fluorine=萤石电解
+
+# 容器名称
+container.coolant_heatex=冷却液热交换器
+container.dfcEmitter=DFC发射器
+container.dfcReceiver=DFC接收器
 
 # 死亡消息
 death.attack.back=%1$s 被原子化并传送到了后室
@@ -21,7 +83,13 @@ death.attack.mine=%1$s 应该多注意脚下的地面
 death.attack.pointed=%1$s 被尖锐物品撕裂
 death.attack.poison=%1$s 中了致命的毒
 
-# 描述文本
+# JEI描述
+desc.leafia._jei.energy_s=%s/秒
+desc.leafia._jei.energy_t=%s/刻
+desc.leafia._jei.time_s=%s 秒
+desc.leafia._jei.time_t=%s 刻
+
+# 反应堆描述
 desc.leafia._repeated.reactors.compression=蒸汽压缩开关$ 当前压缩等级: %sx
 desc.leafia._repeated.reactors.controlrods=控制棒: %s%%
 desc.leafia._repeated.reactors.off=反应堆已关闭
@@ -66,12 +134,17 @@ gui.recipe.inputMix=输入混合物
 hbmfluid.coolant_mal=§c沸腾的冷却液§r
 hbmfluid.deathsteam=§c超浓密蒸汽§r
 hbmfluid.flibe=液态氟化物
+hbmfluid.fluorine=氟
+hbmfluid.hf=氟化氢
 hbmfluid.hot_air=热空气
 hbmfluid.hot_water=热水
+hbmfluid.n2o=一氧化二氮
 hbmfluid.radspice_slop=新维林浆糊
 hbmfluid.uf6_233=六氟化铀-233
 hbmfluid.uf6_235=六氟化铀-235
 hbmfluid.ultrahotsteam=超浓密蒸汽
+
+hbmmat.xanaxium=扎纳西乌姆
 
 hbmpseudofluid.u233f6=六氟化铀-233
 hbmpseudofluid.leu233f6=低浓缩六氟化铀-233
@@ -84,129 +157,313 @@ hbmpseudofluid.heu235f6=高浓缩六氟化铀-235
 
 # 物品信息
 info.leafiarod.empty=空
+info.leafiarod.jei.decay=通用燃料棒增殖
+info.leafiarod.jei.name=通用燃料棒拆解
+info.leafiarod.jei.message=无法拆解$消耗 > 5%%
 
 # 物品名称
+item.advisor.name=高科技顾问
+item.advisor.message.asbestos=也许，大概这$用石棉建造不是什么好主意..
+item.advisor.message.coal=你在吸入煤尘！创造一些保护。$从粗糙防护面具开始。
+item.advisor.message.lava=岩浆在你身后！
+item.advisor.message.pyro=你拿着自燃/热物品！$制作一个钨取物器来安全地拿取它们。
+item.advisor.message.skindmg2=你有中度皮肤损伤。$在治愈前你应该避免贝塔辐射。
+item.advisor.message.skindmg3=你有严重皮肤损伤。$不惜一切代价避免阿尔法辐射！
+
 item.ams_focus_blank.name=空白稳定器焦点
 item.ams_focus_booster.name=增压稳定器焦点
 item.ams_focus_limiter.name=限制稳定器焦点
 item.ams_focus_omega.name=UNDEFINED稳定器焦点
-item.ams_focus_safe.name=紧急停止稳定器焦点
-item.ams_lens.name=稳定器焦点
+item.ams_focus_safe.name=紧急停止稳定器焦点 △
+item.ams_lens.name=稳定器焦点 Δ
+
+item.battery_pack.battery_desh.name=Desh电池
+item.battery_pack.battery_euphemium.name=Ep电池
+item.battery_pack.battery_slop.name=新维林浆糊电池
+item.battery_pack.battery_spk.name=火花电池
+item.battery_pack.battery_electro.name=电子态电池
+
+item.billet_kys.name=Kysmium-3000坯料
+
 item.detonator_laser.desc2=也可在多人游戏中用于指示目标
+
+item.ev_spawn.desc=放置在滑轮下方$用螺丝刀配置$用手钻分解
+item.ev_spawn.error.direction=错误: 电梯与滑轮角度不匹配！
+item.ev_spawn.error.pulley=错误: 找不到上方滑轮！
+item.ev_spawn.name=模块化电梯
+
+item.fix_tool.name=熔"修"
+item.fix_survival.name=撒旦能量抑制器
+
 item.fuzzy_identifier.message=标识符设置为 %s
 item.fuzzy_identifier.name=模糊标识符
+
+item.ingot_francium.name=钫锭
+item.ingot_potassium.name=钾立方
+item.ingot_rubidium.name=铷锭
+item.ingot_xanaxium.name=扎纳西乌姆锭
+
 item.leafiarod=核燃料棒 "%s"
+item.leafiarod.decayheat=裂变产物衰变热: %s
+item.leafiarod.decays=衰变为: %s
+item.leafiarod.heatfunc=热功能: %s
+item.leafiarod.heatfunc_shift=热功能
+item.leafiarod.life=寿命: 约 %s
+item.leafiarod.meltingpt=熔点: %s
+item.leafiarod.moderated=已减速
+item.leafiarod.pref.all=偏好所有中子
+item.leafiarod.pref.fast=偏好快中子
+item.leafiarod.reac.in=反应性 %s
+item.leafiarod.reac.out=发射 %s
+item.leafiarod.status.0=极冷
+item.leafiarod.status.1=次优
+item.leafiarod.status.2=最优
+item.leafiarod.status.3=过热
+item.leafiarod.status.4=熔毁
+item.leafiarod.status.0dg=暂时还好
+item.leafiarod.status.1dg=离开
+item.leafiarod.status.2dg=停止
+item.leafiarod.status.3dg=接近
+item.leafiarod.status.4dg=感受
+item.leafiarod.temp=温度: %s
 item.leafiarodempty=核燃料棒组件
+
 item.lwrdebris.conjunctive.alt={type} of {block}
-item.lwrdebris.conjunctive.switch=of
+item.lwrdebris.conjunctive.switch=的
 item.lwrdebris.conjunctive={block} {type}
 item.lwrdebris.piece=碎片
 item.lwrdebris.shard=碎块
 item.lwrdebris.shrapnel=弹片
+
+item.missile_customnuke.name=自定义核导弹
+item.missile_customnuke.desc=模块化导弹
+
 item.ntmfbottle.name=%s 瓶
+item.nugget_schraranium.name=Sa326粒
+item.powder_xanaxium.name=扎纳西乌姆粉
+item.supercooler.name=超冷却单元
 item.wand_v.name=可视化魔杖
+item.waste_u238.name=增殖铀-238燃料
+
+# 药水
+potion.skindamage=皮肤损伤
 
 # 分离器
-separator.u233=氟化物盐U233提取
+separator.u233=铀-233氟化
+separator.u235=铀-235氟化
 
 # 音效字幕
+subtitles.block.arc_welder=电焊机嗡鸣
+subtitles.block.arc_welder_start=电焊机启动
+subtitles.block.arc_welder_stop=电焊机停止
+subtitles.block.dfc.energyburst=DFC能量爆发
+subtitles.block.dfc.ignite=DFC点燃
+subtitles.block.soldering=焊接台运作
 subtitles.weapon.nuke=核爆炸
 subtitles.weapon.nuke_d=远处的核爆炸
-subtitles.weapon.nuke_folkvangr=Fölkvangr 力场出现
+subtitles.weapon.nuke_folkvangr=Fölkvangr力场出现
 subtitles.weapon.nuke_n=核爆炸
 subtitles.weapon.nuke_s=小型核爆炸
 
 # 方块名称和描述
 tile.amat_duct_charger.name=电磁流体导管充能器
-tile.amat_duct.name=磁流体导管
+tile.amat_duct.name=电磁流体导管
 tile.amat_duct.power=电力: %s
 tile.amat_duct.warn=网络电力不会保存！$ 请始终保持充能器带电！
+
+tile.ams_base.name=AMS基座
+tile.ams_emitter.name=AMS发射极
+tile.ams_limiter.name=AMS稳能器
+
+tile.ash_balefire.name=热核灰烬
+tile.baleonite_0.name= Baleonite
+tile.baleonite_1.name=热Baleonite
+tile.baleonite_2.name=沸腾Baleonite
+tile.baleonite_3.name=炽热Baleonite
+tile.baleonite_4.name=地狱Baleonite
+tile.baleonite_5.name=Baleonite-核素
+
+tile.block_welded_osmiridium.name=焊接锇铱合金块
+tile.block_xanaxium.name=刻蚀扎纳西乌姆的焊接锇铱合金块
+
+tile.broof.name=变异草
+
+tile.control_torch.name=控制面板火把
+
 tile.coolant_heatex.name=冷却液热交换器
+
 tile.crate_tungsten.desc=用于DFC箱子配方，不提供额外槽位
+
 tile.dfc_cemitter.name=创造模式DFC发射器
 tile.dfc_emitter.name=DFC发射器
 tile.dfc_receiver.name=DFC接收器
 tile.dfc_reinforced.name=DFC强化接收器
 tile.dfc_stabilizer.desc=连接建立时也会获取核心状态
 tile.dfc_exchanger.name=DFC热交换器
+
+tile.digammitite_0.name=Digammitite
+tile.digammitite_1.name=热Digammitite
+tile.digammitite_2.name=沸腾Digammitite
+tile.digammitite_3.name=炽热Digammitite
+tile.digammitite_4.name=地狱Digammitite
+tile.digammitite_5.name=Digammitite-核素
+
 tile.ff_duct.name=特殊管道
 tile.ff_duct.desc=由于技术原因，仅支持模糊标识符
+tile.ff_duct_solid_shielded.name=辐射屏蔽特殊管道
+
 tile.ff_converter.ff=FF: %s
 tile.ff_converter.name=特殊管道适配器
 tile.ff_converter.ntmf=NTMF: %s
+
+tile.ff_filter.filter=过滤: %s
+tile.ff_filter.invalid=无效
+tile.ff_filter.name=特殊管道混合过滤器
+tile.ff_filter.message=过滤设置为 %s!
+tile.ff_filter.valid=有效
+
 tile.ff_pump.name=特殊管道泵
 tile.ff_pump.buffer=缓冲: %s
+
+tile.ff_tank.name=特殊储罐
+
+tile.fluid_duct_gauge.name=流体流量计方块
+tile.fluid_duct_gauge_mdl.name=流体流量计
+tile.fluid_duct_valve_mdl.name=流体阀
+tile.fluid_duct_valve_mdl_rs.name=红石流体阀
+
+tile.fluid_switch.name=红石流体阀方块
+tile.fluid_valve.name=流体阀方块
+
+tile.integ_cable_audio.name=涂层音频线缆
+tile.integ_cable_audio_rad.name=辐射屏蔽音频线缆
+tile.integ_cable_oc.name=涂层计算机线缆
+tile.integ_cable_oc_rad.name=辐射屏蔽计算机线缆
+
 tile.letter_sign.name=大型标志 %s
+
+tile.light_unlit.name=荧光灯
+
 tile.lwr_casing.desc=§m需要覆盖所有内部部件才能形成反应堆$§m放置位置: 外壳§r$在NTM:LCE中这是可选的。真正重要的是是否有辐射屏蔽以及方块的爆炸抗性。
 tile.lwr_casing.name=压水堆压力容器
+
 tile.lwr_channel.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 放置位置: 靠近燃料棒
 tile.lwr_channel.name=压水堆冷却通道
-tile.lwr_conductor.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 使用加热的冷却液将水煮沸成蒸汽$ 放置位置: 靠近燃料棒$§c沸水堆..?§r
+
+tile.lwr_conductor.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 使用加热的冷却液将水煮沸成蒸汽$ 仅适用于"冷却液"！$ 放置位置: 靠近燃料棒$§c沸水堆..?§r
 tile.lwr_conductor.name=压水堆集成锅炉
+
 tile.lwr_control.desc=以可控方式限制中子通过$ 放置位置: 中子路径（基本在燃料棒之间）
 tile.lwr_control.name=压水堆控制棒
+tile.lwr_control.overlay.desc1=用螺丝刀升起棒$ 副手使用降低棒
+tile.lwr_control.overlay.desc2=用命名牌标记棒以进行分组控制
+
 tile.lwr_ejector.desc=§m从插入的废料棒中提取废料$ 目前无法工作！
 tile.lwr_ejector.name=压水堆燃料喷射器
+
 tile.lwr_element.desc=压水堆燃料槽$ 可通过检修舱口访问$ 可堆叠$ 放置位置: 网格，以增加反应性
 tile.lwr_element.name=压水堆燃料棒
+tile.lwr_element.overlay.empty=空
+
 tile.lwr_exchanger.desc=增强燃料向冷却液的热传递$ 放置位置: 靠近燃料棒
 tile.lwr_exchanger.name=压水堆热交换器
+
 tile.lwr_heatsink.desc=核心热容量增加5%%$ 使冷却通道和热交换器的效率略微降低$ 放置位置: 任意
 tile.lwr_heatsink.name=压水堆散热器
+
 tile.lwr_inserter.desc=§m将有效的核燃料插入任何已插入的空核燃料组件$§m无法过滤$ 目前无法工作！
 tile.lwr_inserter.name=压水堆燃料插入器
+
+tile.lwr_occs_in.desc=压水堆OCCS（离线堆芯冷却系统）的一部分$ 每个燃料组件需要3000mB/秒的水
+tile.lwr_occs_in.name=压水堆OCCS入口
+tile.lwr_occs_out.desc=压水堆OCCS（离线堆芯冷却系统）的一部分$ 输出水或低压蒸汽
+tile.lwr_occs_out.name=压水堆OCCS出口
+
 tile.lwr_port.desc=允许物品和流体IO$ 放置位置: 外壳
 tile.lwr_port.name=压水堆流体端口
+
 tile.lwr_reflector.desc=将中子反射回燃料棒$ 放置位置: 网格，以增加反应性$ 有效的外壳材料
 tile.lwr_reflector.name=压水堆中子反射器
-tile.lwr_relay.desc=基本上就是可连接到压水堆的OpenComputers红石I/O$ 适用于设置紧急警报$ 放置位置: 任意
+
+tile.lwr_relay.desc=控制面板/OpenComputers红石I/O$ 适用于设置紧急警报$ 放置位置: 外壳
 tile.lwr_relay.name=压水堆红石继电器
+
 tile.lwr_rs.desc=根据情况输出红石信号$ 适用于设置紧急警报$ 放置位置: 任意
 tile.lwr_rs.name=压水堆信号输出口
-tile.lwr_signal.desc=连接到OpenComputers线缆$ 放置位置: 任意
+
+tile.lwr_signal.desc=连接到OpenComputers线缆$ 放置位置: 外壳
 tile.lwr_signal.name=压水堆控制端口
+
 tile.lwr_source.desc=§m为核心添加20通量$§m放置位置: 任意$§m只有当连接打开时，通量才能到达燃料棒$§e§o燃料棒上的热功能机制 §c§o确实是为了消除对中子源的需求§e§o以获得更好的灵活性。$§o是的，这个功能和这个方块绝对不会兼容。
 tile.lwr_source.name=压水堆中子源
+
 tile.lwr_terminal.desc=压水堆的访问终端$ 放置位置: 外壳
 tile.lwr_terminal.name=压水堆检修舱口
+
 tile.lwr_vent_element.desc=压水堆紧急冷却系统组件$ 当供应低温凝胶时，会快速冷却周围的燃料元件$ 一端需要供应商，另一端需要通风口$ 放置位置: 直线
 tile.lwr_vent_element.name=压水堆紧急冷却元件
+
 tile.lwr_vent_inlet.desc=压水堆紧急冷却系统组件$ 可以通过红石、终端GUI或OpenComputers程序发出信号$ 信号时将低温凝胶送入元件$ 放置位置: 紧急冷却元件的一端，朝外
 tile.lwr_vent_inlet.name=压水堆紧急冷却供应商
+
 tile.lwr_vent_outlet.desc=压水堆紧急冷却系统组件$ 冷却效率取决于其前方的方块，如果被阻挡则无法工作$ 放置位置: 紧急冷却元件的一端，朝外
 tile.lwr_vent_outlet.name=压水堆紧急冷却通风口
+
+tile.machine_arc_welder.warn=应远离水，包括雨水
+tile.meteor_diverter.desc=将陨石从这个方块转移$ 放置者需存活至少30分钟
+tile.meteor_diverter.name=陨石保护信标
+tile.meteor_diverter.message.active=激活
+tile.meteor_diverter.message.inactive=放置者需存活至少30分钟！
+tile.meteor_diverter.message.time=激活时间: %s
+tile.meteor_diverter.placer=放置者: %s
+
 tile.mixingvat.name=混合桶
+
+tile.msr_arbitrary.desc=LFTR任意方块: 它转移流体，$可以用你喜欢的方块定制$与石墨块、PWR中子反射器或任何辐射屏蔽块一起使用$ 放置位置: 任意
 tile.msr_arbitrary.name=液态氟化物钍反应堆任意方块
+tile.msr_ejector.desc=从LFTR排出燃料
 tile.msr_ejector.name=液态氟化物钍反应堆燃料喷射器
 tile.msr.fill=储罐: %s
-tile.msr.fuel.th232=Th232
-tile.msr.fuel.u233=U233
-tile.msr.fuel.u235=U235
+tile.msr.fuel.th232=钍-232
+tile.msr.fuel.pa233=镤-233
+tile.msr.fuel.pa234=镤-234
+tile.msr.fuel.u233=铀-233
+tile.msr.fuel.u235=铀-235
 tile.msr.fuel.waste=废料
 tile.msr.mixture=混合物:
 tile.msr.status=状态
+
+tile.msr_control.desc=限制核裂变反应$ 需要LFTR控制棒延伸段才能工作$ 放置位置: 反应室的任何侧面
 tile.msr_control.insertion=插入深度: %sm
 tile.msr_control.name=液态氟化物钍反应堆控制棒
+tile.msr_control_extension.desc=LFTR控制棒管道$ 堆叠以获得更长长度$ 放置位置: 控制棒上的箭头后方
 tile.msr_control_extension.name=液态氟化物钍反应堆控制棒延伸段
+
+tile.msr_element.desc=从所有6个方向和12个额外位置反应$（3x3立方体不包括角落）$ 转移流体$ 如果内容达到6000°C则销毁$ 放置位置: 任意$$12位置可视化:$  X$X  X$  X$适用于所有侧面
 tile.msr_element.name=液态氟化物钍反应堆反应室
 tile.msr_element.restriction=限制: %s%%
+
+tile.msr_plug.desc=向LFTR插入燃料$ 在4000°C时熔化，将其内容物释放到下方的管道$ 或如果没有管道则溢出。$ 放置位置: 在你的LFTR下方
 tile.msr_plug.molten=熔融
 tile.msr_plug.name=液态氟化物钍反应堆燃料塞
+
 tile.salt_separator.name=盐燃料分离装置
 tile.spk_cable.name=DFC重定向电缆
 
 # 特性和危险系统
 trait._hazardfluid.dfcFuel.desc=§d功率输出 §5%s%%
 trait._hazardfluid.dfcFuel=DFC燃料
+trait._hazarditem.hydro=碱性/水反应性
 trait._hazarditem.radioactive.activation=污染：
-trait._hazarditem.radioactive.alpha=α阿尔法射线：
-trait._hazarditem.radioactive.beta=β贝塔射线：
-trait._hazarditem.radioactive.gamma=γ伽马射线：
-trait._hazarditem.radioactive.neutrons=中子射线：
+trait._hazarditem.radioactive.alpha=α射线：
+trait._hazarditem.radioactive.beta=β射线：
+trait._hazarditem.radioactive.gamma=γ射线：
+trait._hazarditem.radioactive.neutrons=中子：
 trait._hazarditem.radioactive.radon=氡气：
 trait._hazarditem.radioactive.x=X射线：
 trait._hazarditem.sharp.add=冲击时额外伤害 +%s
 trait._hazarditem.sharp=锋利边缘
+
 trait._machine.condenser=冷凝器
 trait._machine.modular=模块化
 trait._machine.multiblock.core=核心组件
@@ -214,6 +471,12 @@ trait._machine.multiblock=多方块结构
 trait._machine.nuclear=核能
 trait._machine.power=发电机
 trait._machine.steam=热交换器
+
+trait.leafia.component.pwr=PWR组件
+trait.leafia.component.pwr.desc=PWR组件的导体
+trait.leafia.component.lftr=LFTR组件
+trait.leafia.component.lftr.desc=燃料流经此方块
+
 trait.leafia.lftr=液态氟化物钍反应堆冷却液
 trait.leafia.lftr.multiplier=通量倍增器: %s
 trait.leafia.magnetic=磁性
