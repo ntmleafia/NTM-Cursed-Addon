@@ -10,7 +10,9 @@
                 { "block": "leafia:lwr_terminal" },
                 { "block": "leafia:lwr_port" },
                 { "block": "leafia:lwr_signal" },
-                { "block": "leafia:lwr_casing" }
+                { "block": "leafia:lwr_casing" },
+                { "block": "leafia:lwr_occs_in" },
+                { "block": "leafia:lwr_occs_out" }
             ]
         }
     }

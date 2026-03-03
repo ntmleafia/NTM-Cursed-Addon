@@ -18,6 +18,7 @@ import com.leafia.contents.building.light.LightEmitter;
 import com.leafia.contents.building.mixed.BlockMixedConcrete;
 import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
+import com.leafia.contents.debug.explosion_test.DebugBoomBlock;
 import com.leafia.contents.debug.ff_test.source.DebugSourceBlock;
 import com.leafia.contents.debug.ff_test.tank.DebugTankBlock;
 import com.leafia.contents.fluids.FluorideFluid.FluorideFluidBlock;
@@ -51,11 +52,14 @@ import com.leafia.contents.machines.reactors.pwr.blocks.components.channel.PWREx
 import com.leafia.contents.machines.reactors.pwr.blocks.components.computer.PWRComputerBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.element.PWRElementBlock;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.occs.inlet.PWROCCSInBlock;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.occs.outlet.PWROCCSOutBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.port.PWRPortBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.terminal.PWRTerminalBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRWreckMetal;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRWreckStone;
+import com.leafia.contents.miscellanous.diverter.DiverterBlock;
 import com.leafia.contents.network.computers.audiocable.AudioCableBlock;
 import com.leafia.contents.network.computers.cable.ComputerCableBlock;
 import com.leafia.contents.network.ff_duct.FFDuctRadShielded;
@@ -223,6 +227,7 @@ public class AddonBlocks {
 		static boolean dummy = false;
 		public static final Block ffsource = new DebugSourceBlock(Material.ANVIL,"test_ff_source");
 		public static final Block fftank = new DebugTankBlock(Material.ANVIL,"test_ff_tank");
+		public static final Block boom = new DebugBoomBlock(Material.ANVIL,"test_boom");
 	}
 
 	public static final Block salt_separator = new SaltSeparatorBlock(Material.IRON,"salt_separator").setHardness(5.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
@@ -264,6 +269,9 @@ public class AddonBlocks {
 		public static final Block hatch_alt = new PWRTerminalBlock("reactor_hatch_alt").setCreativeTab(MainRegistry.machineTab).setHardness(5.0F).setResistance(CONCRETE_BRICKS.v);
 		public static final Block port = new PWRPortBlock().setCreativeTab(MainRegistry.machineTab).setHardness(PWR_CASING.v).setResistance(PWR_CASING.v);
 		public static final Block computer = new PWRComputerBlock().setCreativeTab(MainRegistry.machineTab).setHardness(PWR_CASING.v).setResistance(PWR_CASING.v);
+
+		public static final Block occs_in = new PWROCCSInBlock().setCreativeTab(MainRegistry.machineTab).setHardness(PWR_CASING.v).setResistance(PWR_CASING.v);
+		public static final Block occs_out = new PWROCCSOutBlock().setCreativeTab(MainRegistry.machineTab).setHardness(PWR_CASING.v).setResistance(PWR_CASING.v);
 
 		/*public static final Block ventElement = new PWRVentElementBlock().setCreativeTab(MainRegistry.machineTab).setHardness(generalHardness).setResistance(PWR_CASING.v);
 		public static final Block ventOutlet = new PWRVentOutletBlock().setCreativeTab(MainRegistry.machineTab).setHardness(generalHardness).setResistance(PWR_CASING.v);
@@ -338,6 +346,9 @@ public class AddonBlocks {
 	}
 
 	public static final Block heater_rt = new HeaterRTGBlock(Material.IRON, "heater_rt").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+
+	public static final Block diverter = new DiverterBlock("meteor_diverter",true).setCreativeTab(null).setLightLevel(0.5F);
+	public static final Block diverter_unlit = new DiverterBlock("meteor_diverter_unlit",false);
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

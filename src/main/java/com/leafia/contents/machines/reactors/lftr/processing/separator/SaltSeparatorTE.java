@@ -30,6 +30,8 @@ import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.llib.exceptions.LeafiaDevFlaw;
+import com.llib.exceptions.messages.TextWarningLeafia;
+import com.llib.group.LeafiaMap;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -70,6 +72,8 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 	};
 	public FluidTank bufferIn = new FluidTank(12000);
 	public FluidTank bufferOut = new FluidTank(12000);
+	public FluidTankNTM concIn = new FluidTankNTM(Fluids.NONE,12000);
+	public FluidTankNTM concOut = new FluidTankNTM(Fluids.NONE,12000);
 	public SaltSeparatorTE() {
 		super(14);
 		module = new SaltSeparatorModule(0,this,inventory)
@@ -162,6 +166,85 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 		}
 	}
 
+	public void idRatherStartOverThisShitSoHereWeAre(Map<MSRFuel,Double> recipe) { // Yeah screw this
+		if (recipe.size() > 1) {
+			for (EntityPlayer plr : world.playerEntities)
+				plr.sendMessage(new TextWarningLeafia("After long way of headache, I made a decision that LFTR salt separator recipes can only take 1 type in mixture, despite the recipe system supporting multiple. Go fix your custom recipe."));
+			return;
+		}
+		int demand = saltTank.getCapacity()-saltTank.getFluidAmount();
+		FluidStack inFluid = bufferIn.getFluid();
+		if (inFluid == null) return;
+		NBTTagCompound inMixtureNBT = MSRElementTE.nbtProtocol(inFluid.tag);
+		Map<String,Double> inMixture = MSRElementTE.readMixture(inMixtureNBT);
+
+		MSRFuel fuel = null;
+		double desiredY = 0;
+		for (Entry<MSRFuel,Double> entry : recipe.entrySet()) {
+			fuel = entry.getKey();
+			desiredY = entry.getValue();
+			break;
+		}
+		if (fuel == null) throw new LeafiaDevFlaw("How did the fuel get null");
+		Map<String,Double> recipeNBT = new LeafiaMap<>();
+		recipeNBT.put(fuel.name(),desiredY);
+		NBTTagCompound desiredNBT = MSRElementTE.writeMixture(recipeNBT,new NBTTagCompound());
+
+		double currentX = inMixture.getOrDefault(fuel.name(),0d);
+		if (currentX >= desiredY) { // example: 6 >= 3
+			double ratio = currentX/desiredY-1; // always 0 or higher
+			//int requiredConcIn = (int)(inFluid.amount*ratio);
+			int transferAmount = inFluid.amount;
+
+			// total equals (1+ratio)*transferAmount
+
+			transferAmount = (int)Math.min(transferAmount,demand/(1+ratio));
+			if (ratio > 0)
+				transferAmount = (int)Math.min(transferAmount,concIn.getFill()/ratio);
+
+			if (transferAmount <= 0) return;
+
+			// checks
+			int requiredConcIn = (int)(transferAmount*ratio);
+			if (bufferIn.getFluidAmount() < transferAmount) throw new LeafiaDevFlaw("Error case A ("+bufferIn.getFluidAmount()+" < "+transferAmount+")");
+			if (concIn.getFill() < requiredConcIn) throw new LeafiaDevFlaw("Error case B ("+concIn.getFill()+" < "+requiredConcIn+")");
+			if (demand < transferAmount+requiredConcIn) throw new LeafiaDevFlaw("Error case C ("+demand+" < "+(transferAmount+requiredConcIn)+")");
+
+			bufferIn.drain(transferAmount,true);
+			concIn.setFill(concIn.getFill()-requiredConcIn);
+			saltTank.fill(new FluidStack(saltType.getFF(),transferAmount+requiredConcIn,desiredNBT),true);
+		} else {
+
+		}
+	}
+
+	public void lastResortFuckingIdea(Map<MSRFuel,Double> recipe) {
+		FluidStack inFluid = bufferIn.getFluid();
+		FluidStack saltFluid = saltTank.getFluid();
+		if (inFluid == null || saltFluid == null) return;
+		if (inFluid.amount <= 0) return;
+		NBTTagCompound inMixtureNBT = MSRElementTE.nbtProtocol(inFluid.tag);
+		Map<String,Double> inMixture = MSRElementTE.readMixture(inMixtureNBT);
+		NBTTagCompound saltMixtureNBT = MSRElementTE.nbtProtocol(saltFluid.tag);
+		Map<String,Double> saltMixture = MSRElementTE.readMixture(saltMixtureNBT);
+		Map<String,Double> desiredMixture = new HashMap<>();
+		for (Entry<MSRFuel,Double> entry : recipe.entrySet())
+			desiredMixture.put(entry.getKey().name(),entry.getValue());
+		double ratio = inFluid.amount/(double)saltFluid.amount;
+		for (Entry<String,Double> entry : inMixture.entrySet()) {
+			if (desiredMixture.containsKey(entry.getKey())) {
+				double demand = desiredMixture.getOrDefault(entry.getKey(),0d)-saltMixture.getOrDefault(entry.getKey(),0d);
+				if (demand > 0) {
+					double transfer = Math.min(entry.getValue(),demand/ratio);
+					inMixture.put(entry.getKey(),entry.getValue()-transfer); // LeafiaMap allows concurrent modification iirc
+					saltMixture.put(entry.getKey(),saltMixture.getOrDefault(entry.getKey(),0d)+transfer*ratio);
+				}
+			}
+		}
+		inFluid.tag = MSRElementTE.writeMixture(inMixture,inMixtureNBT);
+		saltFluid.tag = MSRElementTE.writeMixture(saltMixture,saltMixtureNBT);
+	}
+
 	@Override
 	public void update() {
 		if (!world.isRemote) {
@@ -194,6 +277,13 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 				}
 			}
 
+			for (DirPos con : getConPos2()) {
+				if (saltType != Fluids.NONE) {
+					trySubscribe(saltType,world,con);
+					tryProvide(concOut,world,con);
+				}
+			}
+
 			double speed = 1D;
 			double pow = 1D;
 
@@ -206,7 +296,10 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 
 			SaltSeparatorRecipe curRecipe = this.module.getRecipe();
 			saltType = (curRecipe != null) ? curRecipe.saltType : Fluids.NONE;
+			concIn.setTankType(saltType);
+			concOut.setTankType(saltType);
 			if (curRecipe != null) {
+				/*
 				Triplet<Integer,Integer,Double> conversion = getExtractionAmount(curRecipe.mixture);
 				if (conversion != null && conversion.getY() > 0) {
 					/*
@@ -214,8 +307,31 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 					if (fuckoff > 0)
 						transferToTank(curRecipe.mixture,(int)(conversion.getX()*conversion.getZ()),fuckoff,1);
 					 */
-					transferToTank(curRecipe.mixture,conversion.getX(),conversion.getY(),1);
+					//transferToTank(curRecipe.mixture,conversion.getX(),conversion.getY(),1);
+				//}
+				/*try {
+					idRatherStartOverThisShitSoHereWeAre(curRecipe.mixture);
+				} catch (LeafiaDevFlaw flaw) {
+					for (EntityPlayer plr : world.playerEntities)
+						plr.sendMessage(new TextWarningLeafia(flaw.getMessage()));
+				}*/
+				if (saltTank.getCapacity() != curRecipe.saltAmount) {
+					if (saltTank.getFluidAmount() > curRecipe.saltAmount)
+						saltTank.drain(saltTank.getFluidAmount()-curRecipe.saltAmount,true);
+					saltTank.setCapacity(curRecipe.saltAmount);
 				}
+				if (saltTank.getFluid() != null && saltTank.getFluidAmount() <= 0)
+					saltTank.setFluid(null);
+				int demand = saltTank.getCapacity()-saltTank.getFluidAmount();
+				if (demand > 0) {
+					int transfer = Math.min(demand,concIn.getFill());
+					concIn.setFill(concIn.getFill()-transfer);
+					if (saltTank.getFluid() != null)
+						saltTank.getFluid().amount = saltTank.getFluid().amount+transfer;
+					else
+						saltTank.fill(new FluidStack(saltType.getFF(),transfer),true);
+				} else
+					lastResortFuckingIdea(curRecipe.mixture);
 				LeafiaUtil.fillFF(bufferIn,bufferOut,bufferIn.getFluidAmount());
 			}
 
@@ -239,6 +355,9 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 					.__write(3,module.progress)
 					.__write(4,power)
 					.__write(5,didProcess)
+					.__write(6,concIn.getFill())
+					.__write(7,concOut.getFill())
+					.__write(8,saltTank.getCapacity())
 					.__sendToAffectedClients();
 		}
 	}
@@ -252,6 +371,8 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 		compound.setTag("salt",saltTank.writeToNBT(new NBTTagCompound()));
 		compound.setTag("bufIn",bufferIn.writeToNBT(new NBTTagCompound()));
 		compound.setTag("bufOut",bufferOut.writeToNBT(new NBTTagCompound()));
+		concIn.writeToNBT(compound,"concIn");
+		concOut.writeToNBT(compound,"concOut");
 		compound.setLong("power",power);
 		compound.setLong("maxPower",maxPower);
 		module.writeToNBT(compound);
@@ -268,6 +389,8 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 		saltTank.readFromNBT(compound.getCompoundTag("salt"));
 		bufferIn.readFromNBT(compound.getCompoundTag("bufIn"));
 		bufferOut.readFromNBT(compound.getCompoundTag("bufOut"));
+		concIn.readFromNBT(compound,"concIn");
+		concOut.readFromNBT(compound,"concOut");
 		power = compound.getLong("power");
 		if (compound.getLong("maxPower") > 0) // you son of a
 			maxPower = compound.getLong("maxPower");
@@ -304,6 +427,15 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 				new DirPos(pos.getX() - 1, pos.getY(), pos.getZ() + 2, Library.POS_Z),
 				new DirPos(pos.getX() + 1, pos.getY(), pos.getZ() - 2, Library.NEG_Z),
 				new DirPos(pos.getX() - 1, pos.getY(), pos.getZ() - 2, Library.NEG_Z)
+		};
+	}
+
+	public DirPos[] getConPos2() {
+		return new DirPos[] {
+				new DirPos(pos.getX() + 2, pos.getY(), pos.getZ(), Library.POS_X),
+				new DirPos(pos.getX() - 2, pos.getY(), pos.getZ(), Library.NEG_X),
+				new DirPos(pos.getX(), pos.getY(), pos.getZ() + 2, Library.POS_Z),
+				new DirPos(pos.getX(), pos.getY(), pos.getZ() - 2, Library.NEG_Z),
 		};
 	}
 
@@ -370,6 +502,8 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 				break;
 			case 2:
 				saltType = Fluids.fromID((int)value);
+				concIn.setTankType(saltType);
+				concOut.setTankType(saltType);
 				break;
 			case 3:
 				module.progress = (double)value;
@@ -379,6 +513,17 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 				break;
 			case 5:
 				didProcess = (boolean)value;
+				break;
+			case 6:
+				concIn.setFill((int)value);
+				break;
+			case 7:
+				concOut.setFill((int)value);
+				break;
+			case 8:
+				int amt = (int)value;
+				if (amt != saltTank.getCapacity())
+					saltTank.setCapacity(amt);
 				break;
 		}
 	}
@@ -395,7 +540,11 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 
 	@Override
 	public @NotNull FluidTankNTM[] getReceivingTanks() {
-		return inputTanks;
+		return new FluidTankNTM[]{
+				inputTanks[0],
+				inputTanks[1],
+				concIn
+		};
 	}
 
 	@Override

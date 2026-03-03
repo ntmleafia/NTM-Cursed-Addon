@@ -3,6 +3,7 @@ package com.leafia.settings;
 import com.hbm.config.GeneralConfig;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.dev.LeafiaDebug;
+import com.leafia.settings._ConfigBuilder.LeafiaConfigError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,9 @@ public class AddonConfig {
 	public static boolean enableFirestorm = LeafiaDebug.isDevEnv;
 	public static boolean enableWackySplashes = true;
 	public static boolean enableAcidRainRender = true;
+	public static int meteorDiverterMinAliveTime = 30*60;
+	public static int meteorDiverterProtectionRadius = 3;
+	public static boolean enableMeteorCraters = true;
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
 		public static void applyGeneralConfig() {
@@ -43,6 +47,17 @@ public class AddonConfig {
 
 			builder._comment("How far DFC components can reach");
 			dfcComponentRange = builder._integer("dfcComponentRange",50);
+
+			builder._comment("How long the placer of Meteor Protection Beacon has to be alive (in seconds)");
+			meteorDiverterMinAliveTime = builder._integer("meteorDiverterMinAliveTime",30*60);
+
+			builder._comment("How far the Meteor Protection Beacon should protect (in chunks)");
+			meteorDiverterProtectionRadius = builder._integer("meteorDiverterProtectionRadius",3);
+			if (meteorDiverterProtectionRadius < 0)
+				throw new LeafiaConfigError("meteorDiverterProtectionRadius should be positive!");
+
+			builder._comment("Whether meteors should create custom craters or not");
+			enableMeteorCraters = builder._boolean("enableMeteorCraters",true);
 		}
 		builder._separator();
 		builder._category("CLIENT");

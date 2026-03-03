@@ -40,8 +40,8 @@
 dependencies {
     compileOnly('appeng:ae2-uel:v0.56.7') { transitive false } // or CE won't compile
     //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7142756")
-    implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7685718") // 2.1.0.0
-    //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:") // java25
+    implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7685718") // 2.1.1.0
+    //implementation rfg.deobf("curse.maven:hbm-nuclear-tech-mod-community-edition-1312314:7688010") // java25
     implementation rfg.deobf("curse.maven:opencomputers-223008:6608365")
     implementation files("libs/Computronics-1.12.2-1.6.6-deobf.jar")
     runtimeOnlyNonPublishable rfg.deobf(files("libs/Backups-1.12.2-1.5.7.jar"))

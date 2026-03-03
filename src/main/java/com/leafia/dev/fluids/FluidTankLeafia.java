@@ -7,7 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * Exists for sole purpose of eliminating issue of NBT erasure with NTMF-FF integration.
  * <p>Do NOT integrate NTMF and LF.
+ * <p>P.S. What the fuck is this leftover garbage
  */
+@Deprecated
 public class FluidTankLeafia {
 	FluidType type;
 	FluidType filter;

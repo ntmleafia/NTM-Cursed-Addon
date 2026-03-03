@@ -207,7 +207,7 @@ public class PWRElementBlock extends BlockMachineBase implements ITooltipProvide
 		if (element.inventory != null) {
 			ItemStack stack = element.inventory.getStackInSlot(0);
 			if (stack.isEmpty())
-				texts.add("Empty");
+				texts.add(I18nUtil.resolveKey("tile.lwr_element.overlay.empty"));
 			else {
 				texts.add(stack.getDisplayName());
 				stack.getItem().addInformation(stack,world,texts,ITooltipFlag.TooltipFlags.NORMAL);

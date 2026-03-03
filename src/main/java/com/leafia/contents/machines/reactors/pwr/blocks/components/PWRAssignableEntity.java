@@ -26,15 +26,14 @@ public abstract class PWRAssignableEntity extends TileEntity implements ITickabl
 	}
 
 	@Override
-	public PWRData getLinkedCore() {
+	public PWRData getCoreByCorePos() {
 		return PWRComponentEntity.getCoreFromPos(world,corePos);
 	}
 
 	@Override
 	public void assignCore(@Nullable PWRData data) {
-		if (this.data != data) {
+		if (this.data != data)
 			PWRData.addDataToPacket(LeafiaPacket._start(this),data).__sendToAffectedClients();
-		}
 		this.data = data;
 	}
 	@Override
@@ -102,5 +101,12 @@ public abstract class PWRAssignableEntity extends TileEntity implements ITickabl
 		if (this.data != null)
 			PWRData.addDataToPacket(packet,this.data);
 		return packet;
+	}
+
+	@Override
+	public void onPlayerValidate(EntityPlayer plr) {
+		LeafiaPacket packet = LeafiaPacket._start(this);
+		addDataToPacket(packet);
+		packet.__sendToClient(plr);
 	}
 }

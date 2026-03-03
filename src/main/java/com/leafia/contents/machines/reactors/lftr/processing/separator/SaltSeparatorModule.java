@@ -97,15 +97,18 @@ public class SaltSeparatorModule extends ModuleMachineBase {
 			NBTTagCompound tag = MSRElementTE.nbtProtocol(saltTank.getFluid().tag);
 			Map<String,Double> mixture = MSRElementTE.readMixture(tag);
 			saltTank.getFluid().tag = tag;
-			boolean shouldEmpty = isMixtureIncompatible(recipe,mixture);
+			/*boolean shouldEmpty = isMixtureIncompatible(recipe,mixture);
 			if (shouldEmpty)
-				saltTank.drain(saltTank.getCapacity()*2,true);
+				saltTank.drain(saltTank.getCapacity()*2,true);*/
 		}
 	}
 
 	public boolean canProcess(SaltSeparatorRecipe recipe,double speed,double power) {
 		if (saltTank.getFluid() != null) {
 			if (saltTank.getFluidAmount() < recipe.saltAmount) return false;
+			NBTTagCompound tag = MSRElementTE.nbtProtocol(saltTank.getFluid().tag);
+			Map<String,Double> mixture = MSRElementTE.readMixture(tag);
+			if (isMixtureIncompatible(recipe,mixture)) return false;
 			return super.canProcess(recipe,speed,power);
 		}
 		return false;

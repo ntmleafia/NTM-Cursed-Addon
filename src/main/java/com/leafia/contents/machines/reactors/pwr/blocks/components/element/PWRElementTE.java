@@ -618,7 +618,7 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 	}
 
 	@Override
-	public PWRData getLinkedCore() {
+	public PWRData getCoreByCorePos() {
 		return PWRComponentEntity.getCoreFromPos(world,corePos);
 	}
 
@@ -719,7 +719,7 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 			}
 		}
 		return null;*/
-		return this.getLinkedCore();
+		return this.getCoreByCorePos();
 	}
 	public double getHeat() {
 		ItemStack stack = this.inventory.getStackInSlot(0);

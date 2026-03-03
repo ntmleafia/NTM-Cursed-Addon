@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal":  { "model": "leafia:meteor_diverter_unlit" }
+    }
+}

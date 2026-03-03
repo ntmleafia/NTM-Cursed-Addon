@@ -12,8 +12,14 @@ public interface PWRComponentBlock {
     default boolean shouldRenderOnGUI() {
         return false;
     }
-	/// Only control rods and elements may return false. Basically if the TE is stacked or not
+
+    /**
+     * Only control rods and elements may return false. Basically if the TE is stacked or not
+     * <p>Returning false will make it be completely ignored by diagnosis
+     * <p>For whether this block should be assigned as core or not, see PWRComponentEntity$canAssignCore
+     */
     boolean tileEntityShouldCreate(World world,BlockPos pos);
+
 	/// Get this TileEntity as PWR component
     @Nullable
     default PWRComponentEntity getPWR(World world,BlockPos pos) {

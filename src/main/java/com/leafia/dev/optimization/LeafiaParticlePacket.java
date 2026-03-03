@@ -10,10 +10,7 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinParticleRBMKMush;
-import com.leafia.unsorted.ParticleFireK;
-import com.leafia.unsorted.ParticleFireLavaK;
-import com.leafia.unsorted.ParticleFlash;
-import com.leafia.unsorted.ParticleSpark;
+import com.leafia.unsorted.*;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaSet;
 import net.minecraft.block.Block;
@@ -366,6 +363,44 @@ public class LeafiaParticlePacket extends RecordablePacket {
 					ticksIn,
 					ticksOut
 			);
+			Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+		}
+	}
+	public static class SmokeShockwaveParticle extends LeafiaParticle {
+		public double increment = 3;
+		public float particleScale = 5;
+		public double maxRadius = 200;
+		public int particleLifetime = 12;
+		@Override
+		protected LeafiaParticle fromBits(LeafiaBuf buf,NBTTagCompound nbt) {
+			SmokeShockwaveParticle particle = new SmokeShockwaveParticle();
+			particle.increment = buf.readDouble();
+			particle.particleScale = buf.readFloat();
+			particle.maxRadius = buf.readDouble();
+			particle.particleLifetime = buf.readInt();
+			return particle;
+		}
+		@Override
+		protected void toBits(LeafiaBuf buf) {
+			buf.writeDouble(increment);
+			buf.writeFloat(particleScale);
+			buf.writeDouble(maxRadius);
+			buf.writeInt(particleLifetime);
+		}
+		@Override
+		@SideOnly(Side.CLIENT)
+		protected void emit(NBTTagCompound nbt) {
+			World world = Minecraft.getMinecraft().world;
+			ParticleSmokeShockwave particle = new ParticleSmokeShockwave(
+					world,
+					nbt.getDouble("posX"),
+					nbt.getDouble("posY"),
+					nbt.getDouble("posZ")
+			);
+			particle.increment = increment;
+			particle.particleScale = particleScale;
+			particle.maxRadius = maxRadius;
+			particle.particleLifetime = particleLifetime;
 			Minecraft.getMinecraft().effectRenderer.addEffect(particle);
 		}
 	}

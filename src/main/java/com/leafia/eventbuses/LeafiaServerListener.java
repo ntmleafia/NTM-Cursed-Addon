@@ -13,6 +13,7 @@ import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.LeafiaPassiveServer;
+import com.leafia.savedata.PlayerDeathsSavedData;
 import com.leafia.unsorted.IEntityCustomCollision;
 import com.leafia.init.LeafiaDamageSource;
 import com.leafia.unsorted.LeafiaBlockReplacer;
@@ -32,6 +33,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.chunk.BlockStatePaletteHashMap;
 import net.minecraft.world.chunk.BlockStatePaletteLinear;
 import net.minecraft.world.chunk.Chunk;
@@ -40,6 +42,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -63,6 +66,15 @@ public class LeafiaServerListener {
 				wasPickedUp = EntityItem.class.getDeclaredField("addon_wasPickedUp");
 			} catch (NoSuchFieldException e) {
 				throw new LeafiaDevFlaw(e);
+			}
+		}
+		@SubscribeEvent
+		public void onEntityDied(LivingDeathEvent evt) {
+			if (evt.getEntity() instanceof EntityPlayer plr) {
+				plr.sendMessage(new TextComponentString("L"));
+				PlayerDeathsSavedData data = PlayerDeathsSavedData.forWorld(plr.world);
+				data.timestamps.put(plr.getName(),plr.world.getTotalWorldTime());
+				data.markDirty();
 			}
 		}
 		/*

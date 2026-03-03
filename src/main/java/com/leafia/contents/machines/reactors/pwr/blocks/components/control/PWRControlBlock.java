@@ -37,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PWRControlBlock extends AddonBlockBase implements ITooltipProvider, ITileEntityProvider, ILookOverlay, PWRComponentBlock {
@@ -173,11 +174,10 @@ public class PWRControlBlock extends AddonBlockBase implements ITooltipProvider,
 		PWRControlTE control = (PWRControlTE)entity;
 
 		texts.add("§e"+String.format("%01.2f",control.position*control.height)+"m");
-		texts.add("Use screwdriver to raise rods");
-		texts.add("Use with offhand to lower rods");
+		texts.addAll(Arrays.asList(I18nUtil.resolveKey("tile.lwr_control.overlay.desc1").split("\\$")));
 		texts.add("");
 		texts.add("§8"+control.name);
-		texts.add("Use name tag to label rods for group control");
+		texts.addAll(Arrays.asList(I18nUtil.resolveKey("tile.lwr_control.overlay.desc2").split("\\$")));
 
 		ILookOverlay.printGeneric(event, I18nUtil.resolveKey(getTranslationKey() + ".name"), 0xFF55FF, 0x3F153F, texts);
 	}

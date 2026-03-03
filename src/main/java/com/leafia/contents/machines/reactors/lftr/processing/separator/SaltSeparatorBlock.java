@@ -68,5 +68,9 @@ public class SaltSeparatorBlock extends BlockDummyable {
 		this.makeExtra(world, x - dir.offsetX + 1, y, z - dir.offsetZ - 1);
 		this.makeExtra(world, x - dir.offsetX - 1, y, z - dir.offsetZ + 1);
 		this.makeExtra(world, x - dir.offsetX - 1, y, z - dir.offsetZ - 1);
+		this.makeExtra(world, x - dir.offsetX - 1, y, z - dir.offsetZ);
+		this.makeExtra(world, x - dir.offsetX + 1, y, z - dir.offsetZ);
+		this.makeExtra(world, x - dir.offsetX, y, z - dir.offsetZ - 1);
+		this.makeExtra(world, x - dir.offsetX, y, z - dir.offsetZ + 1);
 	}
 }

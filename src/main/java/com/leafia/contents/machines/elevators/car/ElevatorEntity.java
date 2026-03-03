@@ -863,7 +863,7 @@ public class ElevatorEntity extends Entity implements IEntityMultiPart, IEntityC
 		}
 	}
 	public boolean hasExteriorDoor(int side) {
-		FiaMatrix mat = new FiaMatrix(new Vec3d(posX,posY+0.5,posZ)).rotateY(side*90);
+		FiaMatrix mat = new FiaMatrix(new Vec3d(posX,posY+0.5,posZ)).rotateY(side*90-rotationYaw);
 		BlockPos pos = new BlockPos(mat.translate(0,0,-1).position);
 		//LeafiaDebug.debugPos(world,pos,1/20f,0xFFFF00,"hasExteriorDoor");
 		IBlockState state = world.getBlockState(pos);

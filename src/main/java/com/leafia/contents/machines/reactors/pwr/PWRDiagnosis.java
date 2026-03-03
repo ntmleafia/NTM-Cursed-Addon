@@ -25,7 +25,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -312,7 +311,7 @@ public class PWRDiagnosis {
 			PWRComponentEntity entity = getPWREntity(pos);
 			if (entity != null) { // give coordinates of the core for each valid blocks
 				if (!world.isRemote) {
-					PWRData link = entity.getLinkedCore();
+					PWRData link = entity.getCoreByCorePos();
 					if (link != null) {
 						if (!members.contains(link.corePos)) {
 							if (isMeltdown) {

@@ -2,7 +2,6 @@ package com.leafia.contents.machines.reactors.pwr.blocks.components.computer;
 
 import com.custom_hbm.util.LCETuple.Triplet;
 import com.hbm.inventory.control_panel.*;
-import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.machines.reactors.pwr.PWRData;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.PWRAssignableEntity;
@@ -30,10 +29,6 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 		return "PWR_COMPUTER";
 	}
 	@Override
-	public void onPlayerValidate(EntityPlayer plr) {
-
-	}
-	@Override
 	public String getComponentName() {
 		return "pwr";
 	}
@@ -41,7 +36,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getControl(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			String name = args.checkString(0);
 			if (core.controlDemand.containsKey(name))
@@ -53,7 +48,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback
 	@Optional.Method(modid = "opencomputers")
 	public Object[] setControl(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			String name = args.checkString(0);
 			double value = MathHelper.clamp(args.checkDouble(1)/100,0,1);
@@ -81,7 +76,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getMasterControl(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new Object[]{core.masterControl*100};
 		}
@@ -91,7 +86,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback
 	@Optional.Method(modid = "opencomputers")
 	public Object[] setMasterControl(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			core.masterControl = MathHelper.clamp(args.checkDouble(0)/100,0,1);
 			core.manipulateRod(null);
@@ -103,7 +98,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback(doc = "Returns lowest fuel temperature, highest fuel temperature, and average fuel temperature in order.")
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getFuelTemperatures(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			Triplet<Double,Double,Double> temps = getTemperatures(core);
 			return new Object[]{temps.getA(),temps.getB(),temps.getC()};
@@ -114,7 +109,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback(doc = "Returns coolant tank fill, hot coolant tank fill, and emergency buffer fill in order.")
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getTankFills(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new Object[]{core.tanks[0].getFill(),core.tanks[1].getFill(),core.tanks[2].getFill()};
 		}
@@ -124,7 +119,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Callback(doc = "Returns coolant tank capacity, hot coolant tank capacity, and emergency buffer capacity in order.")
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getTankCapacities(Context context,Arguments args) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new Object[]{core.tanks[0].getFill(),core.tanks[1].getFill(),core.tanks[2].getFill()};
 		}
@@ -133,7 +128,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 
 	@Override
 	public void receiveEvent(BlockPos from,ControlEvent e) {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (e.name.equals("pwr_computer_set_master") && core != null) {
 			core.masterControl = MathHelper.clamp(e.vars.get("level").getNumber()/100,0,1);
 			core.manipulateRod(null);
@@ -205,7 +200,7 @@ public class PWRComputerTE extends PWRAssignableEntity implements SimpleComponen
 	@Override
 	public Map<String,DataValue> getQueryData() {
 		Map<String,DataValue> map = new HashMap<>();
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		map.put("master_level",new DataValueFloat(0));
 		map.put("temp_lowest",new DataValueFloat(20));
 		map.put("temp_highest",new DataValueFloat(20));

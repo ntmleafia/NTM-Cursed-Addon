@@ -26,7 +26,7 @@ public interface PWRComponentEntity {
     }
     void setCoreLink(@Nullable BlockPos pos);
     @Nullable
-    PWRData getLinkedCore();
+    PWRData getCoreByCorePos();
     void assignCore(@Nullable PWRData data);
     PWRData getCore();
     default void onDiagnosis() {};

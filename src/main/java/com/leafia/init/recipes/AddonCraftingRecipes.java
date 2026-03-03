@@ -113,6 +113,12 @@ public class AddonCraftingRecipes {
 
 		add1To9Pair(ModItems.ingot_schraranium,AddonItems.nugget_schraranium);
 
+		addShapelessAuto(new ItemStack(AddonBlocks.diverter_unlit),new ItemStack(ModItems.protection_charm),new ItemStack(Blocks.TORCH));
+
+		addShapelessAuto(new ItemStack(PWR.occs_in),new ItemStack(PWR.port));
+		addShapelessAuto(new ItemStack(PWR.occs_out),new ItemStack(PWR.occs_in));
+		addShapelessAuto(new ItemStack(PWR.port),new ItemStack(PWR.occs_out));
+
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
 	static void removeRecipesForItem(ForgeRegistry<IRecipe> reg,Item item) {

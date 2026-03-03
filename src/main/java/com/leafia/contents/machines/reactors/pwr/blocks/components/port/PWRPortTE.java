@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardReceiverMK2, IFluidStandardSenderMK2, ITickable {
 	@Override
 	public @NotNull FluidTankNTM[] getReceivingTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new FluidTankNTM[]{
 					core.tanks[0],
@@ -26,7 +26,7 @@ public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardRece
 
 	@Override
 	public @NotNull FluidTankNTM[] getSendingTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new FluidTankNTM[]{
 					core.tanks[1],
@@ -38,7 +38,7 @@ public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardRece
 
 	@Override
 	public FluidTankNTM[] getAllTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null)
 			return core.tanks;
 		return new FluidTankNTM[0];
@@ -59,7 +59,7 @@ public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardRece
 	public void update() {
 		super.update();
 		if (!world.isRemote) {
-			PWRData core = getLinkedCore();
+			PWRData core = getCoreByCorePos();
 			if (core != null) {
 				for (EnumFacing facing : EnumFacing.values()) {
 					trySubscribe(core.tankTypes[0],world,pos.offset(facing),ForgeDirection.getOrientation(facing));
@@ -74,11 +74,6 @@ public class PWRPortTE extends PWRAssignableEntity implements IFluidStandardRece
 	@Override
 	public String getPacketIdentifier() {
 		return "PWR_PORT";
-	}
-
-	@Override
-	public void onPlayerValidate(EntityPlayer plr) {
-
 	}
 
 	/*

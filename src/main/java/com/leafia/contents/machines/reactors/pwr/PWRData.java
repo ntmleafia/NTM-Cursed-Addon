@@ -54,6 +54,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,8 +85,8 @@ import java.util.Map.Entry;
 
 public class PWRData implements ITickable, LeafiaPacketReceiver {
 	public BlockPos corePos;
-	public FluidTankNTM[] tanks;
-	public FluidType[] tankTypes;
+	public final FluidTankNTM[] tanks;
+	public final FluidType[] tankTypes;
 	public int coolantId = Fluids.COOLANT.getID();
 	public int compression = 0;
 	//public double heat = 20;
@@ -136,6 +137,9 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				remoteContainer = new ItemStackHandler(slots);
 				remoteSize = slots;
 			}
+			tanks[5] = resizeTank(tanks[5],fuels.size()*150*5);
+			tanks[6] = resizeTank(tanks[6],fuels.size()*150*5);
+			tanks[7] = resizeTank(tanks[7],fuels.size()*150*5);
 			for (FluidTankNTM tank : tanks) {
 				if (tank.getFill() > tank.getMaxFill())// whoops
 					tank.setFill(tank.getMaxFill());
@@ -256,8 +260,14 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				new FluidTankNTM(Fluids.COOLANT_HOT,128_000),
 				new FluidTankNTM(AddonFluids.COOLANT_MAL,16_000),
 
+				// Integrated Boilers
 				new FluidTankNTM(Fluids.WATER,512_000),
-				new FluidTankNTM(Fluids.STEAM,256_000)
+				new FluidTankNTM(Fluids.STEAM,256_000),
+
+				// OCCS
+				new FluidTankNTM(Fluids.WATER,0),
+				new FluidTankNTM(Fluids.WATER,0),
+				new FluidTankNTM(Fluids.SPENTSTEAM,0)
 		};
 		tankTypes = new FluidType[]{
 				Fluids.COOLANT,
@@ -353,16 +363,10 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		}
 		//if (nbt.hasKey("heat"))
 		//	heat = nbt.getDouble("heat");
-		if (nbt.hasKey("tank0"))
-			tanks[0].readFromNBT(nbt,"tank0");
-		if (nbt.hasKey("tank1"))
-			tanks[1].readFromNBT(nbt,"tank1");
-		if (nbt.hasKey("tank2"))
-			tanks[2].readFromNBT(nbt,"tank2");
-		if (nbt.hasKey("tank3"))
-			tanks[3].readFromNBT(nbt,"tank3");
-		if (nbt.hasKey("tank4"))
-			tanks[4].readFromNBT(nbt,"tank4");
+		for (int i = 0; i <= 7; i++) {
+			if (nbt.hasKey("tank"+i))
+				tanks[i].readFromNBT(nbt,"tank"+i);
+		}
 		if (nbt.hasKey("remoteContainerSize"))
 			remoteSize = nbt.getInteger("remoteContainerSize");
 		if (nbt.hasKey("resourceContainer"))
@@ -389,11 +393,8 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 		if (Fluids.COOLANT.getID() != coolantId)
 			nbt.setInteger("coolantId",coolantId);
 		nbt.setInteger("compression", compression);
-		tanks[0].writeToNBT(nbt,"tank0");
-		tanks[1].writeToNBT(nbt,"tank1");
-		tanks[2].writeToNBT(nbt,"tank2");
-		tanks[3].writeToNBT(nbt,"tank3");
-		tanks[4].writeToNBT(nbt,"tank4");
+		for (int i = 0; i <= 7; i++)
+			tanks[i].writeToNBT(nbt,"tank"+i);
 		nbt.setInteger("remoteContainerSize", remoteSize);
 		nbt.setTag("resourceContainer", resourceContainer.serializeNBT());
 		NBTTagList nbtjection = new NBTTagList();
@@ -492,6 +493,31 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			//}
 			tanks[3].loadTank(1,2,resourceContainer);
 
+			for (BlockPos fuelPos : fuels) {
+				if (tanks[5].getFill() >= 150 && tanks[6].getFill() <= tanks[6].getMaxFill()-150 && tanks[7].getFill() <= tanks[7].getMaxFill()-150) {
+					TileEntity te = getWorld().getTileEntity(fuelPos);
+					if (te instanceof PWRElementTE element) {
+						tanks[5].setFill(tanks[5].getFill()-150);
+						ItemStack stack = element.inventory.getStackInSlot(0);
+						boolean cooled = false;
+						if (stack.getItem() instanceof LeafiaRodItem) {
+							NBTTagCompound nbt = stack.getTagCompound();
+							if (nbt != null && nbt.hasKey("heat")) {
+								double heat = nbt.getDouble("heat");
+								double heatOg = heat;
+								heat = (heat-20)*0.995+20;
+								nbt.setDouble("heat",heat);
+								cooled = heatOg-heat > 0.05;
+							}
+						}
+						if (cooled)
+							tanks[7].setFill(tanks[7].getFill()+150);
+						else
+							tanks[6].setFill(tanks[6].getFill()+150);
+					}
+				}
+			}
+
 			if (coriums > 0)
 				spendCoolant(Math.pow(coriums * 2727, 0.414), null);
 			if (tanks[2].getFill() > 0) {
@@ -530,11 +556,17 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 					tanks[2].getMaxFill(),
 					tanks[3].getMaxFill(),
 					tanks[4].getMaxFill(),
+					tanks[5].getMaxFill(),
+					tanks[6].getMaxFill(),
+					tanks[7].getMaxFill(),
 					tanks[0].getFill(),
 					tanks[1].getFill(),
 					tanks[2].getFill(),
 					tanks[3].getFill(),
-					tanks[4].getFill()
+					tanks[4].getFill(),
+					tanks[5].getFill(),
+					tanks[6].getFill(),
+					tanks[7].getFill()
 			}).__sendToAffectedClients();
 		}
 	}
@@ -1126,8 +1158,8 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				Minecraft.getMinecraft().player.sendMessage(new TextWarningLeafia("Malformed PWR tank packet! (Given value wasn't Array)"));
 				return;
 			}
-			if (Array.getLength(value) != 11) {
-				Minecraft.getMinecraft().player.sendMessage(new TextWarningLeafia("Malformed PWR tank packet! (Array length must be 5, got " + Array.getLength(value) + ")"));
+			if (Array.getLength(value) != 17) {
+				Minecraft.getMinecraft().player.sendMessage(new TextWarningLeafia("Malformed PWR tank packet! (Array length must be 8, got " + Array.getLength(value) + ")"));
 				return;
 			}
 			int readIndex = 0;
@@ -1135,9 +1167,9 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 			compression = (int) Array.get(value, readIndex++);
 			if (prevCompression != compression)
 				onUpdateCompression();
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i <= 7; i++)
 				tanks[i] = resizeTank(tanks[i],(int) Array.get(value, readIndex++));
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i <= 7; i++)
 				tanks[i].setFill((int) Array.get(value, readIndex++));
 			// if we somehow got non-int values in the array, well... #ripbozo
 		} else if (key == 29) { // Rod sync packets

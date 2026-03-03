@@ -74,7 +74,7 @@ public class PWRTerminalBlock extends BlockMachineBase implements ITooltipProvid
 	public boolean onBlockActivated(World world,BlockPos pos,IBlockState state,EntityPlayer player,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
 		PWRComponentEntity entity = getPWR(world,pos);
 		if (entity instanceof PWRTerminalTE terminal) {
-			if (terminal.getLinkedCore() != null) {
+			if (terminal.getCoreByCorePos() != null) {
 				if (!world.isRemote)
 					AdvancementManager.grantAchievement(player,AddonAdvancements.openpwr);
 				return super.onBlockActivated(world,pos,state,player,hand,facing,hitX,hitY,hitZ);

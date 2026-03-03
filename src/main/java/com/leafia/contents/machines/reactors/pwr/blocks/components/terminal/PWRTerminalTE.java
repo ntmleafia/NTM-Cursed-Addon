@@ -31,12 +31,12 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 
 
 	public PWRData getLinkedCoreDiagnosis() {
-		PWRData data = getLinkedCore();
+		PWRData data = getCoreByCorePos();
 		if (data == null) {
 			Block block = world.getBlockState(pos).getBlock();
 			if (block instanceof PWRComponentBlock pwr) {
 				pwr.beginDiagnosis(world,pos,pos);
-				data = getLinkedCore();
+				data = getCoreByCorePos();
 			}
 		}
 		return data;
@@ -120,7 +120,13 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 	}
 	@Override
 	public void onPlayerValidate(EntityPlayer plr) {
-		LeafiaPacket._start(this).__write(0,/*(corePos == null) ? false : */corePos).__sendToClient(plr);
+		addDataToPacket(LeafiaPacket._start(this).__write(0,/*(corePos == null) ? false : */corePos)).__sendToClient(plr);
+	}
+
+	/// for some reason this one stays broken
+	@Override
+	public boolean canAssignCore() {
+		return false;
 	}
 
 	@Override
@@ -143,7 +149,7 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 
 	@Override
 	public @NotNull FluidTankNTM[] getReceivingTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new FluidTankNTM[]{
 					core.tanks[0],
@@ -155,7 +161,7 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 
 	@Override
 	public @NotNull FluidTankNTM[] getSendingTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null) {
 			return new FluidTankNTM[]{
 					core.tanks[1],
@@ -167,7 +173,7 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 
 	@Override
 	public FluidTankNTM[] getAllTanks() {
-		PWRData core = getLinkedCore();
+		PWRData core = getCoreByCorePos();
 		if (core != null)
 			return core.tanks;
 		return new FluidTankNTM[0];
@@ -187,7 +193,7 @@ public class PWRTerminalTE extends PWRAssignableEntity implements LeafiaPacketRe
 	@Override
 	public void update() {
 		if (!world.isRemote) {
-			PWRData core = getLinkedCore();
+			PWRData core = getCoreByCorePos();
 			if (core != null) {
 				for (EnumFacing facing : EnumFacing.values()) {
 					trySubscribe(core.tankTypes[0],world,pos.offset(facing),ForgeDirection.getOrientation(facing));

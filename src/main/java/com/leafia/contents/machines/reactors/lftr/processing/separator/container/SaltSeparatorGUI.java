@@ -54,8 +54,11 @@ public class SaltSeparatorGUI extends LCEGuiInfoContainer {
 			LeafiaClientUtil.renderTankInfo(separator.outputTanks[i], this, mouseX, mouseY, guiLeft + 80 + i * 18, guiTop + 18, 16, 34);
 
 		LeafiaClientUtil.renderTankInfo(this,mouseX,mouseY,guiLeft+8,guiTop+18,16,70,separator.saltTank,separator.saltType.getFF());
-		LeafiaClientUtil.renderTankInfo(this,mouseX,mouseY,guiLeft+8,guiTop+99,52,16,separator.bufferIn,separator.saltType.getFF());
-		LeafiaClientUtil.renderTankInfo(this,mouseX,mouseY,guiLeft+80,guiTop+99,52,16,separator.bufferOut,separator.saltType.getFF());
+		LeafiaClientUtil.renderTankInfo(this,mouseX,mouseY,guiLeft+8,guiTop+99,52,7,separator.bufferIn,separator.saltType.getFF());
+		LeafiaClientUtil.renderTankInfo(this,mouseX,mouseY,guiLeft+80,guiTop+99,52,7,separator.bufferOut,separator.saltType.getFF());
+
+		LeafiaClientUtil.renderTankInfo(separator.concIn,this,mouseX,mouseY,guiLeft+8,guiTop+108,52,7);
+		LeafiaClientUtil.renderTankInfo(separator.concOut,this,mouseX,mouseY,guiLeft+80,guiTop+108,52,7);
 
 		this.drawElectricityInfo(this, mouseX, mouseY, guiLeft + 152, guiTop + 18, 16, 61, separator.power, separator.maxPower);
 
@@ -156,12 +159,14 @@ public class SaltSeparatorGUI extends LCEGuiInfoContainer {
 		LeafiaGls.pushMatrix(); {
 			LeafiaGls.translate(guiLeft+8,guiTop+99,0);
 			LeafiaGls.rotate(90,0,0,1);
-			LeafiaClientUtil.drawLiquid(separator.bufferIn,0,0,zLevel,16,52,0,28);
+			LeafiaClientUtil.drawLiquid(separator.bufferIn,0,0,zLevel,7,52,0,28);
 		} LeafiaGls.popMatrix();
 		LeafiaGls.pushMatrix(); {
 			LeafiaGls.translate(guiLeft+80,guiTop+99,0);
 			LeafiaGls.rotate(90,0,0,1);
-			LeafiaClientUtil.drawLiquid(separator.bufferOut,0,0,zLevel,16,52,0,28);
+			LeafiaClientUtil.drawLiquid(separator.bufferOut,0,0,zLevel,7,52,0,28);
 		} LeafiaGls.popMatrix();
+		separator.concIn.renderTank(guiLeft+8,guiTop+108+7,zLevel,52,7,1);
+		separator.concOut.renderTank(guiLeft+80,guiTop+108+7,zLevel,52,7,1);
 	}
 }

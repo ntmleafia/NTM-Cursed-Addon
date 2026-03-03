@@ -30,9 +30,12 @@ import com.leafia.contents.machines.reactors.pwr.blocks.components.computer.PWRC
 import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlTE;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.element.PWRElementTE;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.element.PWRProxyTE;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.occs.inlet.PWROCCSInTE;
+import com.leafia.contents.machines.reactors.pwr.blocks.components.occs.outlet.PWROCCSOutTE;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.port.PWRPortTE;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.terminal.PWRTerminalTE;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreckEntity;
+import com.leafia.contents.miscellanous.diverter.DiverterTE;
 import com.leafia.contents.network.computers.audiocable.AudioCableTE;
 import com.leafia.contents.network.computers.cable.ComputerCableTE;
 import com.leafia.contents.network.ff_duct.FFDuctTE;
@@ -80,6 +83,8 @@ public class TEInit {
 		register(PWRTerminalTE.class,"lwr_terminal_te");
 		register(PWRComputerTE.class,"lwr_computer_te");
 		register(PWRMeshedWreckEntity.class,"lwr_wreck_te");
+		register(PWROCCSInTE.class,"lwr_occs_in_te");
+		register(PWROCCSOutTE.class,"lwr_occs_out_te");
 		register(AmatDuctTE.class,"pipe_amat_te");
 		register(AmatDuctChargerTE.class,"charger_amat_te");
 		register(LightTE.class,"fluorescent_light_te");
@@ -98,6 +103,7 @@ public class TEInit {
 		register(EvShaftTE.class,"ev_shaft_te");
 		register(EvBufferTE.class,"ev_buffer_te");
 		register(HeaterRTGTE.class,"heater_rt_te");
+		register(DiverterTE.class,"diverter_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

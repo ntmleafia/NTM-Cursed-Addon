@@ -297,6 +297,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 	public String HeatFunction(@Nullable ItemStack stack, boolean updateHeat, double x, double cool, double desiredTemp, double coolingRate, double minimumRequired) {
 		return HeatFunction(stack,updateHeat,x,cool,desiredTemp,coolingRate,minimumRequired,1);
 	}
+	public boolean lastDisableDecay = false;
 	/**
 	 * Does nuclear fissions
 	 * @param stack The fuel rod stack to cause fission reaction
@@ -363,10 +364,10 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				break;
 
 			// THORIUM
-			case "th232":
+			/*case "th232":
 				y = Math.pow(x*4,0.35)*3;
 				n = "("+flux+"×4)^0.35×3 "+TextFormatting.DARK_AQUA+"(LIKE, REALLY POOR)";
-				break;
+				break;*/
 			case "thmeu":
 				y = Math.pow(x*65,0.35)*3;
 				n = "("+flux+"×64)^0.35×3 "+TextFormatting.DARK_AQUA+"(POOR)";
@@ -565,6 +566,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 			} if (meltdown && newCooledTemp < meltingPoint)
 				data.setBoolean("melting", false);
 		}
+		lastDisableDecay = disableDecay; // ass coding
 		return n;
 	}
 	@Override
@@ -680,7 +682,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 			if (life != 0)
 				list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",life+"°C"));
 			String fnc = item.HeatFunction(stack,false,0,0,0,0);
-			if (!fnc.equals("0"))
+			if (!fnc.equals("0") && !lastDisableDecay)
 				list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",decay*20)+"°C/s"));
 			if (emission != 1)
 				list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.reac.out",formatHeatMultiplier(emission)));

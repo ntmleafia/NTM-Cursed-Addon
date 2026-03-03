@@ -11,6 +11,8 @@ import com.leafia.contents.machines.elevators.car.ElevatorEntity.*;
 import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityMeteor;
+import com.leafia.overwrite_contents.interfaces.IMixinEntityMeteor.MeteorSyncPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShockPacket;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.client.Minecraft;
@@ -46,6 +48,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		ELEVATOR_SPECIAL_SYNC(new EvSpecialFloorsSyncPacket()),
 		ELEVATOR_SYNC_REQUEST(new EvSyncRequestPacket()),
 		ELEVATOR_INVENTORY_SYNC(new EvInventorySyncPacket()),
+		METEOR_SYNC(new MeteorSyncPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }
