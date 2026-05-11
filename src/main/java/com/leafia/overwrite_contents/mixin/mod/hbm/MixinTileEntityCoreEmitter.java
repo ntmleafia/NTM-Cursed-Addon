@@ -37,10 +37,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
@@ -514,5 +511,14 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     @Callback
     public Object[] storedCoolnt(Context context, Arguments args) {
         return new Object[]{tank.getFill()};
+    }
+
+    /**
+     * @author ntmleafia
+     * @reason me when the lasers
+     */
+    @Overwrite
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 }

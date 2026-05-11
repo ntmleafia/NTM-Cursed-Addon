@@ -19,6 +19,7 @@ import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -354,5 +355,14 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 	@Callback(doc = "getChargePercent(); returns the charge in percent - double")
 	public Object[] getChargePercent(Context context, Arguments args) {
 		return new Object[]{100D * getPower() / (double) getMaxPower()};
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason me when the lasers
+	 */
+	@Overwrite(remap = false)
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 }

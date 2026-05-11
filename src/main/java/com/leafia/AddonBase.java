@@ -16,6 +16,7 @@ import com.leafia.contents.worldgen.AddonWorldGen;
 import com.leafia.contents.worldgen.NTMStructBuffer.StructLoader;
 import com.leafia.database.AirDetonationMissiles;
 import com.leafia.database.ReactorTiers;
+import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.*;
 import com.leafia.init.proxy.LeafiaServerProxy;
@@ -38,6 +39,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -213,5 +215,11 @@ public class AddonBase {
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandLeaf());
 		AddonAdvancements.init(event.getServer());
+	}
+
+	@EventHandler
+	public void fMLServerStoppedEvent(FMLServerStoppedEvent evt) {
+		if (evt.getSide() == Side.CLIENT)
+			LeafiaClientListener.HandlerClient.iQuit(evt);
 	}
 }

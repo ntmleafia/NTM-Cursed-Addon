@@ -43,6 +43,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -536,5 +537,14 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 	@Callback(doc = "getLevel()->(level: number [0-100])")
 	public Object[] getLevel(Context context, Arguments args) {
 		return new Object[]{leafia$level};
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason me when the lasers
+	 */
+	@Overwrite(remap = false)
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 }

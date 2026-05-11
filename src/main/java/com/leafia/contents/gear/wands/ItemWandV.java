@@ -14,6 +14,7 @@ import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.items.itembase.AddonItemBaked;
 import com.leafia.dev.optimization.LeafiaParticlePacket.JumpingRBMKParticle;
+import com.leafia.unsorted.StructuralIntegrityHandler;
 import com.llib.group.LeafiaMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
@@ -57,6 +58,7 @@ public class ItemWandV extends AddonItemBaked {
 		PWR_PRINT_CORE,
 		PRINT_ROAD_NOISE,
 		JUMPING_RBMK_TEST,
+		STRUCTURAL_INTEGRITY_TEST,
 	}
 
 	@Override
@@ -65,6 +67,11 @@ public class ItemWandV extends AddonItemBaked {
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.getItem() instanceof ItemWandV wandV) {
 			switch(getMode(stack)) {
+				case STRUCTURAL_INTEGRITY_TEST -> {
+					if (!world.isRemote) {
+						StructuralIntegrityHandler.handleBlock(world,pos);
+					}
+				}
 				case JUMPING_RBMK_TEST -> {
 					if (!world.isRemote) {
 						if (world.getBlockState(pos).getBlock() instanceof RBMKBase rbmk) {

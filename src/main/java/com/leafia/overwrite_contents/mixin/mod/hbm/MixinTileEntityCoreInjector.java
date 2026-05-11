@@ -20,6 +20,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -142,5 +143,14 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 	@SideOnly(Side.CLIENT)
 	public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
 		return new CoreInjectorGUI(entityPlayer.inventory,(TileEntityCoreInjector)(IMixinTileEntityInjector)this);
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason me when the lasers
+	 */
+	@Overwrite(remap = false)
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 }
