@@ -10,6 +10,7 @@ import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.passive.effects.LeafiaShakecam;
+import com.leafia.unsorted.StructuralIntegrityHandler;
 import com.llib.exceptions.messages.TextWarningLeafia;
 import com.llib.group.LeafiaSet;
 import com.llib.technical.LeafiaEase;
@@ -43,6 +44,7 @@ public class CommandLeaf extends CommandBase {
 		protected static final List<DebugTargetClass> list = new ArrayList<>();
 
 		//public static final DebugTargetClass targetTurbine = new DebugTargetClass(MTCoreTE.class);
+		public static final DebugTargetClass targetSI = new DebugTargetClass(StructuralIntegrityHandler.class);
 
 		final Class<?> target;
 		public DebugTargetClass(Class<?> target) {

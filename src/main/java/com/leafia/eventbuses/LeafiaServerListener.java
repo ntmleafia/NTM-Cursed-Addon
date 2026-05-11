@@ -206,7 +206,10 @@ public class LeafiaServerListener {
 					if (entry.getValue().contains(evt.getPos()))
 						entry.getKey().updateObstacleMappings();
 				}
-				//StructuralIntegrityHandler.handleBlock(evt.getWorld(),evt.getPos());
+				LeafiaPassiveServer.queueFunction(()->{
+					if (StructuralIntegrityHandler.AUTOMATIC)
+						StructuralIntegrityHandler.handleBlock(evt.getWorld(),evt.getPos());
+				});
 				/*for (Entry<PWRVentInletTE,LeafiaSet<BlockPos>> entry : PWRVentInletTE.listeners.entrySet()) {
 					if (entry.getKey().isInvalid()) {
 						PWRVentInletTE.listeners.remove(entry.getKey());

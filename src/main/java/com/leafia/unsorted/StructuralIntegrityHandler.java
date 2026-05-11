@@ -16,6 +16,7 @@ import java.util.*;
 
 // Fun
 public class StructuralIntegrityHandler {
+	public static boolean AUTOMATIC = false;
 	public static void collapse(World world,BlockPos pos) {
 		if (world.getBlockState(pos).getBlock() instanceof BlockAir) return;
 		LeafiaDebug.debugPos(world,pos,3,0xFFAA00,"COLLAPSED");
@@ -58,9 +59,10 @@ public class StructuralIntegrityHandler {
 		public boolean bottomReached = false;
 		public MutableBlockPos pos = new MutableBlockPos();
 		Set<Long> ignore = new HashSet<>();
-		Set<Long> pillars = new HashSet<>();
-		Map<Long,Integer> glueMap = new HashMap<>();
-		List<BlockPos> collapseCandidates = new ArrayList<>();
+		Set<Long> supporteds = new HashSet<>();
+		List<Pair<BlockPos,CalStack>> collapseCandidates = new ArrayList<>();
+		BlockPos startPos = null;
+		boolean noVerify = false;
 		public CalStack(int mass) {
 			this.mass = mass;
 		}
@@ -70,10 +72,12 @@ public class StructuralIntegrityHandler {
 			stack.pos.setPos(pos);
 			stack.bottomReached = bottomReached;
 			stack.ignore = ignore; // point the same instance
+			stack.supporteds = supporteds; // point the same instance
 			stack.glue = glue;
 			stack.count = count+1;
-			stack.glueMap = glueMap;
 			stack.collapseCandidates = collapseCandidates;
+			stack.startPos = startPos;
+			stack.noVerify = noVerify;
 			return stack;
 		}
 	}
@@ -96,7 +100,7 @@ public class StructuralIntegrityHandler {
 				if (!needsSupport(world.getBlockState(mutable))) break;
 				newIgnore.add(mutable.toLong());
 				maxRelativeY++;
-				stack.mass += getMass(world.getBlockState(mutable));
+				//stack.mass += getMass(world.getBlockState(mutable));
 			}
 			mutable.setY(pos.getY());
 			while (true) {
@@ -104,21 +108,21 @@ public class StructuralIntegrityHandler {
 				if (!world.isValid(mutable)) {
 					stack.bottomReached = true;
 					stack.ignore.addAll(newIgnore);
-					stack.pillars.addAll(newIgnore);
+					stack.supporteds.addAll(newIgnore);
 					return;
 				}
 				if (stack.ignore.contains(mutable.toLong())) break;
 				if (!needsSupport(world.getBlockState(mutable))) break;
 				newIgnore.add(mutable.toLong());
 				minRelativeY--;
-				stack.mass += getMass(world.getBlockState(mutable));
+				//stack.mass += getMass(world.getBlockState(mutable));
 			}
 			mutable.setY(pos.getY());
 			stack.ignore.addAll(newIgnore);
 		}
 		if (stack.count > 50) return;
 		{
-			boolean isSupported = false;
+			Set<Long> accountedBlocks = new HashSet<>();
 			for (int yo = minRelativeY; yo <= maxRelativeY; yo++) {
 				for (EnumFacing face : EnumFacing.HORIZONTALS) {
 					mutable.setPos(pos.getX()+face.getXOffset(),pos.getY()+yo,pos.getZ()+face.getZOffset());
@@ -126,47 +130,39 @@ public class StructuralIntegrityHandler {
 						int glueAdd = getGlue(world.getBlockState(mutable));
 						if (!stack.ignore.contains(mutable.toLong())) {
 							CalStack next = stack.copy();
+							next.glue = 0;
 							calculate(next,world,mutable);
-							isSupported = true;
-							/*if (next.finished) {
-								stack.finished = true;
-								return;
-							}*/
-							if (next.bottomReached) {
+							accountedBlocks.add(mutable.toLong());
+							/*if (next.bottomReached) {
 								stack.glue += glueAdd;
-								if (stack.mass <= stack.glue) {
-									stack.finished = true;
-									//return;
-									break;
-								}
-							}
-						} else if (stack.pillars.contains(mutable.toLong())) {
+								stack.supporteds.addAll(newIgnore);
+							}*/ // fuck that
+						}
+						if (stack.supporteds.contains(mutable.toLong())) {
 							stack.glue += glueAdd;
-							isSupported = true;
-							if (stack.mass <= stack.glue) {
-								stack.finished = true;
-								//return;
-								break;
-							}
-						} else if (stack.glueMap.containsKey(mutable.toLong())) {
-							stack.glue = Math.max(stack.glue,stack.glueMap.get(mutable.toLong()));
-							isSupported = true;
-							if (stack.mass <= stack.glue) {
-								stack.finished = true;
-								//return;
-								break;
-							}
+							stack.supporteds.addAll(newIgnore);
+							accountedBlocks.add(mutable.toLong());
 						}
 					}
 				}
-				for (Long l : newIgnore) {
-					stack.glueMap.put(l,Math.max(stack.glueMap.getOrDefault(l,0),stack.glue));
+			}
+			if (stack.mass > stack.glue) {
+				BlockPos collapsePos = pos.down(-minRelativeY);
+				if (collapsePos.equals(stack.startPos)) {
+					collapse(world,collapsePos);
+				} else if (!stack.noVerify) {
+					CalStack next = new CalStack(0);
+					next.startPos = collapsePos;
+					next.noVerify = true;
+					next.ignore.addAll(accountedBlocks);
+					calculate(next,world,pos);
+					return;
 				}
 			}
-			if (!isSupported) {
+			/*if (!isSupported) {
 				stack.collapseCandidates.add(pos.down(-minRelativeY));
 				return;
-			}
+			}*/
 		}
 	}
 	static boolean collapsed = false;
@@ -177,13 +173,13 @@ public class StructuralIntegrityHandler {
 		collapsed = false;
 		CalStack stacc = new CalStack(0);
 		calculate(stacc,world,pos);
-		if (!stacc.finished) {
+		/*if (!stacc.finished) {
 			for (BlockPos p : stacc.collapseCandidates)
 				collapse(world,p);
 			//stack.finished = true;
 			collapsed = true;
-		}
+		}*/
 		if (!collapsed)
-			LeafiaDebug.debugPos(world,pos,3,0x88FF00,"SUPPORTED");
+			LeafiaDebug.debugPos(world,pos,3,0x88FF00,"SUPPORTED "+stacc.mass+"/"+stacc.glue);
 	}
 }
