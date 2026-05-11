@@ -302,8 +302,10 @@ public class CommandLeaf extends CommandBase {
 								arg = Float.parseFloat(args[0]);
 							else if (field.getType() == Double.class || field.getType() == double.class)
 								arg = Double.parseDouble(args[0]);
+							else if (field.getType() == Boolean.class || field.getType() == boolean.class)
+								arg = Boolean.parseBoolean(args[0]);
 							field.set(null,arg);
-							notifyCommandListener(sender,this,cl.getSimpleName()+"."+field.getName()+" set to "+args[0],new Object[0]);
+							notifyCommandListener(sender,this,cl.getSimpleName()+"."+field.getName()+" set to "+arg,new Object[0]);
 						}
 					} catch (IllegalAccessException ignored) {
 						throw new WrongUsageException("Field "+field.getName()+" couldn't be accessed", new Object[0]);

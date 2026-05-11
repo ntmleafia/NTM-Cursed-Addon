@@ -38,6 +38,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -207,8 +208,11 @@ public class LeafiaServerListener {
 						entry.getKey().updateObstacleMappings();
 				}
 				LeafiaPassiveServer.queueFunction(()->{
-					if (StructuralIntegrityHandler.AUTOMATIC)
+					if (StructuralIntegrityHandler.AUTOMATIC) {
 						StructuralIntegrityHandler.handleBlock(evt.getWorld(),evt.getPos());
+						for (EnumFacing side : evt.getNotifiedSides())
+							StructuralIntegrityHandler.handleBlock(evt.getWorld(),evt.getPos().offset(side));
+					}
 				});
 				/*for (Entry<PWRVentInletTE,LeafiaSet<BlockPos>> entry : PWRVentInletTE.listeners.entrySet()) {
 					if (entry.getKey().isInvalid()) {

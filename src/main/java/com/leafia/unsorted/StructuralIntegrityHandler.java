@@ -55,20 +55,22 @@ public class StructuralIntegrityHandler {
 		public int mass;
 		public int glue = 0;
 		public int count = 0;
-		public boolean finished = false;
+		public boolean terminate = false;
 		public boolean bottomReached = false;
 		public MutableBlockPos pos = new MutableBlockPos();
 		Set<Long> ignore = new HashSet<>();
 		Set<Long> supporteds = new HashSet<>();
 		List<Pair<BlockPos,CalStack>> collapseCandidates = new ArrayList<>();
 		BlockPos startPos = null;
+		CalStack parent = null;
+		Set<Long> newIgnore = new HashSet<>();
 		boolean noVerify = false;
 		public CalStack(int mass) {
 			this.mass = mass;
 		}
 		public CalStack copy() {
 			CalStack stack = new CalStack(mass);
-			stack.finished = finished;
+			stack.terminate = terminate;
 			stack.pos.setPos(pos);
 			stack.bottomReached = bottomReached;
 			stack.ignore = ignore; // point the same instance
@@ -78,6 +80,7 @@ public class StructuralIntegrityHandler {
 			stack.collapseCandidates = collapseCandidates;
 			stack.startPos = startPos;
 			stack.noVerify = noVerify;
+			stack.parent = this;
 			return stack;
 		}
 	}
@@ -88,8 +91,8 @@ public class StructuralIntegrityHandler {
 		MutableBlockPos mutable = new MutableBlockPos(pos);
 		int maxRelativeY = 0;
 		int minRelativeY = 0;
-		Set<Long> newIgnore = new HashSet<>();
 		// fill vertical column & pillar check
+		Set<Long> newIgnore = stack.newIgnore;
 		{
 			stack.mass += getMass(world.getBlockState(pos));
 			newIgnore.add(pos.toLong());
@@ -108,7 +111,7 @@ public class StructuralIntegrityHandler {
 				if (!world.isValid(mutable)) {
 					stack.bottomReached = true;
 					stack.ignore.addAll(newIgnore);
-					stack.supporteds.addAll(newIgnore);
+					stack.glue = Integer.MAX_VALUE;
 					return;
 				}
 				if (stack.ignore.contains(mutable.toLong())) break;
@@ -122,42 +125,42 @@ public class StructuralIntegrityHandler {
 		}
 		if (stack.count > 50) return;
 		{
-			Set<Long> accountedBlocks = new HashSet<>();
+			int maxMass = stack.mass;
 			for (int yo = minRelativeY; yo <= maxRelativeY; yo++) {
 				for (EnumFacing face : EnumFacing.HORIZONTALS) {
 					mutable.setPos(pos.getX()+face.getXOffset(),pos.getY()+yo,pos.getZ()+face.getZOffset());
+					if (!isChunkLoaded(world,mutable)) {
+						//LeafiaDebug.debugLog(world,"Cancelled integrity calculation because the chunk is not loaded yet");
+						stack.terminate = true;
+						return;
+					}
 					if (needsSupport(world.getBlockState(mutable))) {
 						int glueAdd = getGlue(world.getBlockState(mutable));
 						if (!stack.ignore.contains(mutable.toLong())) {
 							CalStack next = stack.copy();
 							next.glue = 0;
 							calculate(next,world,mutable);
-							accountedBlocks.add(mutable.toLong());
-							/*if (next.bottomReached) {
-								stack.glue += glueAdd;
-								stack.supporteds.addAll(newIgnore);
-							}*/ // fuck that
+							if (next.terminate) {
+								stack.terminate = true;
+								return;
+							}
+							if (next.mass <= next.glue) {
+								stack.supporteds.addAll(next.newIgnore);
+								maxMass = Math.max(stack.mass,next.mass);
+							}
 						}
 						if (stack.supporteds.contains(mutable.toLong())) {
 							stack.glue += glueAdd;
 							stack.supporteds.addAll(newIgnore);
-							accountedBlocks.add(mutable.toLong());
 						}
 					}
 				}
 			}
 			if (stack.mass > stack.glue) {
-				BlockPos collapsePos = pos.down(-minRelativeY);
-				if (collapsePos.equals(stack.startPos)) {
-					collapse(world,collapsePos);
-				} else if (!stack.noVerify) {
-					CalStack next = new CalStack(0);
-					next.startPos = collapsePos;
-					next.noVerify = true;
-					next.ignore.addAll(accountedBlocks);
-					calculate(next,world,pos);
-					return;
-				}
+				if (stack.parent == null)
+					collapse(world,pos.down(-minRelativeY));
+				else
+					stack.parent.mass = stack.mass;
 			}
 			/*if (!isSupported) {
 				stack.collapseCandidates.add(pos.down(-minRelativeY));
@@ -165,9 +168,16 @@ public class StructuralIntegrityHandler {
 			}*/
 		}
 	}
+	static boolean isChunkLoaded(World world,BlockPos pos) {
+		return world.isChunkGeneratedAt(pos.getX()>>4,pos.getZ()>>4);
+	}
 	static boolean collapsed = false;
 	public static void handleBlock(World world,BlockPos pos) {
 		if (world.isRemote) return;
+		if (!isChunkLoaded(world,pos)) {
+			//LeafiaDebug.debugLog(world,"Skipped integrity calculation because the chunk is not loaded yet");
+			return;
+		}
 		IBlockState state = world.getBlockState(pos);
 		if (!needsSupport(state)) return;
 		collapsed = false;
