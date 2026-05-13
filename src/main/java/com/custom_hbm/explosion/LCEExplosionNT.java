@@ -52,6 +52,7 @@ public class LCEExplosionNT extends Explosion {
 	public double explosionZ;
 	public Entity exploder;
 	public int iterationLimit = -1;
+	public int affectedBlockCount;
 
 	public float maxExplosionResistance = -1;
 	/** A list of ChunkPositions of blocks affected by this explosion */
@@ -63,7 +64,7 @@ public class LCEExplosionNT extends Explosion {
 	
 	public static final List<LCEExAttrib> nukeAttribs = Arrays.asList(new LCEExAttrib[] {LCEExAttrib.FIRE, LCEExAttrib.NOPARTICLE, LCEExAttrib.NOSOUND, LCEExAttrib.NODROP, LCEExAttrib.NOHURT});
 
-	public LCEExplosionNT(World world,Entity exploder,double x,double y,double z,float strength,List<BlockPos> affected) {
+	public LCEExplosionNT(World world,Entity exploder,double x,double y,double z,float strength,List<BlockPos> affected, int count) {
 		super(world, exploder, x, y, z, strength, false, true);
 		this.worldObj = world;
 		this.explosionSize = strength;
@@ -72,9 +73,10 @@ public class LCEExplosionNT extends Explosion {
 		this.explosionZ = z;
 		this.exploder = exploder;
 		this.affectedBlockPositions = affected;
+		this.affectedBlockCount = count;
 	}
 	public LCEExplosionNT(World world,Entity exploder,double x,double y,double z,float strength) {
-		this(world,exploder,x,y,z,strength,Lists.<BlockPos> newArrayList());
+		this(world,exploder,x,y,z,strength,Lists.<BlockPos> newArrayList(), 0);
 	}
 
 	public LCEExplosionNT addAttrib(LCEExAttrib attrib) {
@@ -112,10 +114,7 @@ public class LCEExplosionNT extends Explosion {
 			buf.writeDouble(nt.explosionY);
 			buf.writeDouble(nt.explosionZ);
 			buf.writeFloat(nt.explosionSize);
-			List<BlockPos> poses = nt.affectedBlockPositions;
-			buf.writeInt(poses.size());
-			for (BlockPos p : poses)
-				buf.writeVec3i(p);
+			buf.writeInt(nt.affectedBlockPositions.size());
 			buf.writeInt(nt.attributes.size());
 			for (LCEExAttrib a : nt.attributes)
 				buf.writeByte(a.ordinal());
@@ -129,15 +128,12 @@ public class LCEExplosionNT extends Explosion {
 			double z = buf.readDouble();
 			float size = buf.readFloat();
 			int affecteds = buf.readInt();
-			List<BlockPos> affected = new ArrayList<>(affecteds);
-			for (int i = 0; i < affecteds; i++)
-				affected.add(buf.readPos());
 			int attribs = buf.readInt();
 			List<LCEExAttrib> attrib = new ArrayList<>(attribs);
 			for (int i = 0; i < attribs; i++)
 				attrib.add(LCEExAttrib.values()[buf.readByte()]);
 			return (ctx)->{
-				LCEExplosionNT nt = new LCEExplosionNT(world,null,x,y,z,size,affected);
+				LCEExplosionNT nt = new LCEExplosionNT(world,null,x,y,z,size,Lists.newArrayList(), affecteds);
 				nt.addAllAttrib(attrib);
 				nt.doNTExplosionB();
 			};
@@ -338,21 +334,16 @@ public class LCEExplosionNT extends Explosion {
 			}
 		}
 		if (!has(LCEExAttrib.DFC_FALL)) {
-			iterator = this.affectedBlockPositions.iterator();
-			while (iterator.hasNext()) {
-				chunkposition = iterator.next();
-				i = chunkposition.getX();
-				j = chunkposition.getY();
-				k = chunkposition.getZ();
-				block = this.worldObj.getBlockState(chunkposition);
-
-				if (!has(LCEExAttrib.NOPARTICLE)) {
-					double d0 = (double) ((float) i+this.worldObj.rand.nextFloat());
-					double d1 = (double) ((float) j+this.worldObj.rand.nextFloat());
-					double d2 = (double) ((float) k+this.worldObj.rand.nextFloat());
-					double d3 = d0-this.explosionX;
-					double d4 = d1-this.explosionY;
-					double d5 = d2-this.explosionZ;
+			if (!has(LCEExAttrib.NOPARTICLE)) {
+				for (int l = 0; l < Math.min(3000, this.affectedBlockCount); ++l) { //lag :/
+					Vec3d v = new Vec3d(this.worldObj.rand.nextFloat() - 0.5, this.worldObj.rand.nextFloat() - 0.5, this.worldObj.rand.nextFloat() - 0.5)
+							.normalize().scale(this.explosionSize * this.worldObj.rand.nextFloat());
+					double d0 = this.explosionX + v.x;
+					double d1 = this.explosionY + v.y;
+					double d2 = this.explosionZ + v.z;
+					double d3 = v.x;
+					double d4 = v.y;
+					double d5 = v.z;
 					double d6 = (double) MathHelper.sqrt(d3*d3+d4*d4+d5*d5);
 					d3 /= d6;
 					d4 /= d6;
@@ -362,9 +353,20 @@ public class LCEExplosionNT extends Explosion {
 					d3 *= d7;
 					d4 *= d7;
 					d5 *= d7;
-					this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL,(d0+this.explosionX*1.0D)/2.0D,(d1+this.explosionY*1.0D)/2.0D,(d2+this.explosionZ*1.0D)/2.0D,d3,d4,d5);
-					this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,d0,d1,d2,d3,d4,d5);
+					if (this.worldObj.isAirBlock(new BlockPos(d0, d1, d2))) {
+						this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL,(d0+this.explosionX*1.0D)/2.0D,(d1+this.explosionY*1.0D)/2.0D,(d2+this.explosionZ*1.0D)/2.0D,d3,d4,d5);
+						this.worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL,d0,d1,d2,d3,d4,d5);
+					}
 				}
+			}
+			iterator = this.affectedBlockPositions.iterator();
+			while (iterator.hasNext()) {
+				chunkposition = iterator.next();
+				i = chunkposition.getX();
+				j = chunkposition.getY();
+				k = chunkposition.getZ();
+				block = this.worldObj.getBlockState(chunkposition);
+
 				if (!worldObj.isRemote) {
 					if (block.getMaterial() != Material.AIR) {
 						if (block.getBlock().canDropFromExplosion(this) && !has(LCEExAttrib.NODROP)) {
