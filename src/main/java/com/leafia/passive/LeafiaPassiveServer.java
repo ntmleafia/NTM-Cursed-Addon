@@ -31,6 +31,8 @@ public class LeafiaPassiveServer {
 	}
 	public static final Set<Node> tickedNodes = new HashSet<>();
 	public static void priorTick() {
+		StructuralIntegrityHandler.blockedPoses.clear();
+		StructuralIntegrityHandler.calculations = 0;
 		tickedNodes.clear();
 		//if (ModItems.wand_leaf.darnit != null)
 		//	ModItems.wand_leaf.darnit.run();

@@ -1,5 +1,6 @@
 package com.leafia.unsorted;
 
+import com.hbm.blocks.BlockDummyable;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -12,13 +13,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
+import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Set;
 
 // Fun
 public class StructuralIntegrityHandler {
 	public static boolean AUTOMATIC = false;
 
 	private static final int MAX_DEPTH = 50;
+
+	public static int calculations = 0;
+	public static LongOpenHashSet blockedPoses = new LongOpenHashSet();
+
+	public static Set<Integer> blacklistedDimensions = new HashSet<>();
 
     public static void collapse(World world,BlockPos pos) {
 		if (world.getBlockState(pos).getBlock() instanceof BlockAir) return;
@@ -43,13 +51,17 @@ public class StructuralIntegrityHandler {
 		GLUE_MASS_MAP.put(Material.ANVIL,iron);
 		GLUE_MASS_MAP.put(Material.IRON,iron);
 		GLUE_MASS_MAP.put(Material.ROCK,new GM(30,5));
+		blacklistedDimensions.add(-1);
+		blacklistedDimensions.add(1);
 	}
 
 	public static int getGlue(IBlockState state) {
+		if (state.getBlock() instanceof BlockDummyable) return 0;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
 		return gm == null ? 10 : gm.glue;
 	}
 	public static int getMass(IBlockState state) {
+		if (state.getBlock() instanceof BlockDummyable) return 10;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
 		int mass = gm == null ? 1 : gm.mass;
 		if (!state.isFullCube()) mass /= 3;
@@ -205,12 +217,17 @@ public class StructuralIntegrityHandler {
 	static boolean collapsed = false;
 	public static void handleBlock(World world,BlockPos pos) {
 		if (world.isRemote) return;
+		if (blacklistedDimensions.contains(world.provider.getDimension())) return;
+		if (calculations > 200) return;
 		if (!isChunkLoaded(world,pos)) {
 			//LeafiaDebug.debugLog(world,"Skipped integrity calculation because the chunk is not loaded yet");
 			return;
 		}
 		IBlockState state = world.getBlockState(pos);
 		if (!needsSupport(state)) return;
+		if (blockedPoses.contains(pos.toLong())) return;
+		blockedPoses.add(pos.toLong());
+		calculations++;
 		collapsed = false;
 		ROOT_IGNORE.clear();
 		ROOT_SUPPORTEDS.clear();
