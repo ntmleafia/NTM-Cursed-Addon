@@ -4,6 +4,7 @@ import com.hbm.config.GeneralConfig;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.settings._ConfigBuilder.LeafiaConfigError;
+import com.leafia.unsorted.StructuralIntegrityHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,9 @@ public class AddonConfig {
 
 			builder._comment("Every biome acts like the digamma crater biome");
 			schizoMode = builder._boolean("enableSchizoMode",false);
+
+			builder._comment("Whether floating blocks and weirdly built buildings should collapse or not (WARNING: VERY LAGGY & CHALLENGING!)");
+			StructuralIntegrityHandler.AUTOMATIC = builder._boolean("enableStructuralIntegrity",false);
 
 			builder._comment("IC10 nodes will throw StackOverflow when stack count exceeds this number");
 			ic10maxstack = builder._integer("ic10maxstack",512);

@@ -53,6 +53,8 @@ import com.leafia.settings.AddonConfig;
 import com.leafia.shit.leafiashader.BigBruh;
 import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
+import com.leafia.unsorted.StructuralIntegrityHandler;
+import com.leafia.unsorted.StructuralIntegrityHandler.SimulationData;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -470,6 +472,74 @@ public class LeafiaClientListener {
 				registerBlockModel(block, 0);
 			}
 		}
+		void renderBox(double ratio,float alpha) {
+			LeafiaBrush brush = LeafiaBrush.instance;
+			brush.startDrawing(BrushMode.LINES,DefaultVertexFormats.POSITION_COLOR);
+			{
+				// bottom line
+				float gb = ratio <= 0 ? 0 : 1;
+				brush.addVertexWithColor(-0.5,-0.5,-0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(0.5,-0.5,-0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(0.5,-0.5,-0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(0.5,-0.5,0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(0.5,-0.5,0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(-0.5,-0.5,0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(-0.5,-0.5,0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(-0.5,-0.5,-0.5,1,gb,gb,alpha);
+			}
+			{
+				// side lines
+				for (int xo = -1; xo <= 1; xo+=2) {
+					for (int zo = -1; zo <= 1; zo+=2) {
+						if (ratio > 0) {
+							brush.addVertexWithColor(-xo/2d,-0.5,-zo/2d,1,1,1,alpha);
+							brush.addVertexWithColor(-xo/2d,-0.5+ratio,-zo/2d,1,1,1,alpha);
+
+							brush.addVertexWithColor(xo/2d,-0.5,-zo/2d,1,1,1,alpha);
+							brush.addVertexWithColor(xo/2d,-0.5+ratio,-zo/2d,1,1,1,alpha);
+
+							brush.addVertexWithColor(-xo/2d,-0.5,zo/2d,1,1,1,alpha);
+							brush.addVertexWithColor(-xo/2d,-0.5+ratio,zo/2d,1,1,1,alpha);
+
+							brush.addVertexWithColor(xo/2d,-0.5,zo/2d,1,1,1,alpha);
+							brush.addVertexWithColor(xo/2d,-0.5+ratio,zo/2d,1,1,1,alpha);
+						}
+						if (ratio < 1) {
+							brush.addVertexWithColor(-xo/2d,-0.5+ratio,-zo/2d,1,0,0,alpha);
+							brush.addVertexWithColor(-xo/2d,0.5,-zo/2d,1,0,0,alpha);
+
+							brush.addVertexWithColor(xo/2d,-0.5+ratio,-zo/2d,1,0,0,alpha);
+							brush.addVertexWithColor(xo/2d,0.5,-zo/2d,1,0,0,alpha);
+
+							brush.addVertexWithColor(-xo/2d,-0.5+ratio,zo/2d,1,0,0,alpha);
+							brush.addVertexWithColor(-xo/2d,0.5,zo/2d,1,0,0,alpha);
+
+							brush.addVertexWithColor(xo/2d,-0.5+ratio,zo/2d,1,0,0,alpha);
+							brush.addVertexWithColor(xo/2d,0.5,zo/2d,1,0,0,alpha);
+						}
+					}
+				}
+			}
+			{
+				// top line
+				float gb = ratio >= 1 ? 1 : 0;
+				brush.addVertexWithColor(-0.5,0.5,-0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(0.5,0.5,-0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(0.5,0.5,-0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(0.5,0.5,0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(0.5,0.5,0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(-0.5,0.5,0.5,1,gb,gb,alpha);
+
+				brush.addVertexWithColor(-0.5,0.5,0.5,1,gb,gb,alpha);
+				brush.addVertexWithColor(-0.5,0.5,-0.5,1,gb,gb,alpha);
+			}
+			brush.draw();
+		}
 		@SubscribeEvent(priority = EventPriority.LOWEST)
 		public void renderWorld(RenderWorldLastEvent evt) {
 			if (AddonConfig.schizoMode) { // fuck the sky
@@ -482,6 +552,59 @@ public class LeafiaClientListener {
 				LeafiaGls.color(1,1,1);
 			}
 			AddonRainRender.INSTANCE.render(evt.getPartialTicks());
+			if (StructuralIntegrityHandler.AUTOMATIC) {
+				EntityPlayer player = Minecraft.getMinecraft().player;
+				ItemStack stack = player.getHeldItemMainhand();
+				if (stack.getItem() instanceof ItemBlock ib) {
+					Minecraft mc = Minecraft.getMinecraft();
+					World world = mc.world;
+					RayTraceResult mop = mc.objectMouseOver;
+					if (mop != null && mop.typeOfHit == mop.typeOfHit.BLOCK) {
+						BlockPos pos = mop.getBlockPos().offset(mop.sideHit);
+						SimulationData data = StructuralIntegrityHandler.handleBlockSimulate(world,pos,ib.getBlock().getStateFromMeta(ib.getDamage(stack)));
+						if (data != null) {
+							Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+							float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
+							double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks;
+							double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks;
+							double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks;
+							LeafiaGls.pushMatrix();
+							LeafiaGls.translate(pos.getX()+0.5-x,pos.getY()+0.5-y,pos.getZ()+0.5-z);
+							LeafiaGls.inStack(()->{
+								LeafiaGls.color(1,1,1,1);
+								LeafiaGls.enableAlpha();
+								LeafiaGls.alphaFunc(GL11.GL_GREATER,0);
+								LeafiaGls.disableLighting();
+								LeafiaGls.enableBlend();
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+								LeafiaGls.disableTexture2D();
+								double offset = Math.floorMod(System.currentTimeMillis(),1000L)/1000d;
+								double r = 1-data.maxRatio;
+								if (data.maxRatio < 1) {
+									LeafiaGls.pushMatrix();
+									LeafiaGls.scale(0.75);
+									renderBox(r,0.75f);
+									LeafiaGls.popMatrix();
+									double pulsate = offset/0.75;
+									if (pulsate <= 1) {
+										LeafiaGls.pushMatrix();
+										LeafiaGls.scale(0.75+pulsate*0.15);
+										renderBox(r,(float)Math.pow(0.5-pulsate/2,1.5));
+										LeafiaGls.popMatrix();
+									}
+								} else {
+									LeafiaGls.pushMatrix();
+									double psin = Math.max(Math.sin(offset*Math.PI/0.75),0);
+									LeafiaGls.scale(0.75+0.1*(float)psin);
+									renderBox(r,0.75f);
+									LeafiaGls.popMatrix();
+								}
+							});
+							LeafiaGls.popMatrix();
+						}
+					}
+				}
+			}
 			TopRender.main(evt);
 		}
 		@SubscribeEvent
@@ -523,6 +646,7 @@ public class LeafiaClientListener {
 			if(trueRam) { offsetX += width; }
 			if(true328) { offsetX += width; }
 			if(AddonConfig.schizoMode) { gui.drawTexturedModalRect(offsetX, offsetY, 0, 0, 24, 8); offsetX += width; }
+			if(StructuralIntegrityHandler.AUTOMATIC) { gui.drawTexturedModalRect(offsetX, offsetY, 24, 0, 24, 8); offsetX += width; }
 
 			Minecraft.getMinecraft().renderEngine.bindTexture(Gui.ICONS);
 			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
