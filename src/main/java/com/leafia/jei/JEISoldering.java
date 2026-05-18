@@ -115,9 +115,9 @@ public class JEISoldering implements IRecipeCategory<Recipe> {
 					I18nUtil.resolveKey(
 							"desc.leafia._jei.energy_"+(shift ? "t" : "s"),
 							SIPfx.format("%,"+LeafiaUtil.getFormatDecimal(
-									shift ? this.consumption : this.consumption/20f,
+									shift ? this.consumption : this.consumption*20f,
 									0,3
-							),shift ? this.consumption : this.consumption/20f,false)+"HE"
+							),shift ? this.consumption : this.consumption*20f,false)+"HE"
 					);
 			int height = 9;
 			font.drawString(duration,recipeWidth-font.getStringWidth(duration),recipeHeight-height*2,0x404040);
