@@ -645,8 +645,16 @@ public class LeafiaClientListener {
 			if(trueExp) { offsetX += width; }
 			if(trueRam) { offsetX += width; }
 			if(true328) { offsetX += width; }
-			if(AddonConfig.schizoMode) { gui.drawTexturedModalRect(offsetX, offsetY, 0, 0, 24, 8); offsetX += width; }
-			if(StructuralIntegrityHandler.AUTOMATIC) { gui.drawTexturedModalRect(offsetX, offsetY, 24, 0, 24, 8); offsetX += width; }
+			boolean schz = AddonConfig.schizoMode;
+			boolean grav = StructuralIntegrityHandler.AUTOMATIC;
+			boolean is128 = true328 && schz && grav;
+			boolean ctcl = GeneralConfig.enableCataclysm;
+			boolean isNeg72 = is128 && ctcl;
+			if(schz) { gui.drawTexturedModalRect(offsetX, offsetY, 0, 0, 24, 8); offsetX += width; }
+			if(grav) { gui.drawTexturedModalRect(offsetX, offsetY, 24, 0, 24, 8); offsetX += width; }
+			if(is128) { gui.drawTexturedModalRect(offsetX, offsetY, 0, 8, 24, 8); offsetX += width; }
+			if(ctcl) { gui.drawTexturedModalRect(offsetX, offsetY, 48, 0, 24, 8); offsetX += width; }
+			if(isNeg72) { gui.drawTexturedModalRect(offsetX, offsetY, 24, 8, 24, 8); offsetX += width; }
 
 			Minecraft.getMinecraft().renderEngine.bindTexture(Gui.ICONS);
 			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);

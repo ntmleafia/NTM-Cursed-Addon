@@ -3,6 +3,7 @@ package com.leafia.unsorted;
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.MachineElectrolyser;
+import com.hbm.blocks.machine.rbmk.RBMKBase;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -66,6 +67,8 @@ public class StructuralIntegrityHandler {
 				return 0;
 			if (state.getBlock() instanceof MachineElectrolyser)
 				return 22;
+			if (state.getBlock() instanceof RBMKBase)
+				return 20;
 			return 0;
 		}
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
@@ -77,7 +80,11 @@ public class StructuralIntegrityHandler {
 		return glue;
 	}
 	public static int getMass(IBlockState state) {
-		if (state.getBlock() instanceof BlockDummyable) return 10;
+		if (state.getBlock() instanceof BlockDummyable) {
+			if (state.getBlock() instanceof RBMKBase)
+				return 1;
+			return 10;
+		}
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
 		int mass = gm == null ? 1 : gm.mass;
 		if (!state.isFullCube()) mass /= 3;
