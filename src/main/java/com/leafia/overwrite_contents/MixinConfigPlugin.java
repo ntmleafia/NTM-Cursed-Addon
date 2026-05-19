@@ -30,6 +30,9 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         switch(mixinClassName) {
             case "MixinGuiMainMenu_WackySplashes" -> cancel = !AddonConfig.enableWackySplashes;
             case "MixinEntityRenderer_AcidRAin" -> cancel = !AddonConfig.enableAcidRainRender;
+            case "MixinTileEntityReactorZIRNOX" -> cancel = AddonConfig.disableAddonZIRNOX;
+            case "MixinCoreComponent","MixinCoreCore","MixinTileEntityCore","MixinTileEntityCoreEmitter",
+                 "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
         }
         if (cancel) {
             System.out.println("DISABLING MIXIN "+mixinClassName+" ("+targetClassName+")");

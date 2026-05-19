@@ -116,6 +116,7 @@ import com.leafia.dev.blocks.legacy.LegacyBlockHazardMeta;
 import com.leafia.dev.blocks.legacy.LegacyWasteEarth;
 import com.leafia.dev.blocks.legacy.LegacyWasteIce;
 import com.leafia.dev.blocks.legacy.LegacyWasteSand;
+import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.ateupd.Reserved6Dummyable;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
@@ -211,10 +212,10 @@ public class AddonBlocks {
 	}
 
 	public static final Block door_fuckoff = new BlockPinkDoor(Material.WOOD, "door_fuckoff").setHardness(3);
-	public static final Block spk_cable = new SPKCableBlock(Material.IRON, "spk_cable").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_reinforced = new AddonCoreComponent(Material.IRON, "dfc_reinforced").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_exchanger = new AddonCoreComponent(Material.IRON, "dfc_exchanger").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
-	public static final Block dfc_cemitter = new AddonCoreComponent(Material.IRON, "dfc_cemitter").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+	public static Block spk_cable;
+	public static Block dfc_reinforced;
+	public static Block dfc_exchanger;
+	public static Block dfc_cemitter;
 
 	static boolean letter_dummy = LetterSigns.dummy;
 	public static class LetterSigns {
@@ -570,6 +571,12 @@ public class AddonBlocks {
 			audio_cable = new AudioCableBlock(Material.IRON, "integ_cable_audio",false,"leafia/sealed_network/oc/cable_oc").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 			audio_cable_rad = new AudioCableBlock(Material.IRON, "integ_cable_audio_rad",true,"leafia/sealed_network/oc/cable_oc_rad").setHardness(15.0F).setResistance(COMPOUND_MESH.v).setCreativeTab(MainRegistry.machineTab);
 		}
+		if (!AddonConfig.disableAddonDFC) {
+			spk_cable = new SPKCableBlock(Material.IRON, "spk_cable").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+			dfc_reinforced = new AddonCoreComponent(Material.IRON, "dfc_reinforced").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+			dfc_exchanger = new AddonCoreComponent(Material.IRON, "dfc_exchanger").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+			dfc_cemitter = new AddonCoreComponent(Material.IRON, "dfc_cemitter").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+		}
 	}
 
 	private static void modifyBlockParams() {
@@ -594,17 +601,37 @@ public class AddonBlocks {
 		ModBlocks.steel_grate.setResistance(15);
 		ModBlocks.steel_grate_wide.setResistance(15);
 
-		ModBlocks.pwr_block.setCreativeTab(null);
-		ModBlocks.pwr_casing.setCreativeTab(null);
-		ModBlocks.pwr_channel.setCreativeTab(null);
-		ModBlocks.pwr_control.setCreativeTab(null);
-		ModBlocks.pwr_fuelrod.setCreativeTab(null);
-		ModBlocks.pwr_controller.setCreativeTab(null);
-		ModBlocks.pwr_heatex.setCreativeTab(null);
-		ModBlocks.pwr_heatsink.setCreativeTab(null);
-		ModBlocks.pwr_neutron_source.setCreativeTab(null);
-		ModBlocks.pwr_port.setCreativeTab(null);
-		ModBlocks.pwr_reflector.setCreativeTab(null);
+		if (!AddonConfig.disableAddonPWR) {
+			ModBlocks.pwr_block.setCreativeTab(null);
+			ModBlocks.pwr_casing.setCreativeTab(null);
+			ModBlocks.pwr_channel.setCreativeTab(null);
+			ModBlocks.pwr_control.setCreativeTab(null);
+			ModBlocks.pwr_fuelrod.setCreativeTab(null);
+			ModBlocks.pwr_controller.setCreativeTab(null);
+			ModBlocks.pwr_heatex.setCreativeTab(null);
+			ModBlocks.pwr_heatsink.setCreativeTab(null);
+			ModBlocks.pwr_neutron_source.setCreativeTab(null);
+			ModBlocks.pwr_port.setCreativeTab(null);
+			ModBlocks.pwr_reflector.setCreativeTab(null);
+		} else {
+			PWR.occs_in.setCreativeTab(null);
+			PWR.occs_out.setCreativeTab(null);
+			PWR.port.setCreativeTab(null);
+			PWR.hatch.setCreativeTab(null);
+			PWR.hatch_alt.setCreativeTab(null);
+			PWR.terminal.setCreativeTab(null);
+			PWR.computer.setCreativeTab(null);
+			PWR.element.setCreativeTab(null);
+			PWR.element_old.setCreativeTab(null);
+			PWR.element_old_blank.setCreativeTab(null);
+			PWR.channel.setCreativeTab(null);
+			PWR.conductor.setCreativeTab(null);
+			PWR.exchanger.setCreativeTab(null);
+			PWR.control.setCreativeTab(null);
+			PWR.reactor_control.setCreativeTab(null);
+			PWR.hull.setCreativeTab(null);
+			PWR.reflector.setCreativeTab(null);
+		}
 	}
 
 	public static void preInit(){

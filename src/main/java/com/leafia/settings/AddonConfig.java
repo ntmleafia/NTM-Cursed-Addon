@@ -30,6 +30,9 @@ public class AddonConfig {
 	public static int ic10maxstack = 512;
 	public static int ic10maxregisters = 64;
 	public static boolean schizoMode = false;
+	public static boolean disableAddonDFC = false;
+	public static boolean disableAddonPWR = false;
+	public static boolean disableAddonZIRNOX = false;
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
 		public static void applyGeneralConfig() {
@@ -52,6 +55,16 @@ public class AddonConfig {
 		{
 			// I do not care about performance. This addon is aimed for newer playerbase.
 			ConfigOverrides.blockReplacement = builder._boolean("ovr_enableBlockReplacement",true);
+		}
+		builder._separator();
+		builder._category("OVERWRITES AND REPLACEMENTS (GAMEPLAY)");
+		{
+			builder._comment("Enable this if you would like the DFC to have the NTMain behavior");
+			disableAddonDFC = builder._boolean("disableAddonDFC",false);
+			builder._comment("Enable this if you would like the PWR to have the NTMain behavior");
+			disableAddonPWR = builder._boolean("disableAddonPWR",false);
+			builder._comment("Enable this if you would like the ZIRNOX to have the NTMain behavior");
+			disableAddonZIRNOX = builder._boolean("disableAddonZIRNOX",false);
 		}
 		builder._separator();
 		builder._category("GENERAL");

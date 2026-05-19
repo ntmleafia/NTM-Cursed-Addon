@@ -4,6 +4,7 @@ import com.hbm.inventory.fluid.trait.FT_Heatable;
 import com.hbm.inventory.fluid.trait.FT_Heatable.HeatingStep;
 import com.hbm.inventory.fluid.trait.FT_Heatable.HeatingType;
 import com.hbm.util.I18nUtil;
+import com.leafia.settings.AddonConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,7 +25,7 @@ public abstract class MixinFT_HEatable {
 	public void addInfoHidden(List<String> info) {
 		info.add(I18nUtil.resolveKey("trait.thermalcap", this.getFirstStep().heatReq));
 		for(HeatingType type : HeatingType.values()) {
-			if (type.equals(HeatingType.PWR)) continue;
+			if (!AddonConfig.disableAddonPWR && type.equals(HeatingType.PWR)) continue;
 			double eff = getEfficiency(type);
 			if(eff > 0) {
 				info.add(I18nUtil.resolveKey("trait.chefficiency", I18nUtil.resolveKey(type.name), ((int) (eff * 100D))) + "%");

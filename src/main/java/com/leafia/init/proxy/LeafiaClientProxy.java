@@ -95,6 +95,7 @@ import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.NullRender;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.leafia.init.ItemRendererInit;
+import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.ateupd.Reserved6Render;
 import com.leafia.unsorted.ateupd.Reserved6TE;
 import com.llib.exceptions.LeafiaDevFlaw;
@@ -157,18 +158,17 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			LCERenderSpinnyLight spinnyLightRender = new LCERenderSpinnyLight();
 			ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpinnyLight.class, spinnyLightRender);
 			NTMClientRegistry.bindTeisr(spinnyLightRender.getItemForRenderer(), spinnyLightRender.getRenderer(spinnyLightRender.getItemForRenderer()));
-
-			ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
-
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
-			DFCComponentRender dfcComponentRender = new DFCComponentRender();
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,dfcComponentRender);
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,dfcComponentRender);
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,dfcComponentRender);
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,dfcComponentRender);
-			ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,dfcComponentRender);
-			ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,dfcComponentRender);
-
+			if (!AddonConfig.disableAddonDFC) {
+				ClientRegistry.bindTileEntitySpecialRenderer(SPKCableTE.class,new SPKCableRender());
+				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCore.class,new DFCCoreRender());
+				DFCComponentRender dfcComponentRender = new DFCComponentRender();
+				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreEmitter.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreReceiver.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreStabilizer.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,dfcComponentRender);
+			}
 			ClientRegistry.bindTileEntitySpecialRenderer(SignTE.class,new SignRender());
 			FFDuctUtilityRender ffUtilityRender = new FFDuctUtilityRender();
 			ClientRegistry.bindTileEntitySpecialRenderer(FFPumpTE.class,ffUtilityRender);

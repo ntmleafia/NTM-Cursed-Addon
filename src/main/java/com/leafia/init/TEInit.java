@@ -64,6 +64,7 @@ import com.leafia.contents.network.pipe_amat.AmatDuctTE;
 import com.leafia.contents.network.pipe_amat.charger.AmatDuctChargerTE;
 import com.leafia.contents.network.spk_cable.SPKCableTE;
 import com.leafia.contents.nonmachines.storage.fluid.fftank.FFTankTE;
+import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.ateupd.Reserved6TE;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -76,9 +77,11 @@ public class TEInit {
 			register(DebugSourceTE.class,"debug_ff_source");
 			register(DebugTankTE.class,"debug_ff_tank");
 		}
-		register(SPKCableTE.class,"spk_cable_te");
-		register(CoreCEmitterTE.class,"core_creative_emitter_te");
-		register(CoreExchangerTE.class,"core_exchanger_te");
+		if (!AddonConfig.disableAddonDFC) {
+			register(SPKCableTE.class,"spk_cable_te");
+			register(CoreCEmitterTE.class,"core_creative_emitter_te");
+			register(CoreExchangerTE.class,"core_exchanger_te");
+		}
 		register(SignTE.class,"letter_sign_te");
 		register(FFDuctTE.class,"ff_duct_te");
 		register(FFPumpTE.class,"ff_pump_te");
