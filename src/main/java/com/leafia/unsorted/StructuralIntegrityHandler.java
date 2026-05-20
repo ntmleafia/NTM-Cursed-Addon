@@ -53,10 +53,11 @@ public class StructuralIntegrityHandler {
 	}
 	private static final IdentityHashMap<Material,GM> GLUE_MASS_MAP = new IdentityHashMap<>();
 	static {
-		GM iron = new GM(50,5);
+		GM iron = new GM(40,5);
 		GLUE_MASS_MAP.put(Material.ANVIL,iron);
 		GLUE_MASS_MAP.put(Material.IRON,iron);
-		GLUE_MASS_MAP.put(Material.ROCK,new GM(30,5));
+		GLUE_MASS_MAP.put(Material.ROCK,new GM(25,5));
+		GLUE_MASS_MAP.put(Material.WOOD,new GM(6,1));
 		blacklistedDimensions.add(-1);
 		blacklistedDimensions.add(1);
 	}
@@ -72,12 +73,12 @@ public class StructuralIntegrityHandler {
 			return 0;
 		}
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
-		int glue = gm == null ? 10 : gm.glue;
+		int glue = gm == null ? 4 : gm.glue;
 		if (state.getBlock() == ModBlocks.concrete_rebar)
 			glue *= 8;
 		if (state.getBlock() == ModBlocks.steel_scaffold)
 			glue *= 4;
-		return glue;
+		return glue*5;
 	}
 	public static int getMass(IBlockState state) {
 		if (state.getBlock() instanceof BlockDummyable) {
@@ -229,6 +230,7 @@ public class StructuralIntegrityHandler {
                         stack.terminate = true;
                         return;
                     }
+					// dev note: when in doubt, revert stack.mass <= next.glue to next.mass <= next.glue
                     if (next.mass <= next.glue)
                         supporteds.addAll(next.newIgnore);
                 }
@@ -241,14 +243,22 @@ public class StructuralIntegrityHandler {
             }
 		}
 
-		if (stack.mass > stack.glue) {
-			if (stack.parent == null) {
+		if (stack.parent == null) {
+			if (stack.mass > stack.glue) {
 				if (stack.simulation == null)
 					collapse(world,pos.down(-minRelativeY));
 				else
 					stack.simulation.maxRatio = 1;
-			} else
-				stack.parent.mass = stack.mass;
+			}
+		} else {
+			stack.parent.mass = Math.max(stack.mass,stack.parent.mass);
+			/*if (supporteds.contains(pos.toLong()))
+				stack.parent.glue = Math.max(stack.glue,stack.parent.glue);*/
+			// ^^ ok so this is asshole and this is how:
+			// the farthest block keeps accumulating glue, meaning it never collapses
+			// after building, the block on the root tends to collapse because it doesnt calculate glue for the other
+			// way around
+			//LeafiaDebug.debugPos(world,pos,5,0xFFD000,"ADD MASS ("+stack.mass+"/"+stack.glue+")");
 		}
 		if (stack.simulation != null) {
 			//if (stack.parent == null)
