@@ -154,9 +154,6 @@ public class StructuralIntegrityHandler {
 		stack.mass += getMass(world.getBlockState(pos));
 		newIgnore.add(mutable.toLong());
 
-		int extraMass = 0;
-		int extraMassDiv = 1;
-
 		while (true) {
 			mutable.setY(mutable.getY() + 1);
 			if (!world.isValid(mutable)) break;
@@ -165,8 +162,7 @@ public class StructuralIntegrityHandler {
 			if (!needsSupport(world.getBlockState(mutable))) break;
 			newIgnore.add(key);
 			maxRelativeY++;
-			extraMass += getMass(world.getBlockState(mutable));
-			extraMassDiv++;
+			//stack.mass += getMass(world.getBlockState(mutable));
 		}
 		mutable.setY(baseY);
 		while (true) {
@@ -182,10 +178,8 @@ public class StructuralIntegrityHandler {
 			if (!needsSupport(world.getBlockState(mutable))) break;
 			newIgnore.add(key);
 			minRelativeY--;
-			extraMass += getMass(world.getBlockState(mutable));
-			extraMassDiv++;
+			//stack.mass += getMass(world.getBlockState(mutable));
 		}
-		stack.mass += extraMass/extraMassDiv;
 		ignore.addAll(newIgnore);
 
 		if (stack.count > MAX_DEPTH) return;
@@ -193,82 +187,55 @@ public class StructuralIntegrityHandler {
 		int cachedCx = Integer.MIN_VALUE, cachedCz = Integer.MIN_VALUE;
 		boolean cachedLoaded = false;
 
-		double glueDiv = 1;
 		outer:
 		for (int yo = minRelativeY; yo <= maxRelativeY; yo++) {
-            for (EnumFacing face : EnumFacing.HORIZONTALS) {
-                int nx = baseX + face.getXOffset();
-                int ny = baseY + yo;
-                int nz = baseZ + face.getZOffset();
-                mutable.setPos(nx, ny, nz);
+			for (EnumFacing face : EnumFacing.HORIZONTALS) {
+				int nx = baseX + face.getXOffset();
+				int ny = baseY + yo;
+				int nz = baseZ + face.getZOffset();
+				mutable.setPos(nx, ny, nz);
 
-                int cx = nx >> 4, cz = nz >> 4;
-                if (cx != cachedCx || cz != cachedCz) {
-                    cachedCx = cx;
-                    cachedCz = cz;
-                    cachedLoaded = world.isChunkGeneratedAt(cx, cz);
-                }
-                if (!cachedLoaded) {
-                    //LeafiaDebug.debugLog(world,"Cancelled integrity calculation because the chunk is not loaded yet");
-                    stack.terminate = true;
-                    return;
-                }
+				int cx = nx >> 4, cz = nz >> 4;
+				if (cx != cachedCx || cz != cachedCz) {
+					cachedCx = cx;
+					cachedCz = cz;
+					cachedLoaded = world.isChunkGeneratedAt(cx, cz);
+				}
+				if (!cachedLoaded) {
+					//LeafiaDebug.debugLog(world,"Cancelled integrity calculation because the chunk is not loaded yet");
+					stack.terminate = true;
+					return;
+				}
 
-                IBlockState nState = world.getBlockState(mutable);
-                if (!needsSupport(nState)) continue;
-				/*float div2 = 1;
-				if (ny > baseY)
-					div2 = 1.2f;*/
-                int glueAdd = getGlue(nState);//MathHelper.ceil(getGlue(nState)/*/Math.pow(glueDiv,0.1)*/ /div2); // screw that
-                long neighborLong = mutable.toLong();
+				IBlockState nState = world.getBlockState(mutable);
+				if (!needsSupport(nState)) continue;
+				int glueAdd = getGlue(nState);
+				long neighborLong = mutable.toLong();
 
-                if (!ignore.contains(neighborLong)) {
-                    CalStack next = frame(stack.count + 1);
-                    next.reset(stack.mass, stack.count + 1, ignore, supporteds, stack);
-                    calculate(next, world, mutable);
-                    if (next.terminate) {
-                        stack.terminate = true;
-                        return;
-                    }
-					// dev note: when in doubt, revert stack.mass <= next.glue to next.mass <= next.glue
-                    if (next.mass <= next.glue)
-                        supporteds.addAll(next.newIgnore);
-                }
-                if (supporteds.contains(neighborLong)) {
-                    stack.glue += glueAdd;
-                    supporteds.addAll(newIgnore);
-					//glueDiv = Math.pow(glueDiv+1,0.5); ah forget it
-                    if (stack.glue >= stack.mass) break outer;
-                }
-            }
-		}
-
-		if (stack.parent == null) {
-			if (stack.mass > stack.glue) {
-				if (stack.simulation == null)
-					collapse(world,pos.down(-minRelativeY));
-				else
-					stack.simulation.maxRatio = 1;
+				if (!ignore.contains(neighborLong)) {
+					CalStack next = frame(stack.count + 1);
+					next.reset(stack.mass, stack.count + 1, ignore, supporteds, stack);
+					calculate(next, world, mutable);
+					if (next.terminate) {
+						stack.terminate = true;
+						return;
+					}
+					if (next.mass <= next.glue)
+						supporteds.addAll(next.newIgnore);
+				}
+				if (supporteds.contains(neighborLong)) {
+					stack.glue += glueAdd;
+					supporteds.addAll(newIgnore);
+					if (stack.glue >= stack.mass) break outer;
+				}
 			}
-		} else {
-			stack.parent.mass = Math.max(stack.mass,stack.parent.mass);
-			/*if (supporteds.contains(pos.toLong()))
-				stack.parent.glue = Math.max(stack.glue,stack.parent.glue);*/
-			// ^^ ok so this is asshole and this is how:
-			// the farthest block keeps accumulating glue, meaning it never collapses
-			// after building, the block on the root tends to collapse because it doesnt calculate glue for the other
-			// way around
-			//LeafiaDebug.debugPos(world,pos,5,0xFFD000,"ADD MASS ("+stack.mass+"/"+stack.glue+")");
 		}
-		if (stack.simulation != null) {
-			//if (stack.parent == null)
-			//	stack.simulation.maxRatio = Math.min(stack.mass/(double)stack.glue,1);
-			if (stack.parent == null && stack.mass > stack.glue)
-				stack.simulation.maxRatio = 1;
-			//double ratio = Math.min(stack.mass/(double)stack.glue,1);
-			//stack.simulation.maxRatio = (stack.simulation.maxRatio+ratio)/2;
-			stack.simulation.maxMass = Math.max(stack.simulation.maxMass,stack.mass);
-			stack.simulation.maxGlue = Math.max(stack.simulation.maxGlue,stack.glue);
+
+		if (stack.mass > stack.glue) {
+			if (stack.parent == null)
+				collapse(world,pos.down(-minRelativeY));
+			else
+				stack.parent.mass = stack.mass;
 		}
 		/*if (!isSupported) {
 			stack.collapseCandidates.add(pos.down(-minRelativeY));
