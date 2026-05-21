@@ -7,6 +7,7 @@ import com.hbm.blocks.machine.rbmk.RBMKBase;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -56,13 +57,13 @@ public class StructuralIntegrityHandler {
 		GM iron = new GM(40,5);
 		GLUE_MASS_MAP.put(Material.ANVIL,iron);
 		GLUE_MASS_MAP.put(Material.IRON,iron);
-		GLUE_MASS_MAP.put(Material.ROCK,new GM(25,5));
+		//GLUE_MASS_MAP.put(Material.ROCK,new GM(25,5*3));
 		GLUE_MASS_MAP.put(Material.WOOD,new GM(6,1));
 		blacklistedDimensions.add(-1);
 		blacklistedDimensions.add(1);
 	}
 
-	public static int getGlue(IBlockState state) {
+	public static int getGlue(IBlockState state,World world,BlockPos pos) {
 		if (state.getBlock() instanceof BlockDummyable) {
 			if (state.getValue(BlockDummyable.META) >= 12 )
 				return 0;
@@ -72,21 +73,29 @@ public class StructuralIntegrityHandler {
 				return 20;
 			return 0;
 		}
+		if (state.getBlock() == ModBlocks.dfc_core)
+			return 0;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
-		int glue = gm == null ? 4 : gm.glue;
+		int glue = gm == null ? 4*3 : gm.glue;
+		if (state.getMaterial() == Material.ROCK)
+			return 25;
 		if (state.getBlock() == ModBlocks.concrete_rebar)
 			glue *= 8;
 		if (state.getBlock() == ModBlocks.steel_scaffold)
 			glue *= 4;
-		return glue*5;
+		return glue;
 	}
-	public static int getMass(IBlockState state) {
+	public static int getMass(IBlockState state,World world,BlockPos pos) {
 		if (state.getBlock() instanceof BlockDummyable) {
 			if (state.getBlock() instanceof RBMKBase)
 				return 1;
 			return 10;
 		}
+		if (state.getBlock() == ModBlocks.dfc_core)
+			return 0;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
+		if (state.getMaterial() == Material.ROCK)
+			return 1+Math.min((int)Math.pow(state.getBlock().getExplosionResistance(null),0.45)/2,15);
 		int mass = gm == null ? 1 : gm.mass;
 		if (!state.isFullCube()) mass /= 3;
 		return Math.max(mass,1);
@@ -110,6 +119,7 @@ public class StructuralIntegrityHandler {
 		final LongOpenHashSet newIgnore = new LongOpenHashSet();
 		CalStack parent;
 		SimulationData simulation = null;
+		ObjectOpenHashSet<BlockPos> checkPoses = new ObjectOpenHashSet<>();
 
 		public CalStack(int mass) { this.mass = mass; }
 
@@ -124,6 +134,7 @@ public class StructuralIntegrityHandler {
 			this.parent = parent;
 			this.newIgnore.clear();
 			this.simulation = parent.simulation;
+			this.checkPoses = parent.checkPoses;
 		}
 	}
 
@@ -151,8 +162,11 @@ public class StructuralIntegrityHandler {
 		LongOpenHashSet ignore = stack.ignore;
 		LongOpenHashSet supporteds = stack.supporteds;
 
-		stack.mass += getMass(world.getBlockState(pos));
+		stack.mass += getMass(world.getBlockState(pos),world,pos);
 		newIgnore.add(mutable.toLong());
+
+		int extraMass = 0;
+		int extraMassDiv = 1;
 
 		while (true) {
 			mutable.setY(mutable.getY() + 1);
@@ -162,7 +176,8 @@ public class StructuralIntegrityHandler {
 			if (!needsSupport(world.getBlockState(mutable))) break;
 			newIgnore.add(key);
 			maxRelativeY++;
-			//stack.mass += getMass(world.getBlockState(mutable));
+			extraMass += Math.max(getMass(world.getBlockState(mutable),world,mutable)-getGlue(world.getBlockState(mutable),world,mutable),0);
+			extraMassDiv++;
 		}
 		mutable.setY(baseY);
 		while (true) {
@@ -178,14 +193,19 @@ public class StructuralIntegrityHandler {
 			if (!needsSupport(world.getBlockState(mutable))) break;
 			newIgnore.add(key);
 			minRelativeY--;
-			//stack.mass += getMass(world.getBlockState(mutable));
+			extraMass += Math.max(getMass(world.getBlockState(mutable),world,mutable)-getGlue(world.getBlockState(mutable),world,mutable),0);
+			extraMassDiv++;
 		}
 		ignore.addAll(newIgnore);
+		stack.mass += extraMass;
 
 		if (stack.count > MAX_DEPTH) return;
 
 		int cachedCx = Integer.MIN_VALUE, cachedCz = Integer.MIN_VALUE;
 		boolean cachedLoaded = false;
+
+		int mass = stack.mass;
+		int glue = stack.glue;
 
 		outer:
 		for (int yo = minRelativeY; yo <= maxRelativeY; yo++) {
@@ -209,11 +229,13 @@ public class StructuralIntegrityHandler {
 
 				IBlockState nState = world.getBlockState(mutable);
 				if (!needsSupport(nState)) continue;
-				int glueAdd = getGlue(nState);
+				int glueAdd = getGlue(nState,world,mutable);
 				long neighborLong = mutable.toLong();
 
 				if (!ignore.contains(neighborLong)) {
 					CalStack next = frame(stack.count + 1);
+					stack.mass = mass;
+					stack.glue = glue;
 					next.reset(stack.mass, stack.count + 1, ignore, supporteds, stack);
 					calculate(next, world, mutable);
 					if (next.terminate) {
@@ -226,16 +248,38 @@ public class StructuralIntegrityHandler {
 				if (supporteds.contains(neighborLong)) {
 					stack.glue += glueAdd;
 					supporteds.addAll(newIgnore);
+					stack.checkPoses.add(pos.up(minRelativeY));
 					if (stack.glue >= stack.mass) break outer;
 				}
 			}
 		}
 
-		if (stack.mass > stack.glue) {
-			if (stack.parent == null)
-				collapse(world,pos.down(-minRelativeY));
-			else
-				stack.parent.mass = stack.mass;
+		if (stack.parent == null) {
+			if (stack.mass > stack.glue) {
+				if (stack.simulation == null)
+					collapse(world,pos.down(-minRelativeY));
+				else
+					stack.simulation.maxRatio = 1;
+			}
+		} else {
+			stack.parent.mass = Math.max(stack.mass,stack.parent.mass);
+			//if (supporteds.contains(pos.toLong()))
+			//	stack.parent.glue = Math.max(stack.parent.glue,(int)(stack.parent.glue+(stack.glue-stack.parent.glue)*0.75));
+			// ^^ ok so this is asshole and this is how:
+			// the farthest block keeps accumulating glue, meaning it never collapses
+			// after building, the block on the root tends to collapse because it doesnt calculate glue for the other
+			// way around
+			//LeafiaDebug.debugPos(world,pos,5,0xFFD000,"ADD MASS ("+stack.mass+"/"+stack.glue+")");
+		}
+		if (stack.simulation != null) {
+			//if (stack.parent == null)
+			//	stack.simulation.maxRatio = Math.min(stack.mass/(double)stack.glue,1);
+			if (stack.parent == null && stack.mass > stack.glue)
+				stack.simulation.maxRatio = 1;
+			//double ratio = Math.min(stack.mass/(double)stack.glue,1);
+			//stack.simulation.maxRatio = (stack.simulation.maxRatio+ratio)/2;
+			stack.simulation.maxMass = Math.max(stack.simulation.maxMass,stack.mass);
+			stack.simulation.maxGlue = Math.max(stack.simulation.maxGlue,stack.glue);
 		}
 		/*if (!isSupported) {
 			stack.collapseCandidates.add(pos.down(-minRelativeY));
@@ -248,15 +292,17 @@ public class StructuralIntegrityHandler {
 	}
 	static boolean collapsed = false;
 	public static void handleBlock(World world,BlockPos pos) {
-		SERVER.handleBlock(world,pos,false,null);
+		SERVER.handleBlock(world,pos,false,false,null);
 	}
 	public static SimulationData handleBlockSimulate(World world,BlockPos pos,IBlockState forcedBlockState) {
-		return LOCAL.handleBlock(world,pos,true,forcedBlockState);
+		return LOCAL.handleBlock(world,pos,true,false,forcedBlockState);
 	}
-	public SimulationData handleBlock(World world,BlockPos pos,boolean simulate,IBlockState forcedBlockState) {
+	public SimulationData handleBlock(World world,BlockPos pos,boolean simulate,boolean verifyMode,IBlockState forcedBlockState) {
 		if (world.isRemote && !simulate) return null;
 		if (blacklistedDimensions.contains(world.provider.getDimension())) return null;
-		if (calculations > 200 && !simulate) return null;
+		if (!verifyMode) {
+			if (calculations > 200 && !simulate) return null;
+		}
 		if (!isChunkLoaded(world,pos)) {
 			//LeafiaDebug.debugLog(world,"Skipped integrity calculation because the chunk is not loaded yet");
 			return null;
@@ -266,7 +312,7 @@ public class StructuralIntegrityHandler {
 		if (blockedPoses.contains(pos.toLong())) return null;
 		if (!simulate)
 			blockedPoses.add(pos.toLong());
-		if (!simulate)
+		if (!simulate && !verifyMode)
 			calculations++;
 		collapsed = false;
 		ROOT_IGNORE.clear();
@@ -286,7 +332,7 @@ public class StructuralIntegrityHandler {
 			collapsed = true;
 		}*/
 		//if (!collapsed)
-		//	LeafiaDebug.debugPos(world,pos,3,0x88FF00,"SUPPORTED "+stacc.mass+"/"+stacc.glue);
+		//LeafiaDebug.debugPos(world,pos,3,0x88FF00,"CALCULATION "+stacc.mass+"/"+stacc.glue);
 		if (stacc.simulation != null) {
 			if (stacc.simulation.maxRatio <= 0) {
 				if (stacc.simulation.maxGlue == 0)
@@ -294,6 +340,10 @@ public class StructuralIntegrityHandler {
 				else
 					stacc.simulation.maxRatio = Math.min(stacc.simulation.maxMass/stacc.simulation.maxGlue,0.99);
 			}
+		} else {
+			//if (!verifyMode)
+			//	for (BlockPos p : stacc.checkPoses)
+			//		handleBlock(world,p,simulate,true,null);
 		}
 		return stacc.simulation;
 	}

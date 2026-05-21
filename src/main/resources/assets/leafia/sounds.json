@@ -51,6 +51,13 @@
   "block.kfc.meltdown": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.meltdown", "name": "leafia:leafia/dfcstress", "stream": true}]},
   "block.kfc.explode": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.explode", "name": "leafia:leafia/dfcexplode", "stream": false}]},
 
+  "block.laser1.start": {"category": "block", "sounds": [{"subtitle": "subtitles.block.laser.activate", "name": "leafia:external/tentacleboss_beam_blast", "stream": false}]},
+  "block.laser1.loop": {"category": "block", "sounds": [{"name": "leafia:external/crystalboss_beam", "stream": false}]},
+  "block.laser1.stop": {"category": "block", "sounds": [{"subtitle": "subtitles.block.laser.deactivate", "name": "leafia:external/crystalboss_beamout", "stream": false}]},
+  "block.laser2.start": {"category": "block", "sounds": [{"subtitle": "subtitles.block.laser.activate", "name": "leafia:external/crystaltrap_on2", "stream": false}]},
+  "block.laser2.loop": {"category": "block", "sounds": [{"name": "leafia:external/crystaltrap_loop", "stream": false}]},
+  "block.laser2.stop": {"category": "block", "sounds": [{"subtitle": "subtitles.block.laser.deactivate", "name": "leafia:external/crystaltrap_off", "stream": false}]},
+
   "music.422fgame": {"category": "music", "sounds": [{"name": "leafia:music/422fgame", "stream": true}]},
   "music.422fmenu": {"category": "music", "sounds": [{"name": "leafia:music/422fmenu", "stream": true}]},
 

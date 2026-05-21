@@ -103,6 +103,13 @@ public class LeafiaSoundEvents {
 	public static SoundEvent elevator_jam_end;
 	public static SoundEvent local_forecast;
 
+	public static SoundEvent laser1start;
+	public static SoundEvent laser1loop;
+	public static SoundEvent laser1stop;
+	public static SoundEvent laser2start;
+	public static SoundEvent laser2loop;
+	public static SoundEvent laser2stop;
+
 	public static void init() {
 		// this is so retarded
 		literally_nothing = register("sdkgjalkdsjgldhsaiuhgui8asd8gy87dast67gt7wy9gty47yaw79g8734");
@@ -220,6 +227,13 @@ public class LeafiaSoundEvents {
 		elevator_jam_loop = register("music.lsplash.elevator_jam.loop");
 		elevator_jam_end = register("music.lsplash.elevator_jam.end");
 		local_forecast = register("music.incompetech.local_forecast");
+
+		laser1start = register("block.laser1.start");
+		laser1loop = register("block.laser1.loop");
+		laser1stop = register("block.laser1.stop");
+		laser2start = register("block.laser2.start");
+		laser2loop = register("block.laser2.loop");
+		laser2stop = register("block.laser2.stop");
 	}
 
 	public static SoundEvent register(String name) {

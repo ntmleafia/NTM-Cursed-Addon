@@ -1,5 +1,6 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
@@ -14,11 +15,13 @@ import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreEmitter;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
+import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.network.spk_cable.uninos.ISPKReceiver;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
@@ -87,6 +90,31 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 
     @Unique
     private boolean leafia$isActive;
+
+    @Unique
+    LCEAudioWrapper leafia$sound;
+    @Unique boolean leafia$isPlaying = false;
+    @Unique void leafia$playSound() {
+        if (leafia$sound == null) {
+            leafia$sound = AddonBase.proxy.getLoopedSoundStartStop(
+                    world,
+                    LeafiaSoundEvents.laser1loop,
+                    LeafiaSoundEvents.laser1start,
+                    LeafiaSoundEvents.laser1stop,
+                    SoundCategory.BLOCKS,
+                    pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,
+                    1,1
+            ).setCustomAttenuation((intended,distance)->Math.pow(Math.max(0,1-distance/50),6));
+        }
+        if (!leafia$isPlaying)
+            leafia$sound.startSound();
+        leafia$isPlaying = true;
+    }
+    @Unique void leafia$stopSound() {
+        if (leafia$isPlaying)
+            leafia$sound.stopSound();
+        leafia$isPlaying = false;
+    }
 
     /**
      * @author mlbv
@@ -192,8 +220,12 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
 			prevWatts = watts;
 			*/
             //this.networkPack(data, 250);
-        } else if (isOn) {
-            leafia$lastRaycast = leafia$raycast(0);
+        } else {
+            if (isOn) {
+                leafia$playSound();
+                leafia$lastRaycast = leafia$raycast(0);
+            } else
+                leafia$stopSound();
         }
     }
 
@@ -451,7 +483,20 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
     @Override
     public void invalidate(){
         super.invalidate();
+        if (leafia$sound != null) {
+            leafia$sound.stopSound();
+            leafia$sound = null;
+        }
         ControlEventSystem.get(world).removeControllable(this);
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        if (leafia$sound != null) {
+            leafia$sound.stopSound();
+            leafia$sound = null;
+        }
     }
 
     // OC //

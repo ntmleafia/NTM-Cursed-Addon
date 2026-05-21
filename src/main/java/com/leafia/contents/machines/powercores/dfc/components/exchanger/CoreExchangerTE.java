@@ -1,5 +1,6 @@
 package com.leafia.contents.machines.powercores.dfc.components.exchanger;
 
+import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.api.fluid.IFluidStandardSender;
 import com.hbm.inventory.fluid.FluidType;
@@ -10,9 +11,11 @@ import com.hbm.items.machine.IItemFluidIdentifier;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.util.Tuple.Quartet;
+import com.leafia.AddonBase;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.machine.LCETileEntityMachineBase;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.settings.AddonConfig;
 import com.llib.group.LeafiaSet;
@@ -23,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,6 +42,45 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
 	protected BlockPos targetPosition = new BlockPos(0,0,0);
 	int inAmt = 1;
 	int outAmt = 1;
+	LCEAudioWrapper leafia$sound;
+	boolean leafia$isPlaying = false;
+	void leafia$playSound() {
+		if (leafia$sound == null) {
+			leafia$sound = AddonBase.proxy.getLoopedSoundStartStop(
+					world,
+					LeafiaSoundEvents.laser2loop,
+					LeafiaSoundEvents.laser2start,
+					LeafiaSoundEvents.laser2stop,
+					SoundCategory.BLOCKS,
+					pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,
+					1,1
+			).setCustomAttenuation((intended,distance)->Math.pow(Math.max(0,1-distance/50),6));
+		}
+		if (!leafia$isPlaying)
+			leafia$sound.startSound();
+		leafia$isPlaying = true;
+	}
+	void leafia$stopSound() {
+		if (leafia$isPlaying)
+			leafia$sound.stopSound();
+		leafia$isPlaying = false;
+	}
+	@Override
+	public void invalidate(){
+		super.invalidate();
+		if (leafia$sound != null) {
+			leafia$sound.stopSound();
+			leafia$sound = null;
+		}
+	}
+	@Override
+	public void onChunkUnload() {
+		super.onChunkUnload();
+		if (leafia$sound != null) {
+			leafia$sound.stopSound();
+			leafia$sound = null;
+		}
+	}
 
 	public AxisAlignedBB getRenderBoundingBox() {
 		return TileEntity.INFINITE_EXTENT_AABB;
@@ -203,6 +246,11 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
                         .__write(5, amountToHeat)
                         .__write(6, tickDelay)
                         .__sendToListeners();
+        } else {
+			if (core != null)
+				leafia$playSound();
+			else
+				leafia$stopSound();
         }
     }
 

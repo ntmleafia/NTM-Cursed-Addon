@@ -1,5 +1,6 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
+import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
@@ -9,9 +10,11 @@ import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
+import com.leafia.AddonBase;
 import com.leafia.contents.machines.powercores.dfc.components.injector.CoreInjectorContainer;
 import com.leafia.contents.machines.powercores.dfc.components.injector.CoreInjectorGUI;
 import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityInjector;
 import com.leafia.settings.AddonConfig;
 import net.minecraft.client.gui.GuiScreen;
@@ -20,6 +23,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,6 +43,47 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 	@Shadow(remap = false) public FluidTankNTM[] tanks;
 	@Unique public TileEntityCore lastGetCore;
 	@Unique public BlockPos targetPosition = new BlockPos(0,0,0);
+
+	@Unique LCEAudioWrapper leafia$sound;
+	@Unique boolean leafia$isPlaying = false;
+	@Unique void leafia$playSound() {
+		if (leafia$sound == null) {
+			leafia$sound = AddonBase.proxy.getLoopedSoundStartStop(
+					world,
+					LeafiaSoundEvents.laser2loop,
+					LeafiaSoundEvents.laser2start,
+					LeafiaSoundEvents.laser2stop,
+					SoundCategory.BLOCKS,
+					pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,
+					1,1
+			).setCustomAttenuation((intended,distance)->Math.pow(Math.max(0,1-distance/50),6));
+		}
+		if (!leafia$isPlaying)
+			leafia$sound.startSound();
+		leafia$isPlaying = true;
+	}
+	@Unique void leafia$stopSound() {
+		if (leafia$isPlaying)
+			leafia$sound.stopSound();
+		leafia$isPlaying = false;
+	}
+	@Override
+	public void invalidate(){
+		super.invalidate();
+		if (leafia$sound != null) {
+			leafia$sound.stopSound();
+			leafia$sound = null;
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		super.onChunkUnload();
+		if (leafia$sound != null) {
+			leafia$sound.stopSound();
+			leafia$sound = null;
+		}
+	}
 
 	public MixinTileEntityCoreInjector(int scount) {
 		super(scount);
@@ -86,6 +131,11 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 			}
 			this.markDirty();
 			this.networkPackNT(250);
+		} else {
+			if (core != null)
+				leafia$playSound();
+			else
+				leafia$stopSound();
 		}
 	}
 
