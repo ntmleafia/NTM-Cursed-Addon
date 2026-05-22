@@ -2,8 +2,9 @@ package com.leafia.unsorted;
 
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
-import com.hbm.blocks.machine.MachineElectrolyser;
+import com.hbm.blocks.machine.*;
 import com.hbm.blocks.machine.rbmk.RBMKBase;
+import com.leafia.contents.machines.elevators.floors.EvFloor;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -18,6 +19,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
@@ -63,7 +65,7 @@ public class StructuralIntegrityHandler {
 		blacklistedDimensions.add(1);
 	}
 
-	public static int getGlue(IBlockState state,World world,BlockPos pos) {
+	public static int getGlue(IBlockState state,@Nullable World world,@Nullable BlockPos pos) {
 		if (state.getBlock() instanceof BlockDummyable) {
 			if (state.getValue(BlockDummyable.META) >= 12 )
 				return 0;
@@ -71,10 +73,28 @@ public class StructuralIntegrityHandler {
 				return 22;
 			if (state.getBlock() instanceof RBMKBase)
 				return 20;
+			if (state.getBlock() instanceof MachineFrackingTower)
+				return 62;
+			if (state.getBlock() instanceof MachineICF)
+				return 22;
+			if (state.getBlock() instanceof MachineCoker)
+				return 32;
+			if (state.getBlock() instanceof MachineOilWell)
+				return 22;
+			if (state.getBlock() instanceof MachineExcavator)
+				return 42;
+			if (state.getBlock() instanceof BlockSiloHatch)
+				return 22;
+			if (state.getBlock() instanceof DummyBlockSiloHatch)
+				return 22;
+			if (state.getBlock() instanceof MachineMiningLaser)
+				return 22;
 			return 0;
 		}
 		if (state.getBlock() == ModBlocks.dfc_core)
 			return 0;
+		if (state.getBlock() instanceof EvFloor)
+			return 1;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
 		int glue = gm == null ? 4*3 : gm.glue;
 		if (state.getMaterial() == Material.ROCK)
@@ -85,13 +105,15 @@ public class StructuralIntegrityHandler {
 			glue *= 4;
 		return glue;
 	}
-	public static int getMass(IBlockState state,World world,BlockPos pos) {
+	public static int getMass(IBlockState state,@Nullable World world,@Nullable BlockPos pos) {
 		if (state.getBlock() instanceof BlockDummyable) {
 			if (state.getBlock() instanceof RBMKBase)
 				return 1;
 			return 10;
 		}
 		if (state.getBlock() == ModBlocks.dfc_core)
+			return 0;
+		if (state.getBlock() instanceof EvFloor)
 			return 0;
 		GM gm = GLUE_MASS_MAP.get(state.getMaterial());
 		if (state.getMaterial() == Material.ROCK)

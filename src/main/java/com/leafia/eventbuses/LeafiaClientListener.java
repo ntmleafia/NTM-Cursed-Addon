@@ -437,6 +437,13 @@ public class LeafiaClientListener {
 				list.add(TextFormatting.GREEN+"Creative Tab ID:");
 				list.add(TextFormatting.DARK_GREEN+" - "+item.getCreativeTab().tabLabel);
 			}
+			if (item instanceof ItemBlock ib && StructuralIntegrityHandler.AUTOMATIC) {
+				int mass = StructuralIntegrityHandler.getMass(ib.getBlock().getStateFromMeta(ib.getMetadata(event.getItemStack())),null,null);
+				int glue = StructuralIntegrityHandler.getGlue(ib.getBlock().getStateFromMeta(ib.getMetadata(event.getItemStack())),null,null);
+				list.add(TextFormatting.RED+"Structural Integrity:");
+				list.add(TextFormatting.DARK_RED+" - Mass: "+((mass != -1) ? mass : "?"));
+				list.add(TextFormatting.DARK_RED+" - Glue: "+((glue != -1) ? glue : "?"));
+			}
 		}
 		@SubscribeEvent
 		public void blockColorsEvent(ColorHandlerEvent.Block evt) {

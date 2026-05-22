@@ -147,9 +147,9 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 			}
 
 			if (lens != null && power >= demand * lens.drainMod) {
-				isOn = true;
 				TileEntityCore core = getCore();
 				if (core != null) {
+					isOn = true;
 					IMixinTileEntityCore mixinTileEntityCore = (IMixinTileEntityCore) core;
 					//core.field += (int)(watts * lens.fieldMod);
 					double eMod = mixinTileEntityCore.getDFCEnergyMod();
