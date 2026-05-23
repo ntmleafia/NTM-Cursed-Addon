@@ -348,6 +348,14 @@ public class IC10State {
 								if (value instanceof String vs) {
 									if (vs.isEmpty())
 										value = 0;
+									else {
+										try {
+											value = Double.parseDouble(vs);
+										} catch (NumberFormatException e) {
+											error = "IncorrectVariable";
+											return;
+										}
+									}
 								}
 								if (argType == IC10Type.INTEGER) {
 									if (value instanceof Double vd) {
