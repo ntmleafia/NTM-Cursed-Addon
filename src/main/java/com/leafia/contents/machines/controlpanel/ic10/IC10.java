@@ -25,9 +25,9 @@ public class IC10 {
 	}
 	public static class IC10Instruction {
 		List<IC10Argument> args = new ArrayList<>();
-		BiConsumer<IC10Env,Object[]> function;
+		BiConsumer<IC10State,Object[]> function;
 		String[] desc;
-		public IC10Instruction(List<IC10Argument> args,BiConsumer<IC10Env,Object[]> function,String... desc) {
+		public IC10Instruction(List<IC10Argument> args,BiConsumer<IC10State,Object[]> function,String... desc) {
 			this.args = args;
 			this.function = function;
 			this.desc = desc;
@@ -42,7 +42,7 @@ public class IC10 {
 		}
 	}
 	/// short wrapper for new IC10Instruction
-	public static IC10Instruction make(List<IC10Argument> args,BiConsumer<IC10Env,Object[]> function,String... desc) {
+	public static IC10Instruction make(List<IC10Argument> args,BiConsumer<IC10State,Object[]> function,String... desc) {
 		return new IC10Instruction(args,function,desc);
 	}
 	public static List<IC10Argument> args(Object... args) {
@@ -79,6 +79,7 @@ public class IC10 {
 		return map;
 	}
 	public static final Map<String,IC10Instruction> instructions = new HashMap<>();
+	public static final Map<IC10Instruction,String> instructionNames = new HashMap<>();
 	public static final Map<IC10Instruction,String> category = new HashMap<>();
 	static void iter(Map<String,Object> d,String path) {
 		for (Entry<String,Object> entry : d.entrySet()) {
@@ -86,6 +87,7 @@ public class IC10 {
 				iter((Map<String,Object>)mop,path.isEmpty() ? entry.getKey() : path+"/"+entry.getKey());
 			else {
 				instructions.put(entry.getKey(),(IC10Instruction)entry.getValue());
+				instructionNames.put((IC10Instruction)entry.getValue(),entry.getKey());
 				category.put((IC10Instruction)entry.getValue(),path);
 			}
 		}
@@ -595,14 +597,14 @@ public class IC10 {
 										return;
 									}
 									env.stack[(int)env.getNumber("sp")] = args[0];
-									env.setRegister(IC10Env.register_sp,(int)env.getNumber("sp")+1);
+									env.setRegister(IC10State.register_sp,(int)env.getNumber("sp")+1);
 								},
 								"Pushes the value of a to the stack at sp and increments sp"
 						),
 						"pop",make(
 								args("reg",REGISTER),
 								(env,args)->{
-									env.setRegister(IC10Env.register_sp,(int)env.getNumber("sp")-1);
+									env.setRegister(IC10State.register_sp,(int)env.getNumber("sp")-1);
 									if ((int)env.getNumber("sp") < 0) {
 										env.error = "StackUnderflow";
 										return;
@@ -640,7 +642,7 @@ public class IC10 {
 				"jal",make(
 						args("a",INTEGER),
 						(env,args)->{
-							env.setRegister(IC10Env.register_ra,env.line+1);
+							env.setRegister(IC10State.register_ra,env.line+1);
 							env.line = (int)args[0];
 						},
 						"Jump execution to line a and store next line number in ra"

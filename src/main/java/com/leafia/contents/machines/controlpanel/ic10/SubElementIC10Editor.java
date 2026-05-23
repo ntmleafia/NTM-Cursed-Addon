@@ -37,29 +37,7 @@ public class SubElementIC10Editor extends SubElement {
 	static <T> ArrayList<T> asArrayList(T ...a) {
 		return new ArrayList<>(Arrays.asList(a));
 	}
-	ArrayList<ArrayList<Object>> instructions = asArrayList(
-			asArrayList("alias",1,"timer",1,"r0"),
-			asArrayList("alias",1,"on",1,"r1"),
-			asArrayList(),
-			asArrayList("#"," reset variables"),
-			asArrayList("move",1,"timer",1,"0"),
-			asArrayList("move",1,"on",1,"0"),
-			asArrayList(),
-			asArrayList("Loop:"),
-			asArrayList(2,"#"," check if timer equals 3"),
-			asArrayList(2,"seq",1,"on",1,"timer",1,"3"),
-			asArrayList(2,"s",1,"\"signal\"",1,"on"),
-			asArrayList(2),
-			asArrayList(2,"#"," adds timer 1 and modulo by 4"),
-			asArrayList(2,"#"," (1mod4=1, 2mod4=2, 3mod4=3, 4mod4=0, 5mod4=1, 6mod4=2...)"),
-			asArrayList(2,"add",1,"timer",1,"timer",1,"1"),
-			asArrayList(2,"mod",1,"timer",1,"timer",1,"4"),
-			asArrayList(2),
-			asArrayList(2,"#"," 1 second = 2 stationeers ticks"),
-			asArrayList(2,"yield"),
-			asArrayList(2,"yield"),
-			asArrayList(2,"j",1,"Loop")
-	);
+	public ArrayList<ArrayList<Object>> instructions;
 	ArrayList<UndoData> undoHistory = new ArrayList<>();
 	int undoCurrent = -1;
 	UndoData lastUndo = null;
@@ -112,9 +90,9 @@ public class SubElementIC10Editor extends SubElement {
 	}
 	public SubElementIC10Editor(GuiControlEdit gui) {
 		super(gui);
-		for (int i = 0; i < instructions.size(); i++) {
+		/*for (int i = 0; i < instructions.size(); i++) {
 			instructions.set(i,formatInstruction(asArrayList(toString(instructions.get(i)))));
-		}
+		}*/
 	}
 	public GuiButton btn_back;
 	public GuiButton btn_funcs;
