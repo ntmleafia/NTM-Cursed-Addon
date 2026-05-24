@@ -1,5 +1,5 @@
 # NTM Cursed (Addon Edition)
-<img width="850" height="447" alt="salt" src="https://github.com/user-attachments/assets/a77f4b16-bb8c-410c-80f4-121543db0665" />
+<img width="1624" height="913" alt="lcathumbnail" src="https://github.com/user-attachments/assets/2005e00a-3228-4174-bce6-c4905fddefee" />
 
 Cursed meme edition made into NTM Community Edition addon.
 
@@ -26,3 +26,5 @@ Requires [MixinBooter](https://www.curseforge.com/minecraft/mc-mods/mixin-booter
 
 
 I recommend you to install [Backups](https://www.curseforge.com/minecraft/mc-mods/backups) if you're playing this addon.
+
+<img width="850" height="447" alt="salt" src="https://github.com/user-attachments/assets/a77f4b16-bb8c-410c-80f4-121543db0665" />
