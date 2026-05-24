@@ -46,7 +46,9 @@ public interface IMixinTileEntityCore {
                 LeafiaSoundEvents.dfc_eoh, (intended, distance) ->
                 Math.pow(MathHelper.clamp(1 - (distance - 3) / 150, 0, 1), 3)),
         glitch(LeafiaSoundEvents.glitch_alpha10302, (intended,distance) ->
-                Math.pow(MathHelper.clamp(1 - (distance - 3) / 125, 0, 1), 3));
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 125, 0, 1), 3)),
+        ams_core_thingy(LeafiaSoundEvents.dfc_thingy,(intended, distance) ->
+                Math.pow(MathHelper.clamp(1 - (distance - 3) / 350, 0, 1), 3)); // haha
 
         public final SoundEvent sfx;
         public final BiFunction<Float, Double, Double> attentuationFunction;

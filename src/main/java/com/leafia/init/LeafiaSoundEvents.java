@@ -37,6 +37,7 @@ public class LeafiaSoundEvents {
 	public static SoundEvent dfc_vs;
 	public static SoundEvent dfc_tw;
 	public static SoundEvent dfc_eoh;
+	public static SoundEvent dfc_thingy;
 
 	public static SoundEvent dfc_meltdown;
 	public static SoundEvent dfc_explode;
@@ -136,6 +137,7 @@ public class LeafiaSoundEvents {
 		dfc_vs = register("block.kfc.vs");
 		dfc_tw = register("block.kfc.tw");
 		dfc_eoh = register("block.kfc.eoh");
+		dfc_thingy = register("block.kfc.thingy");
 		dfc_meltdown = register("block.kfc.meltdown");
 		dfc_explode = register("block.kfc.explode");
 

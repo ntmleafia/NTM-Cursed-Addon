@@ -48,6 +48,7 @@
   "block.kfc.vs": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.vs", "name": "leafia:external/forcefield_loop", "stream": false}]},
   "block.kfc.tw": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.tw", "name": "leafia:external/charge_full_hold1", "stream": false}]},
   "block.kfc.eoh": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.eoh", "name": "leafia:external/avactron_loop", "stream": false}]},
+  "block.kfc.thingy": {"category": "block", "sounds": [{"name": "leafia:leafia/thingy", "stream": false}]},
   "block.kfc.meltdown": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.meltdown", "name": "leafia:leafia/dfcstress", "stream": true}]},
   "block.kfc.explode": {"category": "block", "sounds": [{"subtitle": "subtitles.block.kfc.explode", "name": "leafia:leafia/dfcexplode", "stream": false}]},
 

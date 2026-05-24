@@ -49,6 +49,9 @@ public class RBMKDebrisSmokeTE extends TileEntity implements ITickable, LeafiaPa
 			}
 			if (scale > 0)
 				addSmoke();
+		} else {
+			// yeah fuck off
+			LeafiaPacket._start(this).__write(0,scale).__sendToClients(4096);
 		}
 	}
 	@Override
