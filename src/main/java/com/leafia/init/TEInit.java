@@ -1,6 +1,7 @@
 package com.leafia.init;
 
 import com.leafia.AddonBase;
+import com.leafia.contents.building.doors.AddonDoorTE;
 import com.leafia.contents.building.storage.broof.BroofTE;
 import com.leafia.contents.building.doors.special.reactor_door.ReactorDoorTE;
 import com.leafia.contents.building.light.LightTE;
@@ -141,6 +142,7 @@ public class TEInit {
 		register(DebugRenderTestTE.class,"debug_render_te");
 		register(WindTurbineMediumTE.class,"wind_turbine_medium_te");
 		register(RBMKDebrisSmokeTE.class,"pribris_smoke_te");
+		register(AddonDoorTE.class,"door_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

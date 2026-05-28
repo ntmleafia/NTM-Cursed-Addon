@@ -16,6 +16,7 @@ import com.leafia.contents.bomb.balefire.AshBalefire;
 import com.leafia.contents.bomb.balefire.BaleoniteBlock;
 import com.leafia.contents.bomb.digamma.DigammititeBlock;
 import com.leafia.contents.building.catwalk.railing.types.CatwalkRailingCurved;
+import com.leafia.contents.building.doors.AddonDoorGeneric;
 import com.leafia.contents.building.storage.broof.BroofBlock;
 import com.leafia.contents.building.doors.AddonDoorDecl;
 import com.leafia.contents.building.doors.special.reactor_door.ReactorDoorBlock;
@@ -482,6 +483,8 @@ public class AddonBlocks {
 	public static final Block regex_filter = new RegexFilterBlock(Material.IRON,"regex_filter").setSoundType(ModSoundTypes.pipe).setHardness(0.1F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
 	public static final Block reactor_door = new ReactorDoorBlock(Material.IRON,AddonDoorDecl.REACTOR_DOOR,true,"reactor_door").setHardness(150.0F).setResistance(13500.0F).setCreativeTab(MainRegistry.machineTab);
+	public static final Block crimson_door_small = new AddonDoorGeneric(Material.IRON,AddonDoorDecl.CRIMSON_DOOR_SMALL,true,"crimson_door_small").setHardness(150).setResistance(135000).setCreativeTab(MainRegistry.machineTab);
+	public static final Block crimson_door_large = new AddonDoorGeneric(Material.IRON,AddonDoorDecl.CRIMSON_DOOR_LARGE,true,"crimson_door_large").setHardness(150).setResistance(135000).setCreativeTab(MainRegistry.machineTab);
 
 	public static final Block brick_concrete_dark = new ConcreteBricks(Material.ROCK,"brick_concrete_dark","brick_dark_concrete").setHardness(15.0F).setResistance(160.0F); // :leafeon_facepalm:
 

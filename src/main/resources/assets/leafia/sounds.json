@@ -114,5 +114,10 @@
 
   "external.eversionsong7cut": { "category": "block", "sounds": ["leafia:external/song7_cut"]},
 
-  "music.wtf": { "category": "record", "sounds": [{ "name": "leafia:leafia/untitled", "stream": true }] }
+  "music.wtf": { "category": "record", "sounds": [{ "name": "leafia:leafia/untitled", "stream": true }] },
+
+  "external.scp_sl_gate_open.start": { "category": "block", "sounds": [{ "name": "leafia:external/7509847163_start", "stream": false }] },
+  "external.scp_sl_gate_open.end": { "category": "block", "sounds": [{ "name": "leafia:external/7509847163_end", "stream": false }] },
+  "external.scp_sl_gate_close.start": { "category": "block", "sounds": [{ "name": "leafia:external/7509830749_start", "stream": false }] },
+  "external.scp_sl_gate_close.end": { "category": "block", "sounds": [{ "name": "leafia:external/7509830749_end", "stream": false }] }
 }

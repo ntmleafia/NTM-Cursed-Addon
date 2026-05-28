@@ -111,6 +111,11 @@ public class LeafiaSoundEvents {
 	public static SoundEvent laser2loop;
 	public static SoundEvent laser2stop;
 
+	public static SoundEvent crimDoorOpenStart;
+	public static SoundEvent crimDoorOpenEnd;
+	public static SoundEvent crimDoorCloseStart;
+	public static SoundEvent crimDoorCloseEnd;
+
 	public static void init() {
 		// this is so retarded
 		literally_nothing = register("sdkgjalkdsjgldhsaiuhgui8asd8gy87dast67gt7wy9gty47yaw79g8734");
@@ -236,6 +241,11 @@ public class LeafiaSoundEvents {
 		laser2start = register("block.laser2.start");
 		laser2loop = register("block.laser2.loop");
 		laser2stop = register("block.laser2.stop");
+
+		crimDoorOpenStart = register("external.scp_sl_gate_open.start");
+		crimDoorOpenEnd = register("external.scp_sl_gate_open.end");
+		crimDoorCloseStart = register("external.scp_sl_gate_close.start");
+		crimDoorCloseEnd = register("external.scp_sl_gate_close.end");
 	}
 
 	public static SoundEvent register(String name) {

@@ -5,6 +5,8 @@ import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.bomb.missile.AddonMissileItemRender;
+import com.leafia.contents.building.doors.renderers.CrimsonDoorLargeRender;
+import com.leafia.contents.building.doors.renderers.CrimsonDoorSmallRender;
 import com.leafia.contents.building.storage.broof.BroofRender;
 import com.leafia.contents.building.doors.renderers.ReactorDoorRender;
 import com.leafia.contents.building.light.LightRender;
@@ -94,6 +96,8 @@ public class ResourceInit {
 		_initClass(ReactorDoorRender.class);
 		_initClass(AddonInstrumentModels.class);
 		_initClass(RackRender.class);
+		_initClass(CrimsonDoorSmallRender.class);
+		_initClass(CrimsonDoorLargeRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");
