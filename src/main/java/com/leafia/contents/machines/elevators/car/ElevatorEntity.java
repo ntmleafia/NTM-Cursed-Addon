@@ -310,7 +310,7 @@ public class ElevatorEntity extends Entity implements IEntityMultiPart, IEntityC
 		public int y;
 		final ElevatorEntity entity;
 		final List<MultiPartEntityPart> hitboxes = new ArrayList<>();
-		final List<ElevatorPanelBase> panels;
+		List<ElevatorPanelBase> panels;
 		public String id;
 		// z = 0.9365;
 		ElevatorButton(ElevatorEntity elevator,String id,int x,int y) {
@@ -323,6 +323,7 @@ public class ElevatorEntity extends Entity implements IEntityMultiPart, IEntityC
 			this.y = y;
 		}
 		void updateHitboxes() {
+			panels = entity.getPanels();
 			hitboxes.clear();
 			for (ElevatorPanelBase panel : panels) {
 				hitboxes.add(new MultiPartEntityPart(entity,"button",1 / 16f,1 / 16f) {
