@@ -116,6 +116,12 @@ public class LeafiaSoundEvents {
 	public static SoundEvent crimDoorCloseStart;
 	public static SoundEvent crimDoorCloseEnd;
 
+	public static SoundEvent UI_BUTTON_KEYPAD;
+
+	public static SoundEvent hspActive;
+	public static SoundEvent hspIgnite;
+	public static SoundEvent dfc_detonate;
+
 	public static void init() {
 		// this is so retarded
 		literally_nothing = register("sdkgjalkdsjgldhsaiuhgui8asd8gy87dast67gt7wy9gty47yaw79g8734");
@@ -246,6 +252,12 @@ public class LeafiaSoundEvents {
 		crimDoorOpenEnd = register("external.scp_sl_gate_open.end");
 		crimDoorCloseStart = register("external.scp_sl_gate_close.start");
 		crimDoorCloseEnd = register("external.scp_sl_gate_close.end");
+
+		UI_BUTTON_KEYPAD = register("ui.button.keypad");
+
+		hspActive = register("misc.hsp_active");
+		hspIgnite = register("misc.hsp_ignite");
+		dfc_detonate = register("block.kfc.detonate");
 	}
 
 	public static SoundEvent register(String name) {

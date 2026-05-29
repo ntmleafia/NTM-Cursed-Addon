@@ -4,7 +4,10 @@ import com.custom_hbm.explosion.LCEExplosionNT;
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.blocks.machine.MachineFieldDisturber;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
+import com.hbm.entity.logic.EntityBalefire;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
+import com.hbm.entity.logic.EntityNukeExplosionMK5;
+import com.hbm.explosion.ExplosionLarge;
 import com.hbm.handler.ArmorUtil;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.inventory.fluid.FluidType;
@@ -13,6 +16,7 @@ import com.hbm.items.machine.ItemCatalyst;
 import com.hbm.items.special.ItemAMSCore;
 import com.hbm.lib.Library;
 import com.hbm.main.AdvancementManager;
+import com.hbm.main.ModContext;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
@@ -24,6 +28,7 @@ import com.leafia.contents.AddonItems;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.effects.folkvangr.particles.ParticleFleijaVacuum;
 import com.leafia.contents.fluids.traits.FT_DFCFuel;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.contents.machines.powercores.dfc.core.CoreContainer;
 import com.leafia.contents.machines.powercores.dfc.core.CoreGUI;
 import com.leafia.contents.machines.powercores.dfc.particles.ParticleEyeOfHarmony;
@@ -33,6 +38,7 @@ import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
+import com.leafia.dev.optimization.LeafiaParticlePacket.DFCNukeParticle;
 import com.leafia.dev.optimization.LeafiaParticlePacket.FlashParticle;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
@@ -110,6 +116,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 	private double bonus = 0;
 	@Unique
 	private List<TileEntityCoreReceiver> absorbers = new ArrayList<>();
+	@Unique
+	private final List<CoreDetonatorTE> pulsers = new ArrayList<>();
 	@Unique
 	private boolean destroyed = false;
 	@Unique
@@ -220,9 +228,120 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		return super.writeToNBT(compound);
 	}
 
+	@Unique boolean detonation = false;
+	@Unique int detonationTimer = 0;
+	public boolean getDetonation() {
+		return detonation;
+	}
+	public int getDetonationTimer() {
+		return detonationTimer;
+	}
+	public void setDetonation(boolean v) {
+		detonation = v;
+	}
+	@Unique int lastPulserCount = 0;
+	@Unique
+	private void tickDetonation() {
+		if (pulsers.isEmpty())
+			detonation = false;
+		if (lastPulserCount != pulsers.size())
+			detonationTimer = 0;
+		lastPulserCount = pulsers.size();
+		if (!detonation)
+			detonationTimer = 0;
+		else {
+			detonationTimer++;
+			if (detonationTimer == 20*(30-6))
+				LeafiaPacket._start(this).__write(packetKeys.PLAY_SOUND.key, 2).__sendToAll();
+			if (detonationTimer >= 20*(30-6) && detonationTimer%5 == 0) {
+				PacketThreading.createSendToAllTrackingThreadedPacket(
+						new CommandLeaf.ShakecamPacket(new String[]{
+								"type=smooth",
+								"preset=RUPTURE",
+								"blurDulling*20",
+								"bloomDulling*20",
+								"duration/4",
+								"speed*8",
+								"intensity/16",
+								"range=100"
+						}).setPos(pos),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(),pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,250)
+				);
+			}
+			if (detonationTimer == 20*30) {
+				world.setBlockToAir(pos);
+				int power = pulsers.size();
+				if (power <= 1) {
+					world.playSound(null,pos,LeafiaSoundEvents.machineExplode,SoundCategory.BLOCKS,30,1);
+					ExplosionLarge.spawnParticles(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,25);
+					LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 150);
+					nt.iterationLimit = 150;
+					nt.overrideResolution(24);
+					nt.ignoreBlockPoses.add(pos);
+					nt.addAttrib(LCEExplosionNT.LCEExAttrib.FIRE);
+					nt.addAttrib(LCEExplosionNT.LCEExAttrib.DFC_FALL);
+					nt.explode();
+				} else {
+					int radius = 100*(power-1);
+					if (power <= 4) {
+						world.playSound(null,pos,LeafiaSoundEvents.dfc_detonate,SoundCategory.BLOCKS,300,1);
+						DFCNukeParticle nuke = new DFCNukeParticle();
+						nuke.radius = radius;
+						if (power == 2)
+							nuke.maxAge = 20;
+						if (power == 3) {
+							nuke.flashTime = 130;
+							nuke.maxAge = 20*2+10;
+						}
+						if (power == 4) {
+							nuke.flashTime = 200;
+							nuke.maxAge = 20*4;
+						}
+						nuke.emit(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5),new Vec3d(0,1,0),world.provider.getDimension(),radius*5);
+						EntityNukeExplosionMK5 mk5 = EntityNukeExplosionMK5.statFac(world,radius,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5);
+						world.spawnEntity(mk5);
+					} else if (power <= 7) {
+						world.playSound(null,pos,LeafiaSoundEvents.dfc_detonate,SoundCategory.BLOCKS,300,1);
+						DFCNukeParticle nuke = new DFCNukeParticle();
+						nuke.radius = radius;
+						EntityBalefire bf = new EntityBalefire(world);
+						bf.posX = pos.getX() + 0.5;
+						bf.posY = pos.getY() + 0.5;
+						bf.posZ = pos.getZ() + 0.5;
+						bf.destructionRange = radius;
+						nuke.emit(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5),new Vec3d(0,1,0),world.provider.getDimension(),radius*5);
+						world.spawnEntity(bf);
+					} else {
+						radius += 200*(power-8);
+						EntityNukeExplosionMK3 exp = new EntityNukeExplosionMK3(world);
+						exp.posX = pos.getX();
+						exp.posY = pos.getY();
+						exp.posZ = pos.getZ();
+						exp.destructionRange = radius;
+						exp.speed = 25;
+						exp.coefficient = 1.0F;
+						exp.waste = false;
+
+						PacketThreading.createSendToAllTrackingThreadedPacket(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=PWR_NEAR", "duration*2", "intensity*1.5", "range=200"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 300));
+						world.playSound(null, pos, LeafiaSoundEvents.dfc_explode, SoundCategory.BLOCKS, 100, 1);
+						destroyed = true;
+						world.spawnEntity(exp);
+						EntityCloudFleijaRainbow cloud = new EntityCloudFleijaRainbow(world, exp.destructionRange);
+						cloud.posX = pos.getX();
+						cloud.posY = pos.getY();
+						cloud.posZ = pos.getZ();
+						world.spawnEntity(cloud);
+					}
+				}
+			}
+		}
+		pulsers.clear();
+	}
 
 	@Unique
 	private void tickServer() {
+		tickDetonation();
+		if (detonationTimer >= 20*30) return;
 		lastStabilizers = stabilizers;
 		stabilizers = 0;
 
@@ -768,6 +887,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 				.__write(packetKeys.JAMMER.key, jammerPos)
 				.__write(packetKeys.COLLAPSE.key, collapsing)
 				.__write(packetKeys.HASCORE.key, hasCore)
+				.__write(packetKeys.DETONATION.key, detonation)
+				.__write(packetKeys.DET_TIMER.key, detonationTimer)
 				.__sendToAffectedClients();
 	}
 
@@ -877,10 +998,13 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 						} else if (type == 3 && explosionsSFX != null) {
 							explosionsSFX.startSound();
 							finalPhase = true;
-						}
+						} else if (type == 4)
+							overloadSFX.stopSound();
 						break;
 					case COLLAPSE: collapsing = (double) value; break;
 					case HASCORE: hasCore = (boolean) value; break;
+					case DETONATION: detonation = (boolean)value; break;
+					case DET_TIMER: detonationTimer = (int)value; break;
 				}
 			}
 		}
@@ -1107,6 +1231,12 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 	@Override
 	public List<TileEntityCoreReceiver> getDFCAbsorbers() {
 		return absorbers;
+	}
+
+	@Unique
+	@Override
+	public List<CoreDetonatorTE> getDFCPulsers() {
+		return pulsers;
 	}
 
 	@Unique

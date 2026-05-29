@@ -6,6 +6,7 @@ import com.hbm.main.MainRegistry;
 import com.hbm.particle.ParticleRBMKMush;
 import com.leafia.contents.machines.misc.modular_turbine.ParticleMTSteam;
 import com.leafia.contents.machines.powercores.dfc.particles.ParticleDFC;
+import com.leafia.contents.machines.powercores.dfc.particles.ParticleNuke;
 import com.leafia.contents.machines.reactors.rbmk.effects.ParticleJumpingRBMK;
 import com.leafia.contents.machines.reactors.rbmk.effects.ParticleRBMKJet;
 import com.leafia.dev.math.FiaMatrix;
@@ -490,6 +491,40 @@ public class LeafiaParticlePacket extends RecordablePacket {
 					nbt.getDouble("mZ"),
 					travelDistance
 			));
+		}
+	}
+	public static class DFCNukeParticle extends LeafiaParticle {
+		public int radius = 250;
+		public int maxAge = 20*3;
+		public int flashTime = 50;
+		@Override
+		protected LeafiaParticle fromBits(LeafiaBuf buf,NBTTagCompound nbt) {
+			DFCNukeParticle packet = new DFCNukeParticle();
+			packet.radius = buf.readInt();
+			packet.maxAge = buf.readInt();
+			packet.flashTime = buf.readInt();
+			return packet;
+		}
+		@Override
+		protected void toBits(LeafiaBuf buf) {
+			buf.writeInt(radius);
+			buf.writeInt(maxAge);
+			buf.writeInt(flashTime);
+		}
+		@Override
+		protected void emit(NBTTagCompound nbt) {
+			World world = Minecraft.getMinecraft().world;
+			ParticleNuke nuke = new ParticleNuke(
+					world,
+					new BlockPos(nbt.getDouble("posX"),
+							nbt.getDouble("posY"),
+							nbt.getDouble("posZ")
+					)
+			);
+			nuke.radius = radius;
+			nuke.setMaxAge(maxAge);
+			nuke.flashTime = flashTime;
+			Minecraft.getMinecraft().effectRenderer.addEffect(nuke);
 		}
 	}
 

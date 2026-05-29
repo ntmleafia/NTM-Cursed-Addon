@@ -4,6 +4,7 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.init.LeafiaSoundEvents;
@@ -66,7 +67,10 @@ public interface IMixinTileEntityCore {
         EXPEL_TICK, COLOR, COLOR_CATALYST, CORE_TYPE,
         PLAY_SOUND, JAMMER,
         COLLAPSE,
-        HASCORE;
+        HASCORE,
+
+        DETONATION,DET_TIMER
+        ;
 
         public int key;
 
@@ -157,6 +161,12 @@ public interface IMixinTileEntityCore {
 
     List<TileEntityCoreReceiver> getDFCAbsorbers();
     void setDFCAbsorbers(List<TileEntityCoreReceiver> value);
+
+    List<CoreDetonatorTE> getDFCPulsers();
+
+    boolean getDetonation();
+    int getDetonationTimer();
+    void setDetonation(boolean v);
 
     boolean isDFCDestroyed();
     void setDFCDestroyed(boolean value);

@@ -17,6 +17,7 @@ import com.leafia.contents.AddonFluids;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.machine.MachineTooltip;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
@@ -156,6 +157,9 @@ public abstract class MixinCoreComponent extends BlockContainer implements ILook
 			cir.cancel();
 		} else if (this == AddonBlocks.dfc_cemitter) {
 			cir.setReturnValue(new CoreCEmitterTE());
+			cir.cancel();
+		} else if (this == AddonBlocks.dfc_pulser) {
+			cir.setReturnValue(new CoreDetonatorTE());
 			cir.cancel();
 		}
 	}

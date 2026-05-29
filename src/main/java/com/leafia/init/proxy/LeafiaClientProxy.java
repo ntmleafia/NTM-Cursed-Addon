@@ -61,6 +61,7 @@ import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerRende
 import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerTE;
 import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelEntity;
 import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender;
@@ -168,6 +169,7 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 				ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoreInjector.class,dfcComponentRender);
 				ClientRegistry.bindTileEntitySpecialRenderer(CoreCEmitterTE.class,dfcComponentRender);
 				ClientRegistry.bindTileEntitySpecialRenderer(CoreExchangerTE.class,dfcComponentRender);
+				ClientRegistry.bindTileEntitySpecialRenderer(CoreDetonatorTE.class,dfcComponentRender);
 			}
 			ClientRegistry.bindTileEntitySpecialRenderer(SignTE.class,new SignRender());
 			FFDuctUtilityRender ffUtilityRender = new FFDuctUtilityRender();

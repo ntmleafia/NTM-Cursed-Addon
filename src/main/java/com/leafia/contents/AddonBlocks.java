@@ -217,6 +217,7 @@ public class AddonBlocks {
 	public static Block dfc_reinforced;
 	public static Block dfc_exchanger;
 	public static Block dfc_cemitter;
+	public static Block dfc_pulser;
 
 	static boolean letter_dummy = LetterSigns.dummy;
 	public static class LetterSigns {
@@ -579,6 +580,7 @@ public class AddonBlocks {
 			dfc_reinforced = new AddonCoreComponent(Material.IRON, "dfc_reinforced").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
 			dfc_exchanger = new AddonCoreComponent(Material.IRON, "dfc_exchanger").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
 			dfc_cemitter = new AddonCoreComponent(Material.IRON, "dfc_cemitter").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
+			dfc_pulser = new AddonCoreComponent(Material.IRON, "dfc_pulser").setHardness(5.0F).setResistance(50.0F).setCreativeTab(MainRegistry.machineTab);
 		}
 	}
 

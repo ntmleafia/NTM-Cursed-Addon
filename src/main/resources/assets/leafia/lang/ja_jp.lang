@@ -347,6 +347,7 @@ tile.deco_turbine.name=モジューラータービンデコブロック
 tile.dfc_cemitter.name=Creative DFC Booster
 tile.dfc_emitter.name=DFC ブースター
 tile.dfc_exchanger.name=DFC 熱交換機
+tile.dfc_pulser.name=DFC パルス起爆装置
 tile.dfc_receiver.name=DFC アブソーバー
 tile.dfc_reinforced.name=DFC 強化アブソーバー
 tile.dfc_stabilizer.desc=接続が確立されている場合、$コアのステータスも取得します。

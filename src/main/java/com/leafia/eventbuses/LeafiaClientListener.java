@@ -614,10 +614,29 @@ public class LeafiaClientListener {
 			}
 			TopRender.main(evt);
 		}
+		public static int dfcFlashTicks = 0;
 		@SubscribeEvent
 		public void onOverlayRenderPost(RenderGameOverlayEvent.Post evt) {
-			if(evt.getType() == ElementType.ALL)
-				Digamma.drawVignette(evt.getResolution(),evt.getPartialTicks());
+			if(evt.getType() == ElementType.ALL) {
+				ScaledResolution resolution = evt.getResolution();
+				Digamma.drawVignette(resolution,evt.getPartialTicks());
+				if (dfcFlashTicks > 0) { // dfc flash
+					LeafiaBrush brush = LeafiaBrush.instance;
+					Minecraft.getMinecraft().renderEngine.bindTexture(AddonBase.solid);
+					LeafiaGls.disableAlpha();
+					LeafiaGls.color(1,1,1,Math.max(0,Math.min(1,(dfcFlashTicks-evt.getPartialTicks())/50f)));
+					LeafiaGls.enableBlend();
+					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+					brush.startDrawing(BrushMode.QUADS,DefaultVertexFormats.POSITION_TEX);
+					brush.addVertexWithUV(0,resolution.getScaledHeight_double(),0,0,1);
+					brush.addVertexWithUV(resolution.getScaledWidth_double(),resolution.getScaledHeight_double(),0,1,1);
+					brush.addVertexWithUV(resolution.getScaledWidth_double(),0,0,1,0);
+					brush.addVertexWithUV(0,0,0,0,0);
+					brush.draw();
+					LeafiaGls.enableAlpha();
+					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+				}
+			}
 		}
 		public static final ResourceLocation addonBadges = new ResourceLocation("leafia","textures/badges.png");
 		public static void renderBadges(ScaledResolution res, Gui gui) {

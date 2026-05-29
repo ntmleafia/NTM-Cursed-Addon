@@ -436,7 +436,13 @@ public class LeafiaPacket extends RecordablePacket {
                                 receiver.onPlayerValidate(p);
                             else {
                                 m.signal.forEach((Byte entry, Pair<Byte, Object> value) -> {
-                                    receiver.onReceivePacketServer(getKey(entry), value.getValue(), p);
+                                    try {
+                                        receiver.onReceivePacketServer(getKey(entry),value.getValue(),p);
+                                    } catch (ClassCastException exc) {
+                                        System.err.println("Malformed packet sent by "+p.getName());
+                                        System.out.println(">> "+exc.getMessage());
+                                        exc.printStackTrace();
+                                    }
                                 });
                             }
                         }

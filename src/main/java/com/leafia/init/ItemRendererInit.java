@@ -43,6 +43,7 @@ import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender.FFDuctUti
 import com.leafia.contents.network.fluid.FluidDuctEquipmentRender.FluidDuctEquipmentItemRender;
 import com.leafia.contents.network.spk_cable.SPKCableRender.SPKCableItemRender;
 import com.leafia.contents.nonmachines.storage.fluid.fftank.FFTankRender.FFTankItemRender;
+import com.leafia.settings.AddonConfig;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
@@ -55,14 +56,17 @@ public class ItemRendererInit {
 	public static void preInit() {
 		//fix(AddonItems.door_fuckoff);
 		// DFC
-		register(true,AddonBlocks.spk_cable,new SPKCableItemRender());
-		register(false,ModBlocks.dfc_emitter,new DFCComponentRender());
-		register(false,ModBlocks.dfc_receiver,new DFCComponentRender());
-		register(false,ModBlocks.dfc_injector,new DFCComponentRender());
-		register(false,ModBlocks.dfc_stabilizer,new DFCComponentRender());
-		register(true,AddonBlocks.dfc_cemitter,new DFCComponentRender());
-		register(true,AddonBlocks.dfc_exchanger,new DFCComponentRender());
-		register(true,AddonBlocks.dfc_reinforced,new DFCComponentRender());
+		if (!AddonConfig.disableAddonDFC) {
+			register(true,AddonBlocks.spk_cable,new SPKCableItemRender());
+			register(false,ModBlocks.dfc_emitter,new DFCComponentRender());
+			register(false,ModBlocks.dfc_receiver,new DFCComponentRender());
+			register(false,ModBlocks.dfc_injector,new DFCComponentRender());
+			register(false,ModBlocks.dfc_stabilizer,new DFCComponentRender());
+			register(true,AddonBlocks.dfc_cemitter,new DFCComponentRender());
+			register(true,AddonBlocks.dfc_exchanger,new DFCComponentRender());
+			register(true,AddonBlocks.dfc_reinforced,new DFCComponentRender());
+			register(true,AddonBlocks.dfc_pulser,new DFCComponentRender());
+		}
 		SignItemRender signRenderer = new SignItemRender();
 		for (Block sign : LetterSigns.signs.values())
 			register(sign,signRenderer);

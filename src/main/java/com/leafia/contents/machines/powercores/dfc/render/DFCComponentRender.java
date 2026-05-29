@@ -18,6 +18,7 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
 import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreEmitter;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
@@ -36,6 +37,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -57,6 +59,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				Item.getItemFromBlock(AddonBlocks.dfc_cemitter),
 				Item.getItemFromBlock(AddonBlocks.dfc_reinforced),
 				Item.getItemFromBlock(AddonBlocks.dfc_exchanger),
+				Item.getItemFromBlock(AddonBlocks.dfc_pulser),
 		};
 	}
 
@@ -95,6 +98,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				} else if (item.getItem() == Item.getItemFromBlock(AddonBlocks.dfc_reinforced)) {
 					NTMRenderHelper.bindTexture(dfc_absorber_tex);
 					mdl = dfc_reinforced_mdl;
+				} else if (item.getItem() == Item.getItemFromBlock(AddonBlocks.dfc_pulser)) {
+					NTMRenderHelper.bindTexture(dfc_pulser_tex);
+					mdl = dfc_pulser_mdl;
 				} else return;
 				mdl.renderPart("Core");
 				if (mdl == dfc_reinforced_mdl)
@@ -108,10 +114,17 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 					GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 					LeafiaGls.disableBlend();
 				}
+				if (mdl == dfc_pulser_mdl) {
+					LeafiaGls.color(0,0,0);
+					mdl.renderPart("Neon");
+					LeafiaGls.color(1,1,1);
+				}
 				GlStateManager.pushMatrix();
 				for (int i = 0; i < 4; i++) {
 					mdl.renderPart("Arm");
 					GlStateManager.rotate(90,0,0,1);
+					if (mdl == dfc_pulser_mdl)
+						mdl.renderPart("ArmLaser");
 				}
 				GlStateManager.popMatrix();
 				mdl.renderPart("Frame");
@@ -166,6 +179,10 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 	static final WaveFrontObjectVAO dfc_exchanger_mdl =
 			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/exchanger.obj"));
 
+	static final ResourceLocation dfc_pulser_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_pulser.png");
+	static final WaveFrontObjectVAO dfc_pulser_mdl =
+			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/pulser.obj"));
+
 	@Override
 	public void render(TileEntityMachineBase te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (!(te instanceof IDFCBase)) return;
@@ -192,6 +209,9 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 		} else if (te instanceof CoreExchangerTE) {
 			tex = dfc_exchanger_tex;
 			mdl = dfc_exchanger_mdl;
+		} else if (te instanceof CoreDetonatorTE) {
+			tex = dfc_pulser_tex;
+			mdl = dfc_pulser_mdl;
 		} else return;
 		bindTexture(tex);
 		GL11.glPushMatrix();
@@ -366,6 +386,30 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			}
 			bindTexture(dfc_exchanger_tex);
 		}
+		if (te instanceof CoreDetonatorTE det) {
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,240,240);
+			LeafiaGls.disableLighting();
+
+			bindTexture(AddonBase.solid);
+			LeafiaGls.color(0,0,0);
+			mdl.renderPart("Neon");
+			LeafiaGls.color(1,1,1);
+			bindTexture(tex);
+
+			LeafiaGls.enableBlend();
+			LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+			LeafiaGls.pushMatrix();
+			LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*2,360),0,0,1);
+			mdl.renderPart("EnergyRingOuter");
+			LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*3,360),0,0,1);
+			mdl.renderPart("EnergyRingInner");
+			LeafiaGls.popMatrix();
+			LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+			LeafiaGls.disableBlend();
+
+			LeafiaGls.enableLighting();
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,lx,ly);
+		}
 
 		GlStateManager.enableLighting();
 		GL11.glPopMatrix();
@@ -392,19 +436,55 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			if (isFront) {
 				for (int i = 0; i < 4; i++) {
 					if (face == EnumFacing.UP) {
-						if (!isFace(EnumFacing.byHorizontalIndex(Math.floorMod(-i, 4)), unit))
+						if (!isFace(EnumFacing.byHorizontalIndex(Math.floorMod(-i, 4)), unit)) {
 							mdl.renderPart("Arm");
+							if (mdl == dfc_pulser_mdl) {
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,240,240);
+								LeafiaGls.disableLighting();
+								LeafiaGls.enableBlend();
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+								mdl.renderPart("ArmLaser");
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+								LeafiaGls.disableBlend();
+								LeafiaGls.enableLighting();
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,lx,ly);
+							}
+						}
 					} else if (face == EnumFacing.DOWN) {
-						if (!isFace(EnumFacing.byHorizontalIndex(Math.floorMod(2 - i, 4)), unit))
+						if (!isFace(EnumFacing.byHorizontalIndex(Math.floorMod(2 - i, 4)), unit)) {
 							mdl.renderPart("Arm");
+							if (mdl == dfc_pulser_mdl) {
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,240,240);
+								LeafiaGls.disableLighting();
+								LeafiaGls.enableBlend();
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+								mdl.renderPart("ArmLaser");
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+								LeafiaGls.disableBlend();
+								LeafiaGls.enableLighting();
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,lx,ly);
+							}
+						}
 					} else {
 						EnumFacing check;
 						if (i == 0) check = EnumFacing.UP;
 						else if (i == 1) check = face.rotateY().getOpposite();
 						else if (i == 2) check = EnumFacing.DOWN;
 						else check = face.rotateY();
-						if (!isFace(check, unit))
+						if (!isFace(check, unit)) {
 							mdl.renderPart("Arm");
+							if (mdl == dfc_pulser_mdl) {
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,240,240);
+								LeafiaGls.disableLighting();
+								LeafiaGls.enableBlend();
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+								mdl.renderPart("ArmLaser");
+								LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
+								LeafiaGls.disableBlend();
+								LeafiaGls.enableLighting();
+								OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,lx,ly);
+							}
+						}
 					}
 					GL11.glRotatef(90, 0, 0, 1);
 				}

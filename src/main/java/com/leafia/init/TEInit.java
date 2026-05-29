@@ -31,6 +31,7 @@ import com.leafia.contents.machines.powercores.ams.emitter.AMSEmitterTE;
 import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerTE;
 import com.leafia.contents.machines.powercores.dfc.components.cemitter.CoreCEmitterTE;
 import com.leafia.contents.machines.powercores.dfc.components.exchanger.CoreExchangerTE;
+import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatTE;
 import com.leafia.contents.machines.processing.mixingvat.proxy.MixingVatProxy;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
@@ -82,6 +83,7 @@ public class TEInit {
 			register(SPKCableTE.class,"spk_cable_te");
 			register(CoreCEmitterTE.class,"core_creative_emitter_te");
 			register(CoreExchangerTE.class,"core_exchanger_te");
+			register(CoreDetonatorTE.class,"core_detonator_te");
 		}
 		register(SignTE.class,"letter_sign_te");
 		register(FFDuctTE.class,"ff_duct_te");

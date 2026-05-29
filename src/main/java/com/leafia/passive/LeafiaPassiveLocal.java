@@ -6,7 +6,9 @@ import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.DigammaBacks
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.NullEntity;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
+import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaClientListener.Digamma;
+import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.passive.rendering.AddonRainRender;
 import com.leafia.savedata.FalloutSavedData;
@@ -45,6 +47,8 @@ public class LeafiaPassiveLocal {
 		if (!Minecraft.getMinecraft().isGamePaused()) {
 			AddonRainRender.INSTANCE.update();
 			FalloutSavedData.forWorld(world).tick();
+			if (HandlerClient.dfcFlashTicks > 0)
+				HandlerClient.dfcFlashTicks--;
 		}
 		RecordablePacket.previousByteUsage = RecordablePacket.bytesUsage;
 		RecordablePacket.bytesUsage = 0;

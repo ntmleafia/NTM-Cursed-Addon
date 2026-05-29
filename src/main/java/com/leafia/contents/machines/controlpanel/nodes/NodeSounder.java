@@ -30,6 +30,7 @@ public class NodeSounder extends NodeOutput {
 		BUTTON(LeafiaSoundEvents.sbWallButton),
 		CLICK_ACCEPT(SoundEvents.UI_BUTTON_CLICK),
 		CLICK_INVALID(LeafiaSoundEvents.UI_BUTTON_INVALID),
+		KEYPAD(LeafiaSoundEvents.UI_BUTTON_KEYPAD),
 		ARMED(HBMSoundHandler.fstbmbStart),
 		TIMER(HBMSoundHandler.fstbmbPing),
 		BLEEP(HBMSoundHandler.techBleep),

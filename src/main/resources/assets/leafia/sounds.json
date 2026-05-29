@@ -119,5 +119,11 @@
   "external.scp_sl_gate_open.start": { "category": "block", "sounds": [{ "name": "leafia:external/7509847163_start", "stream": false }] },
   "external.scp_sl_gate_open.end": { "category": "block", "sounds": [{ "name": "leafia:external/7509847163_end", "stream": false }] },
   "external.scp_sl_gate_close.start": { "category": "block", "sounds": [{ "name": "leafia:external/7509830749_start", "stream": false }] },
-  "external.scp_sl_gate_close.end": { "category": "block", "sounds": [{ "name": "leafia:external/7509830749_end", "stream": false }] }
+  "external.scp_sl_gate_close.end": { "category": "block", "sounds": [{ "name": "leafia:external/7509830749_end", "stream": false }] },
+
+  "ui.button.keypad": { "category": "block", "sounds": [{ "name": "leafia:external/keypad_press", "stream": false }] },
+
+  "misc.hsp_active": { "category": "block", "sounds": [{ "name": "leafia:misc/hsp_active", "stream": false }] },
+  "misc.hsp_ignite": { "category": "block", "sounds": [{ "name": "leafia:misc/hsp_ignite", "stream": false }] },
+  "block.kfc.detonate": { "category": "block", "sounds": [{ "name": "leafia:external/1391727615", "stream": false }] }
 }

@@ -16,15 +16,15 @@ import net.minecraft.item.ItemStack;
 
 public class _JEIBlacklist {
 	public static void blacklistRecipes(IIngredientBlacklist blacklist) {
-		for (EnumPWRFuel value : EnumPWRFuel.values()) {
-			int i = value.ordinal();
-			blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel,1,i));
-			blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel_hot,1,i));
-			blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel_depleted,1,i));
-		}
 		for (Block block : Reserved6TE.ateupd)
 			blacklist.addIngredientToBlacklist(new ItemStack(block));
 		if (!AddonConfig.disableAddonPWR) {
+			for (EnumPWRFuel value : EnumPWRFuel.values()) {
+				int i = value.ordinal();
+				blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel,1,i));
+				blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel_hot,1,i));
+				blacklist.addIngredientToBlacklist(new ItemStack(ModItems.pwr_fuel_depleted,1,i));
+			}
 			blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.pwr_block));
 			blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.pwr_casing));
 			blacklist.addIngredientToBlacklist(new ItemStack(ModBlocks.pwr_channel));
