@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -212,7 +213,7 @@ public class MeterHorizontal extends Control {
 		LeafiaGls.pushMatrix();
 		LeafiaGls.translate(posX-5/2d,0,posY-0.5);
 		LeafiaGls.rotate(90,1,0,0);
-		draw(1,ratio(min,max,vars.get("value").getNumber()));
+		draw(1,ratio(min,max,MathHelper.clamp(vars.get("value").getNumber(),0,1)));
 		LeafiaGls.popMatrix();
 		LeafiaGls.shadeModel(GL11.GL_FLAT);
 	}
