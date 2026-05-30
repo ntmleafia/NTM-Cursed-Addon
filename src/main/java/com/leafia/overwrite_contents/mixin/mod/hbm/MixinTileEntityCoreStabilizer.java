@@ -84,6 +84,7 @@ public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBas
 		leafia$isPlaying = true;
 	}
 	@Unique void leafia$stopSound() {
+		if (leafia$sound == null) return;
 		if (leafia$isPlaying)
 			leafia$sound.stopSound();
 		leafia$isPlaying = false;

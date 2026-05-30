@@ -16,9 +16,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,6 +59,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		leafia$isPlaying = true;
 	}
 	void leafia$stopSound() {
+		if (leafia$sound == null) return;
 		if (leafia$isPlaying)
 			leafia$sound.stopSound();
 		leafia$isPlaying = false;
@@ -76,6 +79,9 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 			leafia$sound.stopSound();
 			leafia$sound = null;
 		}
+	}
+	public AxisAlignedBB getRenderBoundingBox() {
+		return TileEntity.INFINITE_EXTENT_AABB;
 	}
 	public CoreDetonatorTE() {
 		super(0);

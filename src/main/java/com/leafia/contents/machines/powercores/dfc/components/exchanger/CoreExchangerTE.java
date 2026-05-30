@@ -61,6 +61,7 @@ public class CoreExchangerTE extends LCETileEntityMachineBase implements IDFCBas
 		leafia$isPlaying = true;
 	}
 	void leafia$stopSound() {
+		if (leafia$sound == null) return;
 		if (leafia$isPlaying)
 			leafia$sound.stopSound();
 		leafia$isPlaying = false;

@@ -25,12 +25,12 @@ import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreStabilizer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -182,6 +182,21 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 	static final ResourceLocation dfc_pulser_tex = new ResourceLocation("leafia", "textures/models/leafia/dfc/core_pulser.png");
 	static final WaveFrontObjectVAO dfc_pulser_mdl =
 			getVAO(new ResourceLocation("leafia","models/leafia/dfc_rotatable/pulser.obj"));
+
+
+	private void tessellateFlare(BufferBuilder buf,double posX,double posY,double posZ,float scale,float a,float partialTicks) {
+		float f1 = ActiveRenderInfo.getRotationX();
+		float f2 = ActiveRenderInfo.getRotationZ();
+		float f3 = ActiveRenderInfo.getRotationYZ();
+		float f4 = ActiveRenderInfo.getRotationXY();
+		float f5 = ActiveRenderInfo.getRotationXZ();
+		buf.pos((double) (posX - f1 * scale - f3 * scale), (double) (posY - f5 * scale), (double) (posZ - f2 * scale - f4 * scale)).tex(1, 1).color(1F, 1F, 1F, a).lightmap(240, 240).endVertex();
+		buf.pos((double) (posX - f1 * scale + f3 * scale), (double) (posY + f5 * scale), (double) (posZ - f2 * scale + f4 * scale)).tex(1, 0).color(1F, 1F, 1F, a).lightmap(240, 240).endVertex();
+		buf.pos((double) (posX + f1 * scale + f3 * scale), (double) (posY + f5 * scale), (double) (posZ + f2 * scale + f4 * scale)).tex(0, 0).color(1F, 1F, 1F, a).lightmap(240, 240).endVertex();
+		buf.pos((double) (posX + f1 * scale - f3 * scale), (double) (posY - f5 * scale), (double) (posZ + f2 * scale - f4 * scale)).tex(0, 1).color(1F, 1F, 1F, a).lightmap(240, 240).endVertex();
+	}
+	static final ResourceLocation flare = new ResourceLocation("hbm","textures/particle/flare.png");
+	static final ResourceLocation hadron = new ResourceLocation("hbm","textures/particle/hadron.png");
 
 	@Override
 	public void render(TileEntityMachineBase te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -390,20 +405,32 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,240,240);
 			LeafiaGls.disableLighting();
 
+			if (det.lastGetCore instanceof IMixinTileEntityCore mixin) {
+				if (true) {
+					bindTexture(AddonBase.solid_e);
+					float width = 0.35f;
+					LCEBeamPronter.prontBeam(false,new Vec3d(0,0,-range),EnumWaveType.STRAIGHT,EnumBeamType.SOLID,0xFF0000,0x7F7F7F,0,1,0F,2,width/2f);
+					LCEBeamPronter.prontBeam(false,new Vec3d(0,0,-range),EnumWaveType.RANDOM,EnumBeamType.SOLID,0xFF0000,0x7F7F7F,(int) te.getWorld().getTotalWorldTime()%1000,(int) (0.3F*range/width),width*0.75F,2,width*0.5F);
+					LCEBeamPronter.prontBeam(false,new Vec3d(0,0,-range),EnumWaveType.RANDOM,EnumBeamType.SOLID,0xFF0000,0x7F7F7F,(int) te.getWorld().getTotalWorldTime()%1000+1,(int) (0.3F*range/width),width*0.75F,2,width*0.5F);
+				}
+			}
+
 			bindTexture(AddonBase.solid);
 			LeafiaGls.color(0,0,0);
 			mdl.renderPart("Neon");
 			LeafiaGls.color(1,1,1);
 			bindTexture(tex);
 
-			LeafiaGls.enableBlend();
-			LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
-			LeafiaGls.pushMatrix();
-			LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*2,360),0,0,1);
-			mdl.renderPart("EnergyRingOuter");
-			LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*3,360),0,0,1);
-			mdl.renderPart("EnergyRingInner");
-			LeafiaGls.popMatrix();
+			if (det.isOn) {
+				LeafiaGls.enableBlend();
+				LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+				LeafiaGls.pushMatrix();
+				LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*2,360),0,0,1);
+				mdl.renderPart("EnergyRingOuter");
+				LeafiaGls.rotate(MathHelper.positiveModulo((getWorld().getTotalWorldTime()+partialTicks)*3,360),0,0,1);
+				mdl.renderPart("EnergyRingInner");
+				LeafiaGls.popMatrix();
+			}
 			LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA);
 			LeafiaGls.disableBlend();
 
@@ -490,6 +517,34 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 				}
 			}
 			GL11.glPopMatrix();
+		}
+		if (te instanceof CoreDetonatorTE det) {
+			if (det.lastGetCore instanceof IMixinTileEntityCore mixin) {
+				if (true) {
+					LeafiaGls.pushMatrix();
+					LeafiaGls.translate(unit.x,unit.y,unit.z);
+					LeafiaGls.enableBlend();
+					LeafiaGls.disableLighting();
+					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+					Tessellator tess = Tessellator.getInstance();
+
+					bindTexture(flare);
+					tess.getBuffer().begin(GL11.GL_QUADS,DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+					tessellateFlare(tess.getBuffer(),0,0,0,0.75f,1,partialTicks);
+					tess.draw();
+
+					bindTexture(hadron);
+					tess.getBuffer().begin(GL11.GL_QUADS,DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+					tessellateFlare(tess.getBuffer(),0,0,0,3,1,partialTicks);
+					tess.draw();
+
+					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+					LeafiaGls.disableBlend();
+					LeafiaGls.popMatrix();
+					bindTexture(tex);
+					LeafiaGls.enableLighting();
+				}
+			}
 		}
 		GL11.glPopMatrix();
 	}

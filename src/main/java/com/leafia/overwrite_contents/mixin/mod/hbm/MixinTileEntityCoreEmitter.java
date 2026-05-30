@@ -111,6 +111,7 @@ public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase i
         leafia$isPlaying = true;
     }
     @Unique void leafia$stopSound() {
+        if (leafia$sound == null) return;
         if (leafia$isPlaying)
             leafia$sound.stopSound();
         leafia$isPlaying = false;
