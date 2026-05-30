@@ -457,8 +457,13 @@ public class LeafiaClientListener {
 			if (item instanceof ItemBlock ib) {
 				if (ib.getBlock() instanceof ITileEntityProvider prov) {
 					if (!ccpSupported.containsKey(prov.hashCode())) {
-						if (!(prov instanceof BlockControlPanel))
-							ccpSupported.put(prov.hashCode(),prov.createNewTileEntity(Minecraft.getMinecraft().world,12) instanceof IControllable);
+						if (!(prov instanceof BlockControlPanel)) {
+							TileEntity fuckoff = null;
+							try {
+								fuckoff = prov.createNewTileEntity(Minecraft.getMinecraft().world,12);
+							} catch (Exception ignored) {}
+							ccpSupported.put(prov.hashCode(),fuckoff instanceof IControllable);
+						}
 					}
 					if (ccpSupported.get(prov.hashCode()))
 						list.add(TextFormatting.GREEN+"[Custom Control Panel Compatible]");
@@ -644,7 +649,7 @@ public class LeafiaClientListener {
 					LeafiaBrush brush = LeafiaBrush.instance;
 					Minecraft.getMinecraft().renderEngine.bindTexture(AddonBase.solid);
 					LeafiaGls.disableAlpha();
-					LeafiaGls.color(1,1,1,Math.max(0,Math.min(1,(dfcFlashTicks-evt.getPartialTicks())/50f)));
+					LeafiaGls.color(1,1,1,Math.max(0,Math.min(1,(dfcFlashTicks-evt.getPartialTicks())/100f)));
 					LeafiaGls.enableBlend();
 					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
 					brush.startDrawing(BrushMode.QUADS,DefaultVertexFormats.POSITION_TEX);

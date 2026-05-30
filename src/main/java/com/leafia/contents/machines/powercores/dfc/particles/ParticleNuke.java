@@ -74,7 +74,7 @@ public class ParticleNuke extends Particle {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (!reachedPlayer && sc/2 >= new Vec3d(posX,posY,posZ).distanceTo(new Vec3d(player.posX,player.posY+player.getEyeHeight(),player.posZ))) {
 			reachedPlayer = true;
-			HandlerClient.dfcFlashTicks = 50+flashTime;
+			HandlerClient.dfcFlashTicks = 100+flashTime;
 		}
 		LeafiaGls.popMatrix();
 		LeafiaGls.color(1,1,1);
