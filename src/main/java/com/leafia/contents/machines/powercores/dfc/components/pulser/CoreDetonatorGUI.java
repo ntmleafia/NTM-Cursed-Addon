@@ -71,9 +71,9 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 			if (charge.isMouseIn(mouseX,mouseY)) {
 				float timeLeft = 30;
 				if (te.lastGetCore instanceof IMixinTileEntityCore mixin) {
-					timeLeft = 30-mixin.getDetonationTimer()/20f+0.5f;
+					timeLeft = 30-mixin.getDetonationTimer()/20f;
 					if (mixin.getDetonation())
-						timeLeft -= partialTicks;
+						timeLeft -= partialTicks/20f;
 				}
 				drawHoveringText(TextFormatting.RED+String.format("%02.2fs",timeLeft),mouseX,mouseY);
 			}

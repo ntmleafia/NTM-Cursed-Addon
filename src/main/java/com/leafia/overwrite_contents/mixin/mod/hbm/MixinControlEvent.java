@@ -29,5 +29,7 @@ public class MixinControlEvent {
 		register(new ControlEvent("setIOMode").setVar("mode",0));
 		register(new ControlEvent("heater_set").setVar("heatPerTick",0));
 		register(new ControlEvent("burner_set").setVar("isOn",0));
+		register(new ControlEvent("set_pulser_active").setVar("active",0).setVar("code",""));
+		register(new ControlEvent("set_pulser_detonation").setVar("charge",0).setVar("code",""));
 	}
 }

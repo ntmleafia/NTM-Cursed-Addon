@@ -74,8 +74,8 @@ public class _ConfigBuilder {
 	public String _string(String key,String def) {
 		String value = values.getOrDefault(key,def);
 		readingLine = lineIndices.getOrDefault(key,-1);
-		if (values.containsKey(key))
-			key = "!"+key;
+		if (!values.containsKey(key))
+			key = "?"+key;
 		lines.add(" "+key+": "+value);
 		if (_autoLineBreak || skipLineBreak)
 			_pushLine();
@@ -128,8 +128,8 @@ public class _ConfigBuilder {
 			int line = 1;
 			for (String s : list) {
 				if (s.trim().startsWith("# ")) continue;
-				if (!s.trim().startsWith("!")) continue;
-				s = s.substring(s.indexOf('!')+1);
+				if (s.trim().startsWith("?")) continue;
+				s = s.substring(s.indexOf('?')+1);
 				if (s.trim().isEmpty()) continue;
 				if (s.equals(separator)) continue;
 				if (s.contains(":")) {

@@ -2,16 +2,24 @@ package com.leafia.contents.machines.powercores.dfc.components.pulser;
 
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
+import com.hbm.inventory.control_panel.ControlEvent;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.lib.ForgeDirection;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.AddonBase;
 import com.leafia.contents.machines.powercores.dfc.IDFCBase;
+import com.leafia.contents.machines.powercores.dfc.particles.ParticlePulserCharge;
+import com.leafia.contents.machines.powercores.dfc.particles.ParticlePulserOvercharge;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.dev.machine.LCETileEntityMachineBase;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.settings.AddonConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -22,15 +30,19 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBase, ITickable, IGUIProvider, IEnergyReceiverMK2 {
+public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBase, ITickable, IGUIProvider, IEnergyReceiverMK2, IControllable {
 	public long power = 0;
 	public boolean isOn = true;
 	String code = "";
@@ -65,12 +77,18 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		leafia$isPlaying = false;
 	}
 	@Override
+	public void validate(){
+		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
+	}
+	@Override
 	public void invalidate(){
 		super.invalidate();
 		if (leafia$sound != null) {
 			leafia$sound.stopSound();
 			leafia$sound = null;
 		}
+		ControlEventSystem.get(world).removeControllable(this);
 	}
 	@Override
 	public void onChunkUnload() {
@@ -199,12 +217,53 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		leafia$writeTargetPos(compound);
+		compound.setString("code",code);
+		compound.setBoolean("isOn",isOn);
 		return super.writeToNBT(compound);
 	}
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		leafia$readTargetPos(compound);
+		if (compound.hasKey("code"))
+			code = compound.getString("code");
+		isOn = compound.getBoolean("isOn");
 		super.readFromNBT(compound);
+	}
+	@SideOnly(Side.CLIENT)
+	void localTick(TileEntityCore core) {
+
+		boolean active = false;
+		if (isOn) {
+			if (core != null) {
+				IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
+				if (mixin.getDetonation()) {
+					active = true;
+					int amt2 = 2+world.rand.nextInt(5);
+					for (int i = 0; i < amt2; i++) {
+						ParticlePulserOvercharge overcharge = new ParticlePulserOvercharge(
+								world,
+								pos.getX()+0.5+(world.rand.nextDouble()-0.5)*1.1,
+								pos.getY()+0.5+(world.rand.nextDouble()-0.5)*1.1,
+								pos.getZ()+0.5+(world.rand.nextDouble()-0.5)*1.1
+						);
+						Minecraft.getMinecraft().effectRenderer.addEffect(overcharge);
+					}
+					if (mixin.getDetonationTimer() >= 20*(30-6)) {
+						Vec3d p = new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5);
+						p = p.add(new Vec3d(targetPosition.subtract(pos)).normalize());
+						int amt = 1+world.rand.nextInt(3);
+						for (int i = 0; i < amt; i++) {
+							ParticlePulserCharge charge = new ParticlePulserCharge(world,p.x,p.y,p.z);
+							Minecraft.getMinecraft().effectRenderer.addEffect(charge);
+						}
+					}
+				}
+			}
+		}
+		if (active)
+			leafia$playSound();
+		else
+			leafia$stopSound();
 	}
 	@Override
 	public void update() {
@@ -233,18 +292,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 					.__write(2,isOn)
 					.__sendToAffectedClients();
 		} else {
-			boolean active = false;
-			if (isOn) {
-				if (core != null) {
-					IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
-					if (mixin.getDetonation())
-						active = true;
-				}
-			}
-			if (active)
-				leafia$playSound();
-			else
-				leafia$stopSound();
+			localTick(core);
 		}
 	}
 	public long getPowerScaled(long i) {
@@ -255,5 +303,44 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		if (leafia$getCore(AddonConfig.dfcComponentRange) instanceof IMixinTileEntityCore core)
 			det = core.getDetonationTimer();
 		return (det * i) / (20*30);
+	}
+	@Override
+	public Map<String,DataValue> getQueryData() {
+		Map<String,DataValue> map = new HashMap<>();
+		float timeRemaining = 30;
+		float charging = 0;
+		if (leafia$getCore(AddonConfig.dfcComponentRange) instanceof IMixinTileEntityCore mixin) {
+			timeRemaining = 30-mixin.getDetonationTimer()/20f;
+			if (mixin.getDetonation())
+				charging = 1;
+		}
+		map.put("active",new DataValueFloat(isOn ? 1 : 0));
+		map.put("charging",new DataValueFloat(charging));
+		map.put("timeRemaining",new DataValueFloat(timeRemaining));
+		return map;
+	}
+	@Override
+	public void receiveEvent(BlockPos from,ControlEvent e) {
+		if (e.name.equals("set_pulser_active")) {
+			if (!e.vars.get("code").toString().equals(code)) return;
+			isOn = e.vars.get("active").getNumber() >= 1f;
+		} else if (e.name.equals("set_pulser_detonation")) {
+			if (!e.vars.get("code").toString().equals(code)) return;
+			boolean charge = e.vars.get("charge").getNumber() >= 1f;
+			if (leafia$getCore(AddonConfig.dfcComponentRange) instanceof IMixinTileEntityCore mixin)
+				mixin.setDetonation(charge);
+		}
+	}
+	@Override
+	public List<String> getInEvents() {
+		return Arrays.asList("set_pulser_active","set_pulser_detonation");
+	}
+	@Override
+	public BlockPos getControlPos() {
+		return getPos();
+	}
+	@Override
+	public World getControlWorld() {
+		return getWorld();
 	}
 }

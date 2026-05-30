@@ -2,6 +2,10 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.fluid.IFluidStandardReceiver;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
@@ -38,8 +42,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Mixin(value = TileEntityCoreInjector.class)
-public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase implements ITickable, IFluidStandardReceiver, IMixinTileEntityInjector, IGUIProvider {
+public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase implements ITickable, IFluidStandardReceiver, IMixinTileEntityInjector, IGUIProvider, IControllable {
 	@Shadow(remap = false) public FluidTankNTM[] tanks;
 	@Unique public TileEntityCore lastGetCore;
 	@Unique public BlockPos targetPosition = new BlockPos(0,0,0);
@@ -69,12 +76,18 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 		leafia$isPlaying = false;
 	}
 	@Override
+	public void validate(){
+		super.validate();
+		ControlEventSystem.get(world).addControllable(this);
+	}
+	@Override
 	public void invalidate(){
 		super.invalidate();
 		if (leafia$sound != null) {
 			leafia$sound.stopSound();
 			leafia$sound = null;
 		}
+		ControlEventSystem.get(world).removeControllable(this);
 	}
 
 	@Override
@@ -203,5 +216,22 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 	@Overwrite(remap = false)
 	public AxisAlignedBB getRenderBoundingBox() {
 		return INFINITE_EXTENT_AABB;
+	}
+
+	@Override
+	public Map<String,DataValue> getQueryData() {
+		Map<String,DataValue> map = new HashMap<>();
+		map.put("tankA",new DataValueFloat(tanks[0].getFill()));
+		map.put("tankB",new DataValueFloat(tanks[0].getFill()));
+		return map;
+	}
+
+	@Override
+	public BlockPos getControlPos() {
+		return getPos();
+	}
+	@Override
+	public World getControlWorld() {
+		return getWorld();
 	}
 }

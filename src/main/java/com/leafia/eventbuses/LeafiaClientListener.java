@@ -5,6 +5,7 @@ import com.custom_hbm.GuiBackupsWarning;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.google.gson.JsonSyntaxException;
 import com.hbm.blocks.BlockDummyable;
+import com.hbm.blocks.generic.BlockControlPanel;
 import com.hbm.capability.HbmLivingProps;
 import com.hbm.config.ClientConfig;
 import com.hbm.config.GeneralConfig;
@@ -55,7 +56,9 @@ import com.leafia.transformer.LeafiaGls;
 import com.leafia.unsorted.IEntityCustomCollision;
 import com.leafia.unsorted.StructuralIntegrityHandler;
 import com.leafia.unsorted.StructuralIntegrityHandler.SimulationData;
+import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
@@ -418,6 +421,7 @@ public class LeafiaClientListener {
 			//event.setGreen((float)inMaterialColor.y);
 			//event.setBlue((float)inMaterialColor.z);
 		}
+		final Long2BooleanOpenHashMap ccpSupported = new Long2BooleanOpenHashMap();
 		/// For calls before addInformation, see com.leafia.dev.machine.MachineTooltip.addInfoASM()
 		@SubscribeEvent
 		public void drawTooltip(ItemTooltipEvent event) {
@@ -438,11 +442,27 @@ public class LeafiaClientListener {
 				list.add(TextFormatting.DARK_GREEN+" - "+item.getCreativeTab().tabLabel);
 			}
 			if (item instanceof ItemBlock ib && StructuralIntegrityHandler.AUTOMATIC) {
-				int mass = StructuralIntegrityHandler.getMass(ib.getBlock().getStateFromMeta(ib.getMetadata(event.getItemStack())),null,null);
-				int glue = StructuralIntegrityHandler.getGlue(ib.getBlock().getStateFromMeta(ib.getMetadata(event.getItemStack())),null,null);
+				IBlockState state = null;
+				try {
+					state = ib.getBlock().getStateFromMeta(ib.getMetadata(event.getItemStack()));
+				} catch (Exception e) {
+					state = ib.getBlock().getDefaultState();
+				}
+				int mass = StructuralIntegrityHandler.getMass(state,null,null);
+				int glue = StructuralIntegrityHandler.getGlue(state,null,null);
 				list.add(TextFormatting.RED+"Structural Integrity:");
 				list.add(TextFormatting.DARK_RED+" - Mass: "+((mass != -1) ? mass : "?"));
 				list.add(TextFormatting.DARK_RED+" - Glue: "+((glue != -1) ? glue : "?"));
+			}
+			if (item instanceof ItemBlock ib) {
+				if (ib.getBlock() instanceof ITileEntityProvider prov) {
+					if (!ccpSupported.containsKey(prov.hashCode())) {
+						if (!(prov instanceof BlockControlPanel))
+							ccpSupported.put(prov.hashCode(),prov.createNewTileEntity(Minecraft.getMinecraft().world,12) instanceof IControllable);
+					}
+					if (ccpSupported.get(prov.hashCode()))
+						list.add(TextFormatting.GREEN+"[Custom Control Panel Compatible]");
+				}
 			}
 		}
 		@SubscribeEvent

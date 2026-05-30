@@ -40,10 +40,9 @@ public class AddonConfig {
 		}
 	}
 	public static void loadFromConfig(){
-		_ConfigBuilder builder = new _ConfigBuilder("leafia");
+		_ConfigBuilder builder = new _ConfigBuilder("leafia2");
 		builder._separator();
-		builder._category("IMPORTANT: The configs will not apply by default! Add ! on start of each configs to apply.");
-		builder._category("Example: enableBarrelSidePorts: true -> !enableBarrelSidePorts: false");
+		builder._category("IMPORTANT: The configs will not apply by default! Remove ? on start of each configs to apply.");
 		builder._pushLine();
 		builder._category("MIXINS");
 		{
@@ -127,9 +126,8 @@ public class AddonConfig {
 		}
 		public static Map<String,RodInfo> map = new HashMap<>();
 		public static void loadFromConfig() {
-			_ConfigBuilder builder = new _ConfigBuilder("generic_fuels");
-			builder._category("IMPORTANT: The configs will not apply by default! Add ! on start of each lines to apply.");
-			builder._category("Example: !enableBarrelSidePorts: false");
+			_ConfigBuilder builder = new _ConfigBuilder("generic_fuels2");
+			builder._category("IMPORTANT: The configs will not apply by default! Remove ? on start of each lines to apply.");
 			builder._separator();
 			builder._autoLineBreak = false;
 			for (Entry<String,LeafiaRodItem> entry : LeafiaRodItem.fromResourceMap.entrySet()) {

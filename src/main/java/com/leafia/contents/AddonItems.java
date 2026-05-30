@@ -602,9 +602,11 @@ public class AddonItems {
 	public static ItemRecord digammaRecord = new DigammaRecord("digamma",LeafiaSoundEvents.digamma_record);
 
 	private static void modifyItemParams() {
-		ModItems.pwr_fuel.setCreativeTab(null);
-		ModItems.pwr_fuel_hot.setCreativeTab(null);
-		ModItems.pwr_fuel_depleted.setCreativeTab(null);
+		if (!AddonConfig.disableAddonPWR) {
+			ModItems.pwr_fuel.setCreativeTab(null);
+			ModItems.pwr_fuel_hot.setCreativeTab(null);
+			ModItems.pwr_fuel_depleted.setCreativeTab(null);
+		}
 	}
 
 	public static void preInit() {

@@ -406,7 +406,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 			LeafiaGls.disableLighting();
 
 			if (det.lastGetCore instanceof IMixinTileEntityCore mixin) {
-				if (true) {
+				if (mixin.getDetonationTimer() >= 20*30-1) {
 					bindTexture(AddonBase.solid_e);
 					float width = 0.35f;
 					LCEBeamPronter.prontBeam(false,new Vec3d(0,0,-range),EnumWaveType.STRAIGHT,EnumBeamType.SOLID,0xFF0000,0x7F7F7F,0,1,0F,2,width/2f);
@@ -520,7 +520,7 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 		}
 		if (te instanceof CoreDetonatorTE det) {
 			if (det.lastGetCore instanceof IMixinTileEntityCore mixin) {
-				if (true) {
+				if (mixin.getDetonationTimer() >= 20*30-1) {
 					LeafiaGls.pushMatrix();
 					LeafiaGls.translate(unit.x,unit.y,unit.z);
 					LeafiaGls.enableBlend();
@@ -528,14 +528,14 @@ public class DFCComponentRender extends TileEntitySpecialRenderer<TileEntityMach
 					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
 					Tessellator tess = Tessellator.getInstance();
 
-					bindTexture(flare);
+					/*bindTexture(flare);
 					tess.getBuffer().begin(GL11.GL_QUADS,DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 					tessellateFlare(tess.getBuffer(),0,0,0,0.75f,1,partialTicks);
-					tess.draw();
+					tess.draw();*/
 
 					bindTexture(hadron);
 					tess.getBuffer().begin(GL11.GL_QUADS,DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-					tessellateFlare(tess.getBuffer(),0,0,0,3,1,partialTicks);
+					tessellateFlare(tess.getBuffer(),0,0,0,4,1,partialTicks);
 					tess.draw();
 
 					LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
