@@ -213,7 +213,7 @@ public class MeterHorizontal extends Control {
 		LeafiaGls.pushMatrix();
 		LeafiaGls.translate(posX-5/2d,0,posY-0.5);
 		LeafiaGls.rotate(90,1,0,0);
-		draw(1,ratio(min,max,MathHelper.clamp(vars.get("value").getNumber(),0,1)));
+		draw(1,MathHelper.clamp(ratio(min,max,vars.get("value").getNumber()),0,1));
 		LeafiaGls.popMatrix();
 		LeafiaGls.shadeModel(GL11.GL_FLAT);
 	}
