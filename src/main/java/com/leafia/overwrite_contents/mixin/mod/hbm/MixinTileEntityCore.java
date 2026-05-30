@@ -16,7 +16,6 @@ import com.hbm.items.machine.ItemCatalyst;
 import com.hbm.items.special.ItemAMSCore;
 import com.hbm.lib.Library;
 import com.hbm.main.AdvancementManager;
-import com.hbm.main.ModContext;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
@@ -275,7 +274,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 					world.playSound(null,pos,LeafiaSoundEvents.machineExplode,SoundCategory.BLOCKS,30,1);
 					ExplosionLarge.spawnParticles(world,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,25);
 					LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 150);
-					nt.iterationLimit = 150;
+					//nt.iterationLimit = 150;
 					nt.overrideResolution(24);
 					nt.ignoreBlockPoses.add(pos);
 					nt.addAttrib(LCEExplosionNT.LCEExAttrib.FIRE);
@@ -555,7 +554,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
 					LCEExplosionNT nt = new LCEExplosionNT(world, null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 50);
 					nt.maxExplosionResistance = 28;
-					nt.iterationLimit = 150;
+					//nt.iterationLimit = 150;
 					nt.ignoreBlockPoses.add(pos);
 					nt.explode();
 
@@ -642,6 +641,12 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		return Minecraft.getMinecraft().isGamePaused();
 	}
 
+	int lastPulserPower;
+	@Override
+	public int lastPulserPower() {
+		return lastPulserPower;
+	}
+
 	// =====================
 	// === Client logic ====
 	// =====================
@@ -649,6 +654,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 	private void tickClient() {
 		ticks++;
 		client_maxDial = world.rand.nextDouble() * 0.08 + 0.9;
+		lastPulserPower = pulsers.size();
+		pulsers.clear();
 
 		if (client_sfx != null) {
 			if (temperature >= 100 && !sfxPlaying) {

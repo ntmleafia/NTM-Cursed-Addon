@@ -49,6 +49,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 	public boolean local$codeSet = false;
 	LCEAudioWrapper leafia$sound;
 	boolean leafia$isPlaying = false;
+	public static final long consumption = 5_000_000_000_000L;
 	void leafia$playSound() {
 		if (leafia$sound == null) {
 			leafia$sound = AddonBase.proxy.getLoopedSoundStartStop(
@@ -114,7 +115,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 	}
 	@Override
 	public long getMaxPower() {
-		return 1_000_000_000_000L*5;
+		return consumption*5;
 	}
 	@Override
 	public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
@@ -176,14 +177,19 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 					TileEntityCore core = leafia$getCore(AddonConfig.dfcComponentRange);
 					if (core != null) {
 						IMixinTileEntityCore mixin = (IMixinTileEntityCore) core;
-						mixin.setDetonation(!mixin.getDetonation());
+						boolean charge = !mixin.getDetonation();
+						if (charge) {
+							if (isConditionMet())
+								mixin.setDetonation(charge);
+						} else
+							mixin.setDetonation(charge);
 					}
 				}
 			}
 		}
 	}
 	boolean isConditionMet() {
-		return power >= 1_000_000_000_000L;
+		return power >= consumption;
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -219,6 +225,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		leafia$writeTargetPos(compound);
 		compound.setString("code",code);
 		compound.setBoolean("isOn",isOn);
+		compound.setLong("power",power);
 		return super.writeToNBT(compound);
 	}
 	@Override
@@ -227,15 +234,16 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		if (compound.hasKey("code"))
 			code = compound.getString("code");
 		isOn = compound.getBoolean("isOn");
+		power = compound.getLong("power");
 		super.readFromNBT(compound);
 	}
 	@SideOnly(Side.CLIENT)
 	void localTick(TileEntityCore core) {
-
 		boolean active = false;
 		if (isOn) {
 			if (core != null) {
 				IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
+				mixin.getDFCPulsers().add(this);
 				if (mixin.getDetonation()) {
 					active = true;
 					int amt2 = 2+world.rand.nextInt(5);
@@ -283,7 +291,7 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 					if (!isConditionMet())
 						mixin.setDetonation(false);
 					else
-						power -= 1_000_000_000_000L;
+						power -= consumption;
 				}
 			}
 			LeafiaPacket._start(this)
@@ -291,9 +299,8 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 					.__write(1,power)
 					.__write(2,isOn)
 					.__sendToAffectedClients();
-		} else {
+		} else
 			localTick(core);
-		}
 	}
 	public long getPowerScaled(long i) {
 		return (power * i) / getMaxPower();
@@ -327,8 +334,13 @@ public class CoreDetonatorTE extends LCETileEntityMachineBase implements IDFCBas
 		} else if (e.name.equals("set_pulser_detonation")) {
 			if (!e.vars.get("code").toString().equals(code)) return;
 			boolean charge = e.vars.get("charge").getNumber() >= 1f;
-			if (leafia$getCore(AddonConfig.dfcComponentRange) instanceof IMixinTileEntityCore mixin)
-				mixin.setDetonation(charge);
+			if (leafia$getCore(AddonConfig.dfcComponentRange) instanceof IMixinTileEntityCore mixin) {
+				if (charge) {
+					if (isConditionMet())
+						mixin.setDetonation(charge);
+				} else
+					mixin.setDetonation(charge);
+			}
 		}
 	}
 	@Override

@@ -77,6 +77,20 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 				}
 				drawHoveringText(TextFormatting.RED+String.format("%02.2fs",timeLeft),mouseX,mouseY);
 			}
+			IMixinTileEntityCore mixin = (IMixinTileEntityCore)te.lastGetCore;
+			if (nukeInfo.isMouseIn(mouseX,mouseY)) {
+				int power = mixin.lastPulserPower();
+				if (power >= 1) {
+					if (power == 1)
+						drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",I18nUtil.resolveKey("tile.dfc_pulser.gui.radius.minimal")),mouseX,mouseY);
+					else {
+						int radius = 100*(power-1);
+						if (power >= 8)
+							radius += 200*(power-8);
+						drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",radius+"m"),mouseX,mouseY);
+					}
+				}
+			}
 		}
 		super.renderHoveredToolTip(mouseX,mouseY);
 	}
@@ -88,13 +102,13 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 		//this.fontRenderer.drawString(inventory,this.xSize-8-this.fontRenderer.getStringWidth(inventory),this.ySize-96+2,4210752);
 		String message = "";
 		if (te.lastGetCore == null)
-			message = "Couldn't connect to the core";
+			message = I18nUtil.resolveKey("tile.dfc_pulser.gui.status.connect");
 		else {
 			if (!unlocked) {
 				if (!te.local$codeSet)
-					message = "Enter new code: "+code;
+					message = I18nUtil.resolveKey("tile.dfc_pulser.gui.status.new",code);
 				else
-					message = "Enter code: "+code;
+					message = I18nUtil.resolveKey("tile.dfc_pulser.gui.status.code",code);
 			}
 		}
 		if (!message.isEmpty())
@@ -171,8 +185,25 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 		if (te.isOn)
 			drawTexturedModalByFiaRect(switch1,192,0);
 		if (te.lastGetCore != null) {
-			if (((IMixinTileEntityCore)te.lastGetCore).getDetonation())
+			IMixinTileEntityCore mixin = (IMixinTileEntityCore)te.lastGetCore;
+			if (mixin.getDetonation())
 				drawTexturedModalByFiaRect(switch2,210,0);
+			int power = mixin.lastPulserPower();
+			if (power >= 8) {
+				drawTexturedModalRect(guiLeft+137,guiTop+59,240,18,16,16);
+				LeafiaGls.color(0.5f,0.5f,0.5f);
+			}
+			if (power >= 5) {
+				drawTexturedModalRect(guiLeft+120,guiTop+59,224,18,16,16);
+				LeafiaGls.color(0.5f,0.5f,0.5f);
+			}
+			if (power >= 2) {
+				drawTexturedModalRect(guiLeft+103,guiTop+59,208,18,16,16);
+				LeafiaGls.color(0.5f,0.5f,0.5f);
+			}
+			if (power >= 1)
+				drawTexturedModalRect(guiLeft+86,guiTop+59,192,18,16,16);
+			LeafiaGls.color(1,1,1);
 		}
 		int det = te.getDetScaled(35);
 		drawTexturedModalRect(guiLeft+83,guiTop+52-det,176,87-det,4,det);

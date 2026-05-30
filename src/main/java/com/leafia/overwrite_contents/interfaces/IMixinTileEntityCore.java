@@ -164,6 +164,8 @@ public interface IMixinTileEntityCore {
 
     List<CoreDetonatorTE> getDFCPulsers();
 
+    int lastPulserPower();
+
     boolean getDetonation();
     int getDetonationTimer();
     void setDetonation(boolean v);
