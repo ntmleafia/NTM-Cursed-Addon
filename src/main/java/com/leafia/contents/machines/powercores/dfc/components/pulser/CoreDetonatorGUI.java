@@ -84,9 +84,11 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 					if (power == 1)
 						drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",I18nUtil.resolveKey("tile.dfc_pulser.gui.radius.minimal")),mouseX,mouseY);
 					else {
-						int radius = 100*(power-1);
+						int radius = 130*(power-1);
+						if (power >= 5)
+							radius += 30*(power-8);
 						if (power >= 8)
-							radius += 200*(power-8);
+							radius += 100*(power-8);
 						drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",radius+"m"),mouseX,mouseY);
 					}
 				}

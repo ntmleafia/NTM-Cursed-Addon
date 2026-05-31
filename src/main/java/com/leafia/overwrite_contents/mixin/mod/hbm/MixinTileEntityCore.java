@@ -267,6 +267,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 						new NetworkRegistry.TargetPoint(world.provider.getDimension(),pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,250)
 				);
 			}
+			if (detonationTimer == 20*30-1)
+				temperature+=25000; // goodbye
 			if (detonationTimer == 20*30) {
 				world.setBlockToAir(pos);
 				int power = pulsers.size();
@@ -281,7 +283,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 					nt.addAttrib(LCEExplosionNT.LCEExAttrib.DFC_FALL);
 					nt.explode();
 				} else {
-					int radius = 100*(power-1);
+					int radius = 130*(power-1);
 					if (power <= 4) {
 						world.playSound(null,pos,LeafiaSoundEvents.dfc_detonate,SoundCategory.BLOCKS,300,1);
 						DFCNukeParticle nuke = new DFCNukeParticle();
@@ -289,17 +291,18 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 						if (power == 2)
 							nuke.maxAge = 20;
 						if (power == 3) {
-							nuke.flashTime = 130;
+							nuke.flashTime = 200;
 							nuke.maxAge = 20*2+10;
 						}
 						if (power == 4) {
-							nuke.flashTime = 200;
+							nuke.flashTime = 500;
 							nuke.maxAge = 20*4;
 						}
 						nuke.emit(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5),new Vec3d(0,1,0),world.provider.getDimension(),radius*5);
 						EntityNukeExplosionMK5 mk5 = EntityNukeExplosionMK5.statFac(world,radius,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5);
 						world.spawnEntity(mk5);
 					} else if (power <= 7) {
+						radius += 30*(power-8);
 						world.playSound(null,pos,LeafiaSoundEvents.dfc_detonate,SoundCategory.BLOCKS,300,1);
 						DFCNukeParticle nuke = new DFCNukeParticle();
 						nuke.radius = radius;
@@ -311,7 +314,8 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 						nuke.emit(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5),new Vec3d(0,1,0),world.provider.getDimension(),radius*5);
 						world.spawnEntity(bf);
 					} else {
-						radius += 200*(power-8);
+						radius += 30*(power-8);
+						radius += 100*(power-8);
 						EntityNukeExplosionMK3 exp = new EntityNukeExplosionMK3(world);
 						exp.posX = pos.getX();
 						exp.posY = pos.getY();
@@ -400,12 +404,14 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 				if (temperature >= 100) {
 					if (!wasActive) {
 						wasActive = true;
-						world.playSound(null,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,LeafiaSoundEvents.fuckingfortnite,SoundCategory.BLOCKS,100,1);
-						PacketThreading.createSendToAllTrackingThreadedPacket(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=RUPTURE", "duration/4", "blurDulling*2", "intensity/2", "range=350"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400));
-						PacketThreading.createSendToAllTrackingThreadedPacket(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=QUAKE", "intensity/2", "range=500"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 550));
-						particleTicks = 20;
-						FlashParticle flash = new FlashParticle();
-						flash.emit(new Vec3d(pos).add(0.5, 0.5, 0.5),new Vec3d(0, 1, 0),world.provider.getDimension(),500);
+						if (detonationTimer < 20*30-1) {
+							world.playSound(null,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,LeafiaSoundEvents.fuckingfortnite,SoundCategory.BLOCKS,100,1);
+							PacketThreading.createSendToAllTrackingThreadedPacket(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=RUPTURE", "duration/4", "blurDulling*2", "intensity/2", "range=350"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 400));
+							PacketThreading.createSendToAllTrackingThreadedPacket(new CommandLeaf.ShakecamPacket(new String[]{"type=smooth", "preset=QUAKE", "intensity/2", "range=500"}).setPos(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 550));
+							particleTicks = 20;
+							FlashParticle flash = new FlashParticle();
+							flash.emit(new Vec3d(pos).add(0.5, 0.5, 0.5),new Vec3d(0, 1, 0),world.provider.getDimension(),500);
+						}
 					}
 					if (particleTicks > 0) {
 						LeafiaColor col = new LeafiaColor(colorCatalyst);

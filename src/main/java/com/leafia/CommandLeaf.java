@@ -605,10 +605,10 @@ public class CommandLeaf extends CommandBase {
 								LCETorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
 							case "statFacBale5":
 								LCETorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
-							//case "statFac6":
-							//	EntityNukeTorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
-							//case "statFacBale6":
-							//	EntityNukeTorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
+							case "statFac6":
+								LCETorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
+							case "statFacBale6":
+								LCETorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
 							default:
 								throw new WrongUsageException(usage, new Object[0]);
 						}

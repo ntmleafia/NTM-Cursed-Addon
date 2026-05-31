@@ -28,7 +28,7 @@ public class LCEAudioWrapperClientStartStop extends LCEAudioWrapperClient {
 
 	@Override
 	public LCEAudioWrapperClientStartStop stopSound(){
-		if(stop != null)
+		if(stop != null && sound != null && sound.isPlaying())
 			world.playSound(x, y, z, stop, category, volume, getPitch(), false);
 		super.stopSound();
 		return this;

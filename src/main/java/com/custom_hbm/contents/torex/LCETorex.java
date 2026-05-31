@@ -435,11 +435,11 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		public Vec3 color;
 		public Vec3 prevColor;
 		public TorexType type;
-		private float startingScale = 3F;
-		private float growingScale = 5F;
-		private float growingScaleEnd = 5F;
-		private double curScale = 0;
-		private double growDiv = 1;
+		public float startingScale = 3F;
+		public float growingScale = 5F;
+		public float growingScaleEnd = 5F;
+		public double curScale = 0;
+		public double growDiv = 1;
 		
 		public Cloudlet(double initPosX, double initPosY, double initPosZ, float angle, int age, int maxAge) {
 			this(initPosX, initPosY, initPosZ, angle, age, Math.min(maxAge,age+(int)(2400/Math.max(getSimulationSpeed(),0.001))), TorexType.STANDARD);
@@ -547,7 +547,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			/* the position of the torus' outer ring center */
 			Vec3 torusPos = Vec3.createVectorHelper(
 					(LCETorex.this.initPosX + torusWidth),
-					(LCETorex.this.initPosY + coreHeight * 0.5),
+					(LCETorex.this.initPosY + coreHeight * 0.35), // changed shit (used to be *0.5)
 					LCETorex.this.initPosZ);
 			
 			/* the difference between the cloudlet and the torus' ring center */
@@ -657,7 +657,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			double distSq = distX * distX + distY * distY + distZ * distZ;
 			distSq /= this.type == TorexType.SHOCK ? LCETorex.this.heat * 3 : LCETorex.this.heat;
 			
-			double col = 2D / Math.max(distSq, 1); //col goes from 2-0
+			double col = 2D / Math.max(distSq/2.5, 1); //col goes from 2-0
 
 			byte type = LCETorex.this.getType();
 			

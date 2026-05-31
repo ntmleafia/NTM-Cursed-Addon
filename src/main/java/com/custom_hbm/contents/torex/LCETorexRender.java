@@ -41,7 +41,7 @@ public class LCETorexRender extends Render<LCETorex> {
 	private static final ResourceLocation flare = new ResourceLocation("hbm" + ":textures/particle/flare.png");
 
 	public static final int flashBaseDuration = 15;
-	public static final int flareBaseDuration = 100;
+	public static final int flareBaseDuration = 600;
 
 	protected LCETorexRender(RenderManager renderManager){
 		super(renderManager);
@@ -151,7 +151,6 @@ public class LCETorexRender extends Render<LCETorex> {
 
 		GL11.glPushMatrix();
 		GL11.glEnable(GL11.GL_BLEND);
-		GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA,SourceFactor.ONE,DestFactor.ZERO);
 		// To prevent particles cutting off before fully fading out
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
@@ -165,21 +164,24 @@ public class LCETorexRender extends Render<LCETorex> {
 		ArrayList<Cloudlet> cloudlets = new ArrayList(cloud.cloudlets);
 		cloudlets.sort(cloudSorter);
 
-		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-		for(Cloudlet cloudlet : cloudlets) {
-			Vec3 vec = cloudlet.getInterpPos(partialTicks);
-			tessellateCloudlet(buf,0.35F,  vec.xCoord - cloud.initPosX, vec.yCoord - cloud.initPosY, vec.zCoord - cloud.initPosZ, cloudlet, partialTicks, false);
-		}
-		tess.draw();
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
-		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+		//tess.draw();
 		for(Cloudlet cloudlet : cloudlets) {
 			if (cloudlet.type != LCETorex.TorexType.CONDENSATION) {
 				Vec3 vec = cloudlet.getInterpPos(partialTicks);
+
+				//alright you can go fuck yourself
+				GlStateManager.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+				buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 				tessellateCloudlet(buf,0,vec.xCoord - cloud.initPosX,vec.yCoord - cloud.initPosY,vec.zCoord - cloud.initPosZ,cloudlet,partialTicks,true);
+				tess.draw();
+
+				GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA,DestFactor.ONE_MINUS_SRC_ALPHA,SourceFactor.ONE,DestFactor.ZERO);
+				buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+				tessellateCloudlet(buf,0.35F,  vec.xCoord - cloud.initPosX, vec.yCoord - cloud.initPosY, vec.zCoord - cloud.initPosZ, cloudlet, partialTicks, false);
+				tess.draw();
+
 			}
 		}
-		tess.draw(); // /hbmleaf torex statFac ~ ~ ~100 100 false
 		/*
 		GlStateManager.blendFunc(SourceFactor.SRC_COLOR,DestFactor.ONE);
 		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
@@ -264,6 +266,9 @@ public class LCETorexRender extends Render<LCETorex> {
 			r = Math.max(r*1.2f-0.2f,0f);
 			g = Math.max(g*1.2f-0.2f,0f);
 			b = Math.max(b*1.2f-0.2f,0f);
+		} else {
+			float br2 = ((r+g+b)/3-0.25f)*1.5f;
+			a *= Math.max(0,1-Math.max(br2,0));
 		}
 
 		buf.pos((double) (posX - f1 * scale - f3 * scale), (double) (posY - f5 * scale), (double) (posZ - f2 * scale - f4 * scale)).tex(1, 1).color(r, g, b, a).lightmap(br, br).endVertex();

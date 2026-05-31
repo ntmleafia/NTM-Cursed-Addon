@@ -63,7 +63,7 @@ public abstract class MixinTileEntityCoreInjector extends TileEntityMachineBase 
 					SoundCategory.BLOCKS,
 					pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,
 					1,1
-			).setCustomAttenuation((intended,distance)->Math.pow(Math.max(0,1-distance/50),6));
+			).setCustomAttenuation((intended,distance)->Math.pow(Math.max(0,1-distance/50),6)/4);
 		}
 		if (!leafia$isPlaying)
 			leafia$sound.startSound();
