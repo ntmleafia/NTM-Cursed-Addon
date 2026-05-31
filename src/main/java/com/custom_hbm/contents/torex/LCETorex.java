@@ -656,8 +656,9 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			
 			double distSq = distX * distX + distY * distY + distZ * distZ;
 			distSq /= this.type == TorexType.SHOCK ? LCETorex.this.heat * 3 : LCETorex.this.heat;
-			
-			double col = 2D / Math.max(distSq/2.5, 1); //col goes from 2-0
+
+			double div = 2.5-Math.min(1,LCETorex.this.getScale()/5)*1.5;
+			double col = 2D / Math.max(distSq/div, 1); //col goes from 2-0
 
 			byte type = LCETorex.this.getType();
 			
