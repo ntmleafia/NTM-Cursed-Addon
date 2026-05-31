@@ -44,7 +44,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.5.0.2,);required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.5.0.3,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
 	public enum AddonLoadingStage {
 		BLOCKS,
@@ -65,7 +65,7 @@ public class AddonBase {
 	public static final ResourceLocation invisible = new ResourceLocation("leafia", "textures/invisible.png");
 
 	static {
-		LeafiaSoundEvents.init();
+		//LeafiaSoundEvents.init();
 	}
 
 	public static void _initMemberClasses(Class<?> c) {
@@ -92,6 +92,8 @@ public class AddonBase {
 	public void preInit(FMLPreInitializationEvent event) {
 		// register to the event bus so that we can listen to events
 		MinecraftForge.EVENT_BUS.register(this);
+
+		LeafiaSoundEvents.init();
 
 		for (EnumBatteryPack value : EnumBatteryPack.values()) {
 			System.out.println("ENUM: "+value.name()+", ORDINAL: "+value.ordinal());

@@ -466,7 +466,7 @@ public class LeafiaClientListener {
 						}
 					}
 					if (ccpSupported.get(prov.hashCode()))
-						list.add(TextFormatting.GREEN+"[Custom Control Panel Compatible]");
+						list.add(TextFormatting.GREEN+"[CCP Compatible]");
 				}
 			}
 		}

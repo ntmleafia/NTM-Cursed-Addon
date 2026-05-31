@@ -1,5 +1,6 @@
 package com.leafia.contents.worldgen;
 
+import com.hbm.world.biome.BiomeGenCraterBase.BiomeGenCrater;
 import com.leafia.contents.worldgen.biomes.Barrens;
 import com.leafia.contents.worldgen.biomes.Ruins;
 import net.minecraft.util.math.BlockPos;
@@ -74,6 +75,19 @@ public class AddonBiomesGenerator {
 			if (newLayer != null)
 				layers = newLayer;
 		}
+		/*
+		GenLayer crater = new GenLayer(-1) {
+			@Override
+			public int[] getInts(int areaX,int areaY,int areaWidth,int areaHeight) {
+				int[] biomes = new int[areaWidth*areaHeight];
+				int a = Biome.getIdForBiome(BiomeGenCrater.craterBiome);
+				for (int i = 0; i < areaWidth*areaHeight; i++)
+					biomes[i] = a;
+				return biomes;
+			}
+		};
+		layers[0] = crater;
+		layers[1] = crater;*/ // alr fun is over
 		evt.setNewBiomeGens(layers);
 		for (GenLayer layer : layers) {
 			System.out.println("######### LAYER: "+layer.getClass().toString());
