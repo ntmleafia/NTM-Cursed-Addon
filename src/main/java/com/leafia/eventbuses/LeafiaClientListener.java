@@ -942,6 +942,7 @@ public class LeafiaClientListener {
 							}
 							LeafiaGls.popMatrix();
 						}
+						LeafiaGls.matrixMode(5888);
 					}
 				/*
 				//LeafiaGls.color(1.0F, 1.0F, 1.0F, 1.0F);
