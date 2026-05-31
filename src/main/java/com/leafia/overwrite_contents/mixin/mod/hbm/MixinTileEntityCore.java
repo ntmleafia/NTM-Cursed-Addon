@@ -12,6 +12,7 @@ import com.hbm.handler.ArmorUtil;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
+import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemCatalyst;
 import com.hbm.items.special.ItemAMSCore;
 import com.hbm.lib.Library;
@@ -379,7 +380,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		}
 
 		expellingSpk = 0;
-		if (inventory.getStackInSlot(1).getItem() instanceof ItemAMSCore) {
+		if (inventory.getStackInSlot(1).getItem() instanceof ItemAMSCore || inventory.getStackInSlot(1).getItem() == ModItems.glitch) {
 			if (tagA != null && tagB != null) {
 				meltingPoint = Math.min(1500000, Math.min(LCEItemCatalyst.getMelting(catalystA), LCEItemCatalyst.getMelting(catalystB)));
 
@@ -938,16 +939,22 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 
 	@Unique
 	private int getCorePower() {
+		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
+			return 1500;
 		return ItemAMSCore.getPowerBase(inventory.getStackInSlot(1));
 	}
 
 	@Unique
 	private float getCoreHeat() {
+		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
+			return 3;
 		return ItemAMSCore.getHeatBase(inventory.getStackInSlot(1));
 	}
 
 	@Unique
 	private float getCoreFuel() {
+		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
+			return 3;
 		return ItemAMSCore.getFuelBase(inventory.getStackInSlot(1));
 	}
 
