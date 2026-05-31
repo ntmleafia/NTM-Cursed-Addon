@@ -1,5 +1,6 @@
 package com.leafia.settings;
 
+import com.hbm.config.BombConfig;
 import com.hbm.config.GeneralConfig;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.dev.LeafiaDebug;
@@ -35,8 +36,10 @@ public class AddonConfig {
 	public static boolean disableAddonZIRNOX = false;
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
+		public static boolean safeCommit = true;
 		public static void applyGeneralConfig() {
 			GeneralConfig.enableBlockReplcement = blockReplacement;
+			BombConfig.safeCommit = safeCommit;
 		}
 	}
 	public static void loadFromConfig(){
@@ -54,6 +57,7 @@ public class AddonConfig {
 		{
 			// I do not care about performance. This addon is aimed for newer playerbase.
 			ConfigOverrides.blockReplacement = builder._boolean("ovr_enableBlockReplacement",true);
+			ConfigOverrides.safeCommit = builder._boolean("ovr_safeCommit",true);
 		}
 		builder._separator();
 		builder._category("OVERWRITES AND REPLACEMENTS (GAMEPLAY)");
