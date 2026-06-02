@@ -36,6 +36,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 public class LeafiaParticlePacket extends RecordablePacket {
 	/**
 	 * The particle's NBT data buffer.
@@ -512,6 +515,7 @@ public class LeafiaParticlePacket extends RecordablePacket {
 			buf.writeInt(flashTime);
 		}
 		@Override
+		@SideOnly(Side.CLIENT)
 		protected void emit(NBTTagCompound nbt) {
 			World world = Minecraft.getMinecraft().world;
 			ParticleNuke nuke = new ParticleNuke(
@@ -557,10 +561,23 @@ public class LeafiaParticlePacket extends RecordablePacket {
 	static {
 		for (Class<?> cl : LeafiaParticlePacket.class.getClasses()) {
 			if (LeafiaParticle.class.isAssignableFrom(cl)) {
+				boolean valid = true;
+				// foolproof
+				for (Method method : cl.getDeclaredMethods()) {
+					if (method.getName().equals("emit")) {
+						valid = false;
+						for (Annotation annotation : method.getAnnotations()) {
+							if (annotation instanceof SideOnly)
+								valid = true;
+						}
+					}
+				}
+				if (!valid)
+					throw new LeafiaDevFlaw("Particle "+cl.getSimpleName()+"#emit is missing a @SideOnly(Side.CLIENT) annotation!");
 				try {
 					registry.add(cl.asSubclass(LeafiaParticle.class).newInstance());
-				} catch (InstantiationException | IllegalAccessException exception) {
-					LeafiaDevFlaw flaw = new LeafiaDevFlaw("Exception during initialization of particles: "+exception.toString());
+				} catch (Throwable exception) { // literally go kys
+					LeafiaDevFlaw flaw = new LeafiaDevFlaw("Exception during initialization of particle "+cl.getSimpleName()+" "+exception.toString());
 					flaw.setStackTrace(exception.getStackTrace());
 					throw flaw;
 				}

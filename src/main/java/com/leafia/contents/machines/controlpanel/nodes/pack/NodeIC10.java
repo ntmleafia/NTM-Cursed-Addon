@@ -13,9 +13,14 @@ import com.leafia.overwrite_contents.interfaces.IMixinGuiControlEdit;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class NodeIC10 extends Node {
 	// \{(.*)\};
@@ -108,12 +113,17 @@ public class NodeIC10 extends Node {
 	@Override
 	public void readFromNBT(NBTTagCompound tag,NodeSystem sys) {
 		super.readFromNBT(tag,sys);
-		if (tag.hasKey("instructions")) {
+		if (tag.hasKey("instructions") || tag.hasKey("compressed")) {
+			byte[] data;
+			if (tag.hasKey("compressed"))
+				data = gunzip(tag.getByteArray("compressed"));
+			else
+				data = tag.getByteArray("instructions");
 			instructions.clear();
 			byte[] cache = new byte[0];
 			boolean writingString = false;
 			ArrayList<Object> instruction = new ArrayList<>();
-			for (byte b : tag.getByteArray("instructions")) {
+			for (byte b : data) {
 				if (b < 0 && writingString) {
 					instruction.add(new String(cache,StandardCharsets.UTF_8));
 					cache = new byte[0];
@@ -158,8 +168,34 @@ public class NodeIC10 extends Node {
 			}
 			codes = append(codes,(byte)(-1));
 		}
-		tag.setByteArray("instructions",codes);
+		gzip(tag,codes);
 		tag.setTag("state",state.serialize());
 		return super.writeToNBT(tag,sys);
+	}
+	static byte[] gunzip(byte[] data) {
+		try {
+			try (var gis = new GZIPInputStream(new ByteArrayInputStream(data))) {
+				return gis.readAllBytes();          // Java 9+
+			}
+		} catch (IOException io) {
+			System.err.println("ERROR: IC10 node zip compression failed!");
+			io.printStackTrace();
+			return new byte[0];
+		}
+	}
+	static void gzip(NBTTagCompound tag,byte[] data) {
+		try {
+			var bos = new ByteArrayOutputStream();
+			try (var gz = new GZIPOutputStream(bos)) {
+				gz.write(data);
+			}
+			byte[] comp = bos.toByteArray();
+			tag.setByteArray("compressed",comp);
+			System.out.println("IC10 node zip compression success! ("+data.length+" -> "+comp.length+" bytes)");
+		} catch (IOException io) {
+			System.err.println("ERROR: IC10 node zip compression failed!");
+			io.printStackTrace();
+			tag.setByteArray("instructions",data);
+		}
 	}
 }

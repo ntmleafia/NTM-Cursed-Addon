@@ -16,6 +16,7 @@ import com.leafia.contents.worldgen.AddonWorldGen;
 import com.leafia.contents.worldgen.NTMStructBuffer.StructLoader;
 import com.leafia.database.AirDetonationMissiles;
 import com.leafia.database.ReactorTiers;
+import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaServerListener;
 import com.leafia.init.*;
@@ -44,7 +45,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.5.0.3,);required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.5.0.2,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
 	public enum AddonLoadingStage {
 		BLOCKS,
@@ -201,6 +202,7 @@ public class AddonBase {
 	public void fMLLoadCompleteEvent(FMLLoadCompleteEvent evt){
 		proxy.onLoadComplete(evt);
 		FalloutConfigInit.onInit();
+		_initClass(LeafiaParticlePacket.class); // make it crash here if it's missing SideOnly annotation
 
         /*
         FluidTankNTM tankNTM = new FluidTankNTM(Fluids.CRYOGEL,1000);

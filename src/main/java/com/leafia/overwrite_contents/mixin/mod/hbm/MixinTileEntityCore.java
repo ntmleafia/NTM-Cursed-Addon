@@ -841,7 +841,7 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 			if (isFixTool(e)) continue;
 			if (e instanceof EntityFallingBlock) continue;
 			boolean isPlayer = e instanceof EntityPlayer;
-			if (!(isPlayer && ArmorUtil.checkForHazmat((EntityPlayer) e))) {
+			if (!(isPlayer && (ArmorUtil.checkForHazmat((EntityPlayer) e) || ArmorUtil.checkArmor((EntityPlayer)e,ModItems.hev_helmet,ModItems.hev_plate,ModItems.hev_legs,ModItems.hev_boots)))) {
 				if (!(Library.isObstructed(world, pos.getX() + 0.5, pos.getY() + 0.5 + 6, pos.getZ() + 0.5, e.posX, e.posY + e.getEyeHeight(), e.posZ))) {
 					if (!isPlayer || (isPlayer && !((EntityPlayer) e).capabilities.isCreativeMode))
 						e.attackEntityFrom(LeafiaDamageSource.dfc, (int) (this.temperature / 100));
