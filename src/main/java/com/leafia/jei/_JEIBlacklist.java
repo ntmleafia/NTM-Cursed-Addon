@@ -59,5 +59,10 @@ public class _JEIBlacklist {
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodKys));
 		blacklist.addIngredientToBlacklist(new ItemStack(Elevators.light));
 		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.digammaRecord));
+		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.dna_felid));
+		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.dna_canid));
+		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.dna_eevee));
+		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodCatsmile));
+		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodConfusion));
 	}
 }

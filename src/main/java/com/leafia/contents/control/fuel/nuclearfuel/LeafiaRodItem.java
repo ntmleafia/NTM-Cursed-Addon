@@ -351,6 +351,13 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				disableDecay = true;
 				break;
 
+			case "confusium":
+				y = Math.abs(Math.tan(x))*1000;
+				n = "abs(tan("+flux+"))×1000 "+TextFormatting.GRAY+"(??????)";
+				break;
+			case "catsmilium":
+				disableDecay = true;
+
 			// URANIUM
 			case "meu235": case "nu": //case "u238": thanks grabber for telling me the reality
 				y = Math.pow(x*8,0.56)*3;

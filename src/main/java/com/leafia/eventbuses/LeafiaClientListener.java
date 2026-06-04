@@ -902,7 +902,7 @@ public class LeafiaClientListener {
 			//multiplier *= IdkWhereThisShitBelongs.fovM;
 			float fovMultiplier = 1-Digamma.digammaDose*0.21428571428f;
 
-			e.setNewfov(e.getFov()*multiplier*fovMultiplier);
+			e.setNewfov(e.getNewfov()*multiplier*fovMultiplier);
 		}
 
 		public static final Logger LOGGER = LogManager.getLogger();

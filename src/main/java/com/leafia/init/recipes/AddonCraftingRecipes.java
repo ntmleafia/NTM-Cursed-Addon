@@ -146,6 +146,9 @@ public class AddonCraftingRecipes {
 		removeRecipesForItem(reg,ModItems.powder_ice);
 		addRecipeAuto(new ItemStack(AddonItems.door_fuckoff, 3), "WW", "WW", "WW", 'W', ModBlocks.pink_planks);
 
+		addShapelessAuto(new ItemStack(LeafiaRods.leafRodCatsmile),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_felid),new ItemStack(ModItems.heart_piece));
+		addShapelessAuto(new ItemStack(LeafiaRods.leafRodConfusion),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_canid));
+
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
 	static void removeRecipesForItem(ForgeRegistry<IRecipe> reg,Item item) {

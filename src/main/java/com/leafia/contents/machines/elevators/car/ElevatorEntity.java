@@ -1157,11 +1157,13 @@ public class ElevatorEntity extends Entity implements IEntityMultiPart, IEntityC
 				boolean foundBuffer = false;
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {
-						BlockPos bp = new BlockPos(posX+i,posY-0.5,posZ+j);
-						if (world.getBlockState(bp).getBlock() instanceof EvBuffer buf) {
-							foundBuffer = true;
-							bufferHeight = buf.findCore(world,bp.getX(),bp.getY(),bp.getZ())[1]+3;
-							break;
+						for (int yo = 0; yo >= -4; yo--) {
+							BlockPos bp = new BlockPos(posX+i,posY-0.5+yo,posZ+j);
+							if (world.getBlockState(bp).getBlock() instanceof EvBuffer buf) {
+								foundBuffer = true;
+								bufferHeight = buf.findCore(world,bp.getX(),bp.getY(),bp.getZ())[1]+3;
+								break;
+							}
 						}
 					}
 				}

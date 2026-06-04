@@ -1,6 +1,7 @@
 package com.leafia.init.recipes;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.generic.BlockBobble.BobbleType;
 import com.hbm.inventory.RecipesCommon.AStack;
 import com.hbm.inventory.RecipesCommon.ComparableStack;
 import com.hbm.inventory.RecipesCommon.OreDictStack;
@@ -8,6 +9,7 @@ import com.hbm.inventory.recipes.anvil.AnvilRecipes.AnvilConstructionRecipe;
 import com.hbm.inventory.recipes.anvil.AnvilRecipes.AnvilOutput;
 import com.hbm.items.ModItems;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonItems;
 import net.minecraft.item.ItemStack;
 
 import static com.hbm.inventory.OreDictManager.*;

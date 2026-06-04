@@ -335,6 +335,39 @@ public class AddonAssemblerRecipes {
 							new ComparableStack(ModItems.coil_gold_torus)
 					)
 			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.reactordoor").setup(200,150)
+					.outputItems(new ItemStack(AddonBlocks.reactor_door))
+					.inputItems(
+							new OreDictStack(STEEL.plateWelded(),4),
+							new OreDictStack(PB.block(),2),
+							new OreDictStack(W.bolt(),12),
+							new OreDictStack(RUBBER.ingot(),4)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.crimsondoorlarge").setup(400,100)
+					.outputItems(new ItemStack(AddonBlocks.crimson_door_large))
+					.inputItems(
+							new OreDictStack(STEEL.plateCast(),12),
+							new OreDictStack(STEEL.pipe(),8),
+							new OreDictStack(ALLOY.plate(),4),
+							new ComparableStack(ModItems.plate_polymer,16),
+							new ComparableStack(ModItems.motor,6),
+							new OreDictStack(W.bolt(),16),
+							new OreDictStack("dyeRed",6)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.crimsondoorsmall").setup(300,100)
+					.outputItems(new ItemStack(AddonBlocks.crimson_door_small))
+					.inputItems(
+							new OreDictStack(STEEL.plateCast(),6),
+							new OreDictStack(STEEL.pipe(),4),
+							new OreDictStack(ALLOY.plate(),2),
+							new ComparableStack(ModItems.plate_polymer,8),
+							new ComparableStack(ModItems.motor,4),
+							new OreDictStack(W.bolt(),8),
+							new OreDictStack("dyeRed",4)
+					)
+			);
 		}
 	}
 	public static void makeRecipe(String s,ComparableStack out, AStack[] in, int duration) {
