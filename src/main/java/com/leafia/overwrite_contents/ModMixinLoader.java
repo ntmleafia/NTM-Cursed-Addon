@@ -2,6 +2,7 @@ package com.leafia.overwrite_contents;
 
 import zone.rong.mixinbooter.ILateMixinLoader;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +11,6 @@ public class ModMixinLoader implements ILateMixinLoader {
 
     @Override
     public List<String> getMixinConfigs() {
-        return Collections.singletonList("leafia.mod.mixin.json");
+        return Arrays.asList("leafia.mod.mixin.json","leafia.mod.bullshit.mixin.json");
     }
 }

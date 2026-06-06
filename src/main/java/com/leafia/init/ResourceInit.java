@@ -28,6 +28,8 @@ import com.leafia.contents.machines.processing.mixingvat.MixingVatRender;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlRender;
 import com.leafia.contents.machines.reactors.pwr.debris.RenderPWRDebris;
+import com.leafia.contents.machines.research.amsp.analyzer.AMSPAnalyzerRender;
+import com.leafia.contents.machines.research.amsp.receiver.AMSPReceiverRender;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender;
 import com.leafia.contents.network.fluid.FluidDuctEquipmentRender;
 import com.leafia.contents.network.spk_cable.SPKCableRender;
@@ -98,6 +100,8 @@ public class ResourceInit {
 		_initClass(RackRender.class);
 		_initClass(CrimsonDoorSmallRender.class);
 		_initClass(CrimsonDoorLargeRender.class);
+		_initClass(AMSPAnalyzerRender.class);
+		_initClass(AMSPReceiverRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");

@@ -34,6 +34,7 @@ public class AddonConfig {
 	public static boolean disableAddonDFC = false;
 	public static boolean disableAddonPWR = false;
 	public static boolean disableAddonZIRNOX = false;
+	public static boolean bullshitUnits = false;
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
 		public static boolean safeCommit = true;
@@ -102,6 +103,9 @@ public class AddonConfig {
 
 			builder._comment("Every biome acts like the digamma crater biome");
 			schizoMode = builder._boolean("enableSchizoMode",false);
+
+			builder._comment("(WIP) Changes this mod from using units you know to some bullshit units that god knows");
+			bullshitUnits = builder._boolean("enableSludgeUnits",false);
 
 			builder._comment("Whether floating blocks and weirdly built buildings should collapse or not (WARNING: VERY LAGGY & CHALLENGING!)");
 			StructuralIntegrityHandler.AUTOMATIC = builder._boolean("enableStructuralIntegrity",false);

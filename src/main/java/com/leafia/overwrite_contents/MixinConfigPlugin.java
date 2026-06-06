@@ -34,6 +34,8 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
             case "MixinCoreComponent","MixinCoreCore","MixinTileEntityCore","MixinTileEntityCoreEmitter",
                  "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
         }
+        if (mixinClassName.startsWith("Bullshit"))
+            cancel = !AddonConfig.bullshitUnits;
         if (cancel) {
             System.out.println("DISABLING MIXIN "+mixinClassName+" ("+targetClassName+")");
             return false;

@@ -5,7 +5,9 @@ import com.hbm.inventory.gui.GuiInfoContainer;
 
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
+import com.leafia.settings.AddonConfig;
 import com.leafia.transformer.LeafiaGls;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import com.llib.math.SIPfx;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -41,14 +43,22 @@ public class CoreGUI extends GuiInfoContainer {
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 53, guiTop + 97, 70, 4, mouseX, mouseY, heat);
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 53, guiTop + 101, 70, 4, mouseX, mouseY, field);*/
 
+		String txt = String.format("%01.1f",mixin.getDFCTemperature())+"°C"+"§8 / "+mixin.getDFCMeltingPoint();
+		if (AddonConfig.bullshitUnits)
+			txt = String.format("%01.1f",BullshitInDavenportIowa.CelsiusToG(mixin.getDFCTemperature()))+"grille"+"§8 / "+(int)BullshitInDavenportIowa.CelsiusToG(mixin.getDFCMeltingPoint());
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 7, guiTop + 98, 70, 4, mouseX, mouseY,
-				new String[]{"Temperature: "+((mixin.getDFCTemperature() >= IMixinTileEntityCore.failsafeLevel) ? "ERROR" : String.format("%01.1f",mixin.getDFCTemperature())+"°C"+"§8 / "+mixin.getDFCMeltingPoint())});
+				new String[]{"Temperature: "+((mixin.getDFCTemperature() >= IMixinTileEntityCore.failsafeLevel) ? "ERROR" : txt)});
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 7, guiTop + 102, 70, 4, mouseX, mouseY,
 				new String[]{"Stabilization: "+Math.round(mixin.getDFCStabilization()*100)+"%"});
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 84, guiTop + 98, 70, 4, mouseX, mouseY,
 				new String[]{"Contained Energy: "+((mixin.getDFCContainedEnergy() >= IMixinTileEntityCore.failsafeLevel) ? "ERROR" : SIPfx.formatNoSpace("%01.3f",mixin.getDFCContainedEnergy()*1000,false)+"SPK")});
-		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 84, guiTop + 102, 70, 4, mouseX, mouseY,
+		if (!AddonConfig.bullshitUnits) {
+			this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 84, guiTop + 102, 70, 4, mouseX, mouseY,
 				new String[]{"Expelling Energy: "+String.format("%01.3f",mixin.getDFCExpellingEnergy()/1000)+"MSPK/s"});
+		} else {
+			this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 84, guiTop + 102, 70, 4, mouseX, mouseY,
+				new String[]{"Expelling Energy: "+String.format("%01.3f",BullshitInDavenportIowa.PSToPSj(mixin.getDFCExpellingEnergy()/1000))+"MSPK/stevejob"});
+		}
 		this.drawCustomInfoStat(mouseX, mouseY, guiLeft + 161, guiTop + 98, 8, 8, mouseX, mouseY,
 				new String[]{"Potential: "+Math.round(mixin.getDFCPotentialGain()*100)+"%"});
 

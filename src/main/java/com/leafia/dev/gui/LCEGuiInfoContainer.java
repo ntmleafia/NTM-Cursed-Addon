@@ -3,6 +3,8 @@ package com.leafia.dev.gui;
 import com.hbm.lib.Library;
 
 import com.leafia.init.LeafiaSoundEvents;
+import com.leafia.settings.AddonConfig;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
@@ -48,8 +50,12 @@ public abstract class LCEGuiInfoContainer extends GuiContainerLeafia {
         return this.isPointInRegion(slotIn.xPos, slotIn.yPos, 16, 16, mouseX, mouseY);
     }
 	public void drawElectricityInfo(LCEGuiInfoContainer gui,int mouseX,int mouseY,int x,int y,int width,int height,long power,long maxPower) {
-		if(x <= mouseX && x + width > mouseX && y < mouseY && y + height >= mouseY)
-			gui.drawFluidInfo(new String[] { Library.getShortNumber(power) + "/" + Library.getShortNumber(maxPower) + "HE" }, mouseX, mouseY);
+		if(x <= mouseX && x + width > mouseX && y < mouseY && y + height >= mouseY) {
+			if (!AddonConfig.bullshitUnits)
+				gui.drawFluidInfo(new String[] { Library.getShortNumber(power) + "/" + Library.getShortNumber(maxPower) + "HE" }, mouseX, mouseY);
+			else
+				gui.drawFluidInfo(new String[] { Library.getShortNumber((long)BullshitInDavenportIowa.HEToCn(power)) + "/" + Library.getShortNumber((long)BullshitInDavenportIowa.HEToCn(maxPower)) + "corn" }, mouseX, mouseY);
+		}
 	}
 	
 	public void drawCustomInfo(LCEGuiInfoContainer gui, int mouseX, int mouseY, int x, int y, int width, int height, String[] text) {

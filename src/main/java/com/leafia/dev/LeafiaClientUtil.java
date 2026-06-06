@@ -17,6 +17,7 @@ import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.machines.reactors.lftr.components.element.MSRElementTE.MSRFuel;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.gui.LCEGuiInfoContainer;
+import com.leafia.settings.AddonConfig;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -65,7 +66,10 @@ public class LeafiaClientUtil {
 		if (x <= mouseX && x + width > mouseX && y < mouseY && y + height >= mouseY) {
 			List<String> list = new ArrayList();
 			list.add(tank.getTankType().getLocalizedName());
-			list.add(tank.getFill() + "/" + tank.getMaxFill() + "mB");
+			if (!AddonConfig.bullshitUnits)
+				list.add(tank.getFill() + "/" + tank.getMaxFill() + "mB");
+			else
+				list.add((int)(tank.getFill()/1000d*9.54406631763) + "/" + (int)(tank.getMaxFill()/1000d*9.54406631763) + "house");
 			if (tank.getPressure() != 0) {
 				list.add(ChatFormatting.RED + "Pressure: " + tank.getPressure() + " PU");
 			}

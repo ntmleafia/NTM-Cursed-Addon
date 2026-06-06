@@ -1,0 +1,18 @@
+{
+  "required": false,
+  "package": "com.leafia.overwrite_contents.mixin.mod",
+  "plugin": "com.leafia.overwrite_contents.MixinConfigPlugin",
+  "refmap": "mixins.leafia.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(MOD)",
+  "client": [
+    "hbm.BullshitMixinGuiInfoContainer"
+  ],
+  "mixins": [
+    "hbm.BullshitMixinFluidTankNTM"
+  ],
+  "server": [
+  ],
+  "setSourceFile": true,
+  "minVersion": "0.8.7"
+}

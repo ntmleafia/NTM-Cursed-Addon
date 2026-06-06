@@ -93,6 +93,8 @@ import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRWreckMetal;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRWreckStone;
 import com.leafia.contents.machines.reactors.rbmk.columns.realersim.RBMKRealerSimBlock;
 import com.leafia.contents.machines.reactors.rbmk.debris.RBMKDebrisSmoke;
+import com.leafia.contents.machines.research.amsp.analyzer.AMSPAnalyzerBlock;
+import com.leafia.contents.machines.research.amsp.receiver.AMSPReceiverBlock;
 import com.leafia.contents.miscellanous.diverter.DiverterBlock;
 import com.leafia.contents.miscellanous.regex_filter.pneumatic.RegexFilterBlock;
 import com.leafia.contents.miscellanous.slop.SlopBlock;
@@ -565,6 +567,13 @@ public class AddonBlocks {
 	}
 
 	public static final Block wind_turbine_medium = new WindTurbineMediumBlock(Material.IRON,"wind_turbine_medium").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
+
+	static boolean research_dummy = Research.dummy;
+	public static class Research {
+		static boolean dummy = false;
+		public static final Block amsp_analyzer = new AMSPAnalyzerBlock(Material.IRON,"amsp_analyzer").setHardness(25.0F).setResistance(60).setCreativeTab(MainRegistry.machineTab);
+		public static final Block amsp_receiver = new AMSPReceiverBlock(Material.IRON,"amsp_receiver").setHardness(25.0F).setResistance(60).setCreativeTab(MainRegistry.machineTab);
+	}
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

@@ -5,6 +5,7 @@ import com.hbm.handler.HazmatRegistry;
 import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.util.ContaminationUtil;
 import com.leafia.settings.AddonConfig;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.Style;
@@ -26,7 +27,6 @@ public abstract class MixinContaminationUtil {
 	public static String getPreffixFromRad(double rads) {
 		return null;
 	}
-
 	/**
 	 * @author ntmleafia
 	 * @reason rad classification
@@ -41,21 +41,48 @@ public abstract class MixinContaminationUtil {
 		double resKoeff = HazmatRegistry.getResistance(player) * 100.0;
 		double rec = env * rawRadMod;
 		double ar;
-		double division = 100;
-		String unit = "Sv";
+
+		double radsD = rads;
+		double eRadD = eRad;
+		double envD = env;
+		double recD = rec;
+
+		String unit = AddonConfig.bullshitUnits ? "dyatlov" : "Sv";
+		String unitRAD = AddonConfig.bullshitUnits ? "expie" : "RAD";
+		String unitPS = AddonConfig.bullshitUnits ? "/stevejob" : "/s";
 		if (!AddonConfig.enableHealthMod) {
-			division = 1;
-			unit = "RAD";
+			unit = unitRAD;
+			if (AddonConfig.bullshitUnits) {
+				radsD = BullshitInDavenportIowa.RADToEx(radsD);
+				eRadD = BullshitInDavenportIowa.RADToEx(eRadD);
+				envD = BullshitInDavenportIowa.RADToEx(envD);
+				recD = BullshitInDavenportIowa.RADToEx(recD);
+			}
+		} else {
+			eRadD /= 100;
+			envD /= 100;
+			recD /= 100;
+			if (AddonConfig.bullshitUnits) {
+				radsD = BullshitInDavenportIowa.RADToEx(radsD);
+				eRadD = BullshitInDavenportIowa.SvToDy(eRadD);
+				envD = BullshitInDavenportIowa.SvToDy(envD);
+				recD = BullshitInDavenportIowa.SvToDy(recD);
+			}
+		}
+		if (AddonConfig.bullshitUnits) {
+			radsD = BullshitInDavenportIowa.PSToPSj(radsD);
+			envD = BullshitInDavenportIowa.PSToPSj(envD);
+			recD = BullshitInDavenportIowa.PSToPSj(recD);
 		}
 		String eRadS, radsS, envS, recS, resS, resKoeffS;
 		ar = Math.abs(eRad);
-		eRadS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", eRad/division) : String.format("%.3f", eRad/division);
+		eRadS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", eRadD) : String.format("%.3f", eRadD);
 		ar = Math.abs(rads);
-		radsS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", rads) : String.format("%.3f", rads);
+		radsS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", radsD) : String.format("%.3f", radsD);
 		ar = Math.abs(env);
-		envS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", env/division) : String.format("%.3f", env/division);
+		envS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", envD) : String.format("%.3f", envD);
 		ar = Math.abs(rec);
-		recS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", rec/division) : String.format("%.3f", rec/division);
+		recS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-3)) ? String.format("%.3e", recD) : String.format("%.3f", recD);
 		ar = Math.abs(res);
 		resS = (ar >= 1.0e6 || (ar > 0.0 && ar < 1.0e-6)) ? String.format("%.6e", res) : String.format("%.6f", res);
 		ar = Math.abs(resKoeff);
@@ -83,13 +110,13 @@ public abstract class MixinContaminationUtil {
 				.appendSibling(new TextComponentString(" ☢ ====="))
 				.setStyle(new Style().setColor(TextFormatting.GOLD)));
 		player.sendMessage(new TextComponentTranslation("geiger.chunkRad")
-				.appendSibling(new TextComponentString(" " + chunkPrefix + radsS + " RAD/s"))
+				.appendSibling(new TextComponentString(" " + chunkPrefix + radsS + " "+unitRAD+unitPS))
 				.setStyle(new Style().setColor(TextFormatting.YELLOW)));
 		player.sendMessage(new TextComponentTranslation("geiger.envRad")
-				.appendSibling(new TextComponentString(" " + envPrefix + envS + " "+unit+"/s"))
+				.appendSibling(new TextComponentString(" " + envPrefix + envS + " "+unit+unitPS))
 				.setStyle(new Style().setColor(TextFormatting.YELLOW)));
 		player.sendMessage(new TextComponentTranslation("geiger.recievedRad")
-				.appendSibling(new TextComponentString(" " + recPrefix + recS + " "+unit+"/s"))
+				.appendSibling(new TextComponentString(" " + recPrefix + recS + " "+unit+unitPS))
 				.setStyle(new Style().setColor(TextFormatting.YELLOW)));
 		player.sendMessage(new TextComponentTranslation("geiger.playerRad")
 				.appendSibling(new TextComponentString(" " + radPrefix + eRadS + " "+unit))

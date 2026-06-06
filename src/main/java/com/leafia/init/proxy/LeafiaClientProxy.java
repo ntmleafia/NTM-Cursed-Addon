@@ -79,6 +79,10 @@ import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreckE
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.RenderPWRMeshedWreck;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisEntity;
 import com.leafia.contents.machines.reactors.pwr.debris.RenderPWRDebris;
+import com.leafia.contents.machines.research.amsp.analyzer.AMSPAnalyzerRender;
+import com.leafia.contents.machines.research.amsp.analyzer.AMSPAnalyzerTE;
+import com.leafia.contents.machines.research.amsp.receiver.AMSPReceiverRender;
+import com.leafia.contents.machines.research.amsp.receiver.AMSPReceiverTE;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender;
 import com.leafia.contents.network.ff_duct.utility.converter.FFConverterTE;
 import com.leafia.contents.network.ff_duct.utility.filter.FFFilterTE2;
@@ -222,6 +226,9 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 
 			ClientRegistry.bindTileEntitySpecialRenderer(DebugRenderTestTE.class,new DebugRenderTestRender());
 			ClientRegistry.bindTileEntitySpecialRenderer(WindTurbineMediumTE.class,new WindTurbineMediumRender());
+
+			ClientRegistry.bindTileEntitySpecialRenderer(AMSPAnalyzerTE.class,new AMSPAnalyzerRender());
+			ClientRegistry.bindTileEntitySpecialRenderer(AMSPReceiverTE.class,new AMSPReceiverRender());
 		}
 		AddonJars.initJars();
 	}

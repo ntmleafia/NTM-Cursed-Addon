@@ -7,6 +7,8 @@ import com.hbm.util.I18nUtil;
 import com.leafia.dev.LeafiaClientUtil;
 import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityReactorZIRNOX;
+import com.leafia.settings.AddonConfig;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.resources.I18n;
@@ -72,10 +74,16 @@ public class ZirnoxGUI extends GuiInfoContainer {
 
 		drawTankInfo(mouseX,mouseY,ui.tankFeedwater,entity.water);
 		drawTankInfo(mouseX,mouseY,ui.tankSteam,entity.steam);
-		drawInfo(mouseX,mouseY,ui.barHullTemp,LeafiaClientUtil.statusDecimals("desc.leafia._repeated.reactors.temp.hull",mixin.getHullTemp(),(byte)1));
+		if (!AddonConfig.bullshitUnits)
+			drawInfo(mouseX,mouseY,ui.barHullTemp,LeafiaClientUtil.statusDecimals("desc.leafia._repeated.reactors.temp.hull",mixin.getHullTemp(),(byte)1));
+		else
+			drawInfo(mouseX,mouseY,ui.barHullTemp,LeafiaClientUtil.statusDecimals("desc.leafia._repeated.reactors.temp.hull.bs",BullshitInDavenportIowa.CelsiusToG(mixin.getHullTemp()),(byte)1));
 		this.drawCustomInfo(mouseX,mouseY,guiLeft+ui.barControlRod.x,guiTop+ui.barControlRod.y-1,ui.barControlRod.width+4,ui.barControlRod.height,LeafiaClientUtil.statusDecimals("desc.leafia._repeated.reactors.controlrods",mixin.getRods(),(byte)0));
 		drawInfo(mouseX,mouseY,ui.valve,I18nUtil.resolveKeyArray("desc.leafia.zirnox.vent"));
-		drawInfo(mouseX,mouseY,ui.gaugePressure,LeafiaClientUtil.statusDecimals("desc.leafia.zirnox.pressure",mixin.getPressure(),(byte)1));
+		if (!AddonConfig.bullshitUnits)
+			drawInfo(mouseX,mouseY,ui.gaugePressure,LeafiaClientUtil.statusDecimals("desc.leafia.zirnox.pressure",mixin.getPressure(),(byte)1));
+		else
+			drawInfo(mouseX,mouseY,ui.gaugePressure,LeafiaClientUtil.statusDecimals("desc.leafia.zirnox.pressure.bs",mixin.getPressure()*1770.49585941,(byte)1));
 		drawTankInfo(mouseX,mouseY,ui.gaugeCoolant,entity.carbonDioxide);
 
 		String[] text = I18nUtil.resolveKeyArray("desc.leafia.zirnox.tips.coolant");

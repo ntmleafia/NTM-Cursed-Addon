@@ -6,7 +6,9 @@ import com.leafia.dev.gui.FiaUIRect;
 import com.leafia.dev.gui.LCEGuiInfoContainer;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
+import com.leafia.settings.AddonConfig;
 import com.leafia.transformer.LeafiaGls;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.resources.I18n;
@@ -75,7 +77,12 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 					if (mixin.getDetonation())
 						timeLeft -= partialTicks/20f;
 				}
-				drawHoveringText(TextFormatting.RED+String.format("%02.2fs",timeLeft),mouseX,mouseY);
+				String unit = "s";
+				if (AddonConfig.bullshitUnits) {
+					unit = "stevejob";
+					timeLeft = (float)BullshitInDavenportIowa.SToSj(timeLeft);
+				}
+				drawHoveringText(TextFormatting.RED+String.format("%02.2f"+unit,timeLeft),mouseX,mouseY);
 			}
 			IMixinTileEntityCore mixin = (IMixinTileEntityCore)te.lastGetCore;
 			if (nukeInfo.isMouseIn(mouseX,mouseY)) {
@@ -89,7 +96,10 @@ public class CoreDetonatorGUI extends LCEGuiInfoContainer {
 							radius += 30*(power-8);
 						if (power >= 8)
 							radius += 100*(power-8);
-						drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",radius+"m"),mouseX,mouseY);
+						if (!AddonConfig.bullshitUnits)
+							drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",radius+"m"),mouseX,mouseY);
+						else
+							drawHoveringText(I18nUtil.resolveKey("tile.dfc_pulser.gui.radius",BullshitInDavenportIowa.MToBn(radius)+"banana"),mouseX,mouseY);
 					}
 				}
 			}

@@ -24,6 +24,8 @@ import com.leafia.dev.items.itembase.AddonItemBase;
 import com.leafia.dev.items.itembase.AddonItemHazardBase;
 import com.leafia.init.hazards.types.radiation.Neutrons;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityNukeExploisonMK5;
+import com.leafia.settings.AddonConfig;
+import com.leafia.unsorted.BullshitInDavenportIowa;
 import com.llib.LeafiaLib;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -693,11 +695,19 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				else
 					list.add(TextFormatting.DARK_GRAY + "  " + I18nUtil.resolveKey("item.leafiarod.decays",I18nUtil.resolveKey(newFuel.getTranslationKey()+".name")));
 			}
-			if (life != 0)
-				list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",life+"°C"));
+			if (life != 0) {
+				if (!AddonConfig.bullshitUnits)
+					list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",life+"°C"));
+				else
+					list.add(TextFormatting.DARK_GREEN + "  "+I18nUtil.resolveKey("item.leafiarod.life",BullshitInDavenportIowa.CelsiusToG(life)+"grille"));
+			}
 			String fnc = item.HeatFunction(stack,false,0,0,0,0);
-			if (!fnc.equals("0") && !lastDisableDecay)
-				list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",decay*20)+"°C/s"));
+			if (!fnc.equals("0") && !lastDisableDecay) {
+				if (!AddonConfig.bullshitUnits)
+					list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",decay*20)+"°C/s"));
+				else
+					list.add(TextFormatting.GOLD + "  "+I18nUtil.resolveKey("item.leafiarod.decayheat","+"+String.format("%01.3f",BullshitInDavenportIowa.PSToPSj(BullshitInDavenportIowa.CelsiusToG(decay*20)))+"grille/stevejob"));
+			}
 			if (emission != 1)
 				list.add(TextFormatting.AQUA+"  "+I18nUtil.resolveKey("item.leafiarod.reac.out",formatHeatMultiplier(emission)));
 			if (reactivity != 1)
@@ -711,10 +721,16 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 			super.addInformation(stack,worldIn,list,flagIn);
 			list.add("");
 			list.add(TextFormatting.YELLOW + I18nUtil.resolveKey("item.leafiarod.heatfunc",fnc));
-			list.add(TextFormatting.GOLD + I18nUtil.resolveKey("item.leafiarod.temp",String.format("%01.1f",heat)+"°C"));
+			if (!AddonConfig.bullshitUnits)
+				list.add(TextFormatting.GOLD + I18nUtil.resolveKey("item.leafiarod.temp",String.format("%01.1f",heat)+"°C"));
+			else
+				list.add(TextFormatting.GOLD + I18nUtil.resolveKey("item.leafiarod.temp",String.format("%01.1f",BullshitInDavenportIowa.CelsiusToG(heat))+"grille"));
 		}
 		if (meltingPoint != 0) {
-			list.add(TextFormatting.DARK_RED + I18nUtil.resolveKey("item.leafiarod.meltingpt",String.format("%01.1f",meltingPoint)));
+			if (!AddonConfig.bullshitUnits)
+				list.add(TextFormatting.DARK_RED + I18nUtil.resolveKey("item.leafiarod.meltingpt",String.format("%01.1f",meltingPoint)+"°C"));
+			else
+				list.add(TextFormatting.DARK_RED + I18nUtil.resolveKey("item.leafiarod.meltingpt",String.format("%01.1f",BullshitInDavenportIowa.CelsiusToG(meltingPoint))+"grille"));
 			double percent = heat/meltingPoint;
 			int barLength = 60;
 			String bar = "";
