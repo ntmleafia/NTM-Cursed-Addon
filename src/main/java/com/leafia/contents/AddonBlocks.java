@@ -17,6 +17,7 @@ import com.leafia.contents.bomb.balefire.BaleoniteBlock;
 import com.leafia.contents.bomb.digamma.DigammititeBlock;
 import com.leafia.contents.building.catwalk.railing.types.CatwalkRailingCurved;
 import com.leafia.contents.building.doors.AddonDoorGeneric;
+import com.leafia.contents.building.sign.poster.PosterBlock;
 import com.leafia.contents.building.storage.broof.BroofBlock;
 import com.leafia.contents.building.doors.AddonDoorDecl;
 import com.leafia.contents.building.doors.special.reactor_door.ReactorDoorBlock;
@@ -127,6 +128,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLiquid;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
@@ -574,6 +576,8 @@ public class AddonBlocks {
 		public static final Block amsp_analyzer = new AMSPAnalyzerBlock(Material.IRON,"amsp_analyzer").setHardness(25.0F).setResistance(60).setCreativeTab(MainRegistry.machineTab);
 		public static final Block amsp_receiver = new AMSPReceiverBlock(Material.IRON,"amsp_receiver").setHardness(25.0F).setResistance(60).setCreativeTab(MainRegistry.machineTab);
 	}
+
+	public static final Block poster_slize = new PosterBlock("poster_slize").setHardness(5).setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

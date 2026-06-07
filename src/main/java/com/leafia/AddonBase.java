@@ -44,6 +44,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
 		dependencies = "required-after:hbm@[2.5.0.2,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
@@ -219,6 +223,17 @@ public class AddonBase {
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandLeaf());
 		AddonAdvancements.init(event.getServer());
+		if (event.getServer().isDedicatedServer()) {
+			/*
+			try {
+				BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+				//String s = r.readLine();
+				//System.out.println(s+" INPUTTED");
+				r.close();
+			} catch (IOException e) {
+				throw new LeafiaDevFlaw(e);
+			}*/ // forget it
+		}
 	}
 
 	@EventHandler

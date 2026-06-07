@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"facing=north": { "model": "leafia:poster_slize", "y": 180 },
+		"facing=east": { "model": "leafia:poster_slize", "y": 270 },
+		"facing=south": { "model": "leafia:poster_slize" },
+		"facing=west": { "model": "leafia:poster_slize", "y": 90 }
+	}
+}

@@ -10,7 +10,7 @@ import static com.leafia.init.ResourceInit.getVAO;
 
 public class AMSPReceiverRender extends TileEntitySpecialRenderer<AMSPReceiverTE> {
 	static final WaveFrontObjectVAO vao = getVAO(getIntegrated("machines/research/ams/ams_base.obj"));
-	static final ResourceLocation tex = getIntegrated("machines/research/ams/ams_base.png");
+	static final ResourceLocation tex = getIntegrated("machines/research/ams/ams_base_fus.png");
 	@Override
 	public void render(AMSPReceiverTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
 		LeafiaGls.pushMatrix();

@@ -1,0 +1,19 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"parent": "block",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "leafia:missing",
+		"particle": "leafia:missing"
+	},
+	"elements": [
+		{
+			"from": [1, 1, 0.1],
+			"to": [15, 15, 0.1],
+			"faces": {
+				"south": {"uv": [0, 0, 16, 16], "texture": "#0"}
+			}
+		}
+	]
+}

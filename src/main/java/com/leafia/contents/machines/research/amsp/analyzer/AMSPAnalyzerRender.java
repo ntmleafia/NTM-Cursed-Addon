@@ -10,7 +10,7 @@ import static com.leafia.init.ResourceInit.getVAO;
 
 public class AMSPAnalyzerRender extends TileEntitySpecialRenderer<AMSPAnalyzerTE> {
 	static final WaveFrontObjectVAO vao = getVAO(getIntegrated("machines/research/ams/ams_emitter.obj"));
-	static final ResourceLocation tex = getIntegrated("machines/research/ams/ams_emitter.png");
+	static final ResourceLocation tex = getIntegrated("machines/research/ams/ams_emitter_fus.png");
 	@Override
 	public void render(AMSPAnalyzerTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
 		LeafiaGls.pushMatrix();
