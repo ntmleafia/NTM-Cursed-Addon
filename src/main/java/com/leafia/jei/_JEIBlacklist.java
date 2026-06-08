@@ -64,5 +64,6 @@ public class _JEIBlacklist {
 		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.dna_eevee));
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodCatsmile));
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodConfusion));
+		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodShitfuckium));
 	}
 }
