@@ -149,6 +149,13 @@ public class AddonCraftingRecipes {
 		addShapelessAuto(new ItemStack(LeafiaRods.leafRodCatsmile),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_felid),new ItemStack(ModItems.heart_piece));
 		addShapelessAuto(new ItemStack(LeafiaRods.leafRodConfusion),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_canid));
 
+		addShapelessAuto(new ItemStack(AddonItems.powder_digammitite),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny));
+
+		removeRecipesForItem(reg,ModItems.five_htp);
+		removeRecipesForItem(reg,ModItems.xanax);
+		CraftingManager.addShapelessAuto(new ItemStack(ModItems.five_htp, 1),COAL.dust(), EUPH.dust(), ModItems.canteen_vodka, new ItemStack(AddonItems.powder_digammitite) );
+		CraftingManager.addShapelessAuto(new ItemStack(ModItems.xanax, 1),COAL.dust(), KNO.dust(), BR.dust(), new ItemStack(AddonItems.powder_digammitite_tiny) );
+
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
 	static void removeRecipesForItem(ForgeRegistry<IRecipe> reg,Item item) {

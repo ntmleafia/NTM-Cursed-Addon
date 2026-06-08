@@ -2,6 +2,7 @@ package com.leafia.settings;
 
 import com.hbm.config.BombConfig;
 import com.hbm.config.GeneralConfig;
+import com.hbm.config.MachineConfig;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.settings._ConfigBuilder.LeafiaConfigError;
@@ -38,9 +39,11 @@ public class AddonConfig {
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
 		public static boolean safeCommit = true;
+		public static boolean holdDoorRedstone = true;
 		public static void applyGeneralConfig() {
 			GeneralConfig.enableBlockReplcement = blockReplacement;
 			BombConfig.safeCommit = safeCommit;
+			MachineConfig.holdDoorRedstone = holdDoorRedstone;
 		}
 	}
 	public static void loadFromConfig(){
@@ -57,7 +60,11 @@ public class AddonConfig {
 		builder._category("OVERRIDE");
 		{
 			// I do not care about performance. This addon is aimed for newer playerbase.
+			builder._comment("LCA is meant for people who love CE but also used to EE");
 			ConfigOverrides.blockReplacement = builder._boolean("ovr_enableBlockReplacement",true);
+			builder._comment("1.7 behavior sucks");
+			ConfigOverrides.holdDoorRedstone = builder._boolean("ovr_holdDoorRedstone",true);
+			builder._comment("Disable this if you love crashes");
 			ConfigOverrides.safeCommit = builder._boolean("ovr_safeCommit",true);
 		}
 		builder._separator();

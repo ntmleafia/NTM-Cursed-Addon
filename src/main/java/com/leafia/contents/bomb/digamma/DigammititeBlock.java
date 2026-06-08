@@ -111,6 +111,11 @@ public class DigammititeBlock extends BlockMeta implements IDynamicModels {
 		if (world.isRemote) return;
 		IBlockState currentState = world.getBlockState(pos);
 		int level = currentState.getValue(META);
+		if (level > 0) {
+			if (rand.nextInt(50) == 0)
+				world.setBlockState(pos,AddonBlocks.digammitite.getDefaultState().withProperty(META,level-1),2);
+		}
+		if (level == 0) return;
 		float netRad = rad * (level + 1);
 		ContaminationUtil.radiate(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 32, 0, netRad, 0, 0, 0);
 	}

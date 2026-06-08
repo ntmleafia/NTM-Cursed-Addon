@@ -21,6 +21,7 @@ import com.leafia.init.hazards.types.HazardTypeSharpEdges;
 import com.leafia.init.hazards.types.LCERad;
 import com.leafia.init.hazards.types.radiation.*;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -122,6 +123,12 @@ public class AddonHazards {
 
 		HazardSystem.register(AddonBlocks.block_welded_osmiridium,makeData(DIGAMMA,0.04f));
 		HazardSystem.register(AddonBlocks.block_xanaxium,makeData(DIGAMMA,0.04f));
+
+		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,1),makeData(DIGAMMA,0.2F));
+		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,2),makeData(DIGAMMA,0.4F));
+		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,3),makeData(DIGAMMA,0.6F));
+		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,4),makeData(DIGAMMA,0.8F));
+		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,5),makeData(DIGAMMA,1F));
 
 		for (AddonItemHazardBase hazardItem : AddonItemHazardBase.ALL_HAZARD_ITEMS) {
 			HazardEntry entry_contamination = null;

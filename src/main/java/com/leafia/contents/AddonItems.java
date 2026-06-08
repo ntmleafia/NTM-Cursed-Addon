@@ -629,6 +629,11 @@ public class AddonItems {
 	public static final Item dna_canid = new AddonItemBaked("dna_canid","dna").setCreativeTab(null);
 	public static final Item dna_eevee = new AddonItemBaked("dna_eevee","dna").setCreativeTab(null);
 
+	public static final Item powder_digammitite = new AddonItemHazardBaked("powder_digammitite","resources/powders/digammitite").addDigamma(0.1).setCreativeTab(MainRegistry.partsTab);
+	public static final Item powder_digammitite_tiny = new AddonItemHazardBaked("powder_digammitite_tiny","resources/powders/digammitite_tiny").addDigamma(0.01).setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item particle_dineutron = new AddonItemBaked("particle_dineutron").setCreativeTab(MainRegistry.controlTab);
+
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {
 			ModItems.pwr_fuel.setCreativeTab(null);

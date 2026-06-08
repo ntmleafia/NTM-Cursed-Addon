@@ -200,6 +200,9 @@ public class AddonBase {
 		AddonMixerRecipes.register();
 		AddonCompressorRecipes.register();
 		AddonPlasmaForgeRecipes.register();
+		AddonShredderRecipes.register();
+		AddonPARecipes.register();
+		AddonExposureChamberRecipes.register();
 	}
 
 	@EventHandler
