@@ -534,6 +534,7 @@ tile.msr_element.restriction=制限度 %s%%
 tile.msr_plug.desc=あなたのLFTRに燃料を供給します$4000°Cで溶け、中身を下のダクトへ流すか、$ダクトが無い場合はそのまま垂れ流します$配置: LFTRの下側
 tile.msr_plug.molten=溶けています!
 tile.msr_plug.name=LFTR燃料プラグ
+tile.nuke_chud.name=Fat Chud
 tile.rbmk_rod_realersim.desc=RBMK燃料部 ReaSimに対し、以下の違いがあります:$- フラックスは吸収部や制御部に「引っ張られる」$- 減速されていない場合、燃料部を無視する$- 75%%の確率で減速材を無視する$- フラックスは通常の2倍の距離まで届く$- 技術的な問題で、高速の中性子で分裂する燃料とは相性が良くありません$§c- 多分パソコンの負荷はすごい
 tile.rbmk_rod_realersim.name=RBMK燃料部 RealerSim
 tile.rbmk_rod_realersim_mod.desc=§d減速部の機能と燃料部(RealerSim)の機能を2つで1つセット

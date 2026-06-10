@@ -8,10 +8,14 @@ import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.tileentity.machine.storage.TileEntityBatteryBase;
 import com.hbm.tileentity.machine.storage.TileEntityBatterySocket;
 import com.leafia.contents.AddonItems;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityBatterySocket;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -72,6 +76,13 @@ public abstract class MixinTileEntityBatterySocket extends TileEntityBatteryBase
 		ControlEventSystem.get(world).removeControllable(this);
 		super.invalidate();
 	}
+	/*
+	@Inject(method = "discharge",at = @At(value = "HEAD"),remap = false,require = 1)
+	private void leafia$onDischarge(CallbackInfo ci) {
+		for (int i = 0; i < 4; i++)
+			IMixinTileEntityCore.shockParticleEditionTrademark(world,new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
+		world.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.mus_sfx_a_lithit, SoundCategory.BLOCKS, 6.66f, 1 + (float) world.rand.nextGaussian() * 0.1f);
+	}*/
 
 /*@Unique public int renderPackLeafia = -1;
 	@Override

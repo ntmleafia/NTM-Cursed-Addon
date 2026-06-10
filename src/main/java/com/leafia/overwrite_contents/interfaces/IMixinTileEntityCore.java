@@ -4,17 +4,23 @@ import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.sound.AudioWrapper;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;
+import com.leafia.LeafiaHelper;
 import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonatorTE;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
+import com.leafia.dev.math.FiaMatrix;
+import com.leafia.dev.optimization.LeafiaParticlePacket.DFCShockParticleEditionTM;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.init.LeafiaSoundEvents;
+import com.llib.LeafiaLib;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -75,6 +81,31 @@ public interface IMixinTileEntityCore {
         public int key;
 
         packetKeys() { this.key = this.ordinal(); }
+    }
+
+    static void shockParticleEditionTrademark(World world,Vec3d core) {
+        double rlen = 1;
+        double length = 0.5;
+        Vec3d p0 = core;
+        Vec3d p1 = new FiaMatrix(p0).rotateY(world.rand.nextDouble() * 360).rotateX(world.rand.nextDouble() * 360)
+                .translate(0, 0, length + world.rand.nextDouble() * rlen).position;
+        List<Vec3d> poses0 = new ArrayList<>();
+        poses0.add(p0);
+        poses0.add(p1);
+        for (int i = 0; i < 25; i++) {
+            p0 = p1;
+            p1 = new FiaMatrix(p1, core).translate(world.rand.nextGaussian() * 2, world.rand.nextGaussian() * 2, length + world.rand.nextDouble() * rlen).position;
+            RayTraceResult res = LeafiaLib.leafiaRayTraceBlocks(world, p0, p1, false, true, false);
+            if (res != null && res.hitVec != null) {
+                p1 = res.hitVec;
+                poses0.add(p1);
+                world.newExplosion(null, p1.x, p1.y, p1.z, world.rand.nextFloat() * 5 + 2, true, true);
+                break;
+            }
+            poses0.add(p1);
+        }
+        DFCShockParticleEditionTM packet = new DFCShockParticleEditionTM(poses0);
+        packet.emit(core,new Vec3d(0,1,0),world.provider.getDimension());
     }
 
     class DFCShock {

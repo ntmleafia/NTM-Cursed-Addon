@@ -534,6 +534,7 @@ tile.msr_element.restriction=Restriction: %s%%
 tile.msr_plug.desc=Inserts fuel into your LFTR$Melts at 4000°C, and releases its contents to ducts below$or spills if there are not ducts below.$Placement: Underneath your LFTR
 tile.msr_plug.molten=Molten
 tile.msr_plug.name=LFTR Fuel Plug
+tile.nuke_chud.name=Fat Chud
 tile.rbmk_rod_realersim.desc=§aSame as RBMK ReaSim rod but with following differences:$§a- Instead of 8 fluxes in star pattern, it emits 6 in any random direction$§a- Flux is "pulled" into absorbers or control rods$§a- Ignores rods if unmoderated$§a- 75%% chance of ignoring moderators$§a- Flux travels double the max distance$§a- Due to technical reasons, doesn't work very well with fast neutron splitting fuels$§c- Probably very performance impacting
 tile.rbmk_rod_realersim.name=RBMK Fuel Channel (RealerSim)
 tile.rbmk_rod_realersim_mod.desc=§aSame as RBMK Fuel Channel (RealerSim) but incoming fast flux is turned into slow flux.

@@ -5,6 +5,7 @@ import com.custom_hbm.contents.oilycoal.BlockCoalOil;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.ModSoundType;
 import com.hbm.blocks.ModSoundTypes;
+import com.hbm.blocks.bomb.NukeMan;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.block.BlockBakeFrame;
@@ -14,6 +15,7 @@ import com.leafia.AddonBase.AddonLoadingStage;
 import com.leafia.contents.AddonFluids.AddonFF;
 import com.leafia.contents.bomb.balefire.AshBalefire;
 import com.leafia.contents.bomb.balefire.BaleoniteBlock;
+import com.leafia.contents.bomb.chud.NukeChudBlock;
 import com.leafia.contents.bomb.digamma.DigammititeBlock;
 import com.leafia.contents.building.catwalk.railing.types.CatwalkRailingCurved;
 import com.leafia.contents.building.doors.AddonDoorGeneric;
@@ -578,6 +580,8 @@ public class AddonBlocks {
 	}
 
 	public static final Block poster_slize = new PosterBlock("poster_slize").setHardness(5).setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+
+	public static final Block nuke_chud = new NukeChudBlock(Material.IRON, "nuke_chud").setCreativeTab(MainRegistry.nukeTab).setHardness(5.0F).setResistance(6000.0F);
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

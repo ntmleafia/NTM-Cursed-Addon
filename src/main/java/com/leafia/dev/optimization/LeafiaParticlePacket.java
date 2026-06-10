@@ -13,6 +13,7 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinParticleRBMKMush;
+import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShock;
 import com.leafia.unsorted.*;
 import com.llib.exceptions.LeafiaDevFlaw;
 import com.llib.group.LeafiaSet;
@@ -38,6 +39,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LeafiaParticlePacket extends RecordablePacket {
 	/**
@@ -529,6 +532,38 @@ public class LeafiaParticlePacket extends RecordablePacket {
 			nuke.setMaxAge(maxAge);
 			nuke.flashTime = flashTime;
 			Minecraft.getMinecraft().effectRenderer.addEffect(nuke);
+		}
+	}
+	public static class DFCShockParticleEditionTM extends LeafiaParticle {
+		List<Vec3d> poses0;
+		public DFCShockParticleEditionTM() { }
+		public DFCShockParticleEditionTM(List<Vec3d> poses0) {
+			this.poses0 = poses0;
+		}
+		@Override
+		protected LeafiaParticle fromBits(LeafiaBuf buf,NBTTagCompound nbt) {
+			DFCShockParticleEditionTM particle = new DFCShockParticleEditionTM();
+			int length = buf.readByte();
+			particle.poses0 = new ArrayList<>(length);
+			for (int i = 0; i < length; i++)
+				particle.poses0.add(buf.readVec3d());
+			return particle;
+		}
+		@Override
+		protected void toBits(LeafiaBuf buf) {
+			buf.writeByte(poses0.size());
+			for (Vec3d vec3d : poses0)
+				buf.writeVec3d(vec3d);
+		}
+		@SideOnly(Side.CLIENT)
+		@Override
+		protected void emit(NBTTagCompound nbt) {
+			ParticleDFCShockParticleEditionTM particle = new ParticleDFCShockParticleEditionTM(
+					Minecraft.getMinecraft().world,
+					nbt.getDouble("posX"),nbt.getDouble("posY"),nbt.getDouble("posZ"),
+					poses0
+			);
+			Minecraft.getMinecraft().effectRenderer.addEffect(particle);
 		}
 	}
 

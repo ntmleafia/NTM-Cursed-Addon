@@ -14,6 +14,8 @@ import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonBlocks.PWR;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.bomb.chud.NukeChudRender;
+import com.leafia.contents.bomb.chud.NukeChudTE;
 import com.leafia.contents.bomb.missile.AddonMissileItemRender;
 import com.leafia.contents.bomb.missile.customnuke.entity.CustomNukeMissileEntity;
 import com.leafia.contents.bomb.missile.customnuke.entity.CustomNukeMissileEntityRender;
@@ -229,6 +231,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 
 			ClientRegistry.bindTileEntitySpecialRenderer(AMSPAnalyzerTE.class,new AMSPAnalyzerRender());
 			ClientRegistry.bindTileEntitySpecialRenderer(AMSPReceiverTE.class,new AMSPReceiverRender());
+
+			ClientRegistry.bindTileEntitySpecialRenderer(NukeChudTE.class,new NukeChudRender());
 		}
 		AddonJars.initJars();
 	}

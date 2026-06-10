@@ -4,6 +4,7 @@ import com.hbm.lib.internal.MethodHandleHelper;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
+import com.leafia.contents.bomb.chud.NukeChudRender;
 import com.leafia.contents.bomb.missile.AddonMissileItemRender;
 import com.leafia.contents.building.doors.renderers.CrimsonDoorLargeRender;
 import com.leafia.contents.building.doors.renderers.CrimsonDoorSmallRender;
@@ -102,6 +103,7 @@ public class ResourceInit {
 		_initClass(CrimsonDoorLargeRender.class);
 		_initClass(AMSPAnalyzerRender.class);
 		_initClass(AMSPReceiverRender.class);
+		_initClass(NukeChudRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");

@@ -1,6 +1,7 @@
 package com.leafia.init;
 
 import com.leafia.AddonBase;
+import com.leafia.contents.bomb.chud.NukeChudTE;
 import com.leafia.contents.building.doors.AddonDoorTE;
 import com.leafia.contents.building.storage.broof.BroofTE;
 import com.leafia.contents.building.doors.special.reactor_door.ReactorDoorTE;
@@ -149,6 +150,7 @@ public class TEInit {
 		register(AddonDoorTE.class,"door_te");
 		register(AMSPAnalyzerTE.class,"amsp_analyzer_te");
 		register(AMSPReceiverTE.class,"amsp_receiver_te");
+		register(NukeChudTE.class,"nuke_chud_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

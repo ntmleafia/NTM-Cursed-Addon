@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class NTMStructBuffer {
-    private static final MethodHandle fillSpaceHandle;
+    public static final MethodHandle fillSpaceHandle;
 
     static {
         try {

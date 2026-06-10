@@ -918,11 +918,21 @@ public class LeafiaClientListener {
 				this.addShader("drx",new ResourceLocation("leafia:shaders/help/digamma.json"));
 			}
 		}
+		public static float rx = 0;
+		public static float ry = 0;
+		public static float rz = 0;
 		@SubscribeEvent
 		public void renderTick(RenderTickEvent e){
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			if (player != null) {
 				if (e.phase == Phase.END) {
+					GlStateManager.matrixMode(GL11.GL_TEXTURE);
+					GlStateManager.loadIdentity();
+					GL11.glTranslatef(rx,ry,rz);
+					rx = 0;
+					ry = 0;
+					rz = 0;
+					LeafiaGls.matrixMode(5888);
 					if (!AddonConfig.disableLCAShaders) {
 						boolean needsUpdate = false;
 						for (BigBruh shaderGroup : shaderGroups.values()) {

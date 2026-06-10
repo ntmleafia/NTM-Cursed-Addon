@@ -72,6 +72,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -940,14 +943,14 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 	@Unique
 	private int getCorePower() {
 		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
-			return 1500;
+			return 7500;
 		return ItemAMSCore.getPowerBase(inventory.getStackInSlot(1));
 	}
 
 	@Unique
 	private float getCoreHeat() {
 		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
-			return 3;
+			return 0.4F;
 		return ItemAMSCore.getHeatBase(inventory.getStackInSlot(1));
 	}
 
@@ -956,6 +959,15 @@ public abstract class MixinTileEntityCore extends TileEntityMachineBase implemen
 		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch)
 			return 3;
 		return ItemAMSCore.getFuelBase(inventory.getStackInSlot(1));
+	}
+
+	@Inject(method = "getRenderBoundingBox",at = @At(value = "HEAD"),require = 1,cancellable = true)
+	private void leafia$onGetRenderBoundingBox(CallbackInfoReturnable<AxisAlignedBB> cir) {
+		if (inventory.getStackInSlot(1).getItem() == ModItems.glitch) {
+			cir.setReturnValue(INFINITE_EXTENT_AABB);
+			cir.cancel();
+			return;
+		}
 	}
 
 	boolean isFixTool(Entity e) {

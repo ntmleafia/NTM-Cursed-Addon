@@ -14,6 +14,7 @@ import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.AddonBase;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
+import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.Cores;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShock;
@@ -70,8 +71,8 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 			renderOrb(core, 0, 0, 0, partialTicks);
 			GL11.glPopMatrix();
 			if (mixin.getDFCClientType() == Cores.glitch) {
-				GlStateManager.matrixMode(GL11.GL_TEXTURE);
-				GlStateManager.loadIdentity();
+				//GlStateManager.matrixMode(GL11.GL_TEXTURE);
+				//GlStateManager.loadIdentity();
 
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				Vec3d playerPos = new Vec3d(player.posX,player.posY,player.posZ);
@@ -81,7 +82,10 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 				float modifier = (float)Math.pow(MathHelper.clamp(1 - (distance - 3) / 125, 0, 1), 3);
 				float modifier2 = (float)Math.pow(MathHelper.clamp(1 - (distance - 3) / 125, 0, 1), 12);
 
-				GL11.glTranslatef((float)core.getWorld().rand.nextGaussian()*100*modifier2,(float)core.getWorld().rand.nextGaussian()*100*modifier2,(float)core.getWorld().rand.nextGaussian()*100*modifier2);
+				float mul = 0.05f;
+				HandlerClient.rx = (float)core.getWorld().rand.nextGaussian()*mul*modifier2;
+				HandlerClient.ry = (float)core.getWorld().rand.nextGaussian()*mul*modifier2;
+				HandlerClient.rz = (float)core.getWorld().rand.nextGaussian()*mul*modifier2;
 
 				GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 				GL11.glTranslatef((core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier);

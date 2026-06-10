@@ -121,6 +121,7 @@ public class LeafiaSoundEvents {
 	public static SoundEvent hspActive;
 	public static SoundEvent hspIgnite;
 	public static SoundEvent dfc_detonate;
+	public static SoundEvent amsp_explode;
 
 	public static void init() {
 		// this is so retarded
@@ -258,6 +259,8 @@ public class LeafiaSoundEvents {
 		hspActive = register("misc.hsp_active");
 		hspIgnite = register("misc.hsp_ignite");
 		dfc_detonate = register("block.kfc.detonate");
+
+		amsp_explode = register("block.amsp.explode");
 	}
 
 	public static SoundEvent register(String name) {
