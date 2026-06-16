@@ -38,7 +38,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: build/libs/NTM_Ultra_Cursed_Edition-CE_Addon.jar
+          files: build/libs/NTM_Cursed_Edition-CE_Addon.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
