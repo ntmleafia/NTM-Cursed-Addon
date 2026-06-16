@@ -348,7 +348,6 @@ public class AddonAssemblerRecipes {
 					.inputItems(
 							new OreDictStack(STEEL.plateCast(),12),
 							new OreDictStack(STEEL.pipe(),8),
-							new OreDictStack(ALLOY.plate(),4),
 							new ComparableStack(ModItems.plate_polymer,16),
 							new ComparableStack(ModItems.motor,6),
 							new OreDictStack(W.bolt(),16),
