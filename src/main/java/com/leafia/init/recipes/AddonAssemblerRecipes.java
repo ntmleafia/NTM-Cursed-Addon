@@ -244,7 +244,7 @@ public class AddonAssemblerRecipes {
 						new ComparableStack(ModItems.plate_dineutronium,8),
 						new ComparableStack(ModItems.circuit, 32, EnumCircuitType.BISMOID),
 						new ComparableStack(ModItems.coil_advanced_torus, 6),
-						new ComparableStack(ModItems.coil_advanced_alloy, 12),
+
 						new ComparableStack(ModItems.coil_magnetized_tungsten, 24),
 						new ComparableStack(ModBlocks.barrel_tcalloy,2),
 						new ComparableStack(ModBlocks.barrel_antimatter,2),

@@ -1,7 +1,7 @@
 {
 	"display": {
 		"icon": {
-			"item": "hbm:ingot_advanced_alloy"
+			"item": "hbm:ingot_steel"
 		},
 		"title": {
 			"translate": "hbm.achievement.progress_adv"
@@ -17,7 +17,7 @@
             "conditions": {
                 "items": [
                     {
-                        "item": "hbm:ingot_advanced_alloy"
+                        "item": "hbm:ingot_steel"
                     }
                 ]
             }

@@ -107,7 +107,7 @@ public class AddonHazards {
 		HazardSystem.register(ModItems.blades_desh,makeData(SHARP,40));
 		HazardSystem.register(ModItems.blades_steel,makeData(SHARP,40));
 		HazardSystem.register(ModItems.blades_titanium,makeData(SHARP,40));
-		HazardSystem.register(ModItems.blades_advanced_alloy,makeData(SHARP,40));
+
 
 		HazardSystem.register(ModItems.nugget_zirconium,makeData(SHARP,10));
 		HazardSystem.register(ModItems.debris_shrapnel,makeData(SHARP,1));
