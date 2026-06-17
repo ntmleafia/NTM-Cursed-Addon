@@ -6,7 +6,6 @@ import com.hbm.config.MachineConfig;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.settings._ConfigBuilder.LeafiaConfigError;
-import com.leafia.unsorted.StructuralIntegrityHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +35,7 @@ public class AddonConfig {
 	public static boolean disableAddonPWR = false;
 	public static boolean disableAddonZIRNOX = false;
 	public static boolean bullshitUnits = false;
+	public static boolean structuralIntegrity = false;
 	public static class ConfigOverrides {
 		public static boolean blockReplacement = true;
 		public static boolean safeCommit = true;
@@ -115,7 +115,7 @@ public class AddonConfig {
 			bullshitUnits = builder._boolean("enableSludgeUnits",false);
 
 			builder._comment("Whether floating blocks and weirdly built buildings should collapse or not (WARNING: VERY LAGGY & CHALLENGING!)");
-			StructuralIntegrityHandler.AUTOMATIC = builder._boolean("enableStructuralIntegrity",false);
+			structuralIntegrity = builder._boolean("enableStructuralIntegrity",false);
 
 			builder._comment("IC10 nodes will throw StackOverflow when stack count exceeds this number");
 			ic10maxstack = builder._integer("ic10maxstack",512);

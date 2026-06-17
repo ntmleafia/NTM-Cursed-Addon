@@ -7,6 +7,7 @@ import com.hbm.blocks.machine.rbmk.RBMKBase;
 import com.leafia.contents.machines.elevators.floors.EvFloor;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaUtil;
+import com.leafia.settings.AddonConfig;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockAir;
@@ -28,7 +29,7 @@ import java.util.Set;
 public class StructuralIntegrityHandler {
 	public static final StructuralIntegrityHandler SERVER = new StructuralIntegrityHandler();
 	public static final StructuralIntegrityHandler LOCAL = new StructuralIntegrityHandler();
-	public static boolean AUTOMATIC = false;
+	public static boolean AUTOMATIC = AddonConfig.structuralIntegrity;
 
 	private static final int MAX_DEPTH = 50;
 
