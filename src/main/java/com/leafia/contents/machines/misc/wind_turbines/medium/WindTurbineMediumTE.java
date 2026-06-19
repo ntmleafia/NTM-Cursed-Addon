@@ -33,7 +33,7 @@ public class WindTurbineMediumTE extends WindTurbineTEBase {
 			if (!obstructed)
 				generated = (long)(Math.min(Wind.power*Wind.dimensionWindMultiplier.getOrDefault(world.provider.getDimension(),0d)*0.5/40,1)*5000/20);
 			double multiplier = Math.pow(lube.getFill()/(double)lube.getMaxFill(),0.25)*0.95+0.05;
-			generated = (long)(generated*multiplier);
+			generated = (long)(generated*multiplier*3);
 			consumeLube();
 			tryProvide(world,pos.down(),ForgeDirection.DOWN);
 			LeafiaPacket._start(this)

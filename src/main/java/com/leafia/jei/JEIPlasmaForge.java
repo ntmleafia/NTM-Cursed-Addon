@@ -5,6 +5,7 @@ import com.hbm.handler.jei.JEIConfig;
 import com.hbm.handler.jei.JeiRecipes;
 import com.hbm.inventory.RecipesCommon.AStack;
 import com.hbm.inventory.fluid.FluidStack;
+import com.hbm.inventory.gui.element.GUIElements;
 import com.hbm.inventory.recipes.ChemicalPlantRecipes;
 import com.hbm.inventory.recipes.PlasmaForgeRecipe;
 import com.hbm.inventory.recipes.PlasmaForgeRecipes;
@@ -12,7 +13,6 @@ import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.inventory.recipes.loader.GenericRecipes.IOutput;
 import com.hbm.items.machine.ItemBlueprints;
 import com.hbm.items.machine.ItemFluidIcon;
-import com.hbm.render.util.GaugeUtil;
 import com.hbm.util.I18nUtil;
 import com.leafia.dev.LeafiaClientUtil;
 import com.leafia.dev.LeafiaUtil;
@@ -104,7 +104,7 @@ public class JEIPlasmaForge implements IRecipeCategory<Recipe> {
 			stacks.addAll(inputFluid);
 			if (!inputFluid.isEmpty())
 				LeafiaClientUtil.jeiFluidRenderTank(stacks,inputFluid.get(0),109,1,16,52,false);
-			GaugeUtil.drawSmoothGauge(28,28,0,ignition/maxIgnition,5, 2, 1, 0xA00000);
+			GUIElements.drawSmoothGauge(28,28,0,ignition/maxIgnition,5, 2, 1, 0xA00000);
 		}
 		@SideOnly(Side.CLIENT)
 		@Override
