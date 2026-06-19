@@ -29,7 +29,7 @@ import java.util.List;
 @Mixin(value = JEIConfig.class,remap = false)
 public class MixinJEIConfig {
 	private static List<IRecipeCategory> addon_categories = new ArrayList<>();
-	@Redirect(method = "registerCategories",at = @At(value = "INVOKE", target = "Lmezz/jei/api/recipe/IRecipeCategoryRegistration;addRecipeCategories([Lmezz/jei/api/recipe/IRecipeCategory;)V"),require = 1)
+	@Redirect(method = "registerCategories",at = @At(value = "INVOKE", target = "Lmezz/jei/api/recipe/IRecipeCategoryRegistration;addRecipeCategories([Lmezz/jei/api/recipe/IRecipeCategory;)V",ordinal = 0),require = 1)
 	public void onRegisterCategories(IRecipeCategoryRegistration instance,IRecipeCategory[] iRecipeCategories,@Local(type = IGuiHelper.class) IGuiHelper help) {
 		addon_categories.clear();
 		addon_categories.add(new JEICentrifuge(help));
