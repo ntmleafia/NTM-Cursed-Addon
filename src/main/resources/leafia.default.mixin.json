@@ -5,7 +5,9 @@
   "refmap": "mixins.leafia.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
-  "client": [],
+  "client": [
+    "MixinRenderGlobal"
+  ],
   "mixins": [
     "MixinBlockFire",
     "MixinEntityItem",
