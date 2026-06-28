@@ -49,7 +49,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.5.0.2,);required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.5.0.4,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
 	public enum AddonLoadingStage {
 		BLOCKS,

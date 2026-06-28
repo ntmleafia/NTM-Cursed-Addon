@@ -25,6 +25,7 @@ import com.hbm.main.AdvancementManager;
 import com.hbm.main.MainRegistry;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.tileentity.IGUIProvider;
+import com.hbm.tileentity.TileEntityLoadedBase;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityReactorZirnox;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
@@ -229,6 +230,7 @@ public abstract class MixinTileEntityReactorZIRNOX extends TileEntityMachineBase
 			else
 				dialY = 1;
 		} else {
+			this.checkTilt(TileEntityLoadedBase.TiltType.CONFIG, true);
 			movedelay = (movedelay+1)%2;
 			if (movedelay == 0) {
 				if (rods > rodsTarget)
@@ -237,7 +239,7 @@ public abstract class MixinTileEntityReactorZIRNOX extends TileEntityMachineBase
 					rods++;
 			}
 
-			if (world.getTotalWorldTime() % 20 == 0) {
+			if (!tilted && world.getTotalWorldTime() % 20 == 0) {
 				this.updateConnections();
 			}
 
@@ -307,7 +309,7 @@ public abstract class MixinTileEntityReactorZIRNOX extends TileEntityMachineBase
 			}
 			steam.fill(steam.getTankType(),boiling,true);
 
-			for (DirPos pos : getConPos())
+			if (!tilted) for (DirPos pos : getConPos())
 				this.tryProvide(steam, world, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDir());
 
 			NBTTagCompound compound = new NBTTagCompound();

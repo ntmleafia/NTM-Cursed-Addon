@@ -1,7 +1,5 @@
 package com.leafia.init;
 
-import com.hbm.lib.internal.MethodHandleHelper;
-import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.bomb.chud.NukeChudRender;
@@ -37,11 +35,10 @@ import com.leafia.contents.network.spk_cable.SPKCableRender;
 import com.leafia.contents.nonmachines.storage.fluid.fftank.FFTankRender;
 import com.leafia.unsorted.BlackholeRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +48,6 @@ import static com.leafia.AddonBase._initMemberClasses;
 @SideOnly(Side.CLIENT)
 public class ResourceInit {
 	public static final List<WaveFrontObjectVAO> allVAOs = new ArrayList<>();
-	private static final MethodHandle pauseSplash = MethodHandleHelper.findStatic(ResourceManager.class, "pauseSplash", MethodType.methodType(void.class));
-	private static final MethodHandle resumeSplash = MethodHandleHelper.findStatic(ResourceManager.class, "resumeSplash", MethodType.methodType(void.class));
 
 	/*public static Map<String,WaveFrontObjectVAO> LWRWreckModels = new HashMap<>();
 	private static WaveFrontObjectVAO getWreckModel(String name) {
@@ -123,19 +118,11 @@ public class ResourceInit {
 	}
 
 	public static void init() {
-		try {
-			pauseSplash.invokeExact();
-		} catch (Throwable t) {
-			throw new RuntimeException(t);
-		}
+		SplashProgress.pause();
 		for (WaveFrontObjectVAO obj : allVAOs) {
 			obj.uploadModels();
 		}
-		try {
-			resumeSplash.invokeExact();
-		} catch (Throwable t) {
-			throw new RuntimeException(t);
-		}
+		SplashProgress.resume();
 	}
 
 	public static WaveFrontObjectVAO getVAO(ResourceLocation model) {

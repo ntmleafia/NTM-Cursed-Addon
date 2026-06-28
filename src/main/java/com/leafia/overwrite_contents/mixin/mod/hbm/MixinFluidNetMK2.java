@@ -22,7 +22,7 @@ import java.util.List;
 
 @Mixin(value = FluidNetMK2.class,remap = false)
 public abstract class MixinFluidNetMK2 extends NodeNet<IFluidReceiverMK2, IFluidProviderMK2,FluidNode, FluidNetMK2> {
-	@Shadow protected static long currentTime;
+	@Shadow protected long currentTime;
 	@Shadow protected static int timeout;
 	@Shadow protected FluidType type;
 	@Shadow public List<ObjectLongPair<IFluidProviderMK2>>[] providers;
