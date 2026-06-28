@@ -3,6 +3,7 @@ package com.leafia.init.recipes;
 import com.hbm.inventory.RecipesCommon.ComparableStack;
 import com.hbm.inventory.fluid.FluidStack;
 import com.hbm.inventory.fluid.Fluids;
+import com.hbm.inventory.recipes.PUREXRecipe;
 import com.hbm.inventory.recipes.PUREXRecipes;
 import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.items.ModItems;
@@ -20,7 +21,7 @@ public class AddonPUREXRecipes {
 		long vitrification = 1_000;
 		// ZIRNOX
 		String autoZirnox = "autoswitch.zirnox";
-		INSTANCE.register(new GenericRecipe("purex.leafia.zirnoxu238").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
+		INSTANCE.register((PUREXRecipe)new PUREXRecipe("purex.leafia.zirnoxu238").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
 				.inputItems(new ComparableStack(DepletedFuels.waste_u238))
 				.inputFluids(new FluidStack(Fluids.KEROSENE,500),new FluidStack(Fluids.NITRIC_ACID,250))
 				.outputItems(
