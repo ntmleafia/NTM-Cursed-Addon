@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "client": [
+    "MixinMinecraft",
     "MixinRenderGlobal"
   ],
   "mixins": [

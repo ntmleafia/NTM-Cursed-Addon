@@ -921,6 +921,7 @@ public class LeafiaClientListener {
 		public static float rx = 0;
 		public static float ry = 0;
 		public static float rz = 0;
+		public static boolean screenshot = false;
 		@SubscribeEvent
 		public void renderTick(RenderTickEvent e){
 			EntityPlayer player = Minecraft.getMinecraft().player;
@@ -963,6 +964,12 @@ public class LeafiaClientListener {
 				LeafiaGls.enableLighting();
 				LeafiaGls.enableColorMaterial();*/
 				}
+			}
+
+			if (screenshot && e.phase == Phase.END) {
+				Minecraft mc = Minecraft.getMinecraft();
+				mc.ingameGUI.getChatGUI().printChatMessage(ScreenShotHelper.saveScreenshot(mc.gameDir, mc.displayWidth, mc.displayHeight, mc.getFramebuffer()));
+				screenshot = false;
 			}
 		}
 		void addShader(String key,ResourceLocation resourceLocationIn)
