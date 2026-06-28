@@ -1,7 +1,6 @@
 package com.leafia.overwrite_contents.mixin;
 
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
-import com.leafia.eventbuses.LeafiaClientListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.ICamera;
@@ -16,11 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinRenderGlobal {
     @Inject(method = "renderEntities", at = @At("HEAD"))
     public void leafia$renderNull(Entity renderViewEntity, ICamera camera, float partialTicks, CallbackInfo ci) {
-        if (LeafiaClientListener.HandlerClient.screenshot) return;
         for (int i = 0; i < DigammaCrater.NULL_LIST.size(); ++i) {
             DigammaCrater.NullEntity nullEntity = DigammaCrater.NULL_LIST.get(i);
             if (nullEntity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())) {
-                Minecraft.getMinecraft().getRenderManager().renderEntityStatic(nullEntity, partialTicks, false);
+                Minecraft.getMinecraft().getRenderManager().renderEntityStatic(nullEntity, partialTicks, true);
             }
         }
     }

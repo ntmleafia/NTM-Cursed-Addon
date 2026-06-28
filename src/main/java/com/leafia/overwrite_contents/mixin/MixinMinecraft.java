@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMinecraft {
     @Inject(method = "dispatchKeypresses", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/ScreenShotHelper;saveScreenshot(Ljava/io/File;IILnet/minecraft/client/shader/Framebuffer;)Lnet/minecraft/util/text/ITextComponent;"), cancellable = true)
     private void leafia$interceptScreenshot(CallbackInfo ci) {
+        DigammaCrater.NULL_LIST.clear();
         HandlerClient.screenshot = true;
         ci.cancel();
     }
