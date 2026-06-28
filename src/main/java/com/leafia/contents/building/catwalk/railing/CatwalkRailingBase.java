@@ -37,6 +37,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -49,16 +50,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class CatwalkRailingBase extends AddonBlockBase implements IDynamicModels, ICustomItemBlockProvider, ICustomBlockHighlight {
 	public String basePath = "_integrated/decoration/catwalks/railings/";
 	public String spritePath = "";
 	public String modelPath = "";
-	/// should be unique to each types of railings
-	public String modelKey = "";
 
 	public static final PropertyBool POS_X = PropertyBool.create("pos_x");
 	public static final PropertyBool POS_Z = PropertyBool.create("pos_z");
@@ -249,98 +246,68 @@ public abstract class CatwalkRailingBase extends AddonBlockBase implements IDyna
 	}
 
 	public static final IUnlistedProperty<Integer> RENDER_MASK = new SimpleUnlistedProperty<>("render_mask",Integer.class);
-	private static final Map<World,WorldStateCache> renderMaskCaches = new IdentityHashMap<>();
+	/// client-only; guarded by its own monitor — getExtendedState runs on chunk batcher threads
+	private static final Long2ObjectOpenHashMap<Long2IntOpenHashMap> renderMaskCache = new Long2ObjectOpenHashMap<>();
+	/// bumped on every invalidation so in-flight computations from stale ChunkCache snapshots don't repopulate the cache
+	private static int renderMaskGeneration;
 
-	private static final class WorldStateCache {
-		private final Long2ObjectOpenHashMap<Long2IntOpenHashMap> chunkCaches = new Long2ObjectOpenHashMap<>();
+	public static void onClientWorldLoad(World world) {
+		clearRenderMaskCache();
+		world.addEventListener(new RenderMaskInvalidator());
+	}
 
-		private static long getChunkKey(BlockPos pos) {
-			return ChunkPos.asLong(pos.getX() >> 4,pos.getZ() >> 4);
+	public static void clearRenderMaskCache() {
+		synchronized (renderMaskCache) {
+			renderMaskCache.clear();
+			renderMaskGeneration++;
 		}
+	}
 
-		private static long getPosKey(BlockPos pos) {
-			return pos.toLong();
-		}
-
-		private Long2IntOpenHashMap getChunkCache(long chunkKey,boolean create) {
-			Long2IntOpenHashMap chunkCache = chunkCaches.get(chunkKey);
-			if (chunkCache == null && create) {
-				chunkCache = new Long2IntOpenHashMap();
-				chunkCache.defaultReturnValue(NO_RENDER_MASK);
-				chunkCaches.put(chunkKey,chunkCache);
+	public static void invalidateRenderMaskCacheChunk(int chunkX,int chunkZ) {
+		synchronized (renderMaskCache) {
+			for (int x = -1; x <= 1; x++) {
+				for (int z = -1; z <= 1; z++)
+					renderMaskCache.remove(ChunkPos.asLong(chunkX + x,chunkZ + z));
 			}
-			return chunkCache;
-		}
-
-		private int get(BlockPos pos) {
-			Long2IntOpenHashMap chunkCache = getChunkCache(getChunkKey(pos),false);
-			if (chunkCache == null)
-				return NO_RENDER_MASK;
-			return chunkCache.get(getPosKey(pos));
-		}
-
-		private void put(BlockPos pos,int mask) {
-			getChunkCache(getChunkKey(pos),true).put(getPosKey(pos),mask);
-		}
-
-		private void remove(BlockPos pos) {
-			long chunkKey = getChunkKey(pos);
-			Long2IntOpenHashMap chunkCache = getChunkCache(chunkKey,false);
-			if (chunkCache == null)
-				return;
-			chunkCache.remove(getPosKey(pos));
-			if (chunkCache.isEmpty())
-				chunkCaches.remove(chunkKey);
-		}
-
-		private void removeChunk(int chunkX,int chunkZ) {
-			chunkCaches.remove(ChunkPos.asLong(chunkX,chunkZ));
+			renderMaskGeneration++;
 		}
 	}
 
-	private static WorldStateCache getWorldStateCache(World world,boolean create) {
-		WorldStateCache cache = renderMaskCaches.get(world);
-		if (cache == null && create) {
-			cache = new WorldStateCache();
-			renderMaskCaches.put(world,cache);
-		}
-		return cache;
-	}
-
-	public static void initRenderMaskCache(World world) {
-		if (world.isRemote)
-			getWorldStateCache(world,true);
-	}
-
-	public static void clearRenderMaskCache(World world) {
-		renderMaskCaches.remove(world);
-	}
-
-	public static void invalidateRenderMaskCache(World world,BlockPos pos) {
-		WorldStateCache cache = getWorldStateCache(world,false);
-		if (cache != null)
-			cache.remove(pos);
-	}
-
-	public static void invalidateRenderMaskCacheChunk(World world,int chunkX,int chunkZ) {
-		WorldStateCache cache = getWorldStateCache(world,false);
-		if (cache == null)
-			return;
-		for (int x = -1; x <= 1; x++) {
-			for (int z = -1; z <= 1; z++)
-				cache.removeChunk(chunkX + x,chunkZ + z);
+	private static void invalidateRenderMaskAround(BlockPos pos) {
+		synchronized (renderMaskCache) {
+			for (int x = -1; x <= 1; x++) {
+				for (int z = -1; z <= 1; z++) {
+					long chunkKey = ChunkPos.asLong((pos.getX() + x) >> 4,(pos.getZ() + z) >> 4);
+					Long2IntOpenHashMap chunkCache = renderMaskCache.get(chunkKey);
+					if (chunkCache == null)
+						continue;
+					chunkCache.remove(pos.add(x,0,z).toLong());
+					if (chunkCache.isEmpty())
+						renderMaskCache.remove(chunkKey);
+				}
+			}
+			renderMaskGeneration++;
 		}
 	}
 
-	private static int getRenderMaskCache(World world,BlockPos pos) {
-		WorldStateCache cache = getWorldStateCache(world,false);
-		if (cache == null)
-			return NO_RENDER_MASK;
-		return cache.get(pos);
-	}
-
-	private static void putRenderMaskCache(World world,BlockPos pos,int mask) {
-		getWorldStateCache(world,true).put(pos,mask);
+	private static final class RenderMaskInvalidator implements IWorldEventListener {
+		@Override
+		public void notifyBlockUpdate(World world,BlockPos pos,IBlockState oldState,IBlockState newState,int flags) {
+			// only railings feed getDiagonalMask; other block changes can't affect cached masks
+			if (oldState.getBlock() instanceof CatwalkRailingBase || newState.getBlock() instanceof CatwalkRailingBase)
+				invalidateRenderMaskAround(pos);
+		}
+		@Override public void notifyLightSet(BlockPos pos) {}
+		@Override public void markBlockRangeForRenderUpdate(int x1,int y1,int z1,int x2,int y2,int z2) {}
+		@Override public void playSoundToAllNearExcept(EntityPlayer player,SoundEvent sound,SoundCategory category,double x,double y,double z,float volume,float pitch) {}
+		@Override public void playRecord(SoundEvent sound,BlockPos pos) {}
+		@Override public void spawnParticle(int particleID,boolean ignoreRange,double x,double y,double z,double xSpeed,double ySpeed,double zSpeed,int... parameters) {}
+		@Override public void spawnParticle(int id,boolean ignoreRange,boolean minimiseParticleLevel,double x,double y,double z,double xSpeed,double ySpeed,double zSpeed,int... parameters) {}
+		@Override public void onEntityAdded(Entity entity) {}
+		@Override public void onEntityRemoved(Entity entity) {}
+		@Override public void broadcastSound(int soundID,BlockPos pos,int data) {}
+		@Override public void playEvent(EntityPlayer player,int type,BlockPos pos,int data) {}
+		@Override public void sendBlockBreakProgress(int breakerId,BlockPos pos,int progress) {}
 	}
 
 	public void initializeState() {
@@ -401,24 +368,32 @@ public abstract class CatwalkRailingBase extends AddonBlockBase implements IDyna
 		return mask;
 	}
 
-	private static void invalidateRenderMaskAround(World world,BlockPos pos) {
-		for (int x = -1; x <= 1; x++) {
-			for (int z = -1; z <= 1; z++)
-				invalidateRenderMaskCache(world,pos.add(x,0,z));
-		}
-	}
-
 	@Override
 	public IBlockState getExtendedState(IBlockState state,IBlockAccess world,BlockPos pos) {
 		if (!(state instanceof IExtendedBlockState extState))
 			return state;
-		int mask = getMetaFromState(state) | getDiagonalMask(world,pos);
-		if (world instanceof World actualWorld && actualWorld.isRemote) {
-			int cached = getRenderMaskCache(actualWorld,pos);
-			if (cached == NO_RENDER_MASK)
-				putRenderMaskCache(actualWorld,pos,mask);
-			else
-				mask = cached;
+		long chunkKey = ChunkPos.asLong(pos.getX() >> 4,pos.getZ() >> 4);
+		long posKey = pos.toLong();
+		int mask;
+		int generation;
+		synchronized (renderMaskCache) {
+			Long2IntOpenHashMap chunkCache = renderMaskCache.get(chunkKey);
+			mask = chunkCache == null ? NO_RENDER_MASK : chunkCache.get(posKey);
+			generation = renderMaskGeneration;
+		}
+		if (mask == NO_RENDER_MASK) {
+			mask = getMetaFromState(state) | getDiagonalMask(world,pos);
+			synchronized (renderMaskCache) {
+				if (generation == renderMaskGeneration) {
+					Long2IntOpenHashMap chunkCache = renderMaskCache.get(chunkKey);
+					if (chunkCache == null) {
+						chunkCache = new Long2IntOpenHashMap();
+						chunkCache.defaultReturnValue(NO_RENDER_MASK);
+						renderMaskCache.put(chunkKey,chunkCache);
+					}
+					chunkCache.put(posKey,mask);
+				}
+			}
 		}
 		return extState.withProperty(RENDER_MASK,mask);
 	}
@@ -427,22 +402,6 @@ public abstract class CatwalkRailingBase extends AddonBlockBase implements IDyna
 		IBlockState s = world.getBlockState(pos);
 		if (!(s.getBlock() instanceof CatwalkRailingBase)) return false;
 		return s.getValue(arm);
-	}
-
-	@Override
-	public void neighborChanged(IBlockState state,World worldIn,BlockPos pos,Block blockIn,BlockPos fromPos) {
-		super.neighborChanged(state,worldIn,pos,blockIn,fromPos);
-		if (worldIn.isRemote) {
-			invalidateRenderMaskAround(worldIn,pos);
-			worldIn.markBlockRangeForRenderUpdate(pos,pos);
-		}
-	}
-
-	@Override
-	public void breakBlock(World worldIn,BlockPos pos,IBlockState state) {
-		if (worldIn.isRemote)
-			invalidateRenderMaskAround(worldIn,pos);
-		super.breakBlock(worldIn,pos,state);
 	}
 
 	@Override
@@ -496,11 +455,11 @@ public abstract class CatwalkRailingBase extends AddonBlockBase implements IDyna
 		IBakedModel blockMdl;
 		IBakedModel itemMdl;
 		if (wavefront != null) {
-			blockMdl = CatwalkRailingBakedModel.forBlock(modelKey,this,wavefront,registeredSprite);
-			itemMdl = CatwalkRailingBakedModel.forItem(modelKey,this,wavefront,registeredSprite,0.75f,0,0,0,(float)Math.PI);
+			blockMdl = CatwalkRailingBakedModel.forBlock(this,wavefront,registeredSprite);
+			itemMdl = CatwalkRailingBakedModel.forItem(this,wavefront,registeredSprite,0.75f,0,0,0,(float)Math.PI);
 		} else {
-			blockMdl = CatwalkRailingBakedModel.empty(modelKey,this,missing);
-			itemMdl = CatwalkRailingBakedModel.empty(modelKey,this,missing);
+			blockMdl = CatwalkRailingBakedModel.empty(this,missing);
+			itemMdl = CatwalkRailingBakedModel.empty(this,missing);
 		}
 		ModelResourceLocation blockMrl = new ModelResourceLocation(getRegistryName(), "normal");
 		evt.getModelRegistry().putObject(blockMrl,blockMdl);

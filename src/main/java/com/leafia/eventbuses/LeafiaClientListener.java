@@ -1065,19 +1065,25 @@ public class LeafiaClientListener {
         @SubscribeEvent
         public void worldInit(Load evt) {
             if (evt.getWorld().isRemote)
-                CatwalkRailingBase.initRenderMaskCache(evt.getWorld());
+                CatwalkRailingBase.onClientWorldLoad(evt.getWorld());
         }
 
         @SubscribeEvent
         public void worldUnload(Unload evt) {
             if (evt.getWorld().isRemote)
-                CatwalkRailingBase.clearRenderMaskCache(evt.getWorld());
+                CatwalkRailingBase.clearRenderMaskCache();
+        }
+
+        @SubscribeEvent
+        public void chunkLoad(ChunkEvent.Load evt) {
+            if (evt.getWorld().isRemote)
+                CatwalkRailingBase.invalidateRenderMaskCacheChunk(evt.getChunk().x,evt.getChunk().z);
         }
 
         @SubscribeEvent
         public void chunkUnload(ChunkEvent.Unload evt) {
             if (evt.getWorld().isRemote)
-                CatwalkRailingBase.invalidateRenderMaskCacheChunk(evt.getWorld(),evt.getChunk().x,evt.getChunk().z);
+                CatwalkRailingBase.invalidateRenderMaskCacheChunk(evt.getChunk().x,evt.getChunk().z);
         }
 
 		/**

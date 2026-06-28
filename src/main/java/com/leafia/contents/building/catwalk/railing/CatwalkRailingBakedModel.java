@@ -3,6 +3,7 @@ package com.leafia.contents.building.catwalk.railing;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.model.AbstractWavefrontBakedModel;
 import com.hbm.render.model.BakedModelTransforms;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -18,21 +19,16 @@ public class CatwalkRailingBakedModel extends AbstractWavefrontBakedModel {
 	public final TextureAtlasSprite registeredSprite;
 	public final boolean forBlock;
 	public final float itemYaw;
-	public final String entry;
 	public final CatwalkRailingBase railing;
-	private final Map<String,Map<Integer,List<BakedQuad>>> blockQuads = new HashMap<>();
-	public static Map<String,List<BakedQuad>> itemQuads = new HashMap<>();
+	/// guarded by its own monitor — getQuads runs concurrently on chunk batcher threads
+	private final Int2ObjectOpenHashMap<List<BakedQuad>> blockQuads = new Int2ObjectOpenHashMap<>();
+	private List<BakedQuad> itemQuads;
 
-	<T> T getElement(Map<String,T> map) {
-		return map.getOrDefault(entry,null);
-	}
-
-	protected CatwalkRailingBakedModel(String entry,CatwalkRailingBase railing,HFRWavefrontObject model,TextureAtlasSprite sprite,boolean forBlock,float baseScale,float tx,float ty,float tz,float itemYaw) {
+	protected CatwalkRailingBakedModel(CatwalkRailingBase railing,HFRWavefrontObject model,TextureAtlasSprite sprite,boolean forBlock,float baseScale,float tx,float ty,float tz,float itemYaw) {
 		super(true,model,forBlock ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM,baseScale,tx,ty,tz,BakedModelTransforms.pipeItem());
 		this.registeredSprite = sprite;
 		this.forBlock = forBlock;
 		this.itemYaw = itemYaw;
-		this.entry = entry;
 		this.railing = railing;
 	}
 
@@ -67,26 +63,20 @@ public class CatwalkRailingBakedModel extends AbstractWavefrontBakedModel {
 	public List<BakedQuad> getQuads(@Nullable IBlockState state,@Nullable EnumFacing side,long rand) {
 		if (side != null) return Collections.emptyList();
 		if (!forBlock) {
-			List<BakedQuad> quads = getElement(itemQuads);
-			if (quads == null) {
-				quads = bake(
+			if (itemQuads == null) {
+				itemQuads = bake(
 						Set.of(
 								"curve_nXnZ","curve_nXpZ","curve_pXnZ","curve_pXpZ",
 								"post_nX","post_nZ","post_pX","post_pZ"
 						),
 						0,0,itemYaw,false
 				);
-				itemQuads.put(entry,quads);
 			}
-			return quads;
-		} else {
-			Map<Integer,List<BakedQuad>> mop = getElement(blockQuads);
-			if (mop == null) {
-				mop = new HashMap<>();
-				blockQuads.put(entry,mop);
-			}
-			int mask = getMask(state);
-			List<BakedQuad> quads = mop.get(mask);
+			return itemQuads;
+		}
+		int mask = getMask(state);
+		synchronized (blockQuads) {
+			List<BakedQuad> quads = blockQuads.get(mask);
 			if (quads == null) {
 				HashSet<String> parts = new HashSet<>();
 				if (hasMask(mask,CatwalkRailingBase.MASK_SLOPED)) {
@@ -167,7 +157,7 @@ public class CatwalkRailingBakedModel extends AbstractWavefrontBakedModel {
 					}
 				}
 				quads = bake(parts,0,0,0,true);
-				mop.put(mask,quads);
+				blockQuads.put(mask,quads);
 			}
 			return quads;
 		}
@@ -178,15 +168,15 @@ public class CatwalkRailingBakedModel extends AbstractWavefrontBakedModel {
 		return registeredSprite;
 	}
 
-	public static CatwalkRailingBakedModel forBlock(String entry,CatwalkRailingBase base,HFRWavefrontObject model,TextureAtlasSprite baseSprite) {
-		return new CatwalkRailingBakedModel(entry,base,model,baseSprite,true,1.0F,0.0F,0.0F,0.0F,0.0F);
+	public static CatwalkRailingBakedModel forBlock(CatwalkRailingBase base,HFRWavefrontObject model,TextureAtlasSprite baseSprite) {
+		return new CatwalkRailingBakedModel(base,model,baseSprite,true,1.0F,0.0F,0.0F,0.0F,0.0F);
 	}
 
-	public static CatwalkRailingBakedModel forItem(String entry,CatwalkRailingBase base,HFRWavefrontObject model,TextureAtlasSprite baseSprite,float baseScale,float tx,float ty,float tz,float yaw) {
-		return new CatwalkRailingBakedModel(entry,base,model,baseSprite,false,baseScale,tx,ty,tz,yaw);
+	public static CatwalkRailingBakedModel forItem(CatwalkRailingBase base,HFRWavefrontObject model,TextureAtlasSprite baseSprite,float baseScale,float tx,float ty,float tz,float yaw) {
+		return new CatwalkRailingBakedModel(base,model,baseSprite,false,baseScale,tx,ty,tz,yaw);
 	}
 
-	public static CatwalkRailingBakedModel empty(String entry,CatwalkRailingBase base,TextureAtlasSprite sprite) {
-		return new CatwalkRailingBakedModel(entry,base,new HFRWavefrontObject(new ResourceLocation("minecraft:empty")),sprite,true,1.0F,0,0,0,0);
+	public static CatwalkRailingBakedModel empty(CatwalkRailingBase base,TextureAtlasSprite sprite) {
+		return new CatwalkRailingBakedModel(base,new HFRWavefrontObject(new ResourceLocation("minecraft:empty")),sprite,true,1.0F,0,0,0,0);
 	}
 }

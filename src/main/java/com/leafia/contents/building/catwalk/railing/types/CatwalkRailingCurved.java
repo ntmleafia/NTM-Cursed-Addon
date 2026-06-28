@@ -8,6 +8,5 @@ public class CatwalkRailingCurved extends CatwalkRailingBase {
 		super(Material.IRON,s);
 		spritePath = "curved";
 		modelPath = "curved";
-		modelKey = "curved";
 	}
 }
