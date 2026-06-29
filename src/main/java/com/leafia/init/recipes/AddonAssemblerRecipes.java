@@ -253,6 +253,18 @@ public class AddonAssemblerRecipes {
 		makeRecipe("ass.leafia.supercooler",new ComparableStack(AddonItems.supercooler, 1), new AStack[] { new ComparableStack(ModItems.coil_copper_torus, 3), new OreDictStack(STEEL.ingot(), 3), new OreDictStack(TI.plate(), 6), new ComparableStack(ModItems.plate_polymer, 12), new OreDictStack(BIGMT.ingot(), 2), new ComparableStack(PWR.exchanger,32), new ComparableStack(ModBlocks.watz_cooler,16) }, 100);
 		makeRecipe("ass.leafia.panel",new ComparableStack(ModBlocks.control_panel_custom, 1), new AStack[]{new ComparableStack(ModItems.circuit,1,EnumCircuitType.ANALOG), new OreDictStack(STEEL.plate(), 6), new ComparableStack(ModItems.wire_fine, 24, Mats.MAT_COPPER.id)}, 100);
 		makeRecipe("ass.leafia.customnukemissile",new ComparableStack(AddonItems.missile_customnuke),new AStack[]{new ComparableStack(ModItems.missile_assembly),new ComparableStack(ModItems.circuit,8,EnumCircuitType.CONTROLLER_ADVANCED.ordinal()),new OreDictStack(KEY_GRAY,4)},100);
+		INSTANCE.register(new GenericRecipe("ass.leafia.nuke_chud").setup(1200,1000)
+				.outputItems(new ItemStack(AddonBlocks.nuke_chud))
+				.inputItems(
+						new ComparableStack(ModItems.circuit,16,EnumCircuitType.CONTROLLER), // 16 control units
+						new ComparableStack(ModBlocks.yellow_barrel,32),                     // 32 yellow barrels
+						new ComparableStack(Blocks.DIRT,64),                                 // 64 dirt
+						new ComparableStack(ModItems.rag_piss,64),                           // 256 piss-soaked rags
+						new ComparableStack(ModItems.rag_piss,64),                           // (4 x 64, one per slot)
+						new ComparableStack(ModItems.rag_piss,64),
+						new ComparableStack(ModItems.rag_piss,64)
+				)
+		);
 		{
 			INSTANCE.register(new GenericRecipe("ass.leafia.elevator_floor_s6").setup(40,50)
 					.outputItems(new ItemStack(Elevators.s6_floor))

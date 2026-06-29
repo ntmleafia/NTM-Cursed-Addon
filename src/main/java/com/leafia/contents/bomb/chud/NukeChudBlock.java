@@ -150,6 +150,7 @@ public class NukeChudBlock extends AddonBlockBase implements ITileEntityProvider
 			}
 			for (int i = 0; i < 15; i++)
 				generateYellowBarrelTower(world,x+world.rand.nextInt(range*2+1)-range,z+world.rand.nextInt(range*2+1)-range);
+			pollute(world,x,y,z);
 			return true;
 		}
 		return false;
@@ -192,6 +193,21 @@ public class NukeChudBlock extends AddonBlockBase implements ITileEntityProvider
 		else
 			state = ModBlocks.sellafield.getStateFromMeta(world.rand.nextInt(3)+3);
 		world.setBlockState(pos,state);
+	}
+
+	// Pollution regions are 64x64 (PollutionHandler keys on pos >> 6). Native diffusion is slow
+	// (5% to each orthogonal neighbor every 60t), so seed an immediate Gaussian fallout footprint.
+	private static void pollute(World world,int x,int y,int z) {
+		int cx = x >> 6, cz = z >> 6;
+		final int regionRadius = 3;
+		final double sigma = 1.5;
+		for (int dx = -regionRadius; dx <= regionRadius; dx++) {
+			for (int dz = -regionRadius; dz <= regionRadius; dz++) {
+				float amount = (float) (10000 * Math.exp(-(dx*dx + dz*dz) / (2*sigma*sigma)));
+				if (amount < 1) continue;
+				PollutionHandler.incrementPollution(world,new BlockPos((cx+dx) << 6,y,(cz+dz) << 6),PollutionType.SOOT,amount);
+			}
+		}
 	}
 
 	@Override
