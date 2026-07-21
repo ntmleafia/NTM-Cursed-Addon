@@ -26,7 +26,7 @@ public class SIPfx { // Now its both uppercase!
 		return Math.floor(num * pow2 + 0.5) / pow2;
 	}
 	public static byte getExponent(double x) {
-		return (byte)Math.floor(Math.log(x)/Math.log(1000));
+		return (byte)Math.min(Math.floor(Math.log(x)/Math.log(1000)),9);
 	}
 	public static double scale(double x,double exponent) {
 		return x/Math.pow(1000,exponent);
