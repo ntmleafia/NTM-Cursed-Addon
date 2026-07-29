@@ -2,15 +2,18 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.custom_hbm.sound.LCEAudioWrapper;
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
-import com.hbm.inventory.control_panel.*;
-import com.hbm.inventory.control_panel.types.*;
+import com.hbm.inventory.control_panel.ControlEvent;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.items.machine.ItemLens;
 import com.hbm.tileentity.TileEntityMachineBase;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.hbm.tileentity.machine.TileEntityCoreStabilizer;
 import com.leafia.AddonBase;
-import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.contents.machines.powercores.dfc.LCEItemLens;
+import com.leafia.dev.container_utility.LeafiaPacket;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreStabilizer;
@@ -18,7 +21,6 @@ import com.leafia.settings.AddonConfig;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -41,9 +43,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
-@Optional.InterfaceList({@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")})
 @Mixin(TileEntityCoreStabilizer.class)
-public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBase implements ITickable, IEnergyReceiverMK2, SimpleComponent, IMixinTileEntityCoreStabilizer, IControllable {
+public abstract class MixinTileEntityCoreStabilizer extends TileEntityMachineBase implements ITickable, IEnergyReceiverMK2, IMixinTileEntityCoreStabilizer, IControllable {
 	public MixinTileEntityCoreStabilizer(int scount) {
 		super(scount);
 	}

@@ -32,7 +32,8 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
             case "MixinEntityRenderer_AcidRAin" -> cancel = !AddonConfig.enableAcidRainRender;
             case "MixinTileEntityReactorZIRNOX" -> cancel = AddonConfig.disableAddonZIRNOX;
             case "MixinCoreComponent","MixinCoreCore","MixinTileEntityCore","MixinTileEntityCoreEmitter",
-                 "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
+                 "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreReceiverOC",
+                 "MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
         }
         if (mixinClassName.startsWith("Bullshit"))
             cancel = !AddonConfig.bullshitUnits;

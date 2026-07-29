@@ -16,6 +16,7 @@ public interface IMixinTileEntityCoreReceiver extends IDFCBase, ISPKProvider, IS
 	double leafia$joulesPerSec();
 	void leafia$sendToPlayer(EntityPlayer player);
 	long leafia$syncJoules();
+	int leafia$destructionLevel();
 	long leafia$syncSpk();
 	FluidTankNTM leafia$getOutputTank();
 }

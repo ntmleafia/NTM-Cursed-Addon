@@ -5,8 +5,11 @@ import com.hbm.api.energymk2.IEnergyReceiverMK2;
 import com.hbm.api.fluid.IFluidStandardReceiver;
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
 import com.hbm.interfaces.ILaserable;
-import com.hbm.inventory.control_panel.*;
-import com.hbm.inventory.control_panel.types.*;
+import com.hbm.inventory.control_panel.ControlEvent;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
@@ -30,7 +33,6 @@ import com.llib.LeafiaLib;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -56,9 +58,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Optional.InterfaceList({@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")})
 @Mixin(value = TileEntityCoreEmitter.class, remap = false)
-public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreEmitter, IEnergyReceiverMK2, ILaserable, IFluidStandardReceiver, IControllable, SimpleComponent, IFluidStandardSenderMK2 {
+public abstract class MixinTileEntityCoreEmitter extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreEmitter, IEnergyReceiverMK2, ILaserable, IFluidStandardReceiver, IControllable, IFluidStandardSenderMK2 {
     public MixinTileEntityCoreEmitter(int scount) {
         super(scount);
     }

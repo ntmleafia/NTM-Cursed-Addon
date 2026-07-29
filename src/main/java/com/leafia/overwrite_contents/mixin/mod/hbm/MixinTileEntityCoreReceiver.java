@@ -6,8 +6,11 @@ import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.ExplosionLarge;
 import com.hbm.interfaces.ILaserable;
-import com.hbm.inventory.control_panel.*;
-import com.hbm.inventory.control_panel.types.*;
+import com.hbm.inventory.control_panel.ControlEvent;
+import com.hbm.inventory.control_panel.ControlEventSystem;
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
 import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.lib.ForgeDirection;
@@ -30,13 +33,8 @@ import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCoreReceiver;
 import com.leafia.settings.AddonConfig;
 import com.llib.LeafiaLib.NumScale;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -45,10 +43,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +59,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
-@Optional.InterfaceList({@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")})
 @Mixin(value = TileEntityCoreReceiver.class)
-public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver, IGUIProvider, IControllable, SimpleComponent, IFluidStandardSenderMK2 {
+public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase implements ITickable, IMixinTileEntityCoreReceiver, IEnergyProviderMK2, ILaserable, IFluidStandardReceiver, IGUIProvider, IControllable, IFluidStandardSenderMK2 {
 	@Shadow(remap = false) public long joules;
 
 	@Shadow(remap = false) public long prevJoules;
@@ -498,45 +493,9 @@ public abstract class MixinTileEntityCoreReceiver extends TileEntityMachineBase 
 		cir.cancel();
 	}
 
-	@Optional.Method(modid = "opencomputers")
-	@Callback
-	public Object[] incomingEnergy(Context context,Arguments args) {
-		return new Object[]{syncJoules};
-	}
-
-	@Optional.Method(modid = "opencomputers")
-	@Callback
-	public Object[] outgoingPower(Context context, Arguments args) {
-		return new Object[]{power};
-	}
-
-	@Optional.Method(modid = "opencomputers")
-	@Callback
-	public Object[] storedCoolant(Context context, Arguments args) {
-		return new Object[]{tank.getFill()};
-	}
-
-	@Optional.Method(modid = "opencomputers")
-	@Callback
-	public Object[] getStress(Context context, Arguments args) {
-		return new Object[]{destructionLevel*100/300f};
-	}
-
-
-	@Optional.Method(modid = "opencomputers")
-	@Callback(doc = "setLevel(newLevel: number [0~100])->(previousLevel: number)")
-	public Object[] setLevel(Context context, Arguments args) {
-		double level = args.checkDouble(0);
-		level = MathHelper.clamp(level,0,100);
-		double prevLevel = level*100;
-		this.leafia$level = level/100d;
-		return new Object[]{prevLevel*100};
-	}
-
-	@Optional.Method(modid = "opencomputers")
-	@Callback(doc = "getLevel()->(level: number [0-100])")
-	public Object[] getLevel(Context context, Arguments args) {
-		return new Object[]{leafia$level};
+	@Override
+	public int leafia$destructionLevel() {
+		return destructionLevel;
 	}
 
 	/**

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.leafia.overwrite_contents.mixin.mod",
+  "plugin": "com.leafia.overwrite_contents.MixinConfigPlugin",
+  "refmap": "mixins.leafia.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "hbm.MixinTileEntityCoreReceiverOC"
+  ],
+  "setSourceFile": true,
+  "minVersion": "0.8.7"
+}
