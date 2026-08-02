@@ -23,12 +23,7 @@ public class LeafiaBufOutputStream extends OutputStream implements DataOutput {
 	}
 	@Override
 	public void write(byte[] src,int srcIndex,int len) throws IOException {
-		if (len == 0) {
-			return;
-		}
-		byte[] crop = new byte[len];
-		System.arraycopy(src,srcIndex,crop,0,len);
-		buffer.writeBytes(crop);
+		buffer.writeBytes(src,srcIndex,len);
 	}
 	@Override
 	public void write(byte[] b) throws IOException {

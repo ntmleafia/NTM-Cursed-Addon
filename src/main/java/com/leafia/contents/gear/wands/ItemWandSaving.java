@@ -390,7 +390,7 @@ public class ItemWandSaving extends AddonItemBaked {
 									buf.writeShort(property.entity);
 							}
 						}
-						LeafiaCustomPacket.__start(new HighlightSavingWandProduct(name,buf.bytes)).__sendToClient(player);
+						LeafiaCustomPacket.__start(new HighlightSavingWandProduct(name,buf.toByteArray())).__sendToClient(player);
 						////////////////////////////////////////////////////////////////////////////////
 						LeafiaCustomPacket.__start(new HighlightSavingWandSave()).__sendToClient(player);
 					}

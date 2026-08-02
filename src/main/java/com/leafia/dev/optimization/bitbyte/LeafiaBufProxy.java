@@ -24,11 +24,11 @@ public class LeafiaBufProxy extends ByteBuf {
 	}
 	@Override
 	public int capacity() {
-		return buf.bytes.length;
+		return buf.payloadLength();
 	}
 	@Override
 	public ByteBuf capacity(int newCapacity) {
-		if (buf.bytes.length > newCapacity)
+		if (buf.payloadLength() > newCapacity)
 			throw new UnsupportedOperationException("LeafiaBuf uses unaligned bit-based internal array and thus cannot be cropped in regular byte-based manner.");
 		return this;
 	}

@@ -138,7 +138,7 @@ public class NTMStructBuffer {
 		private static void loadStruct(String relative, Path file) throws IOException {
 			byte[] bytes = Files.readAllBytes(file);
 			LeafiaBuf buf = new LeafiaBuf(null);
-			buf.bytes = bytes;
+			buf.wrapOwned(bytes);
 			buf.writerIndex = bytes.length * 8;
 			String key = relative.substring(0,relative.length()-10);
 			StructData data = structs.computeIfAbsent(key, _ -> new StructData());
@@ -167,8 +167,8 @@ public class NTMStructBuffer {
 	public static NTMStructBuffer fromFiles(String path) {
 		LeafiaBuf buffer = new LeafiaBuf(null);
 		try {
-			buffer.bytes = Files.readAllBytes(Paths.get(path));
-			buffer.writerIndex = buffer.bytes.length*8;
+			buffer.wrapOwned(Files.readAllBytes(Paths.get(path)));
+			buffer.writerIndex = buffer.payloadLength()*8;
 		} catch (IOException exception) {
 			LeafiaDevFlaw flaw = new LeafiaDevFlaw("Exception while tryina read "+path+" as .ntmstruct");
 			flaw.setStackTrace(exception.getStackTrace());
@@ -178,7 +178,7 @@ public class NTMStructBuffer {
 	}
 	public static NTMStructBuffer fromMetadata(StructData data) {
 		LeafiaBuf buffer = new LeafiaBuf(null);
-		buffer.bytes = data.buf.bytes;
+		buffer.wrapShared(data.buf); // structs are read-only; sharing avoids copying the whole struct per placement
 		buffer.writerIndex = data.buf.writerIndex;
 		NTMStructBuffer struct = new NTMStructBuffer(buffer);
 		struct.terrarinAware = data.terrarinAware;

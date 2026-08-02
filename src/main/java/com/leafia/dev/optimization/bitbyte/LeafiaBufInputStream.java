@@ -35,14 +35,15 @@ public class LeafiaBufInputStream extends InputStream implements DataInput {
 		return b.length;
 	}
 	@Override
-	public int read(byte[] src,int srcIndex,int len) throws IOException {
-		if (len == 0) {
+	public int read(byte[] dst,int dstIndex,int len) throws IOException {
+		if (len == 0)
+			return 0;
+		int available = buffer.readableBits()>>3;
+		if (available <= 0)
 			return -1;
-		}
-		byte[] crop = new byte[len];
-		System.arraycopy(src,srcIndex,crop,0,len);
-		buffer.readBytes(crop);
-		return len;
+		int read = Math.min(len,available);
+		buffer.readBytes(dst,dstIndex,read);
+		return read;
 	}
 	@Override
 	public void mark(int readlimit) {
@@ -72,15 +73,12 @@ public class LeafiaBufInputStream extends InputStream implements DataInput {
 
 	@Override
 	public void readFully(byte[] b) throws IOException {
-		checkAvailable(b.length);
-		for (int i = 0; i < b.length; i++)
-			b[i] = buffer.readByte();
+		readFully(b,0,b.length);
 	}
 	@Override
 	public void readFully(byte[] b,int off,int len) throws IOException {
 		checkAvailable(len);
-		for (int i = 0; i < len; i++)
-			b[i+off] = buffer.readByte();
+		buffer.readBytes(b,off,len);
 	}
 	@Override
 	public int skipBytes(int n) throws IOException {

@@ -6,6 +6,7 @@ import com.llib.technical.FifthString;
 import com.llib.technical.FifthString.ControlType;
 import com.llib.technical.LeafiaBitByteUTF;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,11 +16,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class LeafiaBuf extends BitByteBuf {
 	public static class Config {
@@ -28,7 +29,6 @@ public class LeafiaBuf extends BitByteBuf {
 		public static boolean singleBitBooleans = true;
 	}
 
-	int busy = 0;
 	final ByteBuf buffer;
 	public int writerIndex = 0;
 	public int readerIndex = 0;
@@ -50,8 +50,6 @@ public class LeafiaBuf extends BitByteBuf {
 		writerIndex = this.insertBits(writerIndex,value,length);
 	}
 	public int extract(int length) {
-		if (busy > 0)
-			throw new LeafiaDevFlaw("readerIndex is confused!");
 		int value = this.extractBits(readerIndex,readerIndex+length-1);/*
 		if (identifia != null) {
 			int expected = identifia.readByte()&0xFF;
@@ -77,15 +75,15 @@ public class LeafiaBuf extends BitByteBuf {
 		return str;
 	}
 	byte[] shift(int startBit) {
-		int newLength = bytes.length-Math.floorDiv(startBit,8);
+		int newLength = payloadLength()-Math.floorDiv(startBit,8);
 		if (newLength < 0)
 			return new byte[0];
 		byte[] outArray = new byte[newLength];
-		int offset = Math.floorMod(startBit,8);
-		System.arraycopy(bytes,0,outArray,0,outArray.length);
+		int bitOffset = Math.floorMod(startBit,8);
+		System.arraycopy(bytes,payloadOffset(),outArray,0,newLength);
 		for (int i = outArray.length-1; i >= 0; i--) {
 			int next = (i == 0) ? 0 : outArray[i-1]&0xFF;
-			outArray[i] = (byte)((outArray[i]&0xFF)>>offset|((next&((1<<offset+1)-1))<<8-offset));
+			outArray[i] = (byte)((outArray[i]&0xFF)>>bitOffset|((next&((1<<bitOffset+1)-1))<<8-bitOffset));
 		}
 		return outArray;
 	}/*
@@ -104,22 +102,18 @@ public class LeafiaBuf extends BitByteBuf {
 		}
 	}*/
 	ByteBuf substitute(int startBit) {
-		//System.out.println("Creating substitute!");
 		byte[] subBytes = shift(startBit);
-		ByteBuf buf = buffer.alloc().buffer(subBytes.length,buffer.maxCapacity());
-		for (int i = subBytes.length-1; i >= 0; i--)/*
-			if (identifia != null) {
-				int expected = identifia.readByte()&0xFF;
-				System.out.println("Length: extracting 8 bits (Expected: "+expected+" bits)");
-				int b = subBytes[i]&0xFF;
-				String s = Integer.toBinaryString((int)b&0xFF);
-				for (int i2 = s.length(); i2 < 8; i2++)
-					s = "0" + s;
-				System.out.println(s+" (Value: "+b+", unsigned: "+b+")");
-			}*/
-			buf.writeByte(subBytes[i]);
-		//System.out.println("Shifted "+startBit+" bits | Own bytes: "+bytes.length+" -> "+(subBytes.length+startBit*8));
-		return buf;
+		for (int i = 0, j = subBytes.length-1; i < j; i++, j--) { // shift() keeps the payload's reversed order
+			byte swap = subBytes[i];
+			subBytes[i] = subBytes[j];
+			subBytes[j] = swap;
+		}
+		return Unpooled.wrappedBuffer(subBytes);
+	}
+	/** Appends this buffer's payload to {@code dst} in wire order, as a single bulk copy. */
+	public LeafiaBuf writePayloadTo(ByteBuf dst) {
+		dst.writeBytes(bytes,payloadOffset(),payloadLength());
+		return this;
 	}
 
 	// ByteBuf & AbstractByteBuf
@@ -197,9 +191,12 @@ public class LeafiaBuf extends BitByteBuf {
 		return Double.longBitsToDouble(readLong());
 	}
 	public LeafiaBuf readBytes(byte[] dst, int dstIndex, int length) {
-		//System.out.println("readBytes "+length);
-		for (int i = 0; i < length; i++)
-			dst[dstIndex+i] = readByte();
+		if ((readerIndex&7) == 0 && (readerIndex>>3)+length <= payloadLength()) {
+			extractAlignedBytes(readerIndex,dst,dstIndex,length);
+			readerIndex += length<<3;
+		} else
+			for (int i = 0; i < length; i++)
+				dst[dstIndex+i] = readByte();
 		return this;
 	}
 	public LeafiaBuf readBytes(byte[] dst) {
@@ -267,17 +264,28 @@ public class LeafiaBuf extends BitByteBuf {
 		return this;
 	}
 	public LeafiaBuf writeBytes(ByteBuf src) {
-		//System.out.println("writeBytes "+src.readableBytes());
-		int pos = writerIndex;
-		while (src.isReadable()) // i think this is retarded but whatever
-			writeByte(src.readByte());
-		//System.out.println("writeBytes complete (+"+((writerIndex-pos)/8f)+" bytes)");
+		int length = src.readableBytes();
+		if ((writerIndex&7) == 0) {
+			allocateBits(writerIndex+(length<<3));
+			int base = payloadBase()-(writerIndex>>3);
+			for (int i = 0; i < length; i++)
+				bytes[base-i] = src.readByte();
+			writerIndex += length<<3;
+		} else
+			while (src.isReadable())
+				writeByte(src.readByte());
 		return this;
 	}
 	public LeafiaBuf writeBytes(byte[] src) {
-		for (byte b : src) {
-			writeByte(b);
-		}
+		return writeBytes(src,0,src.length);
+	}
+	public LeafiaBuf writeBytes(byte[] src,int srcIndex,int length) {
+		if ((writerIndex&7) == 0) {
+			insertAlignedBytes(writerIndex,src,srcIndex,length);
+			writerIndex += length<<3;
+		} else
+			for (int i = 0; i < length; i++)
+				writeByte(src[srcIndex+i]);
 		return this;
 	}
 	public LeafiaBuf writeZero(int length) {
@@ -332,24 +340,33 @@ public class LeafiaBuf extends BitByteBuf {
 			return itemstack;
 		}
 	}
+	// ByteBufUtils' <varint length>[UTF-8 bytes] format, read/written in place so a string costs O(its own length)
+	// rather than a substitute() copy of the whole remaining buffer.
 	public String readUTF8String() {
-		ByteBuf substitute = substitute(readerIndex);
-		busy++;
-		int index0 = substitute.readerIndex();
-		String output = ByteBufUtils.readUTF8String(substitute);
-		int delta = substitute.readerIndex()-index0;
-		//System.out.println("##### DELTA: "+delta);
-		readerIndex += delta*8;
-		busy--;
-		return output;
+		int length = 0;
+		int read = 0;
+		byte b;
+		do {
+			b = readByte();
+			length |= (b&127) << read++*7;
+			if (read > 2)
+				throw new LeafiaDevFlaw("VarInt too big");
+		} while ((b&128) == 128);
+		byte[] utf8 = new byte[length];
+		readBytes(utf8);
+		return new String(utf8,StandardCharsets.UTF_8);
 	}
 	public LeafiaBuf writeUTF8String(String string) {
-		ByteBuf buf = buffer.alloc().buffer(0,buffer.maxCapacity());
-		ByteBufUtils.writeUTF8String(buf,string);
-		//System.out.println("writin stRINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
-		//int bitchy = writerIndex;
-		writeBytes(buf);
-		//System.out.println("Written ########### "+(writerIndex-bitchy));
+		byte[] utf8 = string.getBytes(StandardCharsets.UTF_8);
+		if (utf8.length > 16383) // ByteBufUtils caps the length prefix at a 2-byte varint
+			throw new LeafiaDevFlaw("The string is too long for this encoding.");
+		int remaining = utf8.length;
+		while ((remaining&-128) != 0) {
+			writeByte(remaining&127|128);
+			remaining >>>= 7;
+		}
+		writeByte(remaining);
+		writeBytes(utf8);
 		return this;
 	}
 	public LeafiaBuf writeNBT(@Nullable NBTTagCompound nbt) {
@@ -394,7 +411,7 @@ public class LeafiaBuf extends BitByteBuf {
 		return this;
 	}
 	public FifthString readFifthString() {
-		FifthString fifth = new FifthString(null);
+		FifthString fifth = new FifthString();
 		for (int code; (readableBits() >= 5 && (code = extract(5))*0==0);) {
 			fifth.append(code);
 			if (code == ControlType.END.code)
@@ -408,7 +425,8 @@ public class LeafiaBuf extends BitByteBuf {
 	}
 	public LeafiaBuf writeFifthString(FifthString string) {
 		int utfIndex = 0;
-		for (int code : string.codes) {
+		for (int i = 0; i < string.codeCount; i++) {
+			int code = string.codes[i];
 			insert(code,5);
 			if (code == ControlType.END.code)
 				break;

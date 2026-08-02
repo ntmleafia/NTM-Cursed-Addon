@@ -1,92 +1,97 @@
 package com.llib.technical;
 import com.llib.exceptions.LeafiaDevFlaw;
-import com.llib.math.range.RangeInt;
+
+import java.util.Arrays;
 
 import static com.llib.technical.FifthString.CharType.*;
 import static com.llib.technical.FifthString.ControlType.*;
 
 public class FifthString {
-	public int[] codes = new int[0];
-	public String[] utfs = new String[0];
+	/** {@link LeafiaBitByteUTF#writeUTFLeafia} length-prefixes each escape run with an unsigned short, so a run
+	 * longer than this has to be split into several {@link ControlType#SPECIAL} segments. */
+	static final int MAX_SPECIAL_RUN = 65535;
+	private static final int[] NO_CODES = new int[0];
+	private static final String[] NO_UTFS = new String[0];
+
+	/** Over-allocated; only {@code [0,codeCount)} is meaningful. */
+	public int[] codes = NO_CODES;
+	public int codeCount = 0;
+	/** Over-allocated; only {@code [0,utfCount)} is meaningful. */
+	public String[] utfs = NO_UTFS;
+	public int utfCount = 0;
+
+	/** Empty container, to be filled by {@link #append} while decoding. */
+	public FifthString() {}
+
 	public FifthString(String str) {
-		if (str == null) return;
 		char[] chars = str.toCharArray();
-		int skipUntil = 0;
-		RangeInt range = new RangeInt(0,chars.length-1);
+		ensureCodes(chars.length+1);
 		boolean capital = false;
-		for (Integer i : range) {
-			if (i < skipUntil) continue;
+		for (int i = 0; i < chars.length; i++) {
 			char chr = chars[i];
 			CharType type = charType(chr);
 			if (type.isAlphabet && type.isCapital != capital) {
-				if (range.isInRange(i+1) && charType(chars[i+1]).equals(type)) {
+				if (i+1 < chars.length && charType(chars[i+1]) == type) {
 					capital = !capital;
 					append(CAPITAL_TOGGLE);
 				} else
 					append(CAPITAL_ONCE);
 				append(chr);
-			} else if (type.equals(UNICODE)) {
-				String utf = "";
-				for (skipUntil = i; skipUntil < chars.length; skipUntil++) {
-					if (skipUntil-i > 65535) break; // ru crazy??
-					if (charType(chars[skipUntil]).equals(UNICODE))
-						utf = utf + chars[skipUntil];
-					else
-						break;
-				}
+			} else if (type == UNICODE) {
+				int runEnd = i;
+				while (runEnd < chars.length && runEnd-i < MAX_SPECIAL_RUN && charType(chars[runEnd]) == UNICODE)
+					runEnd++;
 				append(SPECIAL);
-				append(utf);
+				append(new String(chars,i,runEnd-i));
+				i = runEnd-1;
 			} else
 				append(chr);
 		}
 		append(END);
-		//System.out.println("Data size: "+original+" bits => "+mysize+" bits ("+String.format("%+d bits, %d%% compressed",mysize-original,(int)(100-mysize/(double)original*100))+")");
 	}
 	@Override
 	public String toString() {
+		StringBuilder str = new StringBuilder(codeCount);
 		int utfIndex = 0;
 		boolean capital = false;
 		boolean nextCap = false;
-		String str = "";
-		for (int code : codes) {
-			if (code == ControlType.END.code)
+		for (int i = 0; i < codeCount; i++) {
+			int code = codes[i];
+			if (code == END.code)
 				break;
-			else if (code == ControlType.CAPITAL_TOGGLE.code)
+			else if (code == CAPITAL_TOGGLE.code)
 				capital = !capital;
-			else if (code == ControlType.CAPITAL_ONCE.code)
-				nextCap = !nextCap;
-			else if (code == ControlType.SPECIAL.code) {
-				if (true) { // for future possiblities where you would want to put a branch here
-					str = str + utfs[utfIndex];
-					utfIndex++;
-				}
-			} else if (code == 26)
-				str = str + " ";
+			else if (code == CAPITAL_ONCE.code)
+				nextCap = true;
+			else if (code == SPECIAL.code)
+				str.append(utfs[utfIndex++]); // for future possiblities where you would want to put a branch here
+			else if (code == 26)
+				str.append(' ');
 			else if (code == 27)
-				str = str + "_";
+				str.append('_');
 			else {
 				boolean cap = capital;
 				if (nextCap) {
 					cap = !cap;
 					nextCap = false;
 				}
-				str = str + (char)((cap ? 65 : 97)+code);
+				str.append((char)((cap ? 65 : 97)+code));
 			}
 		}
-		return str;
+		return str.toString();
+	}
+	private void ensureCodes(int capacity) {
+		if (codes.length < capacity)
+			codes = Arrays.copyOf(codes,Math.max(capacity,Math.max(codes.length<<1,16)));
 	}
 	public void append(int code) {
-		//System.out.println("Appending "+String.format("%2d (%05d)",code,Integer.parseInt(Integer.toBinaryString(code))));
-		int[] buffer = new int[codes.length+1];
-		System.arraycopy(codes,0,buffer,0,codes.length);
-		codes = buffer;
-		codes[codes.length-1] = code;
+		ensureCodes(codeCount+1);
+		codes[codeCount++] = code;
 	}
 	public void append(String utf) {
-		String[] buffer = new String[utfs.length+1];
-		System.arraycopy(utfs,0,buffer,0,utfs.length);
-		utfs = buffer;
-		utfs[utfs.length-1] = utf;
+		if (utfs.length < utfCount+1)
+			utfs = Arrays.copyOf(utfs,Math.max(utfs.length<<1,4));
+		utfs[utfCount++] = utf;
 	}
 	void append(char chr) {
 		CharType type = charType(chr);
@@ -107,12 +112,10 @@ public class FifthString {
 		CharType(boolean capital) { isAlphabet = true; isCapital = capital; }
 	}
 	CharType charType(char chr) {
-		String s = String.valueOf(chr);
-		if (chr > 0x7F) return UNICODE;
-		else if (s.matches("[a-z]")) return LOWER;
-		else if (s.matches("[A-Z]")) return UPPER;
-		else if (s.equals(" ")) return SPACE;
-		else if (s.equals("_")) return UNDERSCORE;
+		if (chr >= 'a' && chr <= 'z') return LOWER;
+		if (chr >= 'A' && chr <= 'Z') return UPPER;
+		if (chr == ' ') return SPACE;
+		if (chr == '_') return UNDERSCORE;
 		return UNICODE;
 	}
 	public enum ControlType {

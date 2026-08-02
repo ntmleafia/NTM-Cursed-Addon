@@ -16,18 +16,19 @@ public abstract class RecordablePacket extends ThreadedPacket {
 	final public void fromBytes(ByteBuf buf) { // Can you feel the pain I've gone through debugging this class?
 		//System.out.println("##################################### DECODING");
 		LeafiaBuf compress = new LeafiaBuf(buf);
-		//LeafiaBuf identifia = new LeafiaBuf(buf);
 		compress.writerIndex = buf.readInt();
-		//identifia.writerIndex = buf.readInt();
-		//identifia.bytes = new byte[(int)Math.ceil(identifia.writerIndex/8d)];
-		compress.bytes = new byte[(int)Math.ceil(compress.writerIndex/8d)];
-		/*for (int i = 0; i < identifia.bytes.length; i++) {
-			byte by = buf.readByte();
-			identifia.bytes[i] = by;
+		int payload = (compress.writerIndex+7)>>3;
+		// Zero-copy: alias netty's memory instead of copying the payload out. Only sound because fromBits() runs
+		// synchronously here and no subclass retains the LeafiaBuf past it — a decoder that wants to defer must
+		// copy what it needs (the established idiom: read eagerly, capture the values in the returned callback).
+		if (buf.hasArray() && payload <= buf.readableBytes()) {
+			compress.wrapShared(buf.array(),buf.arrayOffset()+buf.readerIndex(),payload);
+			buf.skipBytes(payload);
+		} else {
+			byte[] bytes = new byte[payload];
+			buf.readBytes(bytes);
+			compress.wrapOwned(bytes);
 		}
-		compress.identifia = identifia;*/
-		for (int i = 0; i < compress.bytes.length; i++)
-			compress.bytes[i] = buf.readByte();
 		int pos = 0;
 		/*for (int i = identifia.bytes.length-1; i >= 0; i--) {
 			int bits = identifia.bytes[i];
@@ -56,9 +57,7 @@ public abstract class RecordablePacket extends ThreadedPacket {
 		//compress.identifia = identifia;
 		toBits(compress);
 		buf.writeInt(compress.writerIndex);
-		//buf.writeInt(identifia.writerIndex);
-		//buf.writeBytes(identifia.bytes);
-		buf.writeBytes(compress.bytes);
+		compress.writePayloadTo(buf);
 		int cap = buf.writerIndex();
 		bytesUsage += cap;
 		bytesUsageSec += cap;
