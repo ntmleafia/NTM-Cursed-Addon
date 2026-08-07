@@ -1,4 +1,4 @@
-# Leafia's Cursed Addon 中文简体语言文件[不准确翻译还望大家一起帮忙修改]
+# Leafia's Cursed Addon 中文简体语言文件
 
 # 成就
 achievement.watz=Watz发电站
@@ -245,16 +245,16 @@ item.advisor.message.toxic2.name=剧毒物品警告
 item.advisor.message.toxic2.message=你拿着剧毒物品。$制作一个防护服来安全地拿取它们。
 
 item.ev_chip_s6.desc=标准电梯芯片$用于舒适乘坐
-item.ev_chip_s6.name=S6系列芯片
+item.ev_chip_s6.name=S6电梯系列芯片
 item.ev_chip_skylift.desc=闪电般的速度用于疯狂的摩天大楼$可能会坠毁并爆炸
-item.ev_chip_skylift.name=天梯芯片
+item.ev_chip_skylift.name=电梯芯片
 item.ev_radio.name=电梯广播
-item.ev_s6ceiling.name=S6系列天花板
-item.ev_s6door.name=S6系列门
-item.ev_s6floor.name=S6系列地板
-item.ev_s6wall.name=S6系列墙壁
-item.ev_s6window.name=S6系列窗户
-item.ev_skyliftdoor.name=天梯门
+item.ev_s6ceiling.name=S6电梯系列天花板
+item.ev_s6door.name=S6电梯系列门
+item.ev_s6floor.name=S6电梯系列地板
+item.ev_s6wall.name=S6电梯系列墙壁
+item.ev_s6window.name=S6电梯系列窗户
+item.ev_skyliftdoor.name=电梯门
 item.weight_spawn.name=电梯配重
 
 # 焊接台聊天消息
@@ -279,9 +279,9 @@ item.wand_l.name=加载魔杖
 
 # 电梯相关方块
 tile.elevator_buffer.name=电梯缓冲器
-tile.elevator_s6floor.name=S6系列地板
+tile.elevator_s6floor.name=S6系列电梯口
 tile.elevator_shaft.name=电梯井
-tile.elevator_skyliftfloor.name=天梯地板
+tile.elevator_skyliftfloor.name=电梯口
 tile.elevator_pulley.name=电梯滑轮
 
 # 高压锅炉
