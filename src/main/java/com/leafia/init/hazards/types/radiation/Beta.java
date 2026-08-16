@@ -1,7 +1,10 @@
 package com.leafia.init.hazards.types.radiation;
 
+import com.hbm.config.GeneralConfig;
+import com.hbm.hazard.helper.HazardHelper;
 import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.hazard.type.IHazardType;
+import com.hbm.util.BobMathUtil;
 import com.hbm.util.ContaminationUtil;
 import com.leafia.contents.potion.LeafiaPotion;
 import com.leafia.init.hazards.types.HazardTypeHelper;
@@ -22,6 +25,13 @@ public class Beta implements IHazardType, LCERad {
     @Override
     public void onUpdate(EntityLivingBase target, double level, ItemStack stack) {
         if (level <= 0) return;
+        final boolean reacher = HazardHelper.isHoldingReacher(target);
+        level *= stack.getCount();
+        if (GeneralConfig.enable528 && reacher) {
+            level = level * 20 / 49D;
+        } else if (reacher) {
+            level = BobMathUtil.sqrt(level*20)/20;
+        }
         int amp = LeafiaPotion.getSkinDamage(target);
         float health = target.getHealth()/target.getMaxHealth();
         if (target.getRNG().nextInt(2000) == 0)

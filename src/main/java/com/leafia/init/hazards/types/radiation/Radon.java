@@ -2,9 +2,11 @@ package com.leafia.init.hazards.types.radiation;
 
 import com.hbm.config.GeneralConfig;
 import com.hbm.handler.ArmorUtil;
+import com.hbm.hazard.helper.HazardHelper;
 import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.hazard.type.IHazardType;
 import com.hbm.util.ArmorRegistry;
+import com.hbm.util.BobMathUtil;
 import com.hbm.util.ContaminationUtil;
 import com.leafia.init.hazards.types.LCERad;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,6 +26,13 @@ public class Radon implements IHazardType, LCERad {
     @Override
     public void onUpdate(EntityLivingBase target, double level, ItemStack stack) {
         if (!GeneralConfig.enableRadon) return;
+        final boolean reacher = HazardHelper.isHoldingReacher(target);
+        level *= stack.getCount();
+        if (GeneralConfig.enable528 && reacher) {
+            level = level * 20 / 49D;
+        } else if (reacher) {
+            level = BobMathUtil.sqrt(level*20)/20;
+        }
         if(ArmorRegistry.hasProtection(target, EntityEquipmentSlot.HEAD, ArmorRegistry.HazardClass.PARTICLE_FINE)) {
             ArmorUtil.damageGasMaskFilter(target, hazardRate);
         } else {

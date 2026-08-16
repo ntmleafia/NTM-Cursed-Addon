@@ -579,8 +579,10 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				}
 				if (timer != initial)
 					data.setInteger("generosityTimer", timer);
-			} if (meltdown && newCooledTemp < meltingPoint)
-				data.setBoolean("melting", false);
+			} if (meltdown && newCooledTemp < meltingPoint) {
+				data.setBoolean("melting",false);
+				data.setInteger("spillage",0);
+			}
 		}
 		lastDisableDecay = disableDecay; // ass coding
 		return n;
