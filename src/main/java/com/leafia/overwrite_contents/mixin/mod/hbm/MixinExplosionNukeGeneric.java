@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.bomb.Balefire;
 import com.hbm.blocks.fluid.CoriumFinite;
 import com.hbm.blocks.gas.BlockGasMeltdown;
 import com.hbm.blocks.gas.BlockGasRadon;
@@ -9,6 +10,8 @@ import com.hbm.blocks.gas.BlockGasRadonTomb;
 import com.hbm.blocks.machine.rbmk.RBMKDebris;
 import com.hbm.explosion.ExplosionNukeGeneric;
 import com.leafia.contents.AddonBlocks.LegacyBlocks;
+import com.leafia.contents.bomb.balefire.AshBalefire;
+import com.leafia.contents.bomb.balefire.BaleoniteBlock;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreckEntity;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -112,5 +115,11 @@ public class MixinExplosionNukeGeneric {
 				te.markDirty();
 			}
 		}
+		if (state.getBlock() instanceof AshBalefire)
+			world.setBlockToAir(pos);
+		if (state.getBlock() instanceof Balefire)
+			world.setBlockState(pos,Blocks.FIRE.getDefaultState());
+		if (state.getBlock() instanceof BaleoniteBlock)
+			world.setBlockState(pos,ModBlocks.sellafield_slaked.getDefaultState());
 	}
 }

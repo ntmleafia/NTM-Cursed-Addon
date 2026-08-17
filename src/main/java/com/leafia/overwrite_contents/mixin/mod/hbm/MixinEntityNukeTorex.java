@@ -192,7 +192,7 @@ public abstract class MixinEntityNukeTorex extends Entity implements IConstantRe
 						packet.x,
 						packet.y,
 						packet.z,
-						200+amp+Math.pow(amp,0.8)*8
+						200+amp+Math.pow(amp,0.8)*16
 				)
 		);
 	}

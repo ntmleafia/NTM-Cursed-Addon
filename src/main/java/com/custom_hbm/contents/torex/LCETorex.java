@@ -19,6 +19,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -754,15 +755,17 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		torex.writeEntityToNBT(nbt);
 		packet.nbt = nbt;
 		double amp = torex.getScale()*100;
-		PacketThreading.createSendToAllTrackingThreadedPacket(packet,new NetworkRegistry.TargetPoint(
+		packet.range = (200+amp+Math.pow(amp,0.8)*16);
+		/*PacketThreading.createSendToAllTrackingThreadedPacket(packet,new NetworkRegistry.TargetPoint(
 						torex.dimension,
 						packet.x,
 						packet.y,
 						packet.z,
-						200+amp+Math.pow(amp,0.8)*8
+						200+amp+Math.pow(amp,0.8)*16
 				)
-		);
-		//PacketThreading.createSendToDimensionThreadedPacket(packet,torex.dimension);
+		);*/
+		// screw this
+		PacketThreading.createSendToDimensionThreadedPacket(packet,torex.dimension);
 	}
 	
 	public static void statFac(World world, double x, double y, double z, float scale) {
@@ -831,6 +834,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		private double y;
 		private double z;
 		private NBTTagCompound nbt;
+		private double range = 0;
 		private UUID uuid;
 		private boolean doWait;
 		public TorexPacket() {
@@ -844,6 +848,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			this.z = buf.readDouble();
 			this.doWait = buf.readBoolean();
 			this.nbt = buf.readNBT();
+			this.range = buf.readDouble();
 		}
 		@Override
 		public void toBits(LeafiaBuf buf) {
@@ -855,6 +860,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			buf.writeDouble(this.z);
 			buf.writeBoolean(this.doWait);
 			buf.writeNBT(nbt);
+			buf.writeDouble(range);
 		}
 		public static class Handler implements IMessageHandler<TorexPacket, IMessage> {
 			@Override
@@ -862,6 +868,8 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			public IMessage onMessage(TorexPacket message, MessageContext ctx) {
 				Minecraft.getMinecraft().addScheduledTask(() -> {
 					Minecraft mc = Minecraft.getMinecraft();
+					if (new Vec3d(mc.player.posX,0,mc.player.posZ).distanceTo(new Vec3d(message.x,0,message.z)) > message.range)
+						return;
 					LCETorex torex = new LCETorex(mc.world);
 					torex.setEntityId(message.entityId);
 					torex.setUniqueId(message.uuid);
