@@ -1,17 +1,24 @@
 package com.leafia.contents.worldgen.biomes.artificial;
 
 import com.hbm.lib.ModDamageSource;
+import com.hbm.util.ContaminationUtil;
+import com.hbm.util.ContaminationUtil.ContaminationType;
+import com.hbm.util.ContaminationUtil.HazardType;
 import com.hbm.util.RenderUtil;
 import com.leafia.Tags;
 import com.leafia.contents.worldgen.AddonBiome;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
+import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaClientListener.Digamma;
+import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.LeafiaPassiveLocal;
 import com.leafia.settings.AddonConfig;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -194,11 +201,33 @@ public class DigammaCrater extends AddonBiome {
 			return (ctx)->{
 				if (ctx.side == Side.SERVER) {
 					EntityPlayer player = ctx.getServerHandler().player;
-					player.attackEntityFrom(ModDamageSource.digamma,4);
+					player.setHealth(player.getHealth()-4);
+					//player.attackEntityFrom(ModDamageSource.digamma,4);
 					player.velocityChanged = false;
 					LeafiaCustomPacket.__start(new DigammaBackstabPacket()).__sendToClient(player);
 				} else
 					handleLocal();
+			};
+		}
+	}
+	public static class ForceSchizoPacket implements LeafiaCustomPacketEncoder {
+		@Override
+		public void encode(LeafiaBuf buf) { }
+		@SideOnly(Side.CLIENT)
+		public void doShit() {
+			if (!AddonConfig.schizoMode) {
+				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(LeafiaSoundEvents.noise,1));
+				HandlerClient.staticTicks = 5;
+			} else
+				LeafiaCustomPacket.__start(new ForceSchizoPacket()).__sendToServer();
+		}
+		@Override
+		public @Nullable Consumer<MessageContext> decode(LeafiaBuf buf) {
+			return (ctx) -> {
+				if (ctx.side == Side.CLIENT)
+					doShit();
+				else
+					ContaminationUtil.contaminate(ctx.getServerHandler().player,HazardType.DIGAMMA,ContaminationType.CREATIVE,0.2f);
 			};
 		}
 	}

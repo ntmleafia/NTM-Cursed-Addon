@@ -23,6 +23,7 @@ import com.leafia.contents.machines.elevators.items.radio.EvRadioItem.EvRadioUIP
 import com.leafia.contents.machines.misc.modular_turbine.core.MTCoreBlock.TurbineErrorHighlight;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.DigammaBackstabPacket;
+import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.ForceSchizoPacket;
 import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
@@ -82,6 +83,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		DRX_BACKSTAB(new DigammaBackstabPacket()),
 		EV_RADIO_UI(new EvRadioUIPacket()),
 		EV_RADIO_REQUEST(new EvRadioSyncRequestPacket()),
+		FORCE_SCHIZO(new ForceSchizoPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }

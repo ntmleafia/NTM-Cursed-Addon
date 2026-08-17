@@ -148,6 +148,7 @@
     "hbm.MixinTileEntityWasteDrum",
     "hbm.MixinWasteEarth",
     "hbm.MixinWasteGrassTall",
+    "hbm.MixinWeaponSpecial",
     "hbm.MixinWeightedRandomChestContentFrom1710",
     "hbm.MixinWorldProviderNTM"
   ],

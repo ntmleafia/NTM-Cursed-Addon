@@ -126,5 +126,7 @@
   "misc.hsp_active": { "category": "block", "sounds": [{ "name": "leafia:misc/hsp_active", "stream": false }] },
   "misc.hsp_ignite": { "category": "block", "sounds": [{ "name": "leafia:misc/hsp_ignite", "stream": false }] },
   "block.kfc.detonate": { "category": "block", "sounds": [{ "name": "leafia:external/1391727615", "stream": false }] },
-  "block.amsp.explode": { "category": "block", "sounds": [{ "name": "leafia:external/130768997", "stream": false }] }
+  "block.amsp.explode": { "category": "block", "sounds": [{ "name": "leafia:external/130768997", "stream": false }] },
+
+  "player.static": {"category": "player", "sounds": [{"name": "leafia:leafia/static", "stream": false}]}
 }

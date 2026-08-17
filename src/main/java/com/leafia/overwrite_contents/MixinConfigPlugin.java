@@ -34,7 +34,6 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
             case "MixinCoreComponent","MixinCoreCore","MixinTileEntityCore","MixinTileEntityCoreEmitter",
                  "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreReceiverOC",
                  "MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
-                 "MixinTileEntityCoreInjector","MixinTileEntityCoreReceiver","MixinTileEntityCoreStabilizer" -> cancel = AddonConfig.disableAddonDFC;
             case "MixinHazardSystem" -> cancel = !AddonConfig.enableHealthMod;
         }
         if (mixinClassName.startsWith("Bullshit"))

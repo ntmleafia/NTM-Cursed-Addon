@@ -9,12 +9,15 @@ import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaClientListener.Digamma;
 import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
+import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
 import com.leafia.passive.rendering.AddonRainRender;
 import com.leafia.savedata.FalloutSavedData;
+import com.leafia.settings.AddonConfig;
 import com.llib.group.LeafiaSet;
 import com.llib.math.MathLeafia;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -44,11 +47,18 @@ public class LeafiaPassiveLocal {
 	}
 	public static int nullCounter = 0;
 	public static void priorTick(World world) {
-		if (!Minecraft.getMinecraft().isGamePaused()) {
+		if (!Minecraft.getMinecraft().isGamePaused() || !Minecraft.getMinecraft().isSingleplayer()) {
 			AddonRainRender.INSTANCE.update();
 			FalloutSavedData.forWorld(world).tick();
 			if (HandlerClient.dfcFlashTicks > 0)
 				HandlerClient.dfcFlashTicks--;
+			if (HandlerClient.staticTicks > 0) {
+				HandlerClient.staticTicks--;
+				if (HandlerClient.staticTicks == 0) {
+					AddonConfig.schizoMode = true;
+					Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(LeafiaSoundEvents.digamma_record,0.7f));
+				}
+			}
 		}
 		RecordablePacket.previousByteUsage = RecordablePacket.bytesUsage;
 		RecordablePacket.bytesUsage = 0;
@@ -70,7 +80,7 @@ public class LeafiaPassiveLocal {
 		Warns.preTick();
 		if (!Minecraft.getMinecraft().isGamePaused()) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
-			if (!player.isSpectator() && !player.isCreative() && DigammaCrater.isDigammaBiome(world.getBiome(new BlockPos(player.posX,player.posY,player.posZ))) && player.getHealth() > 6 && world.rand.nextInt(40000) == 0 && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
+			if (!player.isSpectator() && !player.isCreative() && DigammaCrater.isDigammaBiome(world.getBiome(new BlockPos(player.posX,player.posY,player.posZ))) && player.getHealth() > 6 && world.rand.nextInt(30000) == 0 && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
 				LeafiaCustomPacket.__start(new DigammaBackstabPacket()).__sendToServer();
 		}
 		if (nullCounter < 20 && !Minecraft.getMinecraft().isGamePaused()) {

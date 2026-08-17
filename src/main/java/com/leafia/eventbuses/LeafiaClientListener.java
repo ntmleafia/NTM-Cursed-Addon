@@ -578,7 +578,7 @@ public class LeafiaClientListener {
 				Minecraft.getMinecraft().renderEngine.bindTexture(AddonBase.solid);
 				LeafiaGls.color(0,0,0);
 				LeafiaGls.pushMatrix();
-				LeafiaGls.scale(-1000);
+				LeafiaGls.scale(-400);
 				ResourceManager.sphere_ruv.renderAll();
 				LeafiaGls.popMatrix();
 				LeafiaGls.color(1,1,1);
@@ -640,10 +640,25 @@ public class LeafiaClientListener {
 			TopRender.main(evt);
 		}
 		public static int dfcFlashTicks = 0;
+		public static int staticTicks = 0;
+		public static ResourceLocation noise = new ResourceLocation("leafia","textures/bigbadstatic.png");
 		@SubscribeEvent
 		public void onOverlayRenderPost(RenderGameOverlayEvent.Post evt) {
 			if(evt.getType() == ElementType.ALL) {
 				ScaledResolution resolution = evt.getResolution();
+				if (staticTicks > 0) {
+					Minecraft.getMinecraft().renderEngine.bindTexture(noise);
+					LeafiaBrush brush = LeafiaBrush.instance;
+					brush.startDrawing(BrushMode.QUADS,DefaultVertexFormats.POSITION_TEX);
+					float u = resolution.getScaledWidth()/1280f;
+					float v = resolution.getScaledHeight()/2160f;
+					float vo = Minecraft.getMinecraft().world.rand.nextInt(1280)/2160f;
+					brush.addVertexWithUV(0,resolution.getScaledHeight_double(),0,0,v+vo);
+					brush.addVertexWithUV(resolution.getScaledWidth_double(),resolution.getScaledHeight_double(),0,u,v+vo);
+					brush.addVertexWithUV(resolution.getScaledWidth_double(),0,0,u,vo);
+					brush.addVertexWithUV(0,0,0,0,vo);
+					brush.draw();
+				}
 				Digamma.drawVignette(resolution,evt.getPartialTicks());
 				if (dfcFlashTicks > 0) { // dfc flash
 					LeafiaBrush brush = LeafiaBrush.instance;
