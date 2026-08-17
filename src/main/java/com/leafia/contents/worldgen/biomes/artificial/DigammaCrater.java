@@ -41,10 +41,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.include.com.google.common.collect.Lists;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class DigammaCrater extends AddonBiome {
+	public static final List<NullEntity> NULL_LIST = Lists.newArrayList();
 	public static boolean isDigammaBiome(Biome biome) {
 		if (AddonConfig.schizoMode)
 			return true;

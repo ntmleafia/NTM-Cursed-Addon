@@ -83,6 +83,13 @@ public class LeafiaPassiveLocal {
 			if (!player.isSpectator() && !player.isCreative() && DigammaCrater.isDigammaBiome(world.getBiome(new BlockPos(player.posX,player.posY,player.posZ))) && player.getHealth() > 6 && world.rand.nextInt(30000) == 0 && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
 				LeafiaCustomPacket.__start(new DigammaBackstabPacket()).__sendToServer();
 		}
+		for (int i = 0; i < DigammaCrater.NULL_LIST.size(); ++i) {
+			DigammaCrater.NullEntity nullEntity = DigammaCrater.NULL_LIST.get(i);
+			nullEntity.onUpdate();
+			if (nullEntity.isDead) {
+				DigammaCrater.NULL_LIST.remove(i--);
+			}
+		}
 		if (nullCounter < 20 && !Minecraft.getMinecraft().isGamePaused()) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			if (DigammaCrater.isDigammaBiome(world.getBiome(new BlockPos(player.posX,player.posY,player.posZ)))) {
@@ -95,7 +102,7 @@ public class LeafiaPassiveLocal {
 					if (DigammaCrater.isDigammaBiome(world.getBiome(p))) {
 						NullEntity entity = new NullEntity(world);
 						entity.setPosition(p.getX()+0.5,p.getY(),p.getZ()+0.5);
-						world.spawnEntity(entity);
+						DigammaCrater.NULL_LIST.add(entity);
 					}
 				}
 			}
