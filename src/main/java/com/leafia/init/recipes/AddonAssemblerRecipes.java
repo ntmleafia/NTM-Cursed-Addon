@@ -74,6 +74,7 @@ public class AddonAssemblerRecipes {
 			replaceOutput("ass.pwrchannel",new ItemStack(PWR.channel));
 			replaceOutput("ass.pwrheatex",new ItemStack(PWR.exchanger));
 			replaceOutput("ass.pwrreflector",new ItemStack(PWR.reflector));
+			replaceOutput("ass.pwrreflectoralt",new ItemStack(PWR.reflector));
 			replaceOutput("ass.pwrcasing",new ItemStack(PWR.hull));
 			replaceOutput("ass.pwrcontroller",new ItemStack(PWR.terminal));
 			replaceOutput("ass.pwrport",new ItemStack(PWR.port));
