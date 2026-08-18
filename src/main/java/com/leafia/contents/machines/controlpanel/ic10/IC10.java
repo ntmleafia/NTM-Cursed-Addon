@@ -3,6 +3,7 @@ package com.leafia.contents.machines.controlpanel.ic10;
 import com.leafia.settings.AddonConfig;
 import net.minecraft.util.math.MathHelper;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -107,7 +108,27 @@ public class IC10 {
 	static boolean equals(Object a,Object b) {
 		if (a == null)
 			return b == null;
+		if (a instanceof Number numA && b instanceof String sB) {
+			Double numB = tonumberd(sB);
+			if (numB != null) {
+				if (numA.doubleValue() == numB)
+					return true;
+			}
+		}
+		if (a instanceof String sA && b instanceof Number numB) {
+			Double numA = tonumberd(sA);
+			if (numA != null) {
+				if (numB.doubleValue() == numA)
+					return true;
+			}
+		}
 		return a.equals(b);
+	}
+	@Nullable static Double tonumberd(String s) {
+		try {
+			return Double.parseDouble(s);
+		} catch (NumberFormatException ignored) {}
+		return null;
 	}
 	static {
 		insn_def = map(
@@ -132,6 +153,14 @@ public class IC10 {
 							env.output((String)args[0],(String)args[1]);
 						},
 						"Value of key in Output = a"
+				),
+				"pulse",make(
+						args("key",STRING,"a",STRING,"b",STRING),
+						(env,args)->{
+							env.output((String)args[0],(String)args[1]);
+							env.pulseQueue.put((String)args[0],(String)args[2]);
+						},
+						"Value of key in Output = a for 1 tick, then b"
 				),
 				"math",map(
 						"rand",make(
@@ -395,8 +424,8 @@ public class IC10 {
 								"beq",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
-											if (equals(args[1],args[2]))
-												env.line = (int)args[3];
+											if (equals(args[0],args[1]))
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a == b"
 								),
@@ -404,15 +433,15 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] == 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a == 0"
 								),
 								"bne",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
-											if (!equals(args[1],args[2]))
-												env.line = (int)args[3];
+											if (!equals(args[0],args[1]))
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a != b"
 								),
@@ -420,7 +449,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] != 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a != 0"
 								),
@@ -428,7 +457,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] > (double)args[1])
-												env.line = (int)args[3];
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a > b"
 								),
@@ -436,7 +465,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] > 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a > 0"
 								),
@@ -444,7 +473,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] >= (double)args[1])
-												env.line = (int)args[3];
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a >= b"
 								),
@@ -452,7 +481,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] >= 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a >= 0"
 								),
@@ -460,7 +489,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] < (double)args[1])
-												env.line = (int)args[3];
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a < b"
 								),
@@ -468,7 +497,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] < 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a < 0"
 								),
@@ -476,7 +505,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] <= (double)args[1])
-												env.line = (int)args[3];
+												env.line = (int)args[2];
 										},
 										"Branch to line c if a <= b"
 								),
@@ -484,7 +513,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] <= 0)
-												env.line = (int)args[2];
+												env.line = (int)args[1];
 										},
 										"Branch to line b if a <= 0"
 								)
@@ -493,8 +522,8 @@ public class IC10 {
 								"breq",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
-											if (equals(args[1],args[2]))
-												env.line += (int)args[3];
+											if (equals(args[0],args[1]))
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a == b"
 								),
@@ -502,15 +531,15 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] == 0)
-												env.line += (int)args[2];
+												env.line += (int)args[1];
 										},
 										"Skip b lines if a == 0"
 								),
 								"brne",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
-											if (!equals(args[1],args[2]))
-												env.line += (int)args[3];
+											if (!equals(args[0],args[1]))
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a != b"
 								),
@@ -518,7 +547,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] != 0)
-												env.line += (int)args[2];
+												env.line += (int)args[1];
 										},
 										"Skip b lines if a != 0"
 								),
@@ -526,7 +555,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] > (double)args[1])
-												env.line += (int)args[3];
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a > b"
 								),
@@ -542,7 +571,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] >= (double)args[1])
-												env.line += (int)args[3];
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a >= b"
 								),
@@ -550,7 +579,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] >= 0)
-												env.line += (int)args[2];
+												env.line += (int)args[1];
 										},
 										"Skip b lines if a >= 0"
 								),
@@ -558,7 +587,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] < (double)args[1])
-												env.line += (int)args[3];
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a < b"
 								),
@@ -566,7 +595,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] < 0)
-												env.line += (int)args[2];
+												env.line += (int)args[1];
 										},
 										"Skip b lines if a < 0"
 								),
@@ -574,7 +603,7 @@ public class IC10 {
 										args("a",NUMBER,"b",NUMBER,"c",INTEGER),
 										(env,args)->{
 											if ((double)args[0] <= (double)args[1])
-												env.line += (int)args[3];
+												env.line += (int)args[2];
 										},
 										"Skip c lines if a <= b"
 								),
@@ -582,7 +611,7 @@ public class IC10 {
 										args("a",NUMBER,"b",INTEGER),
 										(env,args)->{
 											if ((double)args[0] <= 0)
-												env.line += (int)args[2];
+												env.line += (int)args[1];
 										},
 										"Skip b lines if a <= 0"
 								)

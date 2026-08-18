@@ -52,6 +52,10 @@ public class IC10State {
 				regs.setDouble(Integer.toString(entry.getKey()),d);
 		}
 		tag.setTag("registry",regs);
+		NBTTagCompound pulse = new NBTTagCompound();
+		for (Entry<String,String> entry : pulseQueue.entrySet())
+			pulse.setString(entry.getKey(),entry.getValue());
+		tag.setTag("pulseQueue",pulse);
 		NBTTagCompound stacks = new NBTTagCompound();
 		int index = 0;
 		for (Object o : stack) {
@@ -94,6 +98,9 @@ public class IC10State {
 					stack[i] = nd.getDouble();
 			}
 		}
+		NBTTagCompound pulse = tag.getCompoundTag("pulseQueue");
+		for (String s : pulse.getKeySet())
+			pulseQueue.put(s,pulse.getString(s));
 	}
 
 	public void setRegister(int index,Object value) {
@@ -197,11 +204,6 @@ public class IC10State {
 	}
 
 	// UTILITY //
-	boolean equals(Object a,Object b) {
-		if (a == null)
-			return b == null;
-		return a.equals(b);
-	}
 	@Nullable static Integer tonumber(String s) {
 		try {
 			return Integer.parseInt(s);
@@ -297,10 +299,15 @@ public class IC10State {
 			ln++;
 		}
 	}
+	public Map<String,String> pulseQueue = new HashMap<>();
 	public void update() {
 		if (!compiled)
 			compile();
 		if (error != null) return;
+
+		for (Entry<String,String> entry : pulseQueue.entrySet())
+			output.setValueOf(entry.getKey(),entry.getValue());
+		pulseQueue.clear();
 		if (yield > 0) {
 			yield--;
 			if (yield > 0)
