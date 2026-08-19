@@ -5,6 +5,7 @@ achievement.watz=Watz发电站
 
 # 进度
 advancement.leafia.arcwelder=还不够大
+advancement.leafia.arcwelder.desc=那就把它焊起来
 
 # 电梯按钮
 gui.evcab.add=添加按钮
@@ -40,7 +41,7 @@ advancement.leafia.genericfuel.desc=创建你的第一个MEU核燃料棒组件
 advancement.leafia.loseadvisor=| |i || |_
 advancement.leafia.loseadvisor.desc=失去一个高科技顾问
 advancement.leafia.nukebwr=切尔诺贝利学徒
-advancement.leafia.nukebwr.desc=用BWR（水冷PWR）重现福岛核事故
+advancement.leafia.nukebwr.desc=用BWR(水冷PWR)重现福岛核事故
 advancement.leafia.nukepwr=拆卸小组
 advancement.leafia.nukepwr.desc=你怎么搞砸得这么厉害？
 advancement.leafia.openpwr=我的第一个核反应堆
@@ -76,7 +77,7 @@ cannery.leafia.lftr.2=液体会升温，热量可以在冷却液热交换器中�
 cannery.leafia.lftr.3=最初支持的LFTR冷却液不包含任何燃料。
 cannery.leafia.lftr.4=燃料可以用混合桶混合到LFTR冷却液中。
 cannery.leafia.lftr.5=动态混合系统利用NBT，普通流体管道不支持..
-cannery.leafia.lftr.6=..这意味着LFTR、混合桶（核模式）、冷却液热交换器和盐燃料分离厂都需要特殊管道来输送燃料液体。
+cannery.leafia.lftr.6=..这意味着LFTR、混合桶(核模式)、冷却液热交换器和盐燃料分离厂都需要特殊管道来输送燃料液体。
 cannery.leafia.lftr.7=LFTR反应室从6个基本方向接收通量..
 cannery.leafia.lftr.8=..以及这12个额外位置。
 cannery.leafia.lftr.9=如果超过6000°C，该组件将被销毁。
@@ -86,7 +87,7 @@ cannery.leafia.lftr.c=石墨块可以用来减速中子通量以获得更多裂�
 cannery.leafia.lftr.d=PWR中子反射器可以用来将中子反射回反应室本身。
 cannery.leafia.lftr.e=LFTR任意方块会模拟其他方块的行为，同时保留包含燃料并将其转移到相邻组件的能力。
 cannery.leafia.lftr.f=LFTR燃料塞在一侧有一个接受燃料的端口，底部有一个紧急端口。
-cannery.leafia.lftr.g=紧急端口将在4000°C时熔化，以最快速度从反应堆排出（泄漏）燃料。
+cannery.leafia.lftr.g=紧急端口将在4000°C时熔化，以最快速度从反应堆排出(泄漏)燃料。
 cannery.leafia.lftr.h=请记住，如果底部端口被阻挡，排水将不起作用。
 
 # 化学反应
@@ -104,6 +105,7 @@ death.attack.drinkacid=%1$s 摄入了致命的酸性物质
 death.attack.drinkcryo=%1$s 的内脏被冻结
 death.attack.drinkhot=%1$s 摄入了致命的高温物质
 death.attack.fleija=%1$s 在真空环境中肺部爆炸而亡
+death.attack.flywheel=%1$s 被飞轮碾碎
 death.attack.dfc=%1$s 被强烈的高能辐射烧成灰烬
 death.attack.dfcMeltdown=%1$s 在坍缩恒星的超高温中被蒸发
 death.attack.mine=%1$s 应该多注意脚下的地面
@@ -123,12 +125,15 @@ desc.leafia._repeated.reactors.off=反应堆已关闭
 desc.leafia._repeated.reactors.on=反应堆已启动
 desc.leafia._repeated.reactors.require.properly=§c错误:§r 反应堆正常运行需要 %s!
 desc.leafia._repeated.reactors.temp.core=§e核心温度:§r$   %s§e°C§r
+desc.leafia._repeated.reactors.temp.core.bs=§e核心温度:§r$   %s§e格§r
 desc.leafia._repeated.reactors.temp.hull=§6外壳温度:§r$   %s§6°C§r
+desc.leafia._repeated.reactors.temp.hull.bs=§6外壳温度:§r$   %s§6格§r
 desc.leafia._short.fluid.co2=CO₂
 desc.leafia.fuzzy.howto=点击任何支持的GUI中的流体储罐进行配置！
 desc.leafia.fuzzy.set=标识符设置为：
 desc.leafia.fuzzy.unset=未设置任何流体！
 desc.leafia.zirnox.pressure=§d压力:§r$   %s§datm§r
+desc.leafia.zirnox.pressure.bs=§d压力:§r$   %s§dkirk§r
 desc.leafia.zirnox.tips.coolant=§3冷却液§r$ 二氧化碳将燃料的热量传递到反应堆外壳。$ 冷却效率受压力影响很大。$ 反应堆本身不会消耗二氧化碳。$§9给水§r$ 外壳的热量用于将给水煮沸成蒸汽。$ 储罐中的水越少，外壳冷却和蒸汽产生的速度就越慢。
 desc.leafia.zirnox.tips.pressure=§d压力§r$ 可以通过排放二氧化碳来降低压力。$ 然而，压力过低会降低冷却$效率和蒸汽产量。$ 注意防止熔毁！
 desc.leafia.zirnox.vent=排放冷却剂二氧化碳
@@ -154,11 +159,14 @@ gui.digamma_message.7=我无法承受这一切
 gui.digamma_message.8=崇拜我
 gui.digamma_message.9=这太痛苦了...
 gui.heatex.amount=每周期数量
-gui.heatex.cycle=周期延迟（刻）
+gui.heatex.cycle=周期延迟(刻)
 gui.recipe.inputMix=输入混合物
 
 # 流体名称
+hbmfluid.balecorium=Bale熔融物
 hbmfluid.coolant_mal=§c沸腾的冷却液§r
+hbmfluid.corecomponent=熔融DFC组件
+hbmfluid.cryointer=中间级冷冻凝胶
 hbmfluid.deathsteam=§c超浓密蒸汽§r
 hbmfluid.flibe=液态氟化物
 hbmfluid.fluorine=氟
@@ -166,12 +174,14 @@ hbmfluid.hf=氟化氢
 hbmfluid.hot_air=热空气
 hbmfluid.hot_water=热水
 hbmfluid.n2o=一氧化二氮
+hbmfluid.pyrogel=热凝胶
 hbmfluid.radspice_slop=新维林浆糊
+hbmfluid.toxicfluid=典型的绿色粘液
 hbmfluid.uf6_233=六氟化铀-233
 hbmfluid.uf6_235=六氟化铀-235
 hbmfluid.ultrahotsteam=超浓密蒸汽
 
-hbmmat.xanaxium=扎纳西乌姆
+hbmmat.xanaxium=赞纳克西姆
 
 hbmpseudofluid.u233f6=六氟化铀-233
 hbmpseudofluid.leu233f6=低浓缩六氟化铀-233
@@ -183,10 +193,31 @@ hbmpseudofluid.meu235f6=中浓缩六氟化铀-235
 hbmpseudofluid.heu235f6=高浓缩六氟化铀-235
 
 # 物品信息
+info.dfc.cooling=仅支持冷冻凝胶$或全氟甲基
 info.leafiarod.empty=空
 info.leafiarod.jei.decay=通用燃料棒增殖
 info.leafiarod.jei.name=通用燃料棒拆解
 info.leafiarod.jei.message=无法拆解$消耗 > 5%%
+
+# 涡轮信息
+info.turbine._tooltip.glass=不太真实，但是嘿$它让你能看到$里面炫酷的叶片！
+info.turbine._tooltip.power=发电机功率: %s
+info.turbine.assembly.unassembled=!!!!未组装!!!!
+info.turbine.decompression=减压: %s
+info.turbine.downgrade=使用螺丝刀拆除
+info.turbine.gear=齿轮比例: %s
+info.turbine.identifier=标识符: %s
+info.turbine.state.disabled=已禁用
+info.turbine.state.enabled=已启用
+info.turbine.overdrive=超速: %s 最大转速
+info.turbine.rps=转速: %s
+info.turbine.turbulence=湍流: %s
+info.turbine.turbulence.reason.surge=蒸汽输入激增
+info.turbine.turbulence.reason.toomanyblades=堆叠叶片过多
+info.turbine.turbulence.reason.wrongblades=部分叶片反向
+info.turbine.turbulence.reasons=原因：
+info.turbine.turbulence.warning=!!!高度湍流!!!
+info.turbine.weight=重量: %s
 
 # 物品名称
 item.advisor.name=高科技顾问
@@ -214,19 +245,33 @@ item.advisor.message.toxic2.name=剧毒物品警告
 item.advisor.message.toxic2.message=你拿着剧毒物品。$制作一个防护服来安全地拿取它们。
 
 item.ev_chip_s6.desc=标准电梯芯片$用于舒适乘坐
-item.ev_chip_s6.name=S6系列芯片
+item.ev_chip_s6.name=S6电梯系列芯片
 item.ev_chip_skylift.desc=闪电般的速度用于疯狂的摩天大楼$可能会坠毁并爆炸
-item.ev_chip_skylift.name=天梯芯片
-item.ev_s6ceiling.name=S6系列天花板
-item.ev_s6door.name=S6系列门
-item.ev_s6floor.name=S6系列地板
-item.ev_s6wall.name=S6系列墙壁
-item.ev_s6window.name=S6系列窗户
-item.ev_skyliftdoor.name=天梯门
+item.ev_chip_skylift.name=电梯芯片
+item.ev_radio.name=电梯广播
+item.ev_s6ceiling.name=S6电梯系列天花板
+item.ev_s6door.name=S6电梯系列门
+item.ev_s6floor.name=S6电梯系列地板
+item.ev_s6wall.name=S6电梯系列墙壁
+item.ev_s6window.name=S6电梯系列窗户
+item.ev_skyliftdoor.name=电梯门
 item.weight_spawn.name=电梯配重
 
 # 焊接台聊天消息
 chat.loadingwand.set=已设置结构: %s
+
+# 涡轮错误信息
+chat.turbine.error.bug=错误！这是Bug。如果你看到这条消息，请向我们报告。
+chat.turbine.error.cant_decompress=这种蒸汽无法进一步减压！
+chat.turbine.error.identifier_mismatch=腔室不能有两个不同的标识符！
+chat.turbine.error.incompatible_size=尺寸不兼容！
+chat.turbine.error.invalid_identifier=不支持的蒸汽类型！
+chat.turbine.error.no_blades=腔室内没有叶片！
+chat.turbine.error.no_identifier=腔室未设置标识符！
+chat.turbine.error.not_aligned=组件未与转轴对齐！
+chat.turbine.error.open_end=每个腔室的两端都必须是分离器！
+chat.turbine.error.size_mismatch=每种蒸汽只能使用相同尺寸的组件！
+chat.turbine.error.too_long=我觉得你该去找医生看看你为什么把涡轮做这么长。
 
 # 加载和保存魔杖
 item.wand_leaf.name=保存魔杖
@@ -234,9 +279,9 @@ item.wand_l.name=加载魔杖
 
 # 电梯相关方块
 tile.elevator_buffer.name=电梯缓冲器
-tile.elevator_s6floor.name=S6系列地板
+tile.elevator_s6floor.name=S6系列电梯口
 tile.elevator_shaft.name=电梯井
-tile.elevator_skyliftfloor.name=天梯地板
+tile.elevator_skyliftfloor.name=电梯口
 tile.elevator_pulley.name=电梯滑轮
 
 # 高压锅炉
@@ -270,7 +315,6 @@ tile.slop_reactor_casing.name=现代模组中的"平均核反应堆"外壳
 tile.slop_reactor_glass.name=现代模组中的"平均核反应堆"玻璃
 
 # 流体相关
-hbmfluid.pyrogel=热凝胶
 
 item.ams_focus_blank.name=空白稳定器焦点
 item.ams_focus_booster.name=增压稳定器焦点
@@ -289,6 +333,11 @@ item.billet_kys.name=Kysmium-3000坯料
 
 item.detonator_laser.desc2=也可在多人游戏中用于指示目标
 
+item.dna_canid.name=犬科DNA
+item.dna_eevee.name=伊布DNA
+item.dna_felid.name=猫科DNA
+item.door_fuckoff.name=粉色门
+
 item.ev_spawn.desc=放置在滑轮下方$用螺丝刀配置$用手钻分解
 item.ev_spawn.error.direction=错误: 电梯与滑轮角度不匹配！
 item.ev_spawn.error.pulley=错误: 找不到上方滑轮！
@@ -300,10 +349,13 @@ item.fix_survival.name=撒旦能量抑制器
 item.fuzzy_identifier.message=标识符设置为 %s
 item.fuzzy_identifier.name=模糊标识符
 
+item.grenade_filling.null.name=空手雷装药
+item.grenade_filling.sol.name=索利尼姆手雷装药
+
 item.ingot_francium.name=钫锭
 item.ingot_potassium.name=钾立方
 item.ingot_rubidium.name=铷锭
-item.ingot_xanaxium.name=扎纳西乌姆锭
+item.ingot_xanaxium.name=赞纳克西姆锭
 
 item.leafiarod=核燃料棒 "%s"
 item.leafiarod.decayheat=裂变产物衰变热: %s
@@ -342,7 +394,13 @@ item.missile_customnuke.desc=模块化导弹
 
 item.ntmfbottle.name=%s 瓶
 item.nugget_schraranium.name=Sa326粒
-item.powder_xanaxium.name=扎纳西乌姆粉
+
+item.particle_dineutron.name=双中子粒子胶囊
+
+item.powder_digammitite.name=Digammitite粉
+item.powder_digammitite_tiny.name=微量Digammitite粉
+item.powder_xanaxium.name=赞纳克西姆粉
+
 item.supercooler.name=超冷却单元
 item.wand_v.name=可视化魔杖
 item.waste_u238.name=增殖铀-238燃料
@@ -358,9 +416,17 @@ separator.u235=铀-235氟化
 subtitles.block.arc_welder=电焊机嗡鸣
 subtitles.block.arc_welder_start=电焊机启动
 subtitles.block.arc_welder_stop=电焊机停止
+subtitles.block.az5=AZ-5启动
 subtitles.block.dfc.energyburst=DFC能量爆发
 subtitles.block.dfc.ignite=DFC点燃
+subtitles.block.laser.activate=激光启动
+subtitles.block.laser.deactivate=激光停止
+subtitles.block.reactor_door_close=反应堆门关闭
+subtitles.block.reactor_door_handle=反应堆门手轮旋转
+subtitles.block.reactor_door_open=反应堆门打开
 subtitles.block.soldering=焊接台运作
+subtitles.ccp.sbwallbutton=按钮被按下
+subtitles.ccp.sbwallswitch=开关被拨动
 subtitles.weapon.nuke=核爆炸
 subtitles.weapon.nuke_d=远处的核爆炸
 subtitles.weapon.nuke_folkvangr=Fölkvangr力场出现
@@ -376,6 +442,8 @@ tile.amat_duct.warn=网络电力不会保存！$ 请始终保持充能器带电�
 tile.ams_base.name=AMS基座
 tile.ams_emitter.name=AMS发射极
 tile.ams_limiter.name=AMS稳能器
+tile.amsp_analyzer.name=反质量光谱分析仪
+tile.amsp_receiver.name=反质量光谱仪接收器
 
 tile.ash_balefire.name=热核灰烬
 tile.baleonite_0.name= Baleonite
@@ -386,7 +454,12 @@ tile.baleonite_4.name=地狱Baleonite
 tile.baleonite_5.name=Baleonite-核素
 
 tile.block_welded_osmiridium.name=焊接锇铱合金块
-tile.block_xanaxium.name=刻蚀扎纳西乌姆的焊接锇铱合金块
+tile.block_xanaxium.name=刻蚀赞纳克西姆的焊接锇铱合金块
+
+tile.brick_concrete_dark.broken.name=碎裂的深色混凝土砖
+tile.brick_concrete_dark.cracked.name=裂开的深色混凝土砖
+tile.brick_concrete_dark.mossy.name=苔藓覆盖的深色混凝土砖
+tile.brick_concrete_dark.normal.name=深色混凝土砖
 
 tile.broof.name=变异草
 
@@ -396,8 +469,18 @@ tile.coolant_heatex.name=冷却液热交换器
 
 tile.crate_tungsten.desc=用于DFC箱子配方，不提供额外槽位
 
+tile.deco_turbine.name=模块化涡轮装饰方块
 tile.dfc_cemitter.name=创造模式DFC发射器
 tile.dfc_emitter.name=DFC发射器
+tile.dfc_pulser.name=DFC脉冲起爆器
+tile.dfc_pulser.gui.radius=半径: %s
+tile.dfc_pulser.gui.radius.minimal=最小
+tile.dfc_pulser.gui.status.code=输入代码: %s
+tile.dfc_pulser.gui.status.connect=无法连接到核心
+tile.dfc_pulser.gui.status.new=输入新代码: %s
+tile.dfc_pulser.gui.switch1.off=关闭
+tile.dfc_pulser.gui.switch1.on=启动
+tile.dfc_pulser.gui.switch2=起爆
 tile.dfc_receiver.name=DFC接收器
 tile.dfc_reinforced.name=DFC强化接收器
 tile.dfc_stabilizer.desc=连接建立时也会获取核心状态
@@ -430,6 +513,7 @@ tile.ff_pump.buffer=缓冲: %s
 tile.ff_tank.name=特殊储罐
 
 tile.fluid_duct_gauge.name=流体流量计方块
+tile.fluid_duct_gauge_mdl.desc=使用螺丝刀更改显示最大值
 tile.fluid_duct_gauge_mdl.name=流体流量计
 tile.fluid_duct_valve_mdl.name=流体阀
 tile.fluid_duct_valve_mdl_rs.name=红石流体阀
@@ -455,7 +539,7 @@ tile.lwr_channel.name=压水堆冷却通道
 tile.lwr_conductor.desc=利用燃料热量加热冷却液$ 离燃料棒越近，效果越好。$ 使用加热的冷却液将水煮沸成蒸汽$ 仅适用于"冷却液"！$ 放置位置: 靠近燃料棒$§c沸水堆..?§r
 tile.lwr_conductor.name=压水堆集成锅炉
 
-tile.lwr_control.desc=以可控方式限制中子通过$ 放置位置: 中子路径（基本在燃料棒之间）
+tile.lwr_control.desc=以可控方式限制中子通过$ 放置位置: 中子路径(基本在燃料棒之间)
 tile.lwr_control.name=压水堆控制棒
 tile.lwr_control.overlay.desc1=用螺丝刀升起棒$ 副手使用降低棒
 tile.lwr_control.overlay.desc2=用命名牌标记棒以进行分组控制
@@ -476,9 +560,9 @@ tile.lwr_heatsink.name=压水堆散热器
 tile.lwr_inserter.desc=§m将有效的核燃料插入任何已插入的空核燃料组件$§m无法过滤$ 目前无法工作！
 tile.lwr_inserter.name=压水堆燃料插入器
 
-tile.lwr_occs_in.desc=压水堆OCCS（离线堆芯冷却系统）的一部分$ 每个燃料组件需要3000mB/秒的水
+tile.lwr_occs_in.desc=压水堆OCCS(离线堆芯冷却系统)的一部分$ 每个燃料组件需要3000mB/秒的水
 tile.lwr_occs_in.name=压水堆OCCS入口
-tile.lwr_occs_out.desc=压水堆OCCS（离线堆芯冷却系统）的一部分$ 输出水或低压蒸汽
+tile.lwr_occs_out.desc=压水堆OCCS(离线堆芯冷却系统)的一部分$ 输出水或低压蒸汽
 tile.lwr_occs_out.name=压水堆OCCS出口
 
 tile.lwr_port.desc=允许物品和流体IO$ 放置位置: 外壳
@@ -521,6 +605,64 @@ tile.meteor_diverter.placer=放置者: %s
 
 tile.mixingvat.name=混合桶
 
+# 模块化涡轮方块
+tile.modular_turbine_2x2_blades.name=模块化涡轮 2x2 叶片
+tile.modular_turbine_2x2_blades_glass.name=模块化涡轮 2x2 叶片(窗)
+tile.modular_turbine_2x2_blades_glass_smooth.name=模块化涡轮 2x2 叶片(窗，光滑)
+tile.modular_turbine_2x2_blades_smooth.name=模块化涡轮 2x2 叶片(光滑)
+tile.modular_turbine_2x2_flywheel.name=模块化涡轮 2x3 飞轮
+tile.modular_turbine_3x3_blades.name=模块化涡轮 3x3 叶片
+tile.modular_turbine_3x3_blades_glass.name=模块化涡轮 3x3 叶片(窗)
+tile.modular_turbine_3x3_blades_glass_smooth.name=模块化涡轮 3x3 叶片(窗，光滑)
+tile.modular_turbine_3x3_blades_smooth.name=模块化涡轮 3x3 叶片(光滑)
+tile.modular_turbine_3x3_flywheel.name=模块化涡轮 3x3 飞轮
+tile.modular_turbine_3x3_generator.name=模块化涡轮 3x3 发电机
+tile.modular_turbine_3x3_port_inline.name=模块化涡轮 3x3 蒸汽端口(直连)
+tile.modular_turbine_3x3_port_side.name=模块化涡轮 3x3 蒸汽端口(侧)
+tile.modular_turbine_3x3_port_top.name=模块化涡轮 3x3 蒸汽端口(顶)
+tile.modular_turbine_3x3_separator.name=模块化涡轮 3x3 分离器
+tile.modular_turbine_5x5_blades.name=模块化涡轮 5x5 叶片
+tile.modular_turbine_5x5_blades_glass.name=模块化涡轮 5x5 叶片(窗)
+tile.modular_turbine_5x5_blades_glass_smooth.name=模块化涡轮 5x5 叶片(窗，光滑)
+tile.modular_turbine_5x5_blades_smooth.name=模块化涡轮 5x5 叶片(光滑)
+tile.modular_turbine_5x5_flywheel.name=模块化涡轮 5x5 飞轮
+tile.modular_turbine_5x5_port_inline.name=模块化涡轮 5x5 蒸汽端口(直连)
+tile.modular_turbine_5x5_port_side.name=模块化涡轮 5x5 蒸汽端口(侧)
+tile.modular_turbine_5x5_port_top.name=模块化涡轮 5x5 蒸汽端口(顶)
+tile.modular_turbine_5x5_separator.name=模块化涡轮 5x5 分离器
+tile.modular_turbine_7x7_blades.name=模块化涡轮 7x7 叶片
+tile.modular_turbine_7x7_blades_glass.name=模块化涡轮 7x7 叶片(窗)
+tile.modular_turbine_7x7_blades_glass_smooth.name=模块化涡轮 7x7 叶片(窗，光滑)
+tile.modular_turbine_7x7_blades_smooth.name=模块化涡轮 7x7 叶片(光滑)
+tile.modular_turbine_7x7_flywheel.name=模块化涡轮 7x7 飞轮
+tile.modular_turbine_7x7_port_inline.name=模块化涡轮 7x7 蒸汽端口(直连)
+tile.modular_turbine_7x7_port_side.name=模块化涡轮 7x7 蒸汽端口(侧)
+tile.modular_turbine_7x7_port_top.name=模块化涡轮 7x7 蒸汽端口(顶)
+tile.modular_turbine_7x7_separator.name=模块化涡轮 7x7 分离器
+tile.modular_turbine_9x9_blades.name=模块化涡轮 9x9 叶片
+tile.modular_turbine_9x9_blades_glass.name=模块化涡轮 9x9 叶片(窗)
+tile.modular_turbine_9x9_blades_glass_smooth.name=模块化涡轮 9x9 叶片(窗，光滑)
+tile.modular_turbine_9x9_blades_smooth.name=模块化涡轮 9x9 叶片(光滑)
+tile.modular_turbine_9x9_flywheel.name=模块化涡轮 9x9 飞轮
+tile.modular_turbine_9x9_port_inline.name=模块化涡轮 9x9 蒸汽端口(直连)
+tile.modular_turbine_9x9_port_side.name=模块化涡轮 9x9 蒸汽端口(侧)
+tile.modular_turbine_9x9_port_top.name=模块化涡轮 9x9 蒸汽端口(顶)
+tile.modular_turbine_9x9_separator.name=模块化涡轮 9x9 分离器
+tile.modular_turbine_core.name=模块化涡轮核心
+tile.modular_turbine_port.name=模块化涡轮电力端口
+tile.modular_turbine_shaft.name=模块化涡轮转轴
+
+tile.nuke_chud.name=肥佬
+
+tile.reactor_door.name=反应堆门
+tile.reactor_door.paint=主手持螺丝刀$副手任意方块$进行涂装
+
+tile.scorched_earth.name=焦土草方块
+
+tile.wind_turbine.obstructed=! ! ! 被阻挡 ! ! !
+tile.wind_turbine_medium.name=中型风力涡轮
+tile.wind_turbine_medium.desc=需要至少2个区块的间距$需要引擎润滑油以获得最佳发电效率
+
 tile.msr_arbitrary.desc=LFTR任意方块: 它转移流体，$可以用你喜欢的方块定制$与石墨块、PWR中子反射器或任何辐射屏蔽块一起使用$ 放置位置: 任意
 tile.msr_arbitrary.name=液态氟化物钍反应堆任意方块
 tile.msr_ejector.desc=从LFTR排出燃料
@@ -541,7 +683,7 @@ tile.msr_control.name=液态氟化物钍反应堆控制棒
 tile.msr_control_extension.desc=LFTR控制棒管道$ 堆叠以获得更长长度$ 放置位置: 控制棒上的箭头后方
 tile.msr_control_extension.name=液态氟化物钍反应堆控制棒延伸段
 
-tile.msr_element.desc=从所有6个方向和12个额外位置反应$（3x3立方体不包括角落）$ 转移流体$ 如果内容达到6000°C则销毁$ 放置位置: 任意$$12位置可视化:$  X$X  X$  X$适用于所有侧面
+tile.msr_element.desc=从所有6个方向和12个额外位置反应$(3x3立方体不包括角落)$ 转移流体$ 如果内容达到6000°C则销毁$ 放置位置: 任意$$12位置可视化:$  X$X  X$  X$适用于所有侧面
 tile.msr_element.name=液态氟化物钍反应堆反应室
 tile.msr_element.restriction=限制: %s%%
 
