@@ -90,6 +90,8 @@ public class StructuralIntegrityHandler {
 				return 22;
 			if (state.getBlock() instanceof MachineMiningLaser)
 				return 22;
+			if (state.getBlock() instanceof MachineChungus)
+				return 22;
 			return 0;
 		}
 		if (state.getBlock() == ModBlocks.dfc_core)

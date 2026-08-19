@@ -24,11 +24,15 @@ import com.leafia.contents.machines.misc.modular_turbine.core.MTCoreBlock.Turbin
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.DigammaBackstabPacket;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.ForceSchizoPacket;
+import com.leafia.database.ImpactSeismic;
+import com.leafia.database.ImpactSeismic.TomImpactCollapsePacket;
 import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityMeteor.MeteorSyncPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShockPacket;
+import com.leafia.passive.LeafiaPassiveServer;
+import com.leafia.passive.LeafiaPassiveServer.WorldGlobalSyncPacket;
 import com.leafia.passive.Wind.WindSyncPacket;
 import com.leafia.savedata.FalloutSavedData;
 import com.leafia.savedata.FalloutSavedData.FalloutSyncPacket;
@@ -84,6 +88,8 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		EV_RADIO_UI(new EvRadioUIPacket()),
 		EV_RADIO_REQUEST(new EvRadioSyncRequestPacket()),
 		FORCE_SCHIZO(new ForceSchizoPacket()),
+		WORLD_GLOBAL_SYNC(new WorldGlobalSyncPacket()),
+		IMPACT_COLLAPSE(new TomImpactCollapsePacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }

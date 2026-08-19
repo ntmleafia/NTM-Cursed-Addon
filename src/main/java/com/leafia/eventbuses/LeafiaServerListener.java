@@ -5,6 +5,7 @@ import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
 import com.hbm.hazard.HazardEntry;
 import com.hbm.hazard.HazardSystem;
 import com.hbm.lib.HBMSoundHandler;
+import com.hbm.saveddata.TomSaveData;
 import com.hbm.util.ContaminationUtil;
 import com.hbm.util.ContaminationUtil.ContaminationType;
 import com.hbm.util.ContaminationUtil.HazardType;
@@ -21,6 +22,7 @@ import com.leafia.init.LeafiaDamageSource;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.hazards.types.HazardTypeSharpEdges;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityItem;
+import com.leafia.overwrite_contents.interfaces.IMixinTomSaveData;
 import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.savedata.PlayerDeathsSavedData;
 import com.leafia.unsorted.IEntityCustomCollision;
@@ -53,11 +55,13 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -66,6 +70,24 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class LeafiaServerListener {
+	public static class Tom {
+		@SubscribeEvent
+		public void worldTick(TickEvent.WorldTickEvent event) {
+			if (event.world == null || event.world.isRemote || event.phase != TickEvent.Phase.START) {
+				return;
+			}
+			float settle = 1F / 9600000F;  // 400 days to end shaking
+			TomSaveData data = TomSaveData.forWorld(event.world);
+			IMixinTomSaveData mixin = (IMixinTomSaveData)data;
+			if(data.fire > 0) {
+				mixin.leafia$setSeismic(1);
+				data.markDirty();
+			} else {
+				mixin.leafia$setSeismic(Math.max(0,mixin.leafia$getSeismic()-settle));
+				data.markDirty();
+			}
+		}
+	}
 	public static class HandlerServer {
 		@SubscribeEvent
 		public void onPlayerLogin(PlayerLoggedInEvent evt) {
@@ -193,6 +215,16 @@ public class LeafiaServerListener {
 						}
 					}
 				}
+			}
+		}
+		@SubscribeEvent
+		public void onBlockPlaced(EntityPlaceEvent evt) {
+			TomSaveData data = TomSaveData.forWorld(evt.getWorld());
+			IMixinTomSaveData mixin = (IMixinTomSaveData)data;
+			if (mixin.leafia$getSeismic() > 0) {
+				evt.getWorld().getMinecraftServer().addScheduledTask(()->
+						StructuralIntegrityHandler.handleBlock(evt.getWorld(),evt.getPos())
+				);
 			}
 		}
 		@SubscribeEvent

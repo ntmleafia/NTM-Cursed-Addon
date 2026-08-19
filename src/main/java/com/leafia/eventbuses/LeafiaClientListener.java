@@ -10,11 +10,11 @@ import com.hbm.capability.HbmLivingProps;
 import com.hbm.config.ClientConfig;
 import com.hbm.config.GeneralConfig;
 import com.hbm.config.MobConfig;
+import com.hbm.handler.ImpactWorldHandler;
 import com.hbm.interfaces.IHasCustomModel;
 import com.hbm.inventory.control_panel.IControllable;
 import com.hbm.items.IDynamicModels;
 import com.hbm.items.ModItems;
-import com.hbm.lib.ModDamageSource;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.GuiCTMWarning;
 import com.custom_hbm.util.LCETuple.*;
@@ -39,6 +39,7 @@ import com.leafia.contents.network.pipe_amat.AmatDuctStandard;
 import com.leafia.contents.worldgen.AddonBiome;
 import com.leafia.contents.worldgen.AddonBiomes;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
+import com.leafia.database.ImpactSeismic;
 import com.leafia.dev.LeafiaBrush;
 import com.leafia.dev.LeafiaBrush.BrushMode;
 import com.leafia.dev.LeafiaUtil;
@@ -62,7 +63,6 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -75,11 +75,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
@@ -99,7 +97,6 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -116,6 +113,76 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
 public class LeafiaClientListener {
+	public static class Tom {
+		static float shakeX = 0;
+		static float shakeY = 0;
+		public static int dustDisplayTicks = 0;
+		static Random rand = new Random();
+		public static float fovM = 1.0F;
+		public static void localTick() {
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			//RadiationSavedData data = RadiationSavedData.getData(player.world);
+			//if (data.isSealed(player.getPosition(),true))
+			if (ImpactWorldHandler.dust > 0 && player.world.canSeeSky(new BlockPos(player.posX,player.posY+player.getEyeHeight(),player.posZ)))
+				dustDisplayTicks = MathHelper.clamp(dustDisplayTicks+1,0,30);
+			else
+				dustDisplayTicks = MathHelper.clamp(dustDisplayTicks-1,0,30);
+			if (ImpactSeismic.seismic > 0 && player.onGround) {
+				float mul = 1f;//dustDisplayTicks/30f*0.9f+0.1f;
+				fovM = 1.0F - (rand.nextInt(2) * 0.02F)*mul;
+				shakeX = (rand.nextFloat()-0.5F)*mul;
+				shakeY = (rand.nextFloat()-0.5F)*mul;
+			} else {
+				fovM = 1.0F;
+				shakeX = 0F;
+				shakeY = 0F;
+			}
+		}
+		public static void shakeCam() {
+			LeafiaGls.translate(shakeX*0.05F,shakeY*0.005F,0);
+		}
+		static void drawDust(double time,Gui gui,ScaledResolution resolution,double speed) {
+			speed = speed/60;
+			gui.drawTexturedModalRect(0, 0, (int)Math.floorMod((long)(time*60*speed),256), -(int)Math.floorMod((long)(time*40*speed),256), resolution.getScaledWidth(), resolution.getScaledHeight());
+		}
+		private static final ResourceLocation dust = new ResourceLocation("leafia","textures/dust.png");
+		private static final ResourceLocation dust2 = new ResourceLocation("leafia","textures/dust2.png");
+		public static void renderTomDust(ScaledResolution resolution, Gui gui) {
+			float intensity = ImpactWorldHandler.dust*(dustDisplayTicks/30f);
+			if (intensity > 0) {
+				LeafiaGls.pushMatrix();
+				GlStateManager.disableDepth();
+				GlStateManager.depthMask(false);
+				GlStateManager.enableBlend();
+				GlStateManager.disableAlpha();
+				GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+				double time = Math.floorMod(System.currentTimeMillis(), 2147483647) / 1e+3;
+
+				GlStateManager.color(0.75f, 0.75f, 0.75f, 0.9f * intensity);
+				Minecraft.getMinecraft().renderEngine.bindTexture(dust2);
+				drawDust(time, gui, resolution, 30);
+				GlStateManager.color(0.75f, 0.75f, 0.75f, 0.6f * intensity);
+				Minecraft.getMinecraft().renderEngine.bindTexture(dust);
+				drawDust(time, gui, resolution, 100);
+				GlStateManager.color(1, 1, 1, 0.5f * intensity);
+				Minecraft.getMinecraft().renderEngine.bindTexture(dust2);
+				drawDust(time, gui, resolution, 60);
+				GlStateManager.color(1, 1, 1, 0.2f * intensity);
+				Minecraft.getMinecraft().renderEngine.bindTexture(dust);
+				drawDust(time, gui, resolution, 150);
+
+				GlStateManager.enableAlpha();
+				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				GlStateManager.color(1, 1, 1, 1);
+
+				GlStateManager.enableDepth();
+				GlStateManager.depthMask(true);
+
+				LeafiaGls.popMatrix();
+				Minecraft.getMinecraft().renderEngine.bindTexture(Gui.ICONS);
+			}
+		}
+	}
 	public static class Digamma {
 		public static MusicTicker.MusicType silence;
 		public static void backstab(EntityPlayer player) {
@@ -388,9 +455,12 @@ public class LeafiaClientListener {
 					end += delta*entry.getValue();
 				}
 			}
-			//density = (float)Math.max(Math.pow(IdkWhereThisShitBelongs.darkness*(IdkWhereThisShitBelongs.dustDisplayTicks/30f),0.1)*4,density);
+			float tomfog = (float)(1-Math.pow(ImpactWorldHandler.dust*(Tom.dustDisplayTicks/30f),0.1));
+			density = Math.max((1-tomfog)*4,density);
+			start *= (tomfog*0.75f+0.25f);
+			end *= (tomfog*0.5f+0.5f);
 			if (density != ogDensity)
-				LeafiaGls.setFogDensity(start);
+				LeafiaGls.setFogDensity(density);
 			if (start != ogStart)
 				LeafiaGls.setFogStart(start);
 			if (end != ogEnd)
@@ -413,9 +483,9 @@ public class LeafiaClientListener {
 				col = col.add(add.scale(alpha));
 			}
 
-			event.setRed((float) MathHelper.clamp(col.x/*+(1-IdkWhereThisShitBelongs.darkness)*IdkWhereThisShitBelongs.infernal*0.7/1.5*/,0,1));
-			event.setGreen((float)MathHelper.clamp(col.y/*+(1-IdkWhereThisShitBelongs.darkness)*IdkWhereThisShitBelongs.infernal*0.4/1.5*/,0,1));
-			event.setBlue((float)MathHelper.clamp(col.z/*+(1-IdkWhereThisShitBelongs.darkness)*IdkWhereThisShitBelongs.infernal*0.1/1.5*/,0,1));
+			event.setRed((float) MathHelper.clamp(col.x+(1-ImpactWorldHandler.dust)*ImpactWorldHandler.fire*0.7/1.5,0,1));
+			event.setGreen((float)MathHelper.clamp(col.y+(1-ImpactWorldHandler.dust)*ImpactWorldHandler.fire*0.4/1.5,0,1));
+			event.setBlue((float)MathHelper.clamp(col.z+(1-ImpactWorldHandler.dust)*ImpactWorldHandler.fire*0.1/1.5,0,1));
 
 			//event.setRed((float)inMaterialColor.x);
 			//event.setGreen((float)inMaterialColor.y);
@@ -584,7 +654,7 @@ public class LeafiaClientListener {
 				LeafiaGls.color(1,1,1);
 			}
 			AddonRainRender.INSTANCE.render(evt.getPartialTicks());
-			if (StructuralIntegrityHandler.AUTOMATIC) {
+			if (StructuralIntegrityHandler.AUTOMATIC || ImpactSeismic.seismic > 0) {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				ItemStack stack = player.getHeldItemMainhand();
 				if (stack.getItem() instanceof ItemBlock ib) {
@@ -646,6 +716,7 @@ public class LeafiaClientListener {
 		public void onOverlayRenderPost(RenderGameOverlayEvent.Post evt) {
 			if(evt.getType() == ElementType.ALL) {
 				ScaledResolution resolution = evt.getResolution();
+				Tom.renderTomDust(resolution,Minecraft.getMinecraft().ingameGUI);
 				if (staticTicks > 0) {
 					Minecraft.getMinecraft().renderEngine.bindTexture(noise);
 					LeafiaBrush brush = LeafiaBrush.instance;
@@ -915,8 +986,8 @@ public class LeafiaClientListener {
 			if (viewADS != 0)
 				multiplier *= Math.abs(viewADS);
 			//multiplier *= IdkWhereThisShitBelongs.fovM;
+			multiplier *= Tom.fovM;
 			float fovMultiplier = 1-Digamma.digammaDose*0.21428571428f;
-
 			e.setNewfov(e.getNewfov()*multiplier*fovMultiplier);
 		}
 
@@ -1053,6 +1124,7 @@ public class LeafiaClientListener {
 						}
 					}
 					LeafiaShakecam.localTick();
+					Tom.localTick();
 					//IdkWhereThisShitBelongs.localTick();
 					EntityNukeFolkvangr.FolkvangrVacuumPacket.Handler.localTick();
 					for (String s : shaderGroups.keySet()) {
@@ -1062,7 +1134,7 @@ public class LeafiaClientListener {
 								shader.accessor.get("intensity").set(Digamma.digammaDose);
 								break;
 							case "tom":
-								//shader.accessor.get("intensity").set((float)(IdkWhereThisShitBelongs.darkness)*(IdkWhereThisShitBelongs.dustDisplayTicks/30f)/2f);
+								shader.accessor.get("intensity").set(ImpactWorldHandler.dust*(Tom.dustDisplayTicks/30f)/2f);
 								break;
 							case "nuclear":
 								shader.accessor.get("blur").set(LeafiaShakecam.blurSum);
@@ -1076,6 +1148,7 @@ public class LeafiaClientListener {
 		@SubscribeEvent
 		public void cameraSetup(EntityViewRenderEvent.CameraSetup e){
 			//IdkWhereThisShitBelongs.shakeCam();
+			Tom.shakeCam();
 			LeafiaShakecam.shakeCam();
 		}
         @SubscribeEvent

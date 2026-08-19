@@ -1,20 +1,32 @@
 package com.leafia.passive;
 
 import com.hbm.inventory.control_panel.nodes.Node;
+import com.hbm.saveddata.TomSaveData;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
+import com.leafia.database.ImpactSeismic;
 import com.leafia.dev.LeafiaDebug.Tracker;
+import com.leafia.dev.custompacket.LeafiaCustomPacket;
+import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
+import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.eventbuses.LeafiaServerListener.Unsorted;
+import com.leafia.overwrite_contents.interfaces.IMixinTomSaveData;
 import com.leafia.savedata.FalloutSavedData;
 import com.leafia.unsorted.StructuralIntegrityHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 public class LeafiaPassiveServer {
 	/// NOTE TO MY DUMBASS: basically ArrayList but thread safe
@@ -55,6 +67,30 @@ public class LeafiaPassiveServer {
 		FalloutSavedData.forWorld(world).tick();
 		Tracker.preTick(world);
 		Wind.updateWorld(world);
+
+		WorldGlobalSyncPacket sync = new WorldGlobalSyncPacket();
+		sync.world = world;
+		LeafiaCustomPacket.__start(sync).__sendToAllInDimension(world.provider.getDimension());
+	}
+	public static class WorldGlobalSyncPacket implements LeafiaCustomPacketEncoder {
+		public World world;
+		@Override
+		public void encode(LeafiaBuf buf) {
+			TomSaveData data = TomSaveData.forWorld(world);
+			buf.writeFloat(((IMixinTomSaveData)data).leafia$getSeismic());
+		}
+		@SideOnly(Side.CLIENT)
+		public void run(LeafiaBuf buf) {
+			World world = Minecraft.getMinecraft().world;
+			ImpactSeismic.seismic = buf.readFloat();
+		}
+		@Override
+		public @Nullable Consumer<MessageContext> decode(LeafiaBuf buf) {
+			return (ctx)->{
+				if (ctx.side == Side.CLIENT)
+					run(buf);
+			};
+		}
 	}
 	public static void queueFunction(Runnable callback) {
 		queue.add(callback);

@@ -122,6 +122,10 @@ public class IC10 {
 					return true;
 			}
 		}
+		if (a instanceof Number numA && b instanceof Number numB) {
+			if (numA.doubleValue() == numB.doubleValue())
+				return true;
+		}
 		return a.equals(b);
 	}
 	@Nullable static Double tonumberd(String s) {
@@ -146,6 +150,16 @@ public class IC10 {
 							env.setRegister((int)args[0],value);
 						},
 						"Register = value of key in Input"
+				),
+				"ln",make(
+						args("register",REGISTER,"key",STRING),
+						(env,args)->{
+							String value = env.input((String)args[1]);
+							Double num = tonumberd(value);
+							env.setRegister((int)args[0],num != null ? num : -1D);
+						},
+						"Register = value of key in Input as a number",
+						"-1 if invalid"
 				),
 				"s",make(
 						args("key",STRING,"a",STRING),

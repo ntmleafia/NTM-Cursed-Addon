@@ -38,6 +38,7 @@ import com.leafia.contents.debug.ff_test.tank.DebugTankBlock;
 import com.leafia.contents.debug.fluid_voider.VoiderBlock;
 import com.leafia.contents.debug.rbmk_jet.DebugRBMKJetEmitter;
 import com.leafia.contents.debug.render_test.DebugRenderTestBlock;
+import com.leafia.contents.debug.tom_test.TomTest;
 import com.leafia.contents.fluids.BaleCoriumFluid;
 import com.leafia.contents.fluids.BaleCoriumFluid.BaleCoriumFluidBlock;
 import com.leafia.contents.fluids.ConcreteFluid;
@@ -331,6 +332,7 @@ public class AddonBlocks {
 		public static final Block blackhole = new DebugBHBlock(Material.ANVIL,"test_blackhole_render");
 		public static final Block voider = new VoiderBlock(Material.ANVIL,"test_fluid_voider");
 		public static final Block render = new DebugRenderTestBlock(Material.ANVIL,"test_render");
+		public static final Block tom = new TomTest(Material.ANVIL,"test_tom");
 	}
 
 	public static final Block salt_separator = new SaltSeparatorBlock(Material.IRON,"salt_separator").setHardness(5.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
