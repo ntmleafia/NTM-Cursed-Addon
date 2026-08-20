@@ -14,6 +14,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,6 +31,7 @@ public class MixinWeaponSpecial {
 		if (world.getBlockState(pos).getBlock() instanceof BlockControlPanel)
 			LeafiaCustomPacket.__start(new ForceSchizoPacket()).__sendToClient(player);
 	}
+	@SideOnly(Side.CLIENT)
 	@Inject(method = "addInformation",at = @At("HEAD"),require = 1)
 	public void leafia$onAddInformation(ItemStack stack,World worldIn,List<String> list,ITooltipFlag flagIn,CallbackInfo ci) {
 		if (stack.getItem() == ModItems.shimmer_sledge)

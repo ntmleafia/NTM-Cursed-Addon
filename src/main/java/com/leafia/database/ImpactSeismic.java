@@ -17,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -106,6 +108,32 @@ public class ImpactSeismic {
 			buf.writeInt(y1);
 			buf.writeInt(z);
 		}
+		@SideOnly(Side.CLIENT)
+		public void execute(int x,int y0,int y1,int z) {
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				BlockPos pos = new BlockPos(x,y1,z);
+				World world = Minecraft.getMinecraft().world;
+				IBlockState state = world.getBlockState(pos);
+				if (world.isAirBlock(pos)) {
+					BlockPos pos0 = new BlockPos(x,y0,z);
+					if (!world.isAirBlock(pos0))
+						state = world.getBlockState(pos0);
+				}
+				for (int i = 1; i <= (y0-y1); i++) {
+					for (int j2 = 0; j2 < 3; ++j2) {
+						for (int k2 = 0; k2 < 3; ++k2) {
+							for (int l2 = 0; l2 < 3; ++l2) {
+								double d0 = ((double) j2 + 0.5D) / 3.0D;
+								double d1 = ((double) k2 + 0.5D) / 3.0D;
+								double d2 = ((double) l2 + 0.5D) / 3.0D;
+								world.spawnParticle(EnumParticleTypes.BLOCK_DUST,pos.getX()+d0,pos.getY()+i+d1,pos.getZ()+d2,(d0-0.5)/i,d1-0.75,(d2-0.5)/i,Block.getStateId(state));
+							}
+						}
+					}
+				}
+				//Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(pos.up(i),state);
+			});
+		}
 		@Override
 		public @Nullable Consumer<MessageContext> decode(LeafiaBuf buf) {
 			int x = buf.readInt();
@@ -113,29 +141,8 @@ public class ImpactSeismic {
 			int y1 = buf.readInt();
 			int z = buf.readInt();
 			return (ctx)->{
-				Minecraft.getMinecraft().addScheduledTask(() -> {
-					BlockPos pos = new BlockPos(x,y1,z);
-					World world = Minecraft.getMinecraft().world;
-					IBlockState state = world.getBlockState(pos);
-					if (world.isAirBlock(pos)) {
-						BlockPos pos0 = new BlockPos(x,y0,z);
-						if (!world.isAirBlock(pos0))
-							state = world.getBlockState(pos0);
-					}
-					for (int i = 1; i <= (y0-y1); i++) {
-						for (int j2 = 0; j2 < 3; ++j2) {
-							for (int k2 = 0; k2 < 3; ++k2) {
-								for (int l2 = 0; l2 < 3; ++l2) {
-									double d0 = ((double) j2 + 0.5D) / 3.0D;
-									double d1 = ((double) k2 + 0.5D) / 3.0D;
-									double d2 = ((double) l2 + 0.5D) / 3.0D;
-									world.spawnParticle(EnumParticleTypes.BLOCK_DUST,pos.getX()+d0,pos.getY()+i+d1,pos.getZ()+d2,(d0-0.5)/i,d1-0.75,(d2-0.5)/i,Block.getStateId(state));
-								}
-							}
-						}
-					}
-					//Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(pos.up(i),state);
-				});
+				if (ctx.side == Side.CLIENT)
+					execute(x,y0,y1,z);
 			};
 		}
 	}
