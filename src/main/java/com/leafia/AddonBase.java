@@ -14,7 +14,7 @@ import com.leafia.contents.worldgen.AddonBiomes;
 import com.leafia.contents.worldgen.AddonBiomesGenerator;
 import com.leafia.contents.worldgen.AddonWorldGen;
 import com.leafia.contents.worldgen.NTMStructBuffer.StructLoader;
-import com.leafia.database.AirDetonationMissiles;
+import com.leafia.database.AirbustMissiles;
 import com.leafia.database.ReactorTiers;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.eventbuses.LeafiaClientListener;
@@ -43,10 +43,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
 		dependencies = "required-after:hbm@[2.5.0.4,);required:mixinbooter;after:ntmspace")
@@ -168,7 +164,7 @@ public class AddonBase {
 	public void init(FMLInitializationEvent event) {
 		AddonHazards.register();
 		AddonNodesRegister.register();
-		AirDetonationMissiles.init();
+		AirbustMissiles.init();
 		ReactorTiers.register();
 		AddonBiomes.init();
 	}

@@ -1,7 +1,7 @@
 package com.leafia.overwrite_contents.interfaces;
 
 import com.hbm.entity.missile.EntityMissileBaseNT;
-import com.leafia.database.AirDetonationMissiles;
+import com.leafia.database.AirbustMissiles;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 public interface IMixinEntityMissileBaseNT {
 	/// nuclear missiles should use this
 	default boolean shouldDetonateInAir() {
-		return AirDetonationMissiles.defaultAirDetonationMissiles.contains(((EntityMissileBaseNT)this).getMissileItemForInfo().getItem());
+		return AirbustMissiles.defaultAirDetonationMissiles.contains(((EntityMissileBaseNT)this).getMissileItemForInfo().getItem());
 	}
 	/**
 	 * usually shouldn't be overridden
