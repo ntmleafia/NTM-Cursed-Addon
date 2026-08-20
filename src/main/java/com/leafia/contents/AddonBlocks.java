@@ -6,6 +6,7 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.ModSoundType;
 import com.hbm.blocks.ModSoundTypes;
 import com.hbm.blocks.bomb.NukeMan;
+import com.hbm.blocks.generic.BlockHazard;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.block.BlockBakeFrame;
@@ -624,6 +625,7 @@ public class AddonBlocks {
 		ModBlocks.steel_scaffold.setResistance(30);
 		ModBlocks.steel_grate.setResistance(15);
 		ModBlocks.steel_grate_wide.setResistance(15);
+		((BlockHazard)ModBlocks.block_corium).addRad3d(0);
 
 		if (!AddonConfig.disableAddonPWR) {
 			ModBlocks.pwr_block.setCreativeTab(null);
