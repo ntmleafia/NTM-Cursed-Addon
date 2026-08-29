@@ -72,7 +72,10 @@ public class AMRifle extends ItemGunBaseNT implements ILockonWeapon {
 		getNBT(stack).setInteger("leafia_timer",0);
 
 		spawnBullet(world, () ->{
-			AMRifleBeam mk4 = new AMRifleBeam(entity,ILockonWeapon.getLoadedLockon(player),config,200,sideOffset,heightOffset,forwardOffset);
+			float dmg = 200;
+			if (XWeaponModManager.hasUpgrade(stack,0,XWeaponModManager.ID_LAS_SHOTGUN))
+				dmg /= 2;
+			AMRifleBeam mk4 = new AMRifleBeam(entity,ILockonWeapon.getLoadedLockon(player),config,dmg,sideOffset,heightOffset,forwardOffset);
 			world.spawnEntity(mk4);
 		});
 	}

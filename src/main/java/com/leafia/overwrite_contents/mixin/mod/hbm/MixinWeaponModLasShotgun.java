@@ -24,5 +24,9 @@ public abstract class MixinWeaponModLasShotgun extends WeaponModBase {
 			cir.setReturnValue(base);
 			cir.cancel();
 		}
+		if (gun.getItem() == Guns.am_rifle && Objects.equals(key, Receiver.F_BASEDAMAGE)) {
+			cir.setReturnValue(cast((Float)base/2,base));
+			cir.cancel();
+		}
 	}
 }
