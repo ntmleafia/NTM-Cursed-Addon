@@ -41,6 +41,7 @@ public class DiverterBlock extends AddonBlockBase implements ITileEntityProvider
 		super(Material.ROCK,s);
 		this.isOn = isOn;
 		this.setTranslationKey("meteor_diverter");
+		this.setHarvestLevel("pickaxe",0);
 	}
 
 	@Override

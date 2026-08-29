@@ -3,8 +3,8 @@ package com.custom_hbm.contents.torex;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IConstantRenderer;
 import com.hbm.items.ModItems;
-import com.hbm.packet.PacketDispatcher;
 import com.hbm.render.amlfrom1710.Vec3;
+import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.llib.exceptions.messages.TextWarningLeafia;
@@ -22,7 +22,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -205,12 +204,38 @@ public class LCETorex extends Entity implements IConstantRenderer {
 				//int toSpawn = //this is just stupid (int) (0.6 * Math.min(Math.max(0,maxCloudlets - cloudlets.size()),Math.ceil(10 * simSpeed * simSpeed * Math.min(1,1200 / (double) lifetime))));
 				boolean doSpawn = world.rand.nextInt(Math.max(0,(int)Math.floor(1/Math.max(simSpeed,0.001)-0.25))+1) == 0;
 				//for (int i = 0; i < toSpawn; i++) {
-				for (int i = 0; i < (doSpawn ? Math.ceil(simSpeed-0.1)*2 : 0); i++) {
-					double x = initPosX + rand.nextGaussian() * range;
-					double z = initPosZ + rand.nextGaussian() * range;
-					Cloudlet cloud = new Cloudlet(x,lastSpawnY,z,(float) (rand.nextDouble() * 2D * Math.PI),0,lifetime);
-					cloud.setScale((float) (Math.sqrt(s) * 3 + scaleCurrent * s),(float) (Math.sqrt(s) * 3 + scaleGrow * animationSpeedGeneral * cs * s),(float) (Math.sqrt(s) * 3 + scaleGrow * cs * s));
-					cloudlets.add(cloud);
+				for (int i = 0; i < (doSpawn ? Math.ceil(simSpeed-0.1)*2*(getType() == 3 ? 5 : 1) : 0); i++) {
+					if (getType() != 3) {
+						double x = initPosX + rand.nextGaussian() * range;
+						double z = initPosZ + rand.nextGaussian() * range;
+						Cloudlet cloud = new Cloudlet(x,lastSpawnY,z,(float) (rand.nextDouble() * 2D * Math.PI),0,lifetime);
+						cloud.setScale((float) (Math.sqrt(s) * 3 + scaleCurrent * s),(float) (Math.sqrt(s) * 3 + scaleGrow * animationSpeedGeneral * cs * s),(float) (Math.sqrt(s) * 3 + scaleGrow * cs * s));
+						cloudlets.add(cloud);
+					} else {
+						SequencedCloudlet cloud = new SequencedCloudlet(
+								rand.nextDouble()*Math.PI*2,
+								initPosX,initPosY,initPosZ,
+								(float) (rand.nextDouble() * 2D * Math.PI),0,(int)((3.14*2)/4*20*4)
+						);
+						cloud.setScale((float) (Math.sqrt(s) * 3 + scaleCurrent * s)/2,(float) (Math.sqrt(s) * 3 + scaleGrow * animationSpeedGeneral * cs * s)/2,(float) (Math.sqrt(s) * 3 + scaleGrow * cs * s)/2);
+						cloud.type = TorexType.ENDOTHERMIC;
+						cloud.param0 = rand.nextDouble()+0.75;
+						cloudlets.add(cloud);
+					}
+				}
+				if (getType() == 3) {
+					for (int i = 0; i < (doSpawn ? Math.ceil(simSpeed-0.1)*2*6 : 0); i++) {
+						SequencedCloudlet cloud = new SequencedCloudlet(
+								rand.nextDouble()*Math.PI*2,
+								initPosX,initPosY,initPosZ,
+								(float) (rand.nextDouble() * 2D * Math.PI),0,(int)((Math.sqrt(s) * 3 + scaleCurrent * s)*15+25)
+						);
+						cloud.setScale((float) (Math.sqrt(s) * 3 + scaleCurrent * s),0);
+						cloud.type = TorexType.ENDOTHERMIC_PILLAR;
+						cloud.param0 = rand.nextDouble()*0.15+0.6;
+						cloud.param1 = rand.nextDouble()*0.75+0.5;
+						cloudlets.add(cloud);
+					}
 				}
 				//if (toSpawn <= 0) {
 				/*
@@ -244,7 +269,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 				}
 
 				// spawn ring clouds
-				if (this.ticksExisted < 200) {
+				if (this.ticksExisted < 200 && getType() != 3) {
 					lifetime *= s;
 					for (int i = 0; i < 2; i++) {
 						Cloudlet cloud = new Cloudlet(initPosX,initPosY + coreHeight,initPosZ,(float) (rand.nextDouble() * 2D * Math.PI),0,lifetime,TorexType.RING);
@@ -266,8 +291,8 @@ public class LCETorex extends Entity implements IConstantRenderer {
 					cloud.update();
 				}
 
-
-				coreHeight += 0.15/(Math.max(this.ticksExisted-240,0)/(Math.pow(s,0.6)*1.6)*1.75+1)/* * s*/; //250
+				if (getType() != 3)
+					coreHeight += 0.15/(Math.max(this.ticksExisted-240,0)/(Math.pow(s,0.6)*1.6)*1.75+1)/* * s*/; //250
 				torusWidth += 0.05/(Math.max(this.ticksExisted-300,0)/(Math.pow(s,0.6)*1.75)*1.75+1)/* * s*/; // 350
 				rollerSize = torusWidth * 0.35;
 				convectionHeight = coreHeight + rollerSize;
@@ -275,6 +300,8 @@ public class LCETorex extends Entity implements IConstantRenderer {
 				scaleGrow += (0.0025*6)/(Math.max(this.ticksExisted-600,0)/350d+1);
 
 				int maxHeat = (int) (50 * s * s);
+				if (this.getType() == 3)
+					maxHeat *= 2;
 				heat = maxHeat - Math.pow((maxHeat * (this.ticksExisted - subt)) / maxAge,0.6);
 				heatScaled = (maxHeat - Math.pow((maxHeat * this.ticksExisted) / maxAge,0.6))/maxHeat;
 
@@ -410,10 +437,96 @@ public class LCETorex extends Entity implements IConstantRenderer {
 					(bb2 + (bb1 - bb2) * interp),
 					(bb2 + (bb1 - bb2) * interp));
 		}
+		if(type == 3){
+			return Vec3.createVectorHelper(
+					(nb2 + (nb1 - nb2) * interp),
+					(ng2 + (ng1 - ng2) * interp),
+					(nr2 + (nr1 - nr2) * interp));
+		}
 		return Vec3.createVectorHelper(
 			(br2 + (br1 - br2) * interp),
 			(bg2 + (bg1 - bg2) * interp),
 			(bb2 + (bb1 - bb2) * interp));
+	}
+
+	// not really sequenced, idk what to name it
+	public class SequencedCloudlet extends Cloudlet {
+		public double theta;
+		public boolean first = true;
+		public double t = 0;
+		public SequencedCloudlet(double theta,double initPosX,double initPosY,double initPosZ,float angle,int age,int maxAge) {
+			super(initPosX,initPosY,initPosZ,angle,age,maxAge);
+			this.theta = theta;
+		}
+		public SequencedCloudlet(double theta,double initPosX,double initPosY,double initPosZ,float angle,int age,int maxAge,TorexType type) {
+			super(initPosX,initPosY,initPosZ,angle,age,maxAge,type);
+			this.theta = theta;
+		}
+		public double param0 = 1;
+		public double param1 = 1;
+		@Override
+		public void update() {
+			age++;
+			this.curScale += MathHelper.clampedLerp(1d,0d,(LCETorex.this.ticksExisted-600)/1200d)/this.growDiv*MathHelper.clampedLerp(this.growingScaleEnd,this.growingScale,LCETorex.this.heatScaled);
+			if(age > cloudletLife) {
+				//if ((this.type != TorexType.STANDARD) && (this.type != TorexType.RING))
+				this.isDead = true;
+			}
+			this.prevPosX = this.initPosX;
+			this.prevPosY = this.initPosY;
+			this.prevPosZ = this.initPosZ;
+
+			double alpha = 0;
+			double beta = 0;
+			double mul = scaleCurrent*13;
+			switch(type) {
+				case ENDOTHERMIC -> {
+					t += 1/20d*4*getSimulationSpeed();
+					double a = Math.cos(t)-1;
+					double b = Math.sin(t);
+
+					alpha = a;
+					beta = b;
+					if (beta < 0) {
+						double sign = Math.signum(alpha);
+						alpha = Math.pow(Math.abs(alpha/2),0.45)*sign*2;
+					}
+					beta = (b*0.45+Math.pow(-alpha/2,1.5))/2*param0; // i want to kms
+				}
+				case ENDOTHERMIC_PILLAR -> {
+					t += 1d/(cloudletLife-20)*getSimulationSpeed();
+					if (t < 1) {
+						// slight change because it looked like dih
+						//alpha = 1-Math.pow(t,0.35)*param0;
+						alpha = (1-param0+t*param0)*param1;
+						beta = t;
+					} else {
+						double t1 = (age-cloudletLife+20)/20d;
+						double ma = Math.cos(t1*Math.PI)/2+0.5;
+						double mb = Math.sin(t1*Math.PI);
+						//alpha = (1-param0)*ma;
+						alpha = 1*ma*param1;
+						if (ma > 0.5)
+							beta = t+0.1*mb;
+						else
+							beta = (t+0.1)*mb;
+					}
+					//alpha *= 1.4;
+					//beta *= 2;
+					beta *= 1.9;
+				}
+			}
+			initPosX = LCETorex.this.initPosX+alpha*Math.cos(theta)*mul;
+			initPosZ = LCETorex.this.initPosZ+alpha*Math.sin(theta)*mul;
+			initPosY = LCETorex.this.initPosY+beta*mul;
+			if (first) {
+				this.prevPosX = this.initPosX;
+				this.prevPosY = this.initPosY;
+				this.prevPosZ = this.initPosZ;
+			}
+			first = false;
+			this.updateColor();
+		}
 	}
 
 	public class Cloudlet {
@@ -462,15 +575,15 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			this.updateColor();
 		}
 
-		private double motionMult = 1F;
-		private double motionConvectionMult = 0.5F;
-		private double motionLiftMult = 0.625F;
-		private double motionRingMult = 0.5F;
-		private double motionCondensationMult = 1F;
-		private double motionShockwaveMult = 1F;
+		public double motionMult = 1F;
+		public double motionConvectionMult = 0.5F;
+		public double motionLiftMult = 0.625F;
+		public double motionRingMult = 0.5F;
+		public double motionCondensationMult = 1F;
+		public double motionShockwaveMult = 1F;
 		
 		
-		private void update() {
+		public void update() {
 			age++;
 			this.curScale += MathHelper.clampedLerp(1d,0d,(LCETorex.this.ticksExisted-600)/1200d)/this.growDiv*MathHelper.clampedLerp(this.growingScaleEnd,this.growingScale,LCETorex.this.heatScaled);
 			
@@ -490,29 +603,34 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			double mult = this.motionMult;
 			if (this.type.isMainEffect)
 				mult *= getSimulationSpeed();
-			if(this.type == TorexType.STANDARD) {
-				Vec3 convection = getConvectionMotion(simPosX, simPosZ);
-				Vec3 lift = getLiftMotion(simPosX, simPosZ);
-				
-				double factor = MathHelper.clamp((this.initPosY - LCETorex.this.initPosY) / LCETorex.this.coreHeight, 0, 1);
-				this.motionX = convection.xCoord * factor + lift.xCoord * (1D - factor);
-				this.motionY = convection.yCoord * factor + lift.yCoord * (1D - factor);
-				this.motionZ = convection.zCoord * factor + lift.zCoord * (1D - factor);
-			} else if(this.type == TorexType.RING) {
-				Vec3 motion = getRingMotion(simPosX, simPosZ);
-				this.motionX = motion.xCoord;
-				this.motionY = motion.yCoord;
-				this.motionZ = motion.zCoord;
-			} else if(this.type == TorexType.CONDENSATION) {
-				Vec3 motion = getCondensationMotion();
-				this.motionX = motion.xCoord;
-				this.motionY = motion.yCoord;
-				this.motionZ = motion.zCoord;
-			} else if(this.type == TorexType.SHOCK) {
-				Vec3 motion = getShockwaveMotion();
-				this.motionX = motion.xCoord;
-				this.motionY = motion.yCoord;
-				this.motionZ = motion.zCoord;
+			switch(this.type) {
+				case STANDARD -> {
+					Vec3 convection = getConvectionMotion(simPosX, simPosZ);
+					Vec3 lift = getLiftMotion(simPosX, simPosZ);
+
+					double factor = MathHelper.clamp((this.initPosY - LCETorex.this.initPosY) / LCETorex.this.coreHeight, 0, 1);
+					this.motionX = convection.xCoord * factor + lift.xCoord * (1D - factor);
+					this.motionY = convection.yCoord * factor + lift.yCoord * (1D - factor);
+					this.motionZ = convection.zCoord * factor + lift.zCoord * (1D - factor);
+				}
+				case RING -> {
+					Vec3 motion = getRingMotion(simPosX, simPosZ);
+					this.motionX = motion.xCoord;
+					this.motionY = motion.yCoord;
+					this.motionZ = motion.zCoord;
+				}
+				case CONDENSATION -> {
+					Vec3 motion = getCondensationMotion();
+					this.motionX = motion.xCoord;
+					this.motionY = motion.yCoord;
+					this.motionZ = motion.zCoord;
+				}
+				case SHOCK -> {
+					Vec3 motion = getShockwaveMotion();
+					this.motionX = motion.xCoord;
+					this.motionY = motion.yCoord;
+					this.motionZ = motion.zCoord;
+				}
 			}
 			
 			this.initPosX += this.motionX * mult;
@@ -522,7 +640,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			this.updateColor();
 		}
 		
-		private Vec3 getCondensationMotion() {
+		public Vec3 getCondensationMotion() {
 			Vec3 delta = Vec3.createVectorHelper(initPosX - LCETorex.this.initPosX, 0, initPosZ - LCETorex.this.initPosZ).normalize();
 			double speed = motionCondensationMult * LCETorex.this.getScale() * 0.125D * animationSpeedGeneral;
 			delta.xCoord *= speed;
@@ -531,7 +649,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			return delta;
 		}
 
-		private Vec3 getShockwaveMotion() {
+		public Vec3 getShockwaveMotion() {
 			Vec3 delta = Vec3.createVectorHelper(initPosX - LCETorex.this.initPosX, 0, initPosZ - LCETorex.this.initPosZ).normalize();
 			double speed = motionShockwaveMult * LCETorex.this.getScale() * 0.25D * animationSpeedShk;
 			delta.xCoord *= speed;
@@ -540,7 +658,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			return delta;
 		}
 		
-		private Vec3 getRingMotion(double simPosX, double simPosZ) {
+		public Vec3 getRingMotion(double simPosX, double simPosZ) {
 			
 			if(simPosX > LCETorex.this.initPosX + torusWidth * 2)
 				return Vec3.createVectorHelper(0, 0, 0);
@@ -586,7 +704,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		}
 		
 		/* simulated on a 2D-plane along the X/Y axis */
-		private Vec3 getConvectionMotion(double simPosX, double simPosZ) {
+		public Vec3 getConvectionMotion(double simPosX, double simPosZ) {
 			
 			if(simPosX > LCETorex.this.initPosX + torusWidth * 2)
 				return Vec3.createVectorHelper(0, 0, 0);
@@ -599,7 +717,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			
 			/* the difference between the cloudlet and the torus' ring center */
 			Vec3 delta = Vec3.createVectorHelper(torusPos.xCoord - simPosX, torusPos.yCoord - this.initPosY, torusPos.zCoord - simPosZ);
-			
+
 			/* the distance this cloudlet wants to achieve to the torus' ring center */
 			double roller = LCETorex.this.rollerSize * this.rangeMod;
 			/* the distance between this cloudlet and the torus' outer ring perimeter */
@@ -631,7 +749,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			return motion;
 		}
 		
-		private Vec3 getLiftMotion(double simPosX, double simPosZ) {
+		public Vec3 getLiftMotion(double simPosX, double simPosZ) {
 			double scale = MathHelper.clamp(1D - (simPosX - (LCETorex.this.initPosX + torusWidth)), 0, 1) * motionLiftMult;
 			
 			Vec3 motion = Vec3.createVectorHelper(LCETorex.this.initPosX - this.initPosX, (LCETorex.this.initPosY + convectionHeight) - this.initPosY, LCETorex.this.initPosZ - this.initPosZ);
@@ -644,7 +762,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 			return motion;
 		}
 		
-		private void updateColor() {
+		public void updateColor() {
 			this.prevColor = this.color;
 
 			double exX = LCETorex.this.initPosX;
@@ -723,7 +841,9 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		STANDARD(true),
 		RING(true),
 		CONDENSATION(false),
-		SHOCK(false);
+		SHOCK(false),
+		ENDOTHERMIC(true),
+		ENDOTHERMIC_PILLAR(true);
 		public boolean isMainEffect;
 		TorexType(boolean isMain) { this.isMainEffect = isMain; }
 	}
@@ -782,8 +902,17 @@ public class LCETorex extends Entity implements IConstantRenderer {
 	public static void statFacBale(World world, double x, double y, double z, float scale) {
 		statFacBale(world,x,y,z,scale,true);
 	}
+	public static void statFacEndo(World world, double x, double y, double z, float scale) {
+		statFacEndo(world,x,y,z,scale,true);
+	}
 	public static void statFacBale(World world, double x, double y, double z, float scale, boolean sound) {
 		LCETorex torex = new LCETorex(world).setScale(MathHelper.clamp(scale * 0.01F, 0.25F, 5F)).setType(1);
+		torex.setPosition(x, y, z);
+		torex.sound = sound;
+		spawnTorex(world,torex);
+	}
+	public static void statFacEndo(World world, double x, double y, double z, float scale, boolean sound) {
+		LCETorex torex = new LCETorex(world).setScale(MathHelper.clamp(scale * 0.01F, 0.25F, 5F)).setType(3);
 		torex.setPosition(x, y, z);
 		torex.sound = sound;
 		spawnTorex(world,torex);
@@ -799,7 +928,7 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		spawnTorex(world,torex);
 	}
 	public static class TorexFinishPacket extends RecordablePacket {
-		private UUID uuid;
+		public UUID uuid;
 		public TorexFinishPacket() {
 		}
 		@Override
@@ -829,14 +958,14 @@ public class LCETorex extends Entity implements IConstantRenderer {
 		}
 	}
 	public static class TorexPacket extends RecordablePacket {
-		private int entityId;
-		private double x;
-		private double y;
-		private double z;
-		private NBTTagCompound nbt;
-		private double range = 0;
-		private UUID uuid;
-		private boolean doWait;
+		public int entityId;
+		public double x;
+		public double y;
+		public double z;
+		public NBTTagCompound nbt;
+		public double range = 0;
+		public UUID uuid;
+		public boolean doWait;
 		public TorexPacket() {
 		}
 		@Override

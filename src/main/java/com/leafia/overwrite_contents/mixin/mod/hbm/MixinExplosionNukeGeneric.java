@@ -7,6 +7,7 @@ import com.hbm.blocks.gas.BlockGasMeltdown;
 import com.hbm.blocks.gas.BlockGasRadon;
 import com.hbm.blocks.gas.BlockGasRadonDense;
 import com.hbm.blocks.gas.BlockGasRadonTomb;
+import com.hbm.blocks.generic.BlockFallout;
 import com.hbm.blocks.machine.rbmk.RBMKDebris;
 import com.hbm.explosion.ExplosionNukeGeneric;
 import com.leafia.contents.AddonBlocks.LegacyBlocks;
@@ -115,6 +116,8 @@ public class MixinExplosionNukeGeneric {
 				te.markDirty();
 			}
 		}
+		if (state.getBlock() instanceof BlockFallout)
+			world.setBlockToAir(pos);
 		if (state.getBlock() instanceof AshBalefire)
 			world.setBlockToAir(pos);
 		if (state.getBlock() instanceof Balefire)

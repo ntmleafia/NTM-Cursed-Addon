@@ -80,6 +80,7 @@ death.attack.flywheel=%1$s було розмелено маховиком
 death.attack.dfc=%1$s згорів від потужного мікрохвильового випромінювання
 death.attack.dfcMeltdown=%1$s було випарувано у вогні зірки, що колапсує
 death.attack.mine=%1$s мав би дивитися під ноги
+death.attack.mine_player=%1$s мав би дивитися під ноги
 death.attack.pointed=%1$s було розірвано гострими предметами під час удару
 death.attack.poison=%1$s було смертельно отруєно
 desc.leafia._jei.energy_s=%s/с

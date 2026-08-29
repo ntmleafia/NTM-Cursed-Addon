@@ -124,6 +124,7 @@
     "hbm.MixinTileEntityHeaterHeatex",
     "hbm.MixinTileEntityHeaterOilburner",
     "hbm.MixinTileEntityHeaterOven",
+    "hbm.MixinTileEntityLandmine",
     "hbm.MixinTileEntityLaunchPadBase",
     "hbm.MixinTileEntityMachineArcWelder",
     "hbm.MixinTileEntityMachineBase",

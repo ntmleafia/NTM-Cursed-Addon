@@ -80,6 +80,7 @@ death.attack.flywheel=%1$s was grinded by a flywheel
 death.attack.dfc=%1$s burned away from immense microwave rays
 death.attack.dfcMeltdown=%1$s was vaporized in the fire of a collapsing star
 death.attack.mine=%1$s should have paid attention to the floor
+death.attack.mine_player=%1$s should have paid attention to the floor
 death.attack.pointed=%1$s was ragged by pointed items on impact
 death.attack.poison=%1$s was fatally poisoned
 desc.leafia._jei.energy_s=%s/s

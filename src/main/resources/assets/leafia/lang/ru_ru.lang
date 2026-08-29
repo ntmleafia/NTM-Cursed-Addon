@@ -68,6 +68,7 @@ death.attack.fleija=%1$s получил взрыв лёгких в вакуум�
 death.attack.dfc=%1$s был сожжен микроволновыми лучами
 death.attack.dfcMeltdown=%1$s был испарен в огне сверхновы
 death.attack.mine=%1$s следовало бы смотреть под ноги
+death.attack.mine_player=%1$s следовало бы смотреть под ноги
 death.attack.pointed=%1$s был разодран острыми предметами
 death.attack.poison=%1$s был смертельно отравлен
 desc.leafia._jei.energy_s=%s/s

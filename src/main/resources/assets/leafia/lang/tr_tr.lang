@@ -80,6 +80,7 @@ death.attack.flywheel=%1$s Bir volan tarafından öğütüldü
 death.attack.dfc=%1$s muazzam mikrodalga ışınlarının etkisiyle yanıp kül oldu
 death.attack.dfcMeltdown=%1$s çöken bir yıldızın ateşinde buharlaştı
 death.attack.mine=%1$s zemine dikkat etmeliydim
+death.attack.mine_player=%1$s zemine dikkat etmeliydim
 death.attack.pointed=%1$s çarpma anında sivri nesneler tarafından parçalandı
 death.attack.poison=%1$s ölümcül bir şekilde zehirlendi
 desc.leafia._jei.energy_s=%s/s

@@ -140,11 +140,13 @@ public class CommandLeaf extends CommandBase {
 						if (args.length-1 <= 0) {
 							list.add("statFac");
 							list.add("statFacBale");
+							list.add("statFacEndo");
 							list.add("summon");
 						} else {
 							switch(args[0]) {
 								case "statFac":
 								case "statFacBale":
+								case "statFacEndo":
 									switch (args.length-1) {
 										case 1: list.add(String.valueOf(sender.getPosition().getX())); break;
 										case 2: list.add(String.valueOf(sender.getPosition().getY())); break;
@@ -605,10 +607,14 @@ public class CommandLeaf extends CommandBase {
 								LCETorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
 							case "statFacBale5":
 								LCETorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
+							case "statFacEndo5":
+								LCETorex.statFacEndo(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4])); break;
 							case "statFac6":
 								LCETorex.statFac(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
 							case "statFacBale6":
 								LCETorex.statFacBale(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
+							case "statFacEndo6":
+								LCETorex.statFacEndo(sender.getEntityWorld(),pos.getX(),pos.getY(),pos.getZ(),(float)parseDouble(args[4]),parseBoolean(args[5])); break;
 							default:
 								throw new WrongUsageException(usage, new Object[0]);
 						}

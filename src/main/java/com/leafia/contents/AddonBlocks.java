@@ -625,6 +625,9 @@ public class AddonBlocks {
 		ModBlocks.steel_scaffold.setResistance(30);
 		ModBlocks.steel_grate.setResistance(15);
 		ModBlocks.steel_grate_wide.setResistance(15);
+
+		ModBlocks.block_corium.setHardness(12);
+		ModBlocks.block_corium_cobble.setHardness(12);
 		((BlockHazard)ModBlocks.block_corium).addRad3d(0);
 
 		if (!AddonConfig.disableAddonPWR) {

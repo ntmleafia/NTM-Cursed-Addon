@@ -48,7 +48,7 @@ public class MixinHazardSystem {
 		for (HazardEntry hazard : hazards) {
 			if (hazard.type instanceof HazardTypeRadiation || hazard.type instanceof LCERad) {
 				double level = IHazardModifier.evalAllModifiers(stack,player,hazard.baseLevel,hazard.mods);
-				total += level;
+				total += level*stack.getCount();
 				if (hazard.type instanceof Alpha)
 					alpha += level;
 				else if (hazard.type instanceof Beta)

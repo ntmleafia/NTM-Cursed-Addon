@@ -80,6 +80,7 @@ death.attack.flywheel=%1$sはフライホイールに巻き込まれた
 death.attack.dfc=%1$sは強力なマイクロ波により燃え尽きた
 death.attack.dfcMeltdown=%1$sは崩壊する星の業火の中で蒸発した
 death.attack.mine=%1$sは床に注意をはらうべきだった
+death.attack.mine_player=%1$sは床に注意をはらうべきだった
 death.attack.pointed=%1$sは衝撃でとがったアイテムにズタズタにされた
 death.attack.poison=%1$sは毒により死亡した
 desc.leafia._jei.energy_s=%s/s

@@ -109,6 +109,7 @@ death.attack.flywheel=%1$s 被飞轮碾碎
 death.attack.dfc=%1$s 被强烈的高能辐射烧成灰烬
 death.attack.dfcMeltdown=%1$s 在坍缩恒星的超高温中被蒸发
 death.attack.mine=%1$s 应该多注意脚下的地面
+death.attack.mine_player=%1$s 应该多注意脚下的地面
 death.attack.pointed=%1$s 被尖锐物品撕裂
 death.attack.poison=%1$s 中了致命的毒
 

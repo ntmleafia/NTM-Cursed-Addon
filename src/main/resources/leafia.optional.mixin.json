@@ -9,7 +9,9 @@
     "MixinEntityRenderer_AcidRain",
     "MixinGuiMainMenu_WackySplashes"
   ],
-  "mixins": [],
+  "mixins": [
+    "MixinRadiationSystemNT"
+  ],
   "server": [],
   "setSourceFile": true,
   "minVersion": "0.8.7"
