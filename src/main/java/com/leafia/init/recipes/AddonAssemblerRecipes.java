@@ -257,7 +257,7 @@ public class AddonAssemblerRecipes {
 		INSTANCE.register(new GenericRecipe("ass.leafia.nuke_chud").setup(1200,1000)
 				.outputItems(new ItemStack(AddonBlocks.nuke_chud))
 				.inputItems(
-						new ComparableStack(ModItems.circuit,16,EnumCircuitType.CONTROLLER), // 16 control units
+						new ComparableStack(ModItems.circuit,6,EnumCircuitType.CONTROLLER), // 16 control units
 						new ComparableStack(ModBlocks.yellow_barrel,32),                     // 32 yellow barrels
 						new ComparableStack(Blocks.DIRT,64),                                 // 64 dirt
 						new ComparableStack(ModItems.rag_piss,64),                           // 256 piss-soaked rags

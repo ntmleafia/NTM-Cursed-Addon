@@ -9,6 +9,7 @@ import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.hbm.entity.effect.EntityCloudFleija;
 import com.hbm.entity.effect.EntityCloudFleijaRainbow;
 import com.hbm.main.client.NTMClientRegistry;
+import com.hbm.render.entity.projectile.RenderBeamProjectile;
 import com.hbm.tileentity.deco.TileEntitySpinnyLight;
 import com.hbm.tileentity.machine.*;
 import com.leafia.contents.AddonBlocks;
@@ -36,6 +37,8 @@ import com.leafia.contents.debug.render_test.DebugRenderTestRender;
 import com.leafia.contents.debug.render_test.DebugRenderTestTE;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudRainbow;
+import com.leafia.contents.gear.guns.GunInitLocal;
+import com.leafia.contents.gear.guns.am_rifle.AMRifleBeam;
 import com.leafia.contents.machines.elevators.*;
 import com.leafia.contents.machines.elevators.car.ElevatorEntity;
 import com.leafia.contents.machines.elevators.car.ElevatorRender;
@@ -160,6 +163,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			RenderingRegistry.registerEntityRenderingHandler(EvWeightEntity.class,EvWeightRender.FACTORY);
 
 			RenderingRegistry.registerEntityRenderingHandler(NullEntity.class,NullRender.FACTORY);
+
+			RenderingRegistry.registerEntityRenderingHandler(AMRifleBeam.class,RenderBeamProjectile.FACTORY);
 		}
 		{
 			LCERenderSpinnyLight spinnyLightRender = new LCERenderSpinnyLight();
@@ -262,6 +267,11 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 	public void onLoadComplete(FMLLoadCompleteEvent event){
 		if (!Loader.isModLoaded("backups")) HandlerClient.backupsWarning = true;
 		if (Loader.isModLoaded("essential")) HandlerClient.assentialWarning = true;
+	}
+
+	@Override
+	public void registerGunCfg() {
+		GunInitLocal.init();
 	}
 
 	@Override

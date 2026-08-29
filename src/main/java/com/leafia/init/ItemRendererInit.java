@@ -10,6 +10,7 @@ import com.leafia.contents.AddonBlocks.LetterSigns;
 import com.leafia.contents.AddonBlocks.ModularTurbines;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.ElevatorStyles;
+import com.leafia.contents.AddonItems.Guns;
 import com.leafia.contents.bomb.chud.NukeChudRender;
 import com.leafia.contents.bomb.chud.NukeChudRender.NukeChudItemRender;
 import com.leafia.contents.bomb.missile.customnuke.CustomNukeMissileItemRender;
@@ -19,6 +20,7 @@ import com.leafia.contents.building.light.LightRender.LightItemRender;
 import com.leafia.contents.building.sign.SignRender.SignItemRender;
 import com.leafia.contents.building.storage.rack.RackRender.RackItemRender;
 import com.leafia.contents.gear.advisor.AdvisorRender;
+import com.leafia.contents.gear.guns.am_rifle.AMRifleRender;
 import com.leafia.contents.gear.utility.FuzzyIdentifierRender;
 import com.leafia.contents.machines.elevators.EvBufferRender.EvBufferItemRender;
 import com.leafia.contents.machines.elevators.EvPulleyRender.EvPulleyItemRender;
@@ -141,6 +143,8 @@ public class ItemRendererInit {
 			register(component,renderer);
 
 		register(AddonBlocks.nuke_chud,new NukeChudItemRender());
+
+		register(Guns.am_rifle,new AMRifleRender());
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

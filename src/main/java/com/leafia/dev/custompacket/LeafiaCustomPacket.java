@@ -31,6 +31,8 @@ import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityMeteor.MeteorSyncPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShockPacket;
+import com.leafia.passive.EntityAttachedSounds;
+import com.leafia.passive.EntityAttachedSounds.AttachedSoundPacket;
 import com.leafia.passive.LeafiaPassiveServer;
 import com.leafia.passive.LeafiaPassiveServer.WorldGlobalSyncPacket;
 import com.leafia.passive.Wind.WindSyncPacket;
@@ -90,6 +92,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		FORCE_SCHIZO(new ForceSchizoPacket()),
 		WORLD_GLOBAL_SYNC(new WorldGlobalSyncPacket()),
 		IMPACT_COLLAPSE(new TomImpactCollapsePacket()),
+		ATTACHED_SOUND(new AttachedSoundPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }

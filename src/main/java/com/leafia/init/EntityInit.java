@@ -4,6 +4,7 @@ import com.hbm.entity.effect.EntityNukeTorex;
 import com.leafia.AddonBase;
 import com.leafia.contents.bomb.missile.customnuke.entity.CustomNukeMissileEntity;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
+import com.leafia.contents.gear.guns.am_rifle.AMRifleBeam;
 import com.leafia.contents.machines.elevators.car.ElevatorEntity;
 import com.leafia.contents.machines.elevators.weight.EvWeightEntity;
 import com.leafia.contents.machines.elevators.weight.EvWeightRender;
@@ -24,5 +25,6 @@ public class EntityInit {
 		EntityRegistry.registerModEntity(new ResourceLocation("leafia","entity_elevator"),ElevatorEntity.class,"entity_elevator",i++,AddonBase.instance,1000,1,true);
 		EntityRegistry.registerModEntity(new ResourceLocation("leafia","entity_counterweight"),EvWeightEntity.class,"entity_counterweight",i++,AddonBase.instance,1000,1,true);
 		EntityRegistry.registerModEntity(new ResourceLocation("leafia","entity_omfg_its_null_minecraft"),NullEntity.class,"entity_omfg_its_null_minecraft",i++,AddonBase.instance,1000,1,true);
+		EntityRegistry.registerModEntity(new ResourceLocation("leafia","entity_am_beam"),AMRifleBeam.class,"entity_am_beam",i++,AddonBase.instance,1000,1,true);
 	}
 }

@@ -23,4 +23,6 @@ public class LeafiaServerProxy {
 	public void onLoadComplete(FMLLoadCompleteEvent event){}
 
 	public void preInit(FMLPreInitializationEvent evt) {}
+
+	public void registerGunCfg() {}
 }

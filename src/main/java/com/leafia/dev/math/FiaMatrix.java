@@ -243,7 +243,7 @@ public class FiaMatrix {
 				atanPrimary.getValue(pivotAxis.getCorrespondingVector(this))
 		);
 	}
-	TupleRotation getRotation(RotationOrder order) {
+	public TupleRotation getRotation(RotationOrder order) {
 		TupleRotation tuple = new TupleRotation();
 		tuple.order = order;
 		FiaMatrix copy = new FiaMatrix(this);

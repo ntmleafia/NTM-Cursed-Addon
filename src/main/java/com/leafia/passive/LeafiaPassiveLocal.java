@@ -37,6 +37,7 @@ public class LeafiaPassiveLocal {
 
 	public static void onTick(World world) {
 		Digamma.update(world);
+		EntityAttachedSounds.update(world.provider.getDimension());
 		for (Runnable callback : queue)
 			callback.run();
 		queue.clear();

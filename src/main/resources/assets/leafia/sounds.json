@@ -128,5 +128,9 @@
   "block.kfc.detonate": { "category": "block", "sounds": [{ "name": "leafia:external/1391727615", "stream": false }] },
   "block.amsp.explode": { "category": "block", "sounds": [{ "name": "leafia:external/130768997", "stream": false }] },
 
-  "player.static": {"category": "player", "sounds": [{"name": "leafia:leafia/static", "stream": false}]}
+  "player.static": {"category": "player", "sounds": [{"name": "leafia:leafia/static", "stream": false}]},
+
+  "weapon.amRifleCharge": {"subtitle": "subtitles.weapon.am_rifle_charge", "category": "player", "sounds": [{"name": "leafia:external/charge_up15", "stream": false}]},
+  "weapon.amRifleFire": {"subtitle": "subtitles.weapon.am_rifle_fire", "category": "player", "sounds": [{"name": "leafia:external/am_rifle", "stream": false}]},
+  "block.fan": {"subtitle": "subtitles.block.fan", "category": "player", "sounds": [{"name": "leafia:external/furnaceinflamedhighfilter", "stream": false}]}
 }

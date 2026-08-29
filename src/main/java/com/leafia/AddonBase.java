@@ -7,6 +7,7 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.AddonFluids.AddonFF;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.gear.guns.GunInit;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.machines.controlpanel.instruments.AddonInstrumentRegister;
 import com.leafia.contents.potion.LeafiaPotion;
@@ -167,6 +168,7 @@ public class AddonBase {
 		AirbustMissiles.init();
 		ReactorTiers.register();
 		AddonBiomes.init();
+		GunInit.initMods();
 	}
 
 	@EventHandler

@@ -3,6 +3,7 @@ package com.leafia.contents;
 import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.blocks.generic.BlockModDoor;
 import com.hbm.items.ModItems;
+import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.main.MainRegistry;
 import com.hbm.util.I18nUtil;
 import com.leafia.AddonBase;
@@ -13,6 +14,7 @@ import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.gear.advisor.AdvisorItem;
+import com.leafia.contents.gear.guns.GunInit;
 import com.leafia.contents.gear.ntmfbottle.ItemNTMFBottle;
 import com.leafia.contents.gear.utility.FuzzyIdentifierItem;
 import com.leafia.contents.gear.wands.ItemWandLoading;
@@ -634,6 +636,10 @@ public class AddonItems {
 
 	public static final Item particle_dineutron = new AddonItemBaked("particle_dineutron").setCreativeTab(MainRegistry.controlTab);
 
+	public static class Guns {
+		public static ItemGunBaseNT am_rifle;
+	}
+
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {
 			ModItems.pwr_fuel.setCreativeTab(null);
@@ -645,6 +651,8 @@ public class AddonItems {
 	public static void preInit() {
 		modifyItemParams();
 		AddonBase._initMemberClasses(AddonItems.class);
+
+		GunInit.init();
 
 		for(Item item : ALL_ITEMS){
 			ForgeRegistries.ITEMS.register(item);
