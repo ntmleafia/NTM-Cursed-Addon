@@ -1,12 +1,14 @@
 package com.leafia.passive.rendering;
 
 import com.custom_hbm.render.amlfrom1710.CompositeBrush;
+import com.leafia.contents.gear.ILockonWeapon.LockonHandler;
 import com.leafia.dev.LeafiaDebug;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.group.LeafiaSet;
 import com.llib.math.MathLeafia;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -24,6 +26,88 @@ public class TopRender {
 		double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks;
 		double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks;
 		Highlight.render(new Vec3d(x,y,z));
+		renderLockon(new Vec3d(x,y,z),entity);
+	}
+	public static Vec3d lerp(Vec3d a,Vec3d b,double factor) {
+		return a.add(b.subtract(a).scale(factor));
+	}
+	public static void renderLockon(Vec3d pos,Entity entity) {
+		if (LockonHandler.target != null) {
+			float f1 = ActiveRenderInfo.getRotationX();
+			float f2 = ActiveRenderInfo.getRotationZ();
+			float f3 = ActiveRenderInfo.getRotationYZ();
+			float f4 = ActiveRenderInfo.getRotationXY();
+			float f5 = ActiveRenderInfo.getRotationXZ();
+			float scale = 0.4f;
+			float gap = 0.3f;
+			int col = 0xFFFFFF;
+			if (LockonHandler.timer/2 >= 8) {
+				col = 0xFFAA00;
+				gap = 0.15f;
+			}
+			if (LockonHandler.timer/2 >= 16) {
+				col = 0xFF0000;
+				gap = 0;
+			}
+			Vec3d tgtPos = new Vec3d(LockonHandler.target.posX,LockonHandler.target.posY+LockonHandler.target.getEyeHeight(),LockonHandler.target.posZ);
+			double sc2 = pos.distanceTo(tgtPos)/10;
+			scale *= (float)sc2;
+			gap *= (float)sc2;
+
+			Vec3d rd = new Vec3d((double) ( - f1 * (scale+gap) - f3 * (scale+gap)), (double) ( - f5 * (scale+gap)), (double) ( - f2 * (scale+gap) - f4 * (scale+gap)));
+			Vec3d ru = new Vec3d((double) ( - f1 * (scale+gap) + f3 * (scale+gap)), (double) ( + f5 * (scale+gap)), (double) ( - f2 * (scale+gap) + f4 * (scale+gap)));
+			Vec3d lu = new Vec3d((double) ( + f1 * (scale+gap) + f3 * (scale+gap)), (double) ( + f5 * (scale+gap)), (double) ( + f2 * (scale+gap) + f4 * (scale+gap)));
+			Vec3d ld = new Vec3d((double) ( + f1 * (scale+gap) - f3 * (scale+gap)), (double) ( - f5 * (scale+gap)), (double) ( + f2 * (scale+gap) - f4 * (scale+gap)));
+
+			double fac = 0.5-(gap/(gap+scale))/2;
+			Vec3d rd_ld = lerp(rd,ld,fac);
+			Vec3d rd_ru = lerp(rd,ru,fac);
+
+			Vec3d ru_lu = lerp(ru,lu,fac);
+			Vec3d ru_rd = lerp(ru,rd,fac);
+
+			Vec3d lu_ru = lerp(lu,ru,fac);
+			Vec3d lu_ld = lerp(lu,ld,fac);
+
+			Vec3d ld_rd = lerp(ld,rd,fac);
+			Vec3d ld_lu = lerp(ld,lu,fac);
+
+			Vec3d newPos = tgtPos.subtract(pos);
+			// ik this lambda is unoptimized as fuck, but idfc im pissed off rn
+			LeafiaGls._push();
+			{
+				LeafiaGls.resetEffects();
+				LeafiaGls.blendFunc(SourceFactor.SRC_ALPHA,DestFactor.ONE);
+				LeafiaGls.disableTexture2D();
+				CompositeBrush brush = LeafiaGls.Tools.getBrush();
+				brush.startDrawing(GL11.GL_LINES,DefaultVertexFormats.POSITION_COLOR);
+				brush.setColorHex(col);
+				brush.addVertex(newPos.x+rd.x,newPos.y+rd.y,newPos.z+rd.z);
+				brush.addVertex(newPos.x+rd_ld.x,newPos.y+rd_ld.y,newPos.z+rd_ld.z);
+				brush.addVertex(newPos.x+rd.x,newPos.y+rd.y,newPos.z+rd.z);
+				brush.addVertex(newPos.x+rd_ru.x,newPos.y+rd_ru.y,newPos.z+rd_ru.z);
+
+				brush.addVertex(newPos.x+ru.x,newPos.y+ru.y,newPos.z+ru.z);
+				brush.addVertex(newPos.x+ru_lu.x,newPos.y+ru_lu.y,newPos.z+ru_lu.z);
+				brush.addVertex(newPos.x+ru.x,newPos.y+ru.y,newPos.z+ru.z);
+				brush.addVertex(newPos.x+ru_rd.x,newPos.y+ru_rd.y,newPos.z+ru_rd.z);
+
+				brush.addVertex(newPos.x+lu.x,newPos.y+lu.y,newPos.z+lu.z);
+				brush.addVertex(newPos.x+lu_ru.x,newPos.y+lu_ru.y,newPos.z+lu_ru.z);
+				brush.addVertex(newPos.x+lu.x,newPos.y+lu.y,newPos.z+lu.z);
+				brush.addVertex(newPos.x+lu_ld.x,newPos.y+lu_ld.y,newPos.z+lu_ld.z);
+
+				brush.addVertex(newPos.x+ld.x,newPos.y+ld.y,newPos.z+ld.z);
+				brush.addVertex(newPos.x+ld_rd.x,newPos.y+ld_rd.y,newPos.z+ld_rd.z);
+				brush.addVertex(newPos.x+ld.x,newPos.y+ld.y,newPos.z+ld.z);
+				brush.addVertex(newPos.x+ld_lu.x,newPos.y+ld_lu.y,newPos.z+ld_lu.z);
+				brush.draw();
+				brush.setColorHex(0xFFFFFF);
+				LeafiaGls.enableTexture2D();
+			}
+			LeafiaGls._pop();
+			LeafiaGls.enableTexture2D();
+		}
 	}
 	public static class Highlight {
 		public static final LeafiaSet<Highlight> instances = new LeafiaSet<>();

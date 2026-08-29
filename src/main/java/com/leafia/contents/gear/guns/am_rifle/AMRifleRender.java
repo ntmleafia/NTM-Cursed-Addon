@@ -31,6 +31,7 @@ public class AMRifleRender extends ItemRenderWeaponBase {
 	public float getViewFOV(ItemStack stack, float fov) {
 		float aimingProgress = ItemGunBaseNT.prevAimingProgress +
 				(ItemGunBaseNT.aimingProgress - ItemGunBaseNT.prevAimingProgress) * interp;
+		AMRifle.isADS = aimingProgress == 1;
 		return fov * (1 - aimingProgress * (hasScope(stack) ? 7/8F : 0.2F));
 	}
 
@@ -42,7 +43,7 @@ public class AMRifleRender extends ItemRenderWeaponBase {
 		if(hasScope(stack)) {
 			standardAimingTransform(stack,
 					-1.5F * offset, -1.5F * offset, 2.5F * offset,
-					0, -8.375 / 8D, 0.75);
+					0, -8.375 / 8D, 1.2);
 		} else {
 			standardAimingTransform(stack,
 					-1.5F * offset, -1.5F * offset, 2.5F * offset,
@@ -83,7 +84,15 @@ public class AMRifleRender extends ItemRenderWeaponBase {
 		LeafiaGls.rotate((float)ang,0,0,1);
 		mdl.renderPart("Fan");
 		LeafiaGls.popMatrix();
-		//if(hasScope(stack)) lasrifle.renderPart("Scope");
+		if(hasScope(stack)) {
+			Minecraft.getMinecraft().renderEngine.bindTexture(ResourceManager.lilmac_scope_tex);
+			LeafiaGls.pushMatrix();
+			LeafiaGls.translate(0,-0.85,-1.25);
+			LeafiaGls.rotate(90,0,1,0);
+			LeafiaGls.scale(0.75);
+			ResourceManager.lilmac.renderPart("Scope");
+			LeafiaGls.popMatrix();
+		}
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(lasrifle);
 		mdl.renderPart("Grip");
@@ -145,7 +154,15 @@ public class AMRifleRender extends ItemRenderWeaponBase {
 		LeafiaGls.rotate((float)ang,0,0,1);
 		mdl.renderPart("Fan");
 		LeafiaGls.popMatrix();
-		//if(hasScope(stack)) lasrifle.renderPart("Scope");
+		if(hasScope(stack)) {
+			Minecraft.getMinecraft().renderEngine.bindTexture(ResourceManager.lilmac_scope_tex);
+			LeafiaGls.pushMatrix();
+			LeafiaGls.translate(0,-0.85,-1.25);
+			LeafiaGls.rotate(90,0,1,0);
+			LeafiaGls.scale(0.75);
+			ResourceManager.lilmac.renderPart("Scope");
+			LeafiaGls.popMatrix();
+		}
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(lasrifle);
 		mdl.renderPart("Grip");

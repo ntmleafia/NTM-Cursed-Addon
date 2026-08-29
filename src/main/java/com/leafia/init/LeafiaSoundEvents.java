@@ -129,6 +129,10 @@ public class LeafiaSoundEvents {
 	public static SoundEvent am_rifle_fire;
 	public static SoundEvent fan;
 
+	public static SoundEvent lockon0;
+	public static SoundEvent lockon1;
+	public static SoundEvent lockon2;
+
 	public static void init() {
 		// this is so retarded
 		literally_nothing = register("sdkgjalkdsjgldhsaiuhgui8asd8gy87dast67gt7wy9gty47yaw79g8734");
@@ -273,6 +277,10 @@ public class LeafiaSoundEvents {
 		am_rifle_charge = register("weapon.amRifleCharge");
 		am_rifle_fire = register("weapon.amRifleFire");
 		fan = register("block.fan");
+
+		lockon0 = register("weapon.lockon0");
+		lockon1 = register("weapon.lockon1");
+		lockon2 = register("weapon.lockon2");
 	}
 
 	public static SoundEvent register(String name) {

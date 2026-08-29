@@ -1,5 +1,7 @@
 package com.leafia.passive;
 
+import com.leafia.contents.gear.ILockonWeapon;
+import com.leafia.contents.gear.ILockonWeapon.LockonHandler;
 import com.leafia.contents.gear.advisor.AdvisorItem.Warns;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.DigammaBackstabPacket;
@@ -61,6 +63,7 @@ public class LeafiaPassiveLocal {
 				}
 			}
 		}
+		LockonHandler.handleLockon(Minecraft.getMinecraft().player,world);
 		RecordablePacket.previousByteUsage = RecordablePacket.bytesUsage;
 		RecordablePacket.bytesUsage = 0;
 		short t1 = MathLeafia.getTime32s();

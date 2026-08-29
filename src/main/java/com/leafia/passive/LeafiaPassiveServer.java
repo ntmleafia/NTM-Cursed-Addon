@@ -3,6 +3,7 @@ package com.leafia.passive;
 import com.hbm.inventory.control_panel.nodes.Node;
 import com.hbm.saveddata.TomSaveData;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.gear.ILockonWeapon.GetLockonPacket;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
 import com.leafia.database.ImpactSeismic;
@@ -15,6 +16,7 @@ import com.leafia.overwrite_contents.interfaces.IMixinTomSaveData;
 import com.leafia.savedata.FalloutSavedData;
 import com.leafia.unsorted.StructuralIntegrityHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,6 +47,11 @@ public class LeafiaPassiveServer {
 	public static void priorTick() {
 		StructuralIntegrityHandler.blockedPoses.clear();
 		StructuralIntegrityHandler.calculations = 0;
+		List<EntityPlayer> players = new ArrayList<>(GetLockonPacket.lockons.keySet());
+		for (EntityPlayer player : players) {
+			if (System.currentTimeMillis() > GetLockonPacket.lockons.get(player).getB()+60_000)
+				GetLockonPacket.lockons.remove(player);
+		}
 		tickedNodes.clear();
 		//if (ModItems.wand_leaf.darnit != null)
 		//	ModItems.wand_leaf.darnit.run();

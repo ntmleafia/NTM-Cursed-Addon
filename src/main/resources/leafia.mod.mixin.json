@@ -151,6 +151,8 @@
     "hbm.MixinTomSaveData",
     "hbm.MixinWasteEarth",
     "hbm.MixinWasteGrassTall",
+    "hbm.MixinWeaponModLasShotgun",
+    "hbm.MixinWeaponModScope",
     "hbm.MixinWeaponSpecial",
     "hbm.MixinWeightedRandomChestContentFrom1710",
     "hbm.MixinWorldProviderNTM"

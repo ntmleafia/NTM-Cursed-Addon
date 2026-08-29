@@ -6,6 +6,7 @@ import com.hbm.items.weapon.sedna.GunConfig;
 import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.items.weapon.sedna.Receiver;
 import com.hbm.items.weapon.sedna.mags.IMagazine;
+import com.hbm.items.weapon.sedna.mods.XWeaponModManager;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.anim.sedna.AnimationEnums;
@@ -13,6 +14,7 @@ import com.hbm.render.anim.sedna.AnimationEnums.GunAnimation;
 import com.hbm.render.anim.sedna.BusAnimationKeyframeSedna.IType;
 import com.hbm.render.anim.sedna.BusAnimationSedna;
 import com.hbm.render.anim.sedna.BusAnimationSequenceSedna;
+import com.leafia.contents.gear.ILockonWeapon;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.passive.EntityAttachedSounds;
@@ -34,7 +36,7 @@ import static com.hbm.items.weapon.sedna.factory.Lego.spawnBullet;
 import static com.hbm.items.weapon.sedna.factory.XFactoryEnergy.energy_las;
 import static com.leafia.contents.gear.guns.GunInit.am_beam;
 
-public class AMRifle extends ItemGunBaseNT {
+public class AMRifle extends ItemGunBaseNT implements ILockonWeapon {
 	public AMRifle(WeaponQuality quality,String s,GunConfig... cfg) {
 		super(quality,s,cfg);
 	}
@@ -70,7 +72,7 @@ public class AMRifle extends ItemGunBaseNT {
 		getNBT(stack).setInteger("leafia_timer",0);
 
 		spawnBullet(world, () ->{
-			AMRifleBeam mk4 = new AMRifleBeam(entity,null,config,200,sideOffset,heightOffset,forwardOffset);
+			AMRifleBeam mk4 = new AMRifleBeam(entity,ILockonWeapon.getLoadedLockon(player),config,200,sideOffset,heightOffset,forwardOffset);
 			world.spawnEntity(mk4);
 		});
 	}
@@ -137,6 +139,7 @@ public class AMRifle extends ItemGunBaseNT {
 			ItemGunBaseNT.setState(stack,index,GunState.COOLDOWN);
 			ItemGunBaseNT.setTimer(stack,index,11);
 			getNBT(stack).setByte("leafia_state",(byte)1);
+			LeafiaCustomPacket.__start(new GetLockonPacket()).__sendToClient(player);
 		}
 	}
 	public static void orchestra(ItemStack stack,LambdaContext ctx) {
@@ -166,5 +169,18 @@ public class AMRifle extends ItemGunBaseNT {
 				rec.getOnFire(stack).accept(stack, ctx);
 			}
 		}
+	}
+	@Override
+	public boolean canLockon(ItemStack stack) {
+		return XWeaponModManager.hasUpgrade(stack,0,XWeaponModManager.ID_LAS_SHOTGUN) && getNBT(stack).getByte("leafia_state") != 2;
+	}
+	public static boolean isADS = false;
+	@Override
+	public double maxInclination(ItemStack stack) {
+		return isADS ? 0.1 : 0.45;
+	}
+	@Override
+	public boolean freezeTick(ItemStack stack) {
+		return getNBT(stack).getByte("leafia_state") == 1;
 	}
 }

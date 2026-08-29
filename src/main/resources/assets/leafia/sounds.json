@@ -132,5 +132,9 @@
 
   "weapon.amRifleCharge": {"subtitle": "subtitles.weapon.am_rifle_charge", "category": "player", "sounds": [{"name": "leafia:external/charge_up15", "stream": false}]},
   "weapon.amRifleFire": {"subtitle": "subtitles.weapon.am_rifle_fire", "category": "player", "sounds": [{"name": "leafia:external/am_rifle", "stream": false}]},
-  "block.fan": {"subtitle": "subtitles.block.fan", "category": "player", "sounds": [{"name": "leafia:external/furnaceinflamedhighfilter", "stream": false}]}
+  "block.fan": {"subtitle": "subtitles.block.fan", "category": "player", "sounds": [{"name": "leafia:external/furnaceinflamedhighfilter", "stream": false}]},
+
+  "weapon.lockon0": {"category": "player", "sounds": [{"name": "leafia:leafia/lockon_0", "stream": false}]},
+  "weapon.lockon1": {"category": "player", "sounds": [{"name": "leafia:leafia/lockon_1", "stream": false}]},
+  "weapon.lockon2": {"category": "player", "sounds": [{"name": "leafia:leafia/lockon_2", "stream": false}]}
 }

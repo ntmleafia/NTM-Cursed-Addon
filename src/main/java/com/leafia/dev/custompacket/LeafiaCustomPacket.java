@@ -3,6 +3,8 @@ package com.leafia.dev.custompacket;
 import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.packet.threading.ThreadedPacket;
+import com.leafia.contents.gear.ILockonWeapon;
+import com.leafia.contents.gear.ILockonWeapon.GetLockonPacket;
 import com.leafia.contents.gear.advisor.AdvisorItem;
 import com.leafia.contents.gear.advisor.AdvisorItem.AdvisorPacket;
 import com.leafia.contents.gear.utility.FuzzyIdentifierItem.FuzzyIdentifierPacket;
@@ -93,6 +95,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		WORLD_GLOBAL_SYNC(new WorldGlobalSyncPacket()),
 		IMPACT_COLLAPSE(new TomImpactCollapsePacket()),
 		ATTACHED_SOUND(new AttachedSoundPacket()),
+		GET_LOCKON(new GetLockonPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }
