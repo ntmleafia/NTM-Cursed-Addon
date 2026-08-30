@@ -32,6 +32,8 @@ import com.leafia.dev.LeafiaDebug.Tracker.VisualizerPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityMeteor.MeteorSyncPacket;
+import com.leafia.overwrite_contents.interfaces.IMixinItemLaserDetonator;
+import com.leafia.overwrite_contents.interfaces.IMixinItemLaserDetonator.RequestLaserPointPacket;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore.DFCShockPacket;
 import com.leafia.passive.EntityAttachedSounds;
 import com.leafia.passive.EntityAttachedSounds.AttachedSoundPacket;
@@ -96,6 +98,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		IMPACT_COLLAPSE(new TomImpactCollapsePacket()),
 		ATTACHED_SOUND(new AttachedSoundPacket()),
 		GET_LOCKON(new GetLockonPacket()),
+		REQUEST_POINT(new RequestLaserPointPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }

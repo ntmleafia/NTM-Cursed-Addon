@@ -24,7 +24,7 @@ public class AMRifleBeam extends EntityBulletBeamBase {
 		if (lockTarget == null)
 			this.setLocationAndAngles(thrower.posX, thrower.posY + thrower.getEyeHeight(), thrower.posZ, thrower.rotationYaw, thrower.rotationPitch);
 		else {
-			FiaMatrix mat = new FiaMatrix(new Vec3d(thrower.posX,thrower.posY+thrower.getEyeHeight(),thrower.posZ),new Vec3d(lockTarget.posX,lockTarget.posY,lockTarget.posZ));
+			FiaMatrix mat = new FiaMatrix(new Vec3d(thrower.posX,thrower.posY+thrower.getEyeHeight(),thrower.posZ),new Vec3d(lockTarget.posX,lockTarget.posY+lockTarget.getEyeHeight(),lockTarget.posZ));
 			TupleRotation rot = mat.getRotation(RotationOrder.YXZ);
 			this.setLocationAndAngles(thrower.posX, thrower.posY + thrower.getEyeHeight(), thrower.posZ,
 					(float)-rot.angleY+180,(float)-rot.angleX

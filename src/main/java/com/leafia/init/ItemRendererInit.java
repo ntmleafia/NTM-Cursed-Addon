@@ -41,6 +41,8 @@ import com.leafia.contents.machines.powercores.ams.emitter.AMSEmitterRender.AMSE
 import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerRender.AMSStabilizerItemRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatRenderNeo.MixingVatItemRenderNeo;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterRender;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterRender.SolBlasterItemRender;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender.SaltSeparatorItemRender;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisItemRender;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender.FFDuctUtilityItemRender;
@@ -145,6 +147,8 @@ public class ItemRendererInit {
 		register(AddonBlocks.nuke_chud,new NukeChudItemRender());
 
 		register(Guns.am_rifle,new AMRifleRender());
+
+		register(AddonBlocks.sol_blaster,new SolBlasterItemRender());
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

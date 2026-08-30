@@ -25,7 +25,7 @@ public class BroofBlock extends AddonBlockDummyable {
 	@Override
 	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
 		super.addInformation(stack,worldIn,tooltip,flagIn);
-		tooltip.add("To celebrate the fact this mod was used in ossmp server");
+		tooltip.add("To celebrate the fact this mod was used in osmp server");
 		tooltip.add("\"BROOF!\"");
 	}
 	@Override

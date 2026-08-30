@@ -76,6 +76,17 @@ public class MixinItemRenderLaserDetonator extends TEISRBase {
 				} else
 					offsets.apply(type);
 				break;
+			case THIRD_PERSON_LEFT_HAND, THIRD_PERSON_RIGHT_HAND, HEAD:
+				// detonator_laser's 1.7 item was setFull3D(), so third-person uses the full-3D held branch.
+				GlStateManager.multMatrix(type == TransformType.HEAD ? ItemRenderFrames17.HEAD
+						: type == TransformType.THIRD_PERSON_LEFT_HAND ? ItemRenderFrames17.THIRD_PERSON_FULL3D_LEFT
+						: ItemRenderFrames17.THIRD_PERSON_FULL3D);
+				double scale = 0.125D;
+				GlStateManager.scale(-scale, -scale, -scale);
+				GlStateManager.rotate(85F, 0F, 1F, 0F);
+				GlStateManager.rotate(145F, 1F, 0F, 0F);
+				GlStateManager.translate(-0.5F, -1.0F, 6.5F);
+				break;
 			default:
 				offsets.apply(type);
 				break;

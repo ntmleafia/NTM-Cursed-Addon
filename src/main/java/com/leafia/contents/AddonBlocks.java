@@ -74,6 +74,7 @@ import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerBlock
 import com.leafia.contents.machines.powercores.dfc.AddonCoreComponent;
 import com.leafia.contents.machines.powercores.dfc.OsmiridiumBlock;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatBlock;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterBlock;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlExtension;
@@ -349,7 +350,7 @@ public class AddonBlocks {
 		public static final Block arbitrary = new MSRArbitraryBlock(Material.IRON,"msr_arbitrary").setCreativeTab(MainRegistry.machineTab).setHardness(generalHardness);
 		public static final Block ejector = new MSREjectorBlock(Material.IRON,"msr_ejector").setCreativeTab(MainRegistry.machineTab).setHardness(generalHardness);
 	}
-	public static final Block mixingvat = new MixingVatBlock(Material.IRON,"mixingvat").setCreativeTab(MainRegistry.machineTab);
+	public static final Block mixingvat = new MixingVatBlock(Material.IRON,"mixingvat").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);;
 	public static final Block coolant_heatex = new CoolantHeatexBlock(Material.IRON, "coolant_heatex").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
 
 	public static class PWR {
@@ -585,6 +586,8 @@ public class AddonBlocks {
 	public static final Block poster_slize = new PosterBlock("poster_slize").setHardness(5).setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 
 	public static final Block nuke_chud = new NukeChudBlock(Material.IRON, "nuke_chud").setCreativeTab(MainRegistry.nukeTab).setHardness(5.0F).setResistance(6000.0F);
+
+	public static final Block sol_blaster = new SolBlasterBlock(Material.IRON,"sol_blaster").setHardness(15.0F).setResistance(160.0F).setCreativeTab(MainRegistry.machineTab);
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

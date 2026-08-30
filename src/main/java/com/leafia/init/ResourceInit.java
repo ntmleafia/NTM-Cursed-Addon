@@ -12,6 +12,7 @@ import com.leafia.contents.building.light.LightRender;
 import com.leafia.contents.building.storage.rack.RackRender;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.gear.advisor.AdvisorRender;
+import com.leafia.contents.gear.guns.am_rifle.AMRifleRender;
 import com.leafia.contents.machines.controlpanel.instruments.types.AddonInstrumentModels;
 import com.leafia.contents.machines.elevators.EvBufferRender;
 import com.leafia.contents.machines.elevators.EvPulleyRender;
@@ -24,6 +25,7 @@ import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerRende
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatRender;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterRender;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlRender;
 import com.leafia.contents.machines.reactors.pwr.debris.RenderPWRDebris;
@@ -99,6 +101,8 @@ public class ResourceInit {
 		_initClass(AMSPAnalyzerRender.class);
 		_initClass(AMSPReceiverRender.class);
 		_initClass(NukeChudRender.class);
+		_initClass(AMRifleRender.class);
+		_initClass(SolBlasterRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");

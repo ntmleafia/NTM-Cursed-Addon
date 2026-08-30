@@ -73,6 +73,8 @@ import com.leafia.contents.machines.powercores.dfc.debris.AbsorberShrapnelRender
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatRenderNeo;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatTE;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterRender;
+import com.leafia.contents.machines.processing.solblaster.SolBlasterTE;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryRender;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
@@ -105,6 +107,7 @@ import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.NullRender;
 import com.leafia.eventbuses.LeafiaClientListener;
 import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.leafia.init.ItemRendererInit;
+import com.leafia.init.LeafiaKeybinds.Local;
 import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.ateupd.Reserved6Render;
 import com.leafia.unsorted.ateupd.Reserved6TE;
@@ -238,6 +241,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(AMSPReceiverTE.class,new AMSPReceiverRender());
 
 			ClientRegistry.bindTileEntitySpecialRenderer(NukeChudTE.class,new NukeChudRender());
+
+			ClientRegistry.bindTileEntitySpecialRenderer(SolBlasterTE.class,new SolBlasterRender());
 		}
 		AddonJars.initJars();
 	}
@@ -276,6 +281,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent evt) {
+		Local.register();
+
 		ItemRendererInit.preInit();
 		ItemRendererInit.apply();
 

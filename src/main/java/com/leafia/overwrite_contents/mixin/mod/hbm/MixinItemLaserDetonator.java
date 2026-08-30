@@ -13,8 +13,12 @@ import com.hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.gear.IADSWeapon;
 import com.leafia.dev.LeafiaUtil;
+import com.leafia.dev.custompacket.LeafiaCustomPacket;
+import com.leafia.init.LeafiaKeybinds.Local;
+import com.leafia.overwrite_contents.interfaces.IMixinItemLaserDetonator;
 import com.leafia.overwrite_contents.packets.LaserDetonatorPacket;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,11 +37,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 
 @Mixin(value = ItemLaserDetonator.class)
-public abstract class MixinItemLaserDetonator extends Item implements IHoldableWeapon, IADSWeapon {
+public abstract class MixinItemLaserDetonator extends Item implements IMixinItemLaserDetonator, IHoldableWeapon, IADSWeapon {
 
 	public MixinItemLaserDetonator(String s) {
 		this.setRegistryName(s);
@@ -45,6 +50,24 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 		this.setCreativeTab(MainRegistry.controlTab);
 
 		ModItems.ALL_ITEMS.add(this);
+	}
+	@Unique boolean leafia$lastKeyDown = false;
+	@Unique
+	@SideOnly(Side.CLIENT)
+	public void leafia$handlePointing(World world,Entity entity) {
+		if (Local.laserKey.isKeyDown()) {
+			if (!leafia$lastKeyDown) {
+				leafia$lastKeyDown = true;
+				LeafiaCustomPacket.__start(new RequestLaserPointPacket()).__sendToServer();
+			}
+		} else
+			leafia$lastKeyDown = false;
+	}
+
+	@Override
+	public void onUpdate(ItemStack stack,World worldIn,Entity entityIn,int itemSlot,boolean isSelected) {
+		if (worldIn.isRemote)
+			leafia$handlePointing(worldIn,entityIn);
 	}
 
 	/**
@@ -63,12 +86,8 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 		return 0.3f;
 	}
 
-	/**
-	 * @author ntmleafia
-	 * @reason ability to detonate from 512 blocks away
-	 */
-	@Overwrite
-	public ActionResult<ItemStack> onItemRightClick(World world,EntityPlayer player,EnumHand hand) {
+	@Override
+	public void leafia$doDetonate(World world,EntityPlayer player,EnumHand hand,boolean detonate) {
 		boolean rem = world.isRemote;
 		int distance = 128; // vanilla raytrace (which it used to use) has force max range of 200 and even less depending on angle
 		if (player.isSneaking()) {
@@ -97,30 +116,43 @@ public abstract class MixinItemLaserDetonator extends Item implements IHoldableW
 					new LaserDetonatorPacket().set(new Vec3(rayStart),vec),
 					new NetworkRegistry.TargetPoint(player.dimension,pos.getX(),pos.getY(),pos.getZ(),distance * 2)
 			);
-			if (world.getBlockState(pos).getBlock() instanceof IBomb) {
-				if (!rem)
-					((IBomb) world.getBlockState(pos).getBlock()).explode(world,pos,player);
+			if (detonate) {
+				if (world.getBlockState(pos).getBlock() instanceof IBomb) {
+					if (!rem)
+						((IBomb) world.getBlockState(pos).getBlock()).explode(world,pos,player);
 
-				if (GeneralConfig.enableExtendedLogging)
-					MainRegistry.logger.log(Level.INFO,"[DET] Tried to detonate block at " + pos.getX() + " / " + pos.getY() + " / " + pos.getZ() + " by " + player.getDisplayName() + "!");
+					if (GeneralConfig.enableExtendedLogging)
+						MainRegistry.logger.log(Level.INFO,"[DET] Tried to detonate block at "+pos.getX()+" / "+pos.getY()+" / "+pos.getZ()+" by "+player.getDisplayName()+"!");
 
-				if (rem)
-					player.sendMessage(new TextComponentString("§2[" + I18nUtil.resolveKey("chat.detonated") + "]" + "§r"));
-				else
-					world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
+					if (rem)
+						player.sendMessage(new TextComponentString("§2["+I18nUtil.resolveKey("chat.detonated")+"]"+"§r"));
+					else
+						world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
 
-			} else {
-				if (rem)
-					player.sendMessage(new TextComponentString("§c" + I18nUtil.resolveKey("chat.posbadrror") + "§r"));
-				else
-					world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
-			}
+				} else {
+					if (rem) {
+						player.sendMessage(new TextComponentString("§c"+I18nUtil.resolveKey("chat.posbadrror")+"§r"));
+					} else
+						world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
+				}
+			} else if (!rem)
+				world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
 		} else {
-			if (rem)
-				player.sendMessage(new TextComponentString("§c" + I18nUtil.resolveKey("chat.postoofarerror") + "§r"));
-			else
+			if (rem) {
+				if (detonate)
+					player.sendMessage(new TextComponentString("§c"+I18nUtil.resolveKey("chat.postoofarerror")+"§r"));
+			} else
 				world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
 		}
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason ability to detonate from 512 blocks away
+	 */
+	@Overwrite
+	public ActionResult<ItemStack> onItemRightClick(World world,EntityPlayer player,EnumHand hand) {
+		leafia$doDetonate(world,player,hand,true);
 		return super.onItemRightClick(world, player, hand);
 	}
 }
