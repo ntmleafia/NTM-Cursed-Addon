@@ -3,7 +3,7 @@ package com.custom_hbm.render.tileentity;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.LightRenderer;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.hbm.render.item.ItemRenderBase;
 import com.hbm.render.model.BakedModelTransforms;
 import com.hbm.render.tileentity.IItemRendererProvider;

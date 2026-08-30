@@ -3,7 +3,7 @@ package com.custom_hbm.explosion;
 import com.google.common.collect.Lists;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.config.CompatibilityConfig;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;

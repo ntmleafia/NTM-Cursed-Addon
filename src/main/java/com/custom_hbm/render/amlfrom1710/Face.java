@@ -1,6 +1,6 @@
 package com.custom_hbm.render.amlfrom1710;
 
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -126,8 +126,8 @@ public class Face {
     }
 
     public Vertex calculateFaceNormal() {
-        com.hbm.render.amlfrom1710.Vec3 v1 = com.hbm.render.amlfrom1710.Vec3.createVectorHelper(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
-        com.hbm.render.amlfrom1710.Vec3 v2 = com.hbm.render.amlfrom1710.Vec3.createVectorHelper(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
+        com.custom_hbm.render.amlfrom1710.Vec3 v1 = com.custom_hbm.render.amlfrom1710.Vec3.createVectorHelper(vertices[1].x - vertices[0].x, vertices[1].y - vertices[0].y, vertices[1].z - vertices[0].z);
+        com.custom_hbm.render.amlfrom1710.Vec3 v2 = com.custom_hbm.render.amlfrom1710.Vec3.createVectorHelper(vertices[2].x - vertices[0].x, vertices[2].y - vertices[0].y, vertices[2].z - vertices[0].z);
         Vec3 normalVector = null;
 
         normalVector = v1.crossProduct(v2).normalize();

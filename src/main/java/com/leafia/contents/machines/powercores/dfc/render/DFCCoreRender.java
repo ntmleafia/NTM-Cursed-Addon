@@ -4,7 +4,7 @@ package com.leafia.contents.machines.powercores.dfc.render;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.RenderSparks;
-import com.hbm.render.amlfrom1710.Vec3;
+import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.hbm.render.loader.HFRWavefrontObject;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.render.misc.BeamPronter;
