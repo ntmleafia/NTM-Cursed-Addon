@@ -212,6 +212,7 @@ public class AddonBase {
 		AddonCrucibleRecipes.register();
 		AddonSILEXRecipes.register();
 		AddonPressRecipes.register();
+		AddonCyclotronRecipes.register();
 	}
 
 	@EventHandler

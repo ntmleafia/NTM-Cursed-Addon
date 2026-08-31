@@ -1,5 +1,5 @@
 {
-  "parent": "leafia:progress_adv",
+  "parent": "leafia:progress_steel",
   "display": {
     "icon": {
       "item": "hbm:ingot_starmetal"

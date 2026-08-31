@@ -679,7 +679,7 @@ public class AddonItems {
 		public static final Item waste_u238 = new AddonDepletedFuelItem("waste_u238","hbm","waste_uranium");
 		public static final Item waste_mes = new AddonDepletedFuelItem("waste_mes","hbm","waste_schrabidium");
 		public static final Item waste_hes = new AddonDepletedFuelItem("waste_hes","hbm","waste_schrabidium");
-		public static final Item waste_sch = new AddonDepletedFuelItem("waste_hes","hbm","waste_schrabidium");
+		public static final Item waste_sch = new AddonDepletedFuelItem("waste_sch","hbm","waste_schrabidium");
 		public static final Item waste_sol = new AddonDepletedFuelItem("waste_sol","hbm","waste_schrabidium");
 	}
 
@@ -715,6 +715,11 @@ public class AddonItems {
 	public static final Item am_rifle_cell_fissite = new AddonItemHazardBaked("cells_fissite","resources/parts/fissite_cells").addRad(ItemRads.fissite.multiply(5)).setCreativeTab(MainRegistry.partsTab);
 	public static final Item am_rifle_cell_mysticite = new AddonItemBaked("cells_mysticite","resources/parts/mysticite_cells").setCreativeTab(MainRegistry.partsTab);
 	public static final Item am_rifle_cell_mysticite_filled = new AddonItemBaked("cells_mysticite_filled","resources/parts/mysticite_cells_filled").setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item particle_taint = new AddonItemBaked("particle_taint").setCreativeTab(MainRegistry.controlTab);
+	public static final Item particle_cloud = new AddonItemBaked("particle_cloud").setCreativeTab(MainRegistry.controlTab);
+	public static final Item grenade_cloud = new AddonItemBaked("grenade_cloud").setCreativeTab(MainRegistry.controlTab);
+	public static final Item grenade_pink_cloud = new AddonItemBaked("grenade_pink_cloud").setCreativeTab(MainRegistry.controlTab);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {

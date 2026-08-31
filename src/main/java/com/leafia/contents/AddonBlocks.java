@@ -593,8 +593,8 @@ public class AddonBlocks {
 	static boolean ores_dummy = Ores.dummy;
 	public static class Ores {
 		static boolean dummy = false;
-		public static final Block ore_corium_chernobylite = new CoriumOreBase("ore_corium_chernobylite",2,"chernobylite").setHardness(20).setResistance(9000.0F);
-		public static final Block ore_corium_zetalite = new CoriumOreBase("ore_corium_zetalite",3,"zetalite").setHardness(50).setResistance(9000.0F);
+		public static final Block ore_corium_chernobylite = new CoriumOreBase("ore_corium_chernobylite",2,"chernobylite").setCreativeTab(MainRegistry.resourceTab).setHardness(20).setResistance(9000.0F);
+		public static final Block ore_corium_zetalite = new CoriumOreBase("ore_corium_zetalite",3,"zetalite").setCreativeTab(MainRegistry.resourceTab).setHardness(50).setResistance(9000.0F);
 	}
 
 	static {

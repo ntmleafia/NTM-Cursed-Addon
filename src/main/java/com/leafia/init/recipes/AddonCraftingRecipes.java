@@ -4,11 +4,13 @@ import com.hbm.blocks.ModBlocks;
 import com.hbm.crafting.MineralRecipes;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.OreDictManager.DictFrame;
+import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.Mats;
 import com.hbm.items.ItemEnums.EnumCircuitType;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack;
 import com.hbm.items.machine.ItemBatterySC.EnumBatterySC;
+import com.hbm.items.machine.ItemFluidTank;
 import com.hbm.items.weapon.grenade.ItemGrenadeFilling.EnumGrenadeFilling;
 import com.hbm.main.CraftingManager;
 import com.leafia.contents.AddonBlocks;
@@ -169,6 +171,13 @@ public class AddonCraftingRecipes {
 		addShapelessAuto(new ItemStack(AddonItems.am_rifle_cell_mysticite_filled),new ItemStack(AddonItems.am_rifle_cell_mysticite),new ItemStack(ModItems.battery_sc,1,EnumBatterySC.AU198.ordinal()),EUPH.ingot(),EUPH.ingot(),EUPH.ingot(),EUPH.ingot());
 
 		addRecipeAuto(new ItemStack(Guns.am_rifle)," v ","brc","mg ",'v',new ItemStack(ModItems.circuit,1,EnumCircuitType.BISMOID.ordinal()),'b',ANY_BISMOIDBRONZE.lightBarrel(),'r',ANY_ULTRAALLOY.lightReceiver(),'c',AddonItems.am_rifle_cell_mysticite_filled,'m',BIGMT.mechanism(),'g',ANY_HARDPLASTIC.grip());
+
+		addShapelessAuto(new ItemStack(AddonItems.particle_taint, 1), ModItems.particle_empty, TN.dust(), ModItems.pellet_charged );
+
+		addRecipeAuto(new ItemStack(AddonItems.grenade_cloud,2),"SPS","CTC","SPS",'S',S.dust(),'P',ModItems.powder_poison,'C',AddonItems.particle_cloud,'T',new ItemStack(ModItems.fluid_tank_full,1,Fluids.PEROXIDE.getID()));
+		addRecipeAuto(new ItemStack(AddonItems.grenade_pink_cloud), " S ", "ECE", " E ", 'S', ModItems.powder_spark_mix, 'E', ModItems.powder_magic, 'C', AddonItems.grenade_cloud);
+		addRecipeAuto(new ItemStack(ModBlocks.vent_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', AddonItems.grenade_cloud, 'D', Blocks.DISPENSER);
+		addRecipeAuto(new ItemStack(ModBlocks.vent_pink_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', AddonItems.grenade_pink_cloud, 'D', Blocks.DISPENSER);
 
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}

@@ -31,9 +31,9 @@ public class AddonSILEXRecipes {
 				.addOut(new WeightedRandomObject(new ItemStack(ModItems.ingot_electronium), 1))
 		);
 		recipes.put(new ComparableStack(ModItems.egg_balefire, 1), new SILEXRecipe(1000, 1000, EnumWavelengths.DRX)
-				.addOut(new ItemStack(Resources.powder_nc279), 10)
-				.addOut(new ItemStack(Resources.powder_taintium), 10)
-				.addOut(new ItemStack(ModItems.powder_balefire), 80)
+				.addOut(new ItemStack(Resources.powder_nc279), 5)
+				.addOut(new ItemStack(Resources.powder_taintium), 5)
+				.addOut(new ItemStack(ModItems.powder_balefire), 90)
 		);
 	}
 }
