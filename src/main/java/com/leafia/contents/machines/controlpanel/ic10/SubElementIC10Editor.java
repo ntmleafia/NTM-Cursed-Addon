@@ -7,7 +7,7 @@ import com.leafia.AddonBase;
 import com.leafia.contents.machines.controlpanel.ic10.IC10.IC10Argument;
 import com.leafia.contents.machines.controlpanel.ic10.IC10.IC10Instruction;
 import com.leafia.contents.machines.controlpanel.ic10.IC10.IC10Type;
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.dev.LeafiaUtil.ScrollUtil;
 import com.leafia.dev.gui.FiaUIRect;
 import com.leafia.overwrite_contents.interfaces.IMixinGuiControlEdit;

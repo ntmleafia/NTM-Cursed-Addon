@@ -56,7 +56,7 @@ public class LeafiaGripOffsetHelper {
 	static boolean blockInput = false;
 	public Map<TransformType,LeafiaGripOffset> offsetMap;
 	protected int debugIndex = 0;
-	static LeafiaGripOffsetHelper fixGrip = new LeafiaGripOffsetHelper()
+	public static LeafiaGripOffsetHelper fixGrip = new LeafiaGripOffsetHelper()
 			.get(TransformType.GUI).setScale(1).setRotation(180,0,90).getHelper()
 			.get(TransformType.FIRST_PERSON_RIGHT_HAND).setScale(1).setRotation(180,0,90).setPosition(0.5,0.5,0.5).getHelper()
 			.get(TransformType.FIRST_PERSON_LEFT_HAND).setPosition(0,0,1.125).getHelper()

@@ -78,6 +78,7 @@ public class AMRifle extends ItemGunBaseNT implements ILockonWeapon {
 			AMRifleBeam mk4 = new AMRifleBeam(entity,ILockonWeapon.getLoadedLockon(player),config,dmg,sideOffset,heightOffset,forwardOffset);
 			world.spawnEntity(mk4);
 		});
+		ItemGunBaseNT.setWear(stack, index, Math.min(ItemGunBaseNT.getWear(stack, index) + config.wear, ctx.config.getDurability(stack)));
 	}
 	public static int fanDuration = 50;
 	public static int fanDiv = 5;

@@ -1,5 +1,7 @@
 package com.leafia;
 
+import com.hbm.blocks.ModBlocks;
+import com.hbm.blocks.generic.BlockHazard;
 import com.hbm.handler.GuiHandler;
 import com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack;
 import com.hbm.packet.PacketDispatcher;
@@ -10,6 +12,8 @@ import com.leafia.contents.AddonItems;
 import com.leafia.contents.gear.guns.GunInit;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.machines.controlpanel.instruments.AddonInstrumentRegister;
+import com.leafia.contents.machines.processing.solblaster.recipes.SolBlasterRecipes;
+import com.leafia.contents.minerals.corium.CoriumOreBase;
 import com.leafia.contents.potion.LeafiaPotion;
 import com.leafia.contents.worldgen.AddonBiomes;
 import com.leafia.contents.worldgen.AddonBiomesGenerator;
@@ -201,6 +205,7 @@ public class AddonBase {
 		AddonShredderRecipes.register();
 		AddonPARecipes.register();
 		AddonExposureChamberRecipes.register();
+		SolBlasterRecipes.register();
 	}
 
 	@EventHandler
@@ -208,7 +213,7 @@ public class AddonBase {
 		proxy.onLoadComplete(evt);
 		FalloutConfigInit.onInit();
 		_initClass(LeafiaParticlePacket.class); // make it crash here if it's missing SideOnly annotation
-
+		((BlockHazard)ModBlocks.block_corium).addRadiation(CoriumOreBase.rads);
         /*
         FluidTankNTM tankNTM = new FluidTankNTM(Fluids.CRYOGEL,1000);
         NBTTagCompound nbt = new NBTTagCompound();

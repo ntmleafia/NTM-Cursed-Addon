@@ -2,7 +2,7 @@ package com.leafia.contents.machines.misc.wind_turbines.medium;
 
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;

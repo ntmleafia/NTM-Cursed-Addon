@@ -6,6 +6,7 @@ import com.leafia.contents.machines.elevators.car.ElevatorRender.S6;
 import com.leafia.contents.machines.elevators.car.ElevatorRender.Skylift;
 import com.leafia.contents.machines.elevators.car.styles.EvStyleItem.StyleType;
 import com.leafia.dev.items.LeafiaGripOffsetHelper;
+import com.leafia.dev.render.IFMMPerspective;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -13,7 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class EvStyleItemRender extends TEISRBase {
+public class EvStyleItemRender extends TEISRBase implements IFMMPerspective {
 	static LeafiaGripOffsetHelper offsetWall = new LeafiaGripOffsetHelper()
 			.get(TransformType.FIRST_PERSON_RIGHT_HAND)
 			.setScale(0.25).setPosition(-4.25,4.75,0.75).setRotation(-105,-65,65).getHelper()

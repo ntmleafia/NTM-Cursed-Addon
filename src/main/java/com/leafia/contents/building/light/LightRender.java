@@ -3,7 +3,7 @@ package com.leafia.contents.building.light;
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.AddonBlocks;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;

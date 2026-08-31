@@ -2,7 +2,7 @@ package com.leafia.contents.nonmachines.storage.fluid.fftank;
 
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

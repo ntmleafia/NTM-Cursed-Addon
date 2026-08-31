@@ -6,7 +6,7 @@ import com.hbm.render.tileentity.door.IRenderDoors;
 import com.hbm.tileentity.TileEntityDoorGeneric;
 import com.leafia.contents.building.doors.AddonDoorDecl;
 import com.leafia.contents.building.doors.special.reactor_door.ReactorDoorTE;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

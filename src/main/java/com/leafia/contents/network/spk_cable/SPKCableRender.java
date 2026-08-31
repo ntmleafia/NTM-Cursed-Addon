@@ -10,7 +10,7 @@ import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.network.spk_cable.SPKCableTE.EffectLink;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConnector;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

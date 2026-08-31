@@ -6,6 +6,7 @@ import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.hbm.items.ModItems;
 import com.hbm.potion.HbmPotion;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.minerals.corium.ICoriumOre;
 import com.leafia.shit.BlockFallingLeafia;
 import com.leafia.shit.Bruh;
 import com.leafia.unsorted.ParticleBalefire;
@@ -208,6 +209,7 @@ public class AshBalefire extends BlockFallingLeafia {
                     rand.nextInt(5)-2,
                     rand.nextInt(5)-2
             );
+            if (!worldIn.isBlockLoaded(target)) return;
             if (worldIn.isAirBlock(target) || worldIn.getBlockState(target).getBlock() == AddonBlocks.ash_balefire) {
                 if (isSurroundingBlockFlammable(worldIn,target)) {
                     worldIn.setBlockState(target,ModBlocks.balefire.getDefaultState());
@@ -216,10 +218,12 @@ public class AshBalefire extends BlockFallingLeafia {
 				IBlockState state1 = worldIn.getBlockState(target);
                 Block bock = state1.getBlock();
                 if (bock == Blocks.COBBLESTONE || bock == Blocks.STONE || bock == AddonBlocks.baleonitite || bock == Blocks.MONSTER_EGG || state1.getMaterial().equals(Material.ROCK)) {
-                    int rng = (rand.nextInt(3)+1)^2;
-                    if (rng <= 1) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,2));
-                    else if (rng <= 4) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,1));
-                    else if (rng <= 9) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,0));
+                    if (bock != ModBlocks.block_corium && bock != ModBlocks.block_corium_cobble && !(bock instanceof ICoriumOre)) {
+                        int rng = (rand.nextInt(3)+1)^2;
+                        if (rng <= 1) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,2));
+                        else if (rng <= 4) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,1));
+                        else if (rng <= 9) worldIn.setBlockState(target,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,0));
+                    }
                 }
             }
         }

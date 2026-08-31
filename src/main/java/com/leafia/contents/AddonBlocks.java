@@ -101,6 +101,7 @@ import com.leafia.contents.machines.reactors.rbmk.columns.realersim.RBMKRealerSi
 import com.leafia.contents.machines.reactors.rbmk.debris.RBMKDebrisSmoke;
 import com.leafia.contents.machines.research.amsp.analyzer.AMSPAnalyzerBlock;
 import com.leafia.contents.machines.research.amsp.receiver.AMSPReceiverBlock;
+import com.leafia.contents.minerals.corium.CoriumOreBase;
 import com.leafia.contents.miscellanous.diverter.DiverterBlock;
 import com.leafia.contents.miscellanous.regex_filter.pneumatic.RegexFilterBlock;
 import com.leafia.contents.miscellanous.slop.SlopBlock;
@@ -588,6 +589,13 @@ public class AddonBlocks {
 	public static final Block nuke_chud = new NukeChudBlock(Material.IRON, "nuke_chud").setCreativeTab(MainRegistry.nukeTab).setHardness(5.0F).setResistance(6000.0F);
 
 	public static final Block sol_blaster = new SolBlasterBlock(Material.IRON,"sol_blaster").setHardness(15.0F).setResistance(160.0F).setCreativeTab(MainRegistry.machineTab);
+
+	static boolean ores_dummy = Ores.dummy;
+	public static class Ores {
+		static boolean dummy = false;
+		public static final Block ore_corium_chernobylite = new CoriumOreBase("ore_corium_chernobylite",2,"chernobylite").setHardness(20).setResistance(9000.0F);
+		public static final Block ore_corium_zetalite = new CoriumOreBase("ore_corium_zetalite",3,"zetalite").setHardness(50).setResistance(9000.0F);
+	}
 
 	static {
 		if (Loader.isModLoaded("opencomputers")) {

@@ -6,8 +6,7 @@ import com.hbm.inventory.control_panel.controls.ControlType;
 import com.hbm.inventory.control_panel.controls.configs.SubElementBaseConfig;
 import com.hbm.render.loader.IModelCustom;
 import com.leafia.AddonBase;
-import com.leafia.contents.machines.controlpanel.instruments.AddonControlType;
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,7 +16,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Map;

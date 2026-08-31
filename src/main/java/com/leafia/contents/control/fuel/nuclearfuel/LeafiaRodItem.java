@@ -921,7 +921,7 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 
 	@Override
 	public AddonItemHazardBase addRad(MultiRadContainer container) {
-		container = container.copy().multiply(0.5);
+		container = container.multiply(0.5);
 		if (container.neutrons == 0)
 			container.neutrons = -1;
 		return super.addRad(container);

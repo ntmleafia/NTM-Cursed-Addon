@@ -1,7 +1,7 @@
 package com.leafia.contents.building.storage.broof;
 
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;

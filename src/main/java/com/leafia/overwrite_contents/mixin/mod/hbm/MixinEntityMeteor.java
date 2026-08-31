@@ -1,6 +1,7 @@
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.GeneralConfig;
+import com.hbm.config.WorldConfig;
 import com.hbm.entity.projectile.EntityMeteor;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.world.Meteorite;
@@ -99,10 +100,10 @@ public abstract class MixinEntityMeteor extends Entity implements IMixinEntityMe
 			y-=2;
 		instance.generate(world,rand,x,y,z,safe,special,damaging);
 	}
-	@Redirect(method = "onUpdate",at = @At(value = "FIELD", target = "Lcom/hbm/config/GeneralConfig;enableMeteorTails:Z",ordinal = 0,remap = false),require = 1)
+	@Redirect(method = "onUpdate",at = @At(value = "FIELD", target = "Lcom/hbm/config/WorldConfig;enableMeteorTails:Z",ordinal = 0,remap = false),require = 1)
 	private boolean leafia$onOnUpdate() {
-		if (!AddonConfig.enableMeteorCraters) return GeneralConfig.enableMeteorTails;
-		if (GeneralConfig.enableMeteorTails && !safe) {
+		if (!AddonConfig.enableMeteorCraters) return WorldConfig.enableMeteorTails;
+		if (WorldConfig.enableMeteorTails && !safe) {
 			// for some reason its both Z axis in original code
 			DebugBoomBlock.createMeteorExplosionEffect(world,posX+(this.motionZ*4),posY,posZ+(this.motionZ*4));
 			DebugBoomBlock.createMeteorCrater(world,new BlockPos(posX+(this.motionZ*4),posY,posZ+(this.motionZ*4)));

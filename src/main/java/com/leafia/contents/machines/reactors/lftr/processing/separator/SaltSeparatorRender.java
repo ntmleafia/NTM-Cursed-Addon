@@ -1,7 +1,7 @@
 package com.leafia.contents.machines.reactors.lftr.processing.separator;
 
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;

@@ -4,8 +4,8 @@ import com.hbm.blocks.machine.rbmk.RBMKBase;
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.tileentity.machine.rbmk.RBMKDials;
 import com.hbm.tileentity.machine.rbmk.TileEntityRBMKBase;
-import com.leafia.dev.LeafiaBrush;
-import com.leafia.dev.LeafiaBrush.BrushMode;
+import com.leafia.dev.render.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush.BrushMode;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityRBMKBase;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

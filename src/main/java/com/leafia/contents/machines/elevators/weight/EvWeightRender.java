@@ -1,9 +1,8 @@
 package com.leafia.contents.machines.elevators.weight;
 
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.contents.machines.elevators.car.ElevatorEntity;
 import com.leafia.contents.machines.elevators.car.ElevatorRender;
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;

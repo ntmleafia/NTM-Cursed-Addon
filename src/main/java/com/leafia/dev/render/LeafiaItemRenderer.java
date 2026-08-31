@@ -1,4 +1,4 @@
-package com.leafia.dev;
+package com.leafia.dev.render;
 
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.item.ItemRenderBase;
@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-public abstract class LeafiaItemRenderer extends ItemRenderBase {
+public abstract class LeafiaItemRenderer extends ItemRenderBase implements IFMMPerspective {
 	static boolean debug = false;
 	double scale = _sizeReference();
 	double offset = _itemYoffset();

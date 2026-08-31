@@ -2,11 +2,10 @@ package com.leafia.contents.machines.elevators.floors;
 
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.elevators.car.ElevatorRender.S6;
 import com.leafia.contents.machines.elevators.car.ElevatorRender.Skylift;
-import com.leafia.dev.LeafiaBrush;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaBrush;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

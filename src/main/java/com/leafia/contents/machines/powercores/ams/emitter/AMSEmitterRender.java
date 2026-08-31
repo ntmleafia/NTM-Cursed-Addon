@@ -4,7 +4,7 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseTE;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.unsorted.NTMRenderHelperWrapper;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

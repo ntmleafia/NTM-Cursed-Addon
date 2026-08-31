@@ -68,7 +68,7 @@ public class ReactorDoorTE extends TileEntityDoorGeneric implements LeafiaPacket
 			}
 		} else if (state == DoorState.CLOSING) {
 			if (openTicks == getDoorType().timeToOpen()-23)
-				world.playSound(null,pos,LeafiaSoundEvents.reactor_door_close,SoundCategory.BLOCKS,1,1);
+				world.playSound(null,pos,LeafiaSoundEvents.reactor_door_close,SoundCategory.BLOCKS,3,1);
 			if (openTicks == getDoorType().timeToOpen()-44-2) { // why is it off sync
 				PacketThreading.createSendToAllTrackingThreadedPacket(
 						new CommandLeaf.ShakecamPacket(

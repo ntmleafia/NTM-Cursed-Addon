@@ -1,6 +1,6 @@
 package com.leafia.unsorted.ateupd;
 
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.client.renderer.OpenGlHelper;

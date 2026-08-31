@@ -24,7 +24,7 @@ public class AmatDuctBakedModel extends AbstractWavefrontBakedModel {
 	private List<BakedQuad> itemQuads;
 
 	private AmatDuctBakedModel(HFRWavefrontObject model,TextureAtlasSprite baseSprite,TextureAtlasSprite overlaySprite,boolean forBlock,float baseScale,float tx,float ty,float tz,float itemYaw) {
-		super(model, forBlock ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM, baseScale, tx, ty, tz, BakedModelTransforms.pipeItem());
+		super(model, forBlock ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM, baseScale, tx, ty, tz, BakedModelTransforms.isbrh());
 		this.baseSprite = baseSprite;
 		this.overlaySprite = overlaySprite;
 		this.forBlock = forBlock;
@@ -36,7 +36,7 @@ public class AmatDuctBakedModel extends AbstractWavefrontBakedModel {
 	}
 
 	public static AmatDuctBakedModel forItem(HFRWavefrontObject model, TextureAtlasSprite baseSprite, TextureAtlasSprite overlaySprite, float baseScale, float tx, float ty, float tz, float yaw) {
-		return new AmatDuctBakedModel(model, baseSprite, overlaySprite, false, baseScale, tx, ty, tz, yaw);
+		return new AmatDuctBakedModel(model, baseSprite, overlaySprite, false, 1.25F, 0.5F, 0.5F, 0.5F, (float) Math.PI);
 	}
 
 	public static AmatDuctBakedModel empty(TextureAtlasSprite sprite) {

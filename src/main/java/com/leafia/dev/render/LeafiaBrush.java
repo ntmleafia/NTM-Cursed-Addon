@@ -1,4 +1,4 @@
-package com.leafia.dev;
+package com.leafia.dev.render;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;

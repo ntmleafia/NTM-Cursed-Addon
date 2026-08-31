@@ -3,7 +3,7 @@ package com.leafia.contents.machines.elevators.items;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.machines.elevators.car.ElevatorRender;
 import com.leafia.contents.machines.elevators.car.ElevatorRender.S6;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;

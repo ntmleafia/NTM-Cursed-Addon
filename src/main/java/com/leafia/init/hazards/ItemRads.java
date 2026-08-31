@@ -11,6 +11,7 @@ import com.leafia.init.hazards.modifiers.NBTModifier;
 import com.leafia.init.hazards.modifiers.NBTModifier.NBTKey;
 import com.leafia.init.hazards.types.radiation.*;
 import com.leafia.settings.AddonConfig;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
 import java.util.*;
@@ -28,6 +29,8 @@ public class ItemRads {
 	public static MultiRadContainer balefire = new MultiRadContainer(0,0,0,300000,0);
 
 	public static MultiRadContainer cobalt60 = new MultiRadContainer(0,30,30,60,0).multiply(1/3f);
+
+	public static MultiRadContainer corium = new MultiRadContainer(30,30,30,30,50,50,0);
 
 	public static MultiRadContainer flashlead = new MultiRadContainer(0,500+10000+2000,500,500,0).multiply(1/2f);
 
@@ -72,10 +75,10 @@ public class ItemRads {
 	public static MultiRadContainer thorium232 = new MultiRadContainer(0.1,0,0,0,0);
 	public static MultiRadContainer thoriumFuel = new MultiRadContainer(1.75,0,0,0,0);
 
-	public static MultiRadContainer uranium = new MultiRadContainer(0.35,0,0,0,0,0.5,0);
-	public static MultiRadContainer uranium233 = new MultiRadContainer(5,0,0,0,0,0.85,0);
-	public static MultiRadContainer uranium235 = new MultiRadContainer(1,0,0,0,0,0.75,0);
-	public static MultiRadContainer uranium238 = new MultiRadContainer(0.25,0,0,0,0,0.4,0);
+	public static MultiRadContainer uranium = new MultiRadContainer(0.35,0,0,0,0,0.5/2,0);
+	public static MultiRadContainer uranium233 = new MultiRadContainer(5,0,0,0,0,0.85/2,0);
+	public static MultiRadContainer uranium235 = new MultiRadContainer(1,0,0,0,0,0.75/2,0);
+	public static MultiRadContainer uranium238 = new MultiRadContainer(0.25,0,0,0,0,0.1,0);
 	public static MultiRadContainer uraniumFuel = new MultiRadContainer(0.5,0,0,0,0,0.65,0);
 
 	public static MultiRadContainer waste = new MultiRadContainer(0,125,125,50,25);
@@ -116,20 +119,24 @@ public class ItemRads {
 		}
 
 		public MultiRadContainer multiply(double v) {
-			alpha *= v;
-			beta *= v;
-			x *= v;
-			gamma *= v;
-			neutrons *= v;
-			radon *= v;
-			activation *= v;
-			return this;
+			MultiRadContainer c = copy();
+			c.alpha *= v;
+			c.beta *= v;
+			c.x *= v;
+			c.gamma *= v;
+			c.neutrons *= v;
+			c.radon *= v;
+			c.activation *= v;
+			return c;
 		}
 
 		public MultiRadContainer copy() {
 			return new MultiRadContainer(alpha, beta, x, gamma, neutrons, radon, activation);
 		}
 
+		public void register(Block block) {
+			register(Item.getItemFromBlock(block));
+		}
 		public void register(Item item) {
 			HazardData data = HazardSystem.itemMap.computeIfAbsent(item, k -> new HazardData());
 			// if you need to add a hazard modifier to HazardTypeRadiation, use

@@ -6,6 +6,7 @@ import com.hbm.render.item.TEISRBase;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
 import com.leafia.dev.items.LeafiaGripOffsetHelper;
+import com.leafia.dev.render.IFMMPerspective;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.math.LeafiaColor;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -15,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 
 import static com.leafia.init.ResourceInit.getVAO;
 
-public class AdvisorRender extends TEISRBase {
+public class AdvisorRender extends TEISRBase implements IFMMPerspective {
 	static final String basePath = "textures/_integrated/items/advisor/";
 	public static final WaveFrontObjectVAO mdl = getVAO(new ResourceLocation("leafia",basePath+"ugly af.obj"));
 	public static final ResourceLocation base = ResourceManager.control_panel_custom_tex;

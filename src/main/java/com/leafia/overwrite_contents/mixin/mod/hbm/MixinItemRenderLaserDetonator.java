@@ -2,6 +2,7 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.main.ModEventHandlerClient;
 import com.hbm.main.ResourceManager;
+import com.hbm.render.item.ItemRenderFrames17;
 import com.hbm.render.item.ItemRendererDetonatorLaser;
 import com.hbm.render.item.TEISRBase;
 import com.hbm.util.RenderUtil;
@@ -27,7 +28,7 @@ import java.util.Random;
 @Mixin(value = ItemRendererDetonatorLaser.class)
 public class MixinItemRenderLaserDetonator extends TEISRBase {
 
-	@Unique
+	/*@Unique
 	private static final LeafiaGripOffsetHelper offsets = new LeafiaGripOffsetHelper()
 			.get(TransformType.GUI)
 			.setScale(0.25).setPosition(-2.25,1.45,-1.25).setRotation(-40,0,0).getHelper()
@@ -41,6 +42,26 @@ public class MixinItemRenderLaserDetonator extends TEISRBase {
 			.setScale(0.25).setPosition(12.75,4.75,-13.75).setRotation(0,-5,-10).getHelper()
 			.get(TransformType.THIRD_PERSON_RIGHT_HAND)
 			.setScale(0.25).setPosition(-2.6,1.6,-0.6).setRotation(-53,7,-7).getHelper()
+			.get(TransformType.THIRD_PERSON_LEFT_HAND)
+			.setScale(1).setPosition(1.25,0,0).setRotation(0,-9,0).getHelper()
+
+			.get(TransformType.GROUND)
+			.setScale(0.25).setPosition(-2,0.25,-1.75).setRotation(0,0,0).getHelper();
+	*/
+	@Unique
+	private static final LeafiaGripOffsetHelper offsets = new LeafiaGripOffsetHelper()
+			.get(TransformType.GUI)
+			.setScale(0.25).setPosition(-2.25,1.45,-1.25).setRotation(-40,0,0).getHelper()
+
+			.get(TransformType.FIXED)
+			.copySettings(TransformType.GUI).getHelper()
+
+			.get(TransformType.FIRST_PERSON_RIGHT_HAND)
+			.setScale(0.25).setPosition(-1.30,1.05,-3.25).setRotation(14,91,5).getHelper()
+			.get(TransformType.FIRST_PERSON_LEFT_HAND) // Whoops
+			.setScale(0.25).setPosition(1.75,6.25,-12.75).setRotation(-5,-5,-10).getHelper()
+			.get(TransformType.THIRD_PERSON_RIGHT_HAND)
+			.setScale(0.25).setPosition(-2.10,1.60,-1.35).setRotation(7,92,-2).getHelper()
 			.get(TransformType.THIRD_PERSON_LEFT_HAND)
 			.setScale(1).setPosition(1.25,0,0).setRotation(0,-9,0).getHelper()
 
@@ -76,7 +97,7 @@ public class MixinItemRenderLaserDetonator extends TEISRBase {
 				} else
 					offsets.apply(type);
 				break;
-			case THIRD_PERSON_LEFT_HAND, THIRD_PERSON_RIGHT_HAND, HEAD:
+			/*case THIRD_PERSON_LEFT_HAND, THIRD_PERSON_RIGHT_HAND, HEAD:
 				// detonator_laser's 1.7 item was setFull3D(), so third-person uses the full-3D held branch.
 				GlStateManager.multMatrix(type == TransformType.HEAD ? ItemRenderFrames17.HEAD
 						: type == TransformType.THIRD_PERSON_LEFT_HAND ? ItemRenderFrames17.THIRD_PERSON_FULL3D_LEFT
@@ -86,7 +107,7 @@ public class MixinItemRenderLaserDetonator extends TEISRBase {
 				GlStateManager.rotate(85F, 0F, 1F, 0F);
 				GlStateManager.rotate(145F, 1F, 0F, 0F);
 				GlStateManager.translate(-0.5F, -1.0F, 6.5F);
-				break;
+				break;*/
 			default:
 				offsets.apply(type);
 				break;

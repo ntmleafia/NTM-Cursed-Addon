@@ -4,7 +4,7 @@ import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.machines.elevators.EvPulleyTE;
 import com.leafia.contents.machines.elevators.car.ElevatorEntity.*;
 import com.leafia.contents.machines.elevators.car.styles.panels.ElevatorPanelBase;
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.group.LeafiaMap;
 import net.minecraft.client.Minecraft;

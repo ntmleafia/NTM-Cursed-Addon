@@ -3,7 +3,7 @@ package com.leafia.contents.machines.elevators.items;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.contents.machines.elevators.car.ElevatorRender;
 import com.leafia.contents.machines.elevators.weight.EvWeightRender;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class WeightSpawnItemRender extends LeafiaItemRenderer {

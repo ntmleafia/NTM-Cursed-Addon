@@ -25,7 +25,7 @@ public class CatwalkRailingBakedModel extends AbstractWavefrontBakedModel {
 	private List<BakedQuad> itemQuads;
 
 	protected CatwalkRailingBakedModel(CatwalkRailingBase railing,HFRWavefrontObject model,TextureAtlasSprite sprite,boolean forBlock,float baseScale,float tx,float ty,float tz,float itemYaw) {
-		super(true,model,forBlock ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM,baseScale,tx,ty,tz,BakedModelTransforms.pipeItem());
+		super(true,model,forBlock ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM,baseScale,tx,ty,tz,BakedModelTransforms.isbrh());
 		this.registeredSprite = sprite;
 		this.forBlock = forBlock;
 		this.itemYaw = itemYaw;

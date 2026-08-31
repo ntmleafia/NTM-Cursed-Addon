@@ -64,7 +64,7 @@ public class GunInit {
 		// the real bullshit that needs you to read code to find out-
 		Guns.am_rifle = new AMRifle(
 				WeaponQuality.SECRET,"gun_leafia_amrifle",new GunConfig()
-				.dura(2000).draw(10).crosshair(Crosshair.CIRCLE)
+				.dura(50).draw(10).crosshair(Crosshair.CIRCLE)
 				.rec(
 						new Receiver(0)
 								.dmg(200)

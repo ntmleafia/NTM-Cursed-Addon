@@ -1,10 +1,9 @@
 package com.leafia.contents.building.storage.rack;
 
-import com.hbm.blocks.ModBlocks;
 import com.hbm.render.loader.WaveFrontObjectVAO;
-import com.leafia.dev.LeafiaBrush;
-import com.leafia.dev.LeafiaBrush.BrushMode;
-import com.leafia.dev.LeafiaItemRenderer;
+import com.leafia.dev.render.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush.BrushMode;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

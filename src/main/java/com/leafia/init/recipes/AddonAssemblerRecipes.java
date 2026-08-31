@@ -379,6 +379,16 @@ public class AddonAssemblerRecipes {
 							new OreDictStack("dyeRed",4)
 					)
 			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.solblaster").setup(2000,100)
+					.outputItems(new ItemStack(AddonBlocks.sol_blaster))
+					.inputItems(
+							new OreDictStack(STEEL.plateCast(),3),
+							new ComparableStack(ModItems.neutron_reflector,2),
+							new OreDictStack(MINGRADE.wireFine(),8),
+							new ComparableStack(ModBlocks.brick_concrete,6),
+							new OreDictStack(PB.plateCast(),2)
+					)
+			);
 		}
 	}
 	public static void makeRecipe(String s,ComparableStack out, AStack[] in, int duration) {

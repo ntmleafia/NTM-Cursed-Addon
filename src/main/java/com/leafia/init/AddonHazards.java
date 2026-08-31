@@ -1,5 +1,6 @@
 package com.leafia.init;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.hazard.HazardData;
 import static com.hbm.hazard.HazardRegistry.*;
 
@@ -12,6 +13,7 @@ import com.hbm.inventory.OreDictManager.DictFrame;
 import com.hbm.inventory.RecipesCommon;
 import com.hbm.items.ModItems;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.Ores;
 import com.leafia.contents.AddonItems;
 import com.leafia.database.AddonOreDictHazards;
 import com.leafia.dev.items.itembase.AddonItemHazardBase;
@@ -54,7 +56,13 @@ public class AddonHazards {
 		ItemRads.americium241.register(OreDictManager.AM241);
 		ItemRads.americium242.register(OreDictManager.AM242);
 		ItemRads.americiumRG.register(OreDictManager.AMRG);
+		ItemRads.balefire.register(ModItems.egg_balefire);
+		ItemRads.balefire.multiply(0.1).register(ModItems.egg_balefire_shard);
 		ItemRads.cobalt60.register(OreDictManager.CO60);
+		ItemRads.corium.register(ModBlocks.block_corium);
+		ItemRads.corium.register(ModBlocks.block_corium_cobble);
+		ItemRads.corium.register(Ores.ore_corium_chernobylite);
+		ItemRads.corium.register(Ores.ore_corium_zetalite);
 		ItemRads.francium.register(AddonOreDict.FR);
 		ItemRads.gold198.register(OreDictManager.AU198);
 		ItemRads.lead209.register(OreDictManager.PB209);
@@ -77,10 +85,10 @@ public class AddonHazards {
 		ItemRads.uranium233.register(OreDictManager.U233);
 		ItemRads.uranium235.register(OreDictManager.U235);
 		ItemRads.uranium238.register(OreDictManager.U238);
-		ItemRads.waste.copy().multiply(3).register(ModItems.nuclear_waste);
-		ItemRads.waste_v.copy().multiply(3).register(ModItems.nuclear_waste_vitrified);
-		ItemRads.waste.copy().multiply(0.3).register(ModItems.nuclear_waste_tiny);
-		ItemRads.waste_v.copy().multiply(0.3).register(ModItems.nuclear_waste_vitrified_tiny);
+		ItemRads.waste.multiply(3).register(ModItems.nuclear_waste);
+		ItemRads.waste_v.multiply(3).register(ModItems.nuclear_waste_vitrified);
+		ItemRads.waste.multiply(0.3).register(ModItems.nuclear_waste_tiny);
+		ItemRads.waste_v.multiply(0.3).register(ModItems.nuclear_waste_vitrified_tiny);
 		ItemRads.waste.register(ModItems.billet_nuclear_waste);
 
 		HazardSystem.register(AddonItems.dfcsh_cable,makeData(SHARP,5).addEntry(DIGAMMA,0.003));

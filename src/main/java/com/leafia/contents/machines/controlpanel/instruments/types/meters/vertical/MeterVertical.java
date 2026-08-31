@@ -9,7 +9,7 @@ import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
 import com.leafia.contents.machines.controlpanel.CCPSyncPacketBase;
 import com.leafia.contents.machines.controlpanel.instruments.types.AddonInstrumentModels;
-import com.leafia.dev.LeafiaBrush;
+import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.transformer.LeafiaGls;

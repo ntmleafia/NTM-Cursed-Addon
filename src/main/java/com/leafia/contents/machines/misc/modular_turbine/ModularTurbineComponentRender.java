@@ -3,8 +3,7 @@ package com.leafia.contents.machines.misc.modular_turbine;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
 import com.leafia.contents.machines.misc.modular_turbine.ModularTurbineBlockBase.TurbineComponentType;
-import com.leafia.dev.LeafiaItemRenderer;
-import com.leafia.init.ItemRendererInit;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,8 +13,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
