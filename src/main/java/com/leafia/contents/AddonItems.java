@@ -707,7 +707,7 @@ public class AddonItems {
 		public static ItemGunBaseNT am_rifle;
 	}
 
-	public static final Item rad_glasses = new RadGlassesItem(ArmorMaterial.IRON, -1, EntityEquipmentSlot.HEAD, "radglasses").setMaxStackSize(1);
+	public static final Item radglasses = new RadGlassesItem(ArmorMaterial.IRON, -1, EntityEquipmentSlot.HEAD, "radglasses").setMaxStackSize(1);
 
 	public static final Item pellet_rtg_fissium = new AddonItemHazardBaked("pellet_rtg_fissium").addRad(ItemRads.fissium.multiply(0.5)).setContainerItem(ModItems.plate_iron).setCreativeTab(MainRegistry.controlTab);
 	public static final Item pellet_rtg_nc279 = new AddonRTGPelletItem(120,"pellet_rtg_nc279").setDecays(pellet_rtg_fissium,2000000L,4).setCreativeTab(MainRegistry.controlTab);

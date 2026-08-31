@@ -10,7 +10,6 @@ import com.hbm.items.ItemEnums.EnumCircuitType;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack;
 import com.hbm.items.machine.ItemBatterySC.EnumBatterySC;
-import com.hbm.items.machine.ItemFluidTank;
 import com.hbm.items.weapon.grenade.ItemGrenadeFilling.EnumGrenadeFilling;
 import com.hbm.main.CraftingManager;
 import com.leafia.contents.AddonBlocks;
@@ -178,6 +177,8 @@ public class AddonCraftingRecipes {
 		addRecipeAuto(new ItemStack(AddonItems.grenade_pink_cloud), " S ", "ECE", " E ", 'S', ModItems.powder_spark_mix, 'E', ModItems.powder_magic, 'C', AddonItems.grenade_cloud);
 		addRecipeAuto(new ItemStack(ModBlocks.vent_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', AddonItems.grenade_cloud, 'D', Blocks.DISPENSER);
 		addRecipeAuto(new ItemStack(ModBlocks.vent_pink_cloud), "IGI", "ICI", "IDI", 'I', IRON.plate(), 'G', Blocks.IRON_BARS, 'C', AddonItems.grenade_pink_cloud, 'D', Blocks.DISPENSER);
+
+		CraftingManager.addRecipeAuto(new ItemStack(AddonItems.radglasses, 1),"I I", "GPG"," C ",'C',new ItemStack(ModItems.circuit,1,EnumCircuitType.ADVANCED.ordinal()) , 'I', ANY_RUBBER.ingot(), 'G', Blocks.GLASS_PANE, 'P', ANY_PLASTIC.ingot() );
 
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
