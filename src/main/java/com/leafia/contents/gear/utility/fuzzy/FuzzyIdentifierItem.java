@@ -1,4 +1,4 @@
-package com.leafia.contents.gear.utility;
+package com.leafia.contents.gear.utility.fuzzy;
 
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
 import com.hbm.blocks.BlockDummyable;

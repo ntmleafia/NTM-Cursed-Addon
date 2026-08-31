@@ -7,6 +7,8 @@ import com.hbm.explosion.vanillant.ExplosionVNT;
 import com.hbm.explosion.vanillant.standard.*;
 import com.hbm.handler.radiation.ChunkRadiationManager;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.Ores;
+import com.leafia.contents.minerals.corium.ICoriumOre;
 import com.leafia.unsorted.explosion_vnt.BlockAllocatorSteamExplosion;
 import com.leafia.unsorted.explosion_vnt.BlockMutatorCollapse;
 import net.minecraft.block.Block;
@@ -18,6 +20,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.BlockFluidFinite;
@@ -26,6 +29,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
@@ -34,6 +40,14 @@ public class MixinCoriumFinite extends BlockFluidFinite {
 	@Shadow(remap = false)
 	@Final
 	private Random rand;
+
+	@Inject(method = "canDisplace",at = @At(value = "HEAD"),require = 1,remap = false,cancellable = true)
+	public void leafia$onDisplace(IBlockAccess world,BlockPos pos,CallbackInfoReturnable<Boolean> cir) {
+		if (rand.nextInt(3) == 0) {
+			cir.setReturnValue(false);
+			cir.cancel();
+		}
+	}
 
 	public MixinCoriumFinite(Fluid fluid,Material material) {
 		super(fluid,material);
@@ -103,8 +117,14 @@ public class MixinCoriumFinite extends BlockFluidFinite {
 		ChunkRadiationManager.proxy.incrementRad(world, pos, isBalefire ? 500 : 50);
 		if (!world.isRemote) {
 			if (random.nextInt(10) == 0/* && world.getBlockState(pos.down()).getBlock() != this*/) {
-				if (random.nextInt(3) == 0) {
-					world.setBlockState(pos,ModBlocks.block_corium.getDefaultState());
+				if (random.nextInt(3) <= (isBalefire ? 1 : 0)) {
+					if (random.nextInt(3) == 0) {
+						if (isBalefire)
+							world.setBlockState(pos,Ores.ore_corium_zetalite.getDefaultState());
+						else
+							world.setBlockState(pos,Ores.ore_corium_chernobylite.getDefaultState());
+					} else
+						world.setBlockState(pos,ModBlocks.block_corium.getDefaultState());
 				} else {
 					world.setBlockState(pos,ModBlocks.block_corium_cobble.getDefaultState());
 				}
@@ -136,10 +156,15 @@ public class MixinCoriumFinite extends BlockFluidFinite {
 							IBlockState state1 = world.getBlockState(blockpos);
 							Block bock = state1.getBlock();
 							if (bock == Blocks.COBBLESTONE || bock == Blocks.STONE || bock == AddonBlocks.baleonitite || bock == Blocks.MONSTER_EGG || state1.getMaterial().equals(Material.ROCK)) {
-								int rng = (rand.nextInt(3)+1)^2;
-								if (rng <= 1) world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,2));
-								else if (rng <= 4) world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,1));
-								else if (rng <= 9) world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,0));
+								if (bock != ModBlocks.block_corium && bock != ModBlocks.block_corium_cobble && !(bock instanceof ICoriumOre)) {
+									int rng = (rand.nextInt(3)+1)^2;
+									if (rng <= 1)
+										world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,2));
+									else if (rng <= 4)
+										world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,1));
+									else if (rng <= 9)
+										world.setBlockState(blockpos,AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,0));
+								}
 							}
 						}
 					}

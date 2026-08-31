@@ -3,11 +3,12 @@ package com.leafia.jei;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemPWRFuel.EnumPWRFuel;
-import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonBlocks.Elevators;
 import com.leafia.contents.AddonBlocks.PWR;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.LeafiaRods;
+import com.leafia.contents.AddonItems.Resources;
+import com.leafia.init.AddonMats;
 import com.leafia.settings.AddonConfig;
 import com.leafia.unsorted.ateupd.Reserved6TE;
 import mezz.jei.api.ingredients.IIngredientBlacklist;
@@ -55,7 +56,7 @@ public class _JEIBlacklist {
 			blacklist.addIngredientToBlacklist(new ItemStack(PWR.hull));
 			blacklist.addIngredientToBlacklist(new ItemStack(PWR.reflector));
 		}
-		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.billet_kys));
+		blacklist.addIngredientToBlacklist(new ItemStack(Resources.billet_kys));
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodKys));
 		blacklist.addIngredientToBlacklist(new ItemStack(Elevators.light));
 		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.digammaRecord));
@@ -65,5 +66,8 @@ public class _JEIBlacklist {
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodCatsmile));
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodConfusion));
 		blacklist.addIngredientToBlacklist(new ItemStack(LeafiaRods.leafRodShitfuckium));
+		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.am_rifle_cell_mysticite));
+		blacklist.addIngredientToBlacklist(new ItemStack(AddonItems.am_rifle_cell_mysticite_filled));
+		blacklist.addIngredientToBlacklist(new ItemStack(ModItems.part_receiver_light,1,AddonMats.MAT_MYSTICITE.id));
 	}
 }

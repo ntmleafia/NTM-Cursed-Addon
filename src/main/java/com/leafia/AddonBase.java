@@ -118,6 +118,7 @@ public class AddonBase {
 				throw flaw;
 			}
 		}
+		AddonOreDict.registerGroups();
 		AddonFluids.init();
 		AddonFF.init();
 		staticLoadingStage = AddonLoadingStage.BLOCKS;
@@ -206,6 +207,11 @@ public class AddonBase {
 		AddonPARecipes.register();
 		AddonExposureChamberRecipes.register();
 		SolBlasterRecipes.register();
+		AddonMatDistribution.register();
+		AddonArcFurnaceRecipes.register();
+		AddonCrucibleRecipes.register();
+		AddonSILEXRecipes.register();
+		AddonPressRecipes.register();
 	}
 
 	@EventHandler

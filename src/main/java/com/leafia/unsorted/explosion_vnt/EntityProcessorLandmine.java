@@ -20,7 +20,7 @@ public class EntityProcessorLandmine extends EntityProcessorCrossSmooth {
 				amount *= 0.5F;
 			//}
 			if (amount <= 22)
-				amount = Math.min(amount,17);
+				amount = Math.min(amount,/*17*/11); // nerfed since player-placed mines deals 600000
 
 			DamageSource dmg = LeafiaDamageSource.mine;
 			if (!(entity instanceof EntityLivingBase)) {

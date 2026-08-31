@@ -63,10 +63,14 @@ public class AddonHazards {
 		ItemRads.corium.register(ModBlocks.block_corium_cobble);
 		ItemRads.corium.register(Ores.ore_corium_chernobylite);
 		ItemRads.corium.register(Ores.ore_corium_zetalite);
+		ItemRads.fissium.register(AddonOreDict.FS);
+		ItemRads.fissite.register(AddonOreDict.FSALLOY);
 		ItemRads.francium.register(AddonOreDict.FR);
 		ItemRads.gold198.register(OreDictManager.AU198);
 		ItemRads.lead209.register(OreDictManager.PB209);
 		ItemRads.neptunium237.register(OreDictManager.NP237);
+		ItemRads.nuclium279.register(AddonOreDict.NC279);
+		ItemRads.nuclium279.multiply(0.5).register(AddonItems.pellet_rtg_nc279);
 		ItemRads.plutonium.register(OreDictManager.PU);
 		ItemRads.plutoniumRG.register(OreDictManager.PURG);
 		ItemRads.plutonium238.register(OreDictManager.PU238);

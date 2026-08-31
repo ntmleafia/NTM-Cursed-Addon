@@ -15,6 +15,7 @@ import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
+import com.leafia.passive.rendering.TopRender;
 import com.leafia.passive.rendering.TopRender.Highlight;
 import com.llib.group.LeafiaMap;
 import com.llib.group.LeafiaSet;
@@ -566,6 +567,15 @@ public class LeafiaDebug {
 				BlockPos pos = buf.readPos();
 				return ()->{
 					Highlight highlight = new Highlight(pos);
+					int i = 0;
+					while (i < Highlight.instances.size()) {
+						Highlight instance = Highlight.instances.get(i);
+						if (instance.center.equals(highlight.center) && instance.size.equals(highlight.size)) {
+							instance.hide();
+							continue;
+						}
+						i++;
+					}
 					highlight.setColor(color);
 					highlight.label = label;
 					highlight.lifetime = duration;

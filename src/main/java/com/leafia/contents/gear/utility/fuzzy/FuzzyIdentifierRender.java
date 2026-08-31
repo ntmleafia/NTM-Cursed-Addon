@@ -1,4 +1,4 @@
-package com.leafia.contents.gear.utility;
+package com.leafia.contents.gear.utility.fuzzy;
 
 import com.custom_hbm.render.LCERenderHelper;
 import com.hbm.inventory.fluid.FluidType;

@@ -51,6 +51,12 @@ public class PWRElementBlock extends BlockMachineBase implements ITooltipProvide
 		AddonBlocks.ALL_BLOCKS.add(this);
 	}
 	@Override
+	public void breakBlock(World worldIn,BlockPos pos,IBlockState state) {
+		if (tileEntityShouldCreate(worldIn,pos))
+			InventoryHelper.dropInventoryItems(worldIn, pos, worldIn.getTileEntity(pos));
+		worldIn.removeTileEntity(pos);
+	}
+	@Override
 	public boolean shouldRenderOnGUI() {
 		return true;
 	}

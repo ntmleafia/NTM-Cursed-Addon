@@ -32,6 +32,8 @@ public class ItemRads {
 
 	public static MultiRadContainer corium = new MultiRadContainer(30,30,30,30,50,50,0);
 
+	public static MultiRadContainer fissium = new MultiRadContainer(0,0,0,10,30);
+	public static MultiRadContainer fissite = fissium.multiply(0.1);
 	public static MultiRadContainer flashlead = new MultiRadContainer(0,500+10000+2000,500,500,0).multiply(1/2f);
 
 	public static MultiRadContainer francium = new MultiRadContainer(150000,0,0,1400000,0);
@@ -44,6 +46,8 @@ public class ItemRads {
 
 	public static MultiRadContainer neptunium237 = new MultiRadContainer(2.5,0,0,0,0);
 	public static MultiRadContainer neptuniumFuel = new MultiRadContainer(1.5,0,0,0,0);
+
+	public static MultiRadContainer nuclium279 = new MultiRadContainer(0,250,0,70,0);
 
 	public static MultiRadContainer plutonium = new MultiRadContainer(7.5,0,0,0,0);
 	public static MultiRadContainer plutoniumRG = new MultiRadContainer(6.25,0,0,0,0);

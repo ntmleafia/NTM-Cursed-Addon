@@ -6,6 +6,7 @@ import com.hbm.handler.jei.JEIConfig;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.machines.processing.solblaster.recipes.SolBlasterJEI.Recipe;
+import com.leafia.contents.machines.processing.solblaster.recipes.SolBlasterRecipes.ItemOrOreDict;
 import com.leafia.jei._AddonJEI;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -19,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,26 +34,32 @@ public class SolBlasterJEI implements IRecipeCategory<Recipe> {
 	public static class Recipe implements IRecipeWrapper {
 		public static final List<Recipe> recipes = new ArrayList<>();
 		public static List<Recipe> buildRecipes() {
-			for (Entry<Item,Map<Integer,Pair<Item,Integer>>> entryItem : SolBlasterRecipes.recipes.entrySet()) {
-				for (Entry<Integer,Pair<Item,Integer>> entryMeta : entryItem.getValue().entrySet())
+			for (Entry<ItemOrOreDict,Map<Integer,Pair<Item,Integer>>> entryItem : SolBlasterRecipes.recipes.entrySet()) {
+				for (Entry<Integer,Pair<Item,Integer>> entryMeta : entryItem.getValue().entrySet()) {
+					List<ItemStack> stacks = new ArrayList<>();
+					if (!entryItem.getKey().isOreDict)
+						stacks.add(new ItemStack(entryItem.getKey().item,1,entryMeta.getKey()));
+					else
+						stacks.addAll(OreDictionary.getOres(entryItem.getKey().dict));
 					recipes.add(new Recipe(
-							new ItemStack(entryItem.getKey(),1,entryMeta.getKey()),
+							stacks,
 							new ItemStack(entryMeta.getValue().getA(),1,entryMeta.getValue().getB())
 					));
+				}
 			}
 			return recipes;
 		}
 
-		final ItemStack input;
+		final List<ItemStack> input;
 		final ItemStack output;
-		public Recipe(ItemStack input,ItemStack output) {
+		public Recipe(List<ItemStack> input,ItemStack output) {
 			this.input = input;
 			this.output = output;
 		}
 
 		@Override
 		public void getIngredients(IIngredients ingredients) {
-			ingredients.setInput(VanillaTypes.ITEM,input);
+			ingredients.setInputs(VanillaTypes.ITEM,input);
 			ingredients.setOutput(VanillaTypes.ITEM,output);
 		}
 	}

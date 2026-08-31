@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -46,6 +47,27 @@ public class SolBlasterTE extends LCETileEntityMachineBase implements ITickable,
 	public SolBlasterTE() {
 		super(20);
 		inventory = getNewInventory(20,1);
+	}
+	public static int[] zeroToNineteen = new int[20];
+	static {
+		for (int i = 0; i < 20; i++)
+			zeroToNineteen[i] = i;
+	}
+	@Override
+	public int[] getAccessibleSlotsFromSide(EnumFacing e) {
+		return zeroToNineteen;
+	}
+	@Override
+	public void slotContentsChanged(int slot,ItemStack newStack) {
+		super.slotContentsChanged(slot,newStack);
+		for (int x = -1; x <= 1; x++) {
+			for (int z = -1; z <= 1; z++) {
+				for (int y = 0; y <= 2; y++)
+					world.notifyNeighborsOfStateChange(pos.add(x,y,z),getBlockType(),true);
+			}
+		}
+		world.notifyNeighborsOfStateChange(pos.up(3),getBlockType(),true);
+		world.notifyNeighborsOfStateChange(pos.up(4),getBlockType(),true);
 	}
 	@Override
 	public boolean isItemValidForSlot(int i,ItemStack stack) {

@@ -12,11 +12,13 @@ import com.leafia.contents.bomb.missile.customnuke.CustomNukeMissileItem;
 import com.leafia.contents.building.generic.lined_asphalt.LinedAsphaltBlock;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
+import com.leafia.contents.control.fuel.AddonRTGPelletItem;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.gear.advisor.AdvisorItem;
 import com.leafia.contents.gear.guns.GunInit;
 import com.leafia.contents.gear.ntmfbottle.ItemNTMFBottle;
-import com.leafia.contents.gear.utility.FuzzyIdentifierItem;
+import com.leafia.contents.gear.utility.fuzzy.FuzzyIdentifierItem;
+import com.leafia.contents.gear.utility.radglasses.RadGlassesItem;
 import com.leafia.contents.gear.wands.ItemWandLoading;
 import com.leafia.contents.gear.wands.ItemWandSaving;
 import com.leafia.contents.gear.wands.ItemWandV;
@@ -42,7 +44,9 @@ import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemRecord;
 import net.minecraft.item.ItemStack;
@@ -507,7 +511,7 @@ public class AddonItems {
 						super.addInformation(stack,worldIn,tooltip,flagIn);
 					}
 				}
-				.setAppearance(AddonItems.billet_kys, BILLET, UNSTABLE)
+				.setAppearance(Resources.billet_kys, BILLET, UNSTABLE)
 				.setEmission(114)
 				.setReactivity(514)
 				.setCreativeTab(null);
@@ -551,23 +555,56 @@ public class AddonItems {
 	public static final Item pwr_shrapnel = new PWRDebrisItem("lwr_shrapnel",DebrisType.SHRAPNEL);
 	public static final Item pwr_shard = new PWRDebrisItem("lwr_shard",DebrisType.BLANK).disableCrafting();
 
-	public static final Item ingot_potassium = new AddonItemBaked("ingot_potassium","leafia/ingots/ingot_potassium").setCreativeTab(MainRegistry.partsTab);
-	public static final Item ingot_rubidium = new AddonItemBaked("ingot_rubidium","leafia/ingots/ingot_rubidium").setCreativeTab(MainRegistry.partsTab);
-	public static final Item ingot_francium = new AddonItemBaked("ingot_francium","leafia/ingots/ingot_francium").setCreativeTab(MainRegistry.partsTab);
+	public static class Resources {
+		public static final Item ingot_potassium = new AddonItemBaked("ingot_potassium","leafia/ingots/ingot_potassium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_rubidium = new AddonItemBaked("ingot_rubidium","leafia/ingots/ingot_rubidium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_francium = new AddonItemBaked("ingot_francium","leafia/ingots/ingot_francium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item nugget_schraranium = new AddonItemHazardBaked("nugget_schraranium","resources/nuggets/schraranium")/*.addRad(ItemRads.schraranium.copy().multiply(0.1))*/.setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_xanaxium = new AddonItemBaked("ingot_xanaxium","resources/ingots/xanaxium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item powder_xanaxium = new AddonItemBaked("powder_xanaxium","resources/powders/xanaxium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item billet_kys = new AddonItemHazardBaked("billet_kys","leafia/billets/billet_kys") {
+			@Override
+			public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+				super.addInformation(stack,worldIn,tooltip,flagIn);
+				tooltip.add("Inspired by Quasar!");
+				tooltip.add("Corrstud will pay their life for this very billet.");
+			}
+		}.addCryogenic(5).setCreativeTab(null);
+		public static final Item powder_digammitite = new AddonItemHazardBaked("powder_digammitite","resources/powders/digammitite").addDigamma(0.1).setCreativeTab(MainRegistry.partsTab);
+		public static final Item powder_digammitite_tiny = new AddonItemHazardBaked("powder_digammitite_tiny","resources/powders/digammitite_tiny").addDigamma(0.01).setCreativeTab(MainRegistry.partsTab);
 
-	public static final Item nugget_schraranium = new AddonItemHazardBaked("nugget_schraranium","resources/nuggets/schraranium")/*.addRad(ItemRads.schraranium.copy().multiply(0.1))*/.setCreativeTab(MainRegistry.partsTab);
+		// Taint world ores
+		public static final Item ingot_nc279 = new AddonItemHazardBaked("ingot_nc279","resources/ingots/nc279").addRad(ItemRads.nuclium279).addFire(4).setCreativeTab(MainRegistry.partsTab);
+		public static final Item powder_nc279 = new AddonItemHazardBaked("powder_nc279","resources/powders/nc279").addRad(ItemRads.nuclium279.multiply(3)).addFire(4).setCreativeTab(MainRegistry.partsTab);
+		public static final Item billet_nc279 = new AddonItemHazardBaked("billet_nc279","resources/billets/nc279").addRad(ItemRads.nuclium279.multiply(0.5)).addFire(4).setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_taintium = new AddonItemBaked("ingot_taintium","resources/ingots/taintium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item powder_taintium = new AddonItemBaked("powder_taintium","resources/powders/taintium").setCreativeTab(MainRegistry.partsTab);
 
-	public static final Item ingot_xanaxium = new AddonItemBaked("ingot_xanaxium","resources/ingots/xanaxium").setCreativeTab(MainRegistry.partsTab);
-	public static final Item powder_xanaxium = new AddonItemBaked("powder_xanaxium","resources/powders/xanaxium").setCreativeTab(MainRegistry.partsTab);
+		// Mystic system resources
+		public static final Item ingot_fissium = new AddonItemHazardBaked("ingot_fissium","resources/ingots/fissium").addRad(ItemRads.fissium).setCreativeTab(MainRegistry.partsTab);
+		public static final Item billet_fissium = new AddonItemHazardBaked("billet_fissium","resources/billets/fissium").addRad(ItemRads.fissium.multiply(0.5)).setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_chydalium = new AddonItemBaked("ingot_chydalium","resources/ingots/chydalium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item powder_chydalium = new AddonItemBaked("powder_chydalium","resources/powders/chydalium").setCreativeTab(MainRegistry.partsTab);
+		public static final Item billet_chydalium = new AddonItemBaked("billet_chydalium","resources/billets/chydalium").setCreativeTab(MainRegistry.partsTab);
 
-	public static final Item billet_kys = new AddonItemHazardBaked("billet_kys","leafia/billets/billet_kys") {
-		@Override
-		public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
-			super.addInformation(stack,worldIn,tooltip,flagIn);
-			tooltip.add("Inspired by Quasar!");
-			tooltip.add("Corrstud will pay their life for this very billet.");
-		}
-	}.addCryogenic(5).setCreativeTab(null);
+		// Mystic system alloys
+		public static final Item ingot_fissite = new AddonItemHazardBaked("ingot_fissite","resources/ingots/fissite").addRad(ItemRads.fissite).setCreativeTab(MainRegistry.partsTab);
+		public static final Item plate_fissite = new AddonItemHazardBaked("plate_fissite","resources/plates/fissite").addRad(ItemRads.fissite).setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_mysticite = new AddonItemBaked("ingot_mysticite","resources/ingots/mysticite") {
+			@Override
+			public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+				super.addInformation(stack,worldIn,tooltip,flagIn);
+				tooltip.add("The ultimate alloy.");
+				tooltip.add("");
+				tooltip.add("You cannot shape it due to it's");
+				tooltip.add("extreme durability and heat resistance.");
+				tooltip.add("");
+				tooltip.add("Congratulations, you just wasted it.");
+			}
+		}.setCreativeTab(MainRegistry.partsTab);
+		public static final Item plate_mysticite = new AddonItemBaked("plate_mysticite","resources/plates/mysticite").setCreativeTab(MainRegistry.partsTab);
+		public static final Item ingot_tnalloy = new AddonItemBaked("ingot_tnalloy","resources/ingots/tnalloy").setCreativeTab(MainRegistry.partsTab);
+	}
 
 	public static final Item advisor = new AdvisorItem("advisor").setCreativeTab(MainRegistry.consumableTab);
 
@@ -631,14 +668,20 @@ public class AddonItems {
 	public static final Item dna_canid = new AddonItemBaked("dna_canid","dna").setCreativeTab(null);
 	public static final Item dna_eevee = new AddonItemBaked("dna_eevee","dna").setCreativeTab(null);
 
-	public static final Item powder_digammitite = new AddonItemHazardBaked("powder_digammitite","resources/powders/digammitite").addDigamma(0.1).setCreativeTab(MainRegistry.partsTab);
-	public static final Item powder_digammitite_tiny = new AddonItemHazardBaked("powder_digammitite_tiny","resources/powders/digammitite_tiny").addDigamma(0.01).setCreativeTab(MainRegistry.partsTab);
-
 	public static final Item particle_dineutron = new AddonItemBaked("particle_dineutron").setCreativeTab(MainRegistry.controlTab);
 
 	public static class Guns {
 		public static ItemGunBaseNT am_rifle;
 	}
+
+	public static final Item rad_glasses = new RadGlassesItem(ArmorMaterial.IRON, -1, EntityEquipmentSlot.HEAD, "radglasses").setMaxStackSize(1);
+
+	public static final Item pellet_rtg_fissium = new AddonItemHazardBaked("pellet_rtg_fissium").addRad(ItemRads.fissium.multiply(0.5)).setContainerItem(ModItems.plate_iron).setCreativeTab(MainRegistry.controlTab);
+	public static final Item pellet_rtg_nc279 = new AddonRTGPelletItem(120,"pellet_rtg_nc279").setDecays(pellet_rtg_fissium,2000000L,4).setCreativeTab(MainRegistry.controlTab);
+
+	public static final Item am_rifle_cell_fissite = new AddonItemHazardBaked("cells_fissite","resources/parts/fissite_cells").addRad(ItemRads.fissite.multiply(5)).setCreativeTab(MainRegistry.partsTab);
+	public static final Item am_rifle_cell_mysticite = new AddonItemBaked("cells_mysticite","resources/parts/mysticite_cells").setCreativeTab(MainRegistry.partsTab);
+	public static final Item am_rifle_cell_mysticite_filled = new AddonItemBaked("cells_mysticite_filled","resources/parts/mysticite_cells_filled").setCreativeTab(MainRegistry.partsTab);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {

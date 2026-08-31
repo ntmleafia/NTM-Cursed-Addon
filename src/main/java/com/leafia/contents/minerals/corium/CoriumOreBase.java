@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class CoriumOreBase extends AddonOreBaked {
+public class CoriumOreBase extends AddonOreBaked implements ICoriumOre {
 	public static int rads = 450;
 	public CoriumOreBase(String s,int harvestLvl,String texture) {
 		super(s,harvestLvl,"resources/ores/corium/"+texture);

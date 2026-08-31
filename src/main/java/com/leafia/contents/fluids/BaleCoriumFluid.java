@@ -34,6 +34,8 @@ public class BaleCoriumFluid extends Fluid {
 		private final Random rand = new Random();
 		@Override
 		public boolean canDisplace(@NotNull IBlockAccess world,@NotNull BlockPos pos) {
+			if (rand.nextInt(3) == 0)
+				return false;
 			IBlockState state = world.getBlockState(pos);
 			Material mat = state.getMaterial();
 			Block block = state.getBlock();

@@ -160,14 +160,14 @@ public class AMRifle extends ItemGunBaseNT implements ILockonWeapon {
 				entity.world.playSound(
 						null,entity.getPosition(),
 						LeafiaSoundEvents.am_rifle_charge,SoundCategory.PLAYERS,
-						1,1
+						10,1
 				);
 			}
 			if (timer == 11) {
 				entity.world.playSound(
 						null,entity.getPosition(),
 						LeafiaSoundEvents.am_rifle_fire,SoundCategory.PLAYERS,
-						1,1
+						10,1
 				);
 				Receiver rec = ctx.config.getReceivers(stack)[0];
 				rec.getOnFire(stack).accept(stack, ctx);

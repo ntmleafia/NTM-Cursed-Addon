@@ -6,8 +6,8 @@ import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.recipes.PUREXRecipe;
 import com.hbm.inventory.recipes.PUREXRecipes;
 import com.hbm.items.ModItems;
-import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.DepletedFuels;
+import com.leafia.contents.AddonItems.Resources;
 import net.minecraft.item.ItemStack;
 
 public class AddonPUREXRecipes {
@@ -26,7 +26,7 @@ public class AddonPUREXRecipes {
 				.outputItems(
 						new ItemStack(ModItems.nugget_u238,1),
 						new ItemStack(ModItems.nugget_pu239,4),
-						new ItemStack(AddonItems.nugget_schraranium,1),
+						new ItemStack(Resources.nugget_schraranium,1),
 						new ItemStack(ModItems.nuclear_waste_tiny,1)
 				).setIconToFirstIngredient());
 	}

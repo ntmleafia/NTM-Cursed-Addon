@@ -1,14 +1,14 @@
 package com.leafia.init.recipes;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.crafting.MineralRecipes;
 import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.OreDictManager.DictFrame;
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.inventory.material.Mats;
 import com.hbm.items.ItemEnums.EnumCircuitType;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemBatteryPack.EnumBatteryPack;
-import com.hbm.items.special.ItemCell;
+import com.hbm.items.machine.ItemBatterySC.EnumBatterySC;
 import com.hbm.items.weapon.grenade.ItemGrenadeFilling.EnumGrenadeFilling;
 import com.hbm.main.CraftingManager;
 import com.leafia.contents.AddonBlocks;
@@ -16,10 +16,13 @@ import com.leafia.contents.AddonBlocks.Elevators;
 import com.leafia.contents.AddonBlocks.LetterSigns;
 import com.leafia.contents.AddonBlocks.PWR;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.AddonItems.Guns;
 import com.leafia.contents.AddonItems.LeafiaRods;
+import com.leafia.contents.AddonItems.Resources;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodCrafting;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisCrafting;
+import com.leafia.init.AddonOreDict;
 import com.leafia.settings.AddonConfig;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -34,9 +37,8 @@ import net.minecraftforge.registries.ForgeRegistry;
 import java.util.Objects;
 
 import static com.hbm.inventory.OreDictManager.*;
-import static com.hbm.inventory.OreDictManager.ZR;
-import static com.hbm.main.CraftingManager.*;
 import static com.leafia.init.AddonOreDict.*;
+import static com.hbm.main.CraftingManager.*;
 
 public class AddonCraftingRecipes {
 	public static void craftingRegister() {
@@ -119,7 +121,7 @@ public class AddonCraftingRecipes {
 
 		addRecipeAuto(new ItemStack(AddonItems.fix_survival, 1), " O ", "OTO", " O ", 'O', ModItems.ingot_osmiridium, 'T', ModItems.crystal_trixite);
 
-		add1To9Pair(ModItems.ingot_schraranium,AddonItems.nugget_schraranium);
+		add1To9Pair(ModItems.ingot_schraranium,Resources.nugget_schraranium);
 
 		addShapelessAuto(new ItemStack(AddonBlocks.diverter_unlit),new ItemStack(ModItems.protection_charm),new ItemStack(Blocks.TORCH));
 
@@ -149,12 +151,24 @@ public class AddonCraftingRecipes {
 		addShapelessAuto(new ItemStack(LeafiaRods.leafRodCatsmile),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_felid),new ItemStack(ModItems.heart_piece));
 		addShapelessAuto(new ItemStack(LeafiaRods.leafRodConfusion),new ItemStack(LeafiaRods.leafRod),new ItemStack(AddonItems.dna_canid));
 
-		addShapelessAuto(new ItemStack(AddonItems.powder_digammitite),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny),new ItemStack(AddonItems.powder_digammitite_tiny));
+		addShapelessAuto(new ItemStack(Resources.powder_digammitite),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny),new ItemStack(Resources.powder_digammitite_tiny));
 
 		removeRecipesForItem(reg,ModItems.five_htp);
 		removeRecipesForItem(reg,ModItems.xanax);
-		CraftingManager.addShapelessAuto(new ItemStack(ModItems.five_htp, 1),COAL.dust(), EUPH.dust(), ModItems.canteen_vodka, new ItemStack(AddonItems.powder_digammitite) );
-		CraftingManager.addShapelessAuto(new ItemStack(ModItems.xanax, 1),COAL.dust(), KNO.dust(), BR.dust(), new ItemStack(AddonItems.powder_digammitite_tiny) );
+		CraftingManager.addShapelessAuto(new ItemStack(ModItems.five_htp, 1),COAL.dust(), EUPH.dust(), ModItems.canteen_vodka, new ItemStack(Resources.powder_digammitite) );
+		CraftingManager.addShapelessAuto(new ItemStack(ModItems.xanax, 1),COAL.dust(), KNO.dust(), BR.dust(), new ItemStack(Resources.powder_digammitite_tiny) );
+
+		addRecipeAutoOreShapeless(new ItemStack(AddonItems.pellet_rtg_nc279), Resources.billet_nc279, Resources.billet_nc279, Resources.billet_nc279, IRON.plate() );
+		addRecipeAutoOreShapeless(new ItemStack(Resources.billet_fissium,3),new ItemStack(AddonItems.pellet_rtg_fissium));
+
+		MineralRecipes.addBilletToIngot(Resources.billet_nc279,Resources.ingot_nc279);
+		MineralRecipes.addBilletToIngot(Resources.billet_fissium,Resources.ingot_fissium);
+		MineralRecipes.addBilletToIngot(Resources.billet_chydalium,Resources.ingot_chydalium);
+
+		addRecipeAuto(new ItemStack(AddonItems.am_rifle_cell_fissite),"---","# #","---",'-',AddonOreDict.FSALLOY.plate(),'#',AddonOreDict.FSALLOY.ingot());
+		addShapelessAuto(new ItemStack(AddonItems.am_rifle_cell_mysticite_filled),new ItemStack(AddonItems.am_rifle_cell_mysticite),new ItemStack(ModItems.battery_sc,1,EnumBatterySC.AU198.ordinal()),EUPH.ingot(),EUPH.ingot(),EUPH.ingot(),EUPH.ingot());
+
+		addRecipeAuto(new ItemStack(Guns.am_rifle)," v ","brc","mg ",'v',new ItemStack(ModItems.circuit,1,EnumCircuitType.BISMOID.ordinal()),'b',ANY_BISMOIDBRONZE.lightBarrel(),'r',ANY_ULTRAALLOY.lightReceiver(),'c',AddonItems.am_rifle_cell_mysticite_filled,'m',BIGMT.mechanism(),'g',ANY_HARDPLASTIC.grip());
 
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}

@@ -8,7 +8,7 @@ import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.tileentity.TileEntityLoadedBase;
 import com.hbm.tileentity.machine.TileEntityTurbineBase;
-import com.leafia.contents.gear.utility.IFuzzyCompatible;
+import com.leafia.contents.gear.utility.fuzzy.IFuzzyCompatible;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;

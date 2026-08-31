@@ -44,6 +44,10 @@ public class SolBlasterBlock extends AddonBlockDummyable implements ITooltipProv
 		x += dir.offsetX * o;
 		z += dir.offsetZ * o;
 		MultiblockHandlerXR.fillSpace(world,x,y,z,new int[]{4,-3,0,0,0,0},this,dir);
+		makeExtra(world,x+1,y,z+1);
+		makeExtra(world,x+1,y,z-1);
+		makeExtra(world,x-1,y,z+1);
+		makeExtra(world,x-1,y,z-1);
 	}
 	@Override
 	public boolean checkRequirement(World world,int x,int y,int z,ForgeDirection dir,int o) {

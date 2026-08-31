@@ -565,6 +565,7 @@ public class PWRElementTE extends TileEntityInventoryBase implements PWRComponen
 	}
 
 	public void connectUpper() { // For clients, called only on validate()
+		// update: fym for clients?!?!?
 		if (!this.isInvalid() && world.isBlockLoaded(pos)) {
 			Chunk chunk = world.getChunk(pos);
 			if (world.isRemote) { // Keep in mind that neighborChanged in Block does NOT get called for Remotes
