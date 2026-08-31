@@ -348,6 +348,10 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 				disableDecay = true;
 				break;
 			case "depletedschrabidium":
+			case "depletedmesa326":
+			case "depletedhesa326":
+			case "depletedsa326":
+			case "depletedsa327":
 				y = 100-20;
 				n = "100-20";
 				disableDecay = true;

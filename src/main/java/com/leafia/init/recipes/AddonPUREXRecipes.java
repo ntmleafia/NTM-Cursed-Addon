@@ -29,5 +29,41 @@ public class AddonPUREXRecipes {
 						new ItemStack(Resources.nugget_schraranium,1),
 						new ItemStack(ModItems.nuclear_waste_tiny,1)
 				).setIconToFirstIngredient());
+		INSTANCE.register((PUREXRecipe) new PUREXRecipe("purex.leafia.zirnoxmes").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
+				.inputItems(new ComparableStack(DepletedFuels.waste_mes))
+				.inputFluids(new FluidStack(Fluids.KEROSENE,500),new FluidStack(Fluids.NITRIC_ACID,250))
+				.outputItems(
+						new ItemStack(ModItems.nugget_solinium,1),
+						new ItemStack(ModItems.nugget_beryllium,2),
+						new ItemStack(ModItems.nuclear_waste_tiny,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,2)
+				).setIconToFirstIngredient());
+		INSTANCE.register((PUREXRecipe) new PUREXRecipe("purex.leafia.zirnoxhes").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
+				.inputItems(new ComparableStack(DepletedFuels.waste_hes))
+				.inputFluids(new FluidStack(Fluids.KEROSENE,500),new FluidStack(Fluids.NITRIC_ACID,250))
+				.outputItems(
+						new ItemStack(ModItems.nugget_solinium,2),
+						new ItemStack(ModItems.nugget_beryllium,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,2)
+				).setIconToFirstIngredient());
+		INSTANCE.register((PUREXRecipe) new PUREXRecipe("purex.leafia.zirnoxsch").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
+				.inputItems(new ComparableStack(DepletedFuels.waste_sch))
+				.inputFluids(new FluidStack(Fluids.KEROSENE,500),new FluidStack(Fluids.NITRIC_ACID,250))
+				.outputItems(
+						new ItemStack(ModItems.nugget_solinium,2),
+						new ItemStack(ModItems.nugget_solinium,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,2)
+				).setIconToFirstIngredient());
+		INSTANCE.register((PUREXRecipe) new PUREXRecipe("purex.leafia.zirnoxsol").setup(100,zirnoxPower).setNameWrapper("purex.recycle").setGroup(autoZirnox,INSTANCE)
+				.inputItems(new ComparableStack(DepletedFuels.waste_sol))
+				.inputFluids(new FluidStack(Fluids.KEROSENE,500),new FluidStack(Fluids.NITRIC_ACID,250))
+				.outputItems(
+						new ItemStack(ModItems.nugget_australium,2),
+						new ItemStack(ModItems.nugget_euphemium,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,1),
+						new ItemStack(ModItems.nuclear_waste_tiny,2)
+				).setIconToFirstIngredient());
 	}
 }

@@ -231,6 +231,7 @@ public class AddonItems {
 				leafRodLES236
 				= new LeafiaRodItem("LESa-326",3500000, 2500)
 				.setAppearance(ModItems.billet_les, BILLET, FUEL)
+				.setDecayProduct("depletedschrabidium")
 				.setEmission(0.75)
 				.setModerated()
 				.addRad(ItemRads.schrabidiumLow)
@@ -240,6 +241,7 @@ public class AddonItems {
 				leafRodMES326
 				= new LeafiaRodItem("MESa-326",3000000, 2750)
 				.setAppearance(ModItems.billet_schrabidium_fuel, BILLET, FUEL)
+				.setDecayProduct("depletedmsa326")
 				.addRad(ItemRads.schrabidiumMedium)
 				.addBlinding()
 				.setCreativeTab(MainRegistry.controlTab);
@@ -247,6 +249,7 @@ public class AddonItems {
 				leafRodHES326
 				= new LeafiaRodItem("HESa-326",2500000, 3000)
 				.setAppearance(ModItems.billet_hes, BILLET, FUEL)
+				.setDecayProduct("depletedhesa326")
 				.setEmission(1.25)
 				.addRad(ItemRads.schrabidiumHigh)
 				.addBlinding()
@@ -255,6 +258,7 @@ public class AddonItems {
 				leafRodSa326
 				= new LeafiaRodItem("Sa-326",2000000, 3250)
 				.setAppearance(ModItems.billet_schrabidium, BILLET, FUEL)
+				.setDecayProduct("depletedsa326")
 				.setEmission(2.25)
 				.addRad(ItemRads.schrabidium326)
 				.addBlinding()
@@ -347,6 +351,7 @@ public class AddonItems {
 				leafRodSa327
 				= new LeafiaRodItem("Sa-327",8000000, 2250)
 				.setAppearance(ModItems.billet_solinium, BILLET, RAW)
+				.setDecayProduct("depletedsa327")
 				.setEmission(65).setReactivity(1/45d)
 				.addRad(ItemRads.solinium327)
 				.addBlinding()
@@ -416,6 +421,30 @@ public class AddonItems {
 				leafRodWasteSchrabidium
 				= new LeafiaRodItem("Depleted Schrabidium",0, 0)
 				.setAppearance(ModItems.waste_schrabidium, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteSchrabidium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteMESa326
+				= new LeafiaRodItem("Depleted MESa-326",0, 0)
+				.setAppearance(DepletedFuels.waste_mes, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteSchrabidium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteHESa326
+				= new LeafiaRodItem("Depleted HESa-326",0, 0)
+				.setAppearance(DepletedFuels.waste_hes, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteSchrabidium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteSa326
+				= new LeafiaRodItem("Depleted Sa-326",0, 0)
+				.setAppearance(DepletedFuels.waste_sch, 1, DEPLETED, RAW)
+				.addRad(ItemRads.wasteSchrabidium)
+				.setCreativeTab(MainRegistry.controlTab);
+		public static final Item
+				leafRodWasteSa327
+				= new LeafiaRodItem("Depleted Sa-327",0, 0)
+				.setAppearance(DepletedFuels.waste_sol, 1, DEPLETED, RAW)
 				.addRad(ItemRads.wasteSchrabidium)
 				.setCreativeTab(MainRegistry.controlTab);
 		public static final Item
@@ -648,6 +677,10 @@ public class AddonItems {
 
 	public static class DepletedFuels {
 		public static final Item waste_u238 = new AddonDepletedFuelItem("waste_u238","hbm","waste_uranium");
+		public static final Item waste_mes = new AddonDepletedFuelItem("waste_mes","hbm","waste_schrabidium");
+		public static final Item waste_hes = new AddonDepletedFuelItem("waste_hes","hbm","waste_schrabidium");
+		public static final Item waste_sch = new AddonDepletedFuelItem("waste_hes","hbm","waste_schrabidium");
+		public static final Item waste_sol = new AddonDepletedFuelItem("waste_sol","hbm","waste_schrabidium");
 	}
 
 	public static class DigammaRecord extends ItemRecord {
