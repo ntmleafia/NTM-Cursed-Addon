@@ -6,6 +6,10 @@ import com.hbm.blocks.generic.BlockMeta;
 import com.hbm.explosion.vanillant.ExplosionVNT;
 import com.hbm.explosion.vanillant.standard.*;
 import com.hbm.handler.radiation.ChunkRadiationManager;
+import com.hbm.lib.ModDamageSource;
+import com.hbm.util.ContaminationUtil;
+import com.hbm.util.ContaminationUtil.ContaminationType;
+import com.hbm.util.ContaminationUtil.HazardType;
 import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonBlocks.Ores;
 import com.leafia.contents.minerals.corium.ICoriumOre;
@@ -14,8 +18,12 @@ import com.leafia.unsorted.explosion_vnt.BlockMutatorCollapse;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
@@ -46,6 +54,21 @@ public class MixinCoriumFinite extends BlockFluidFinite {
 		if (rand.nextInt(3) == 0) {
 			cir.setReturnValue(false);
 			cir.cancel();
+		}
+	}
+
+	/**
+	 * @author ntmleafia
+	 * @reason make it only fire damage
+	 */
+	@Overwrite
+	public void onEntityCollision(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Entity entity) {
+		if (entity instanceof EntityPlayerMP playerMP && (playerMP.isSpectator() || playerMP.isCreative())) return;
+		entity.setInWeb();
+		entity.setFire(3);
+		entity.attackEntityFrom(DamageSource.LAVA, 3F);
+		if (entity instanceof EntityLivingBase) {
+			ContaminationUtil.contaminate((EntityLivingBase) entity, HazardType.RADIATION, ContaminationType.CREATIVE, 500F);
 		}
 	}
 

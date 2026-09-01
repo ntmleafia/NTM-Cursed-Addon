@@ -6,6 +6,7 @@ import com.leafia.contents.AddonItems;
 import com.leafia.contents.gear.ILockonWeapon.GetLockonPacket;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
+import com.leafia.contents.potion.LeafiaPotion;
 import com.leafia.database.ImpactSeismic;
 import com.leafia.dev.LeafiaDebug.Tracker;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
@@ -17,6 +18,8 @@ import com.leafia.savedata.FalloutSavedData;
 import com.leafia.unsorted.StructuralIntegrityHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -74,6 +77,22 @@ public class LeafiaPassiveServer {
 		FalloutSavedData.forWorld(world).tick();
 		Tracker.preTick(world);
 		Wind.updateWorld(world);
+		for (EntityPlayer player : world.playerEntities) {
+			NBTTagCompound tag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+			if (tag.hasKey("pillMeltdownCooldown")) {
+				int v = tag.getInteger("pillMeltdownCooldown")-1;
+				if (v > 0) {
+					tag.setInteger("pillMeltdownCooldown",v);
+					PotionEffect overdose = player.getActivePotionEffect(LeafiaPotion.overdose);
+					if (overdose != null) {
+						if (overdose.getDuration() >= v-5)
+							continue;
+					}
+					player.addPotionEffect(new PotionEffect(LeafiaPotion.overdose,v,0,false,false));
+				} else
+					tag.removeTag("pillMeltdownCooldown");
+			}
+		}
 
 		WorldGlobalSyncPacket sync = new WorldGlobalSyncPacket();
 		sync.world = world;

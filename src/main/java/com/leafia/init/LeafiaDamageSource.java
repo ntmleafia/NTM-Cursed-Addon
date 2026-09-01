@@ -17,6 +17,7 @@ public class LeafiaDamageSource extends DamageSource {
 	public static DamageSource flywheel = new DamageSource("flywheel").setDamageIsAbsolute().setDamageBypassesArmor();
 	public static DamageSource mine_player = (new DamageSource("mine_player")).setDamageIsAbsolute();
 	public static DamageSource am_rifle = (new DamageSource("am_rifle")).setDamageIsAbsolute().setDamageAllowedInCreativeMode().setDamageBypassesArmor().setMagicDamage();
+	public static DamageSource pillMeltdown = new DamageSource("pillMeltdown").setDamageAllowedInCreativeMode().setDamageIsAbsolute().setDamageBypassesArmor();
 
 	public LeafiaDamageSource(String damageTypeIn) {
 		super(damageTypeIn);

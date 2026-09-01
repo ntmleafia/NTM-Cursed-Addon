@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class LeafiaPotion extends Potion {
 	public static LeafiaPotion skindamage;
 	public static LeafiaPotion frigid;
+	public static LeafiaPotion overdose;
 
 	public LeafiaPotion(boolean isBad,int color,String name,int x,int y){
 		super(isBad, color);
@@ -67,6 +68,7 @@ public class LeafiaPotion extends Potion {
 	public static void init() {
 		skindamage = registerPotion(true, 0xe11313, "skindamage", 4, 1);
 		frigid = registerPotion(true, /*0x65d3ff*/0xFFFFFF, "frigid", 0, 2);
+		overdose = registerPotion(true, /*0x65d3ff*/0x692681, "overdose", 2, 1);
 	}
 
 	public static LeafiaPotion registerPotion(boolean isBad, int color, String name, int x, int y) {

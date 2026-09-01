@@ -180,6 +180,8 @@ public class AddonCraftingRecipes {
 
 		CraftingManager.addRecipeAuto(new ItemStack(AddonItems.radglasses, 1),"I I", "GPG"," C ",'C',new ItemStack(ModItems.circuit,1,EnumCircuitType.ADVANCED.ordinal()) , 'I', ANY_RUBBER.ingot(), 'G', Blocks.GLASS_PANE, 'P', ANY_PLASTIC.ingot() );
 
+		addShapelessAuto(new ItemStack(AddonItems.pill_meltdown),COAL.dust(),U.dust(),F.dust(),ModItems.powder_magic);
+
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
 	static void removeRecipesForItem(ForgeRegistry<IRecipe> reg,Item item) {

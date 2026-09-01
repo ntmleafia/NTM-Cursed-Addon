@@ -12,6 +12,7 @@ import com.leafia.contents.bomb.missile.customnuke.CustomNukeMissileItem;
 import com.leafia.contents.building.generic.lined_asphalt.LinedAsphaltBlock;
 import com.leafia.contents.building.pinkdoor.ItemPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
+import com.leafia.contents.consumable.medication.PillMeltdownItem;
 import com.leafia.contents.control.fuel.AddonRTGPelletItem;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.gear.advisor.AdvisorItem;
@@ -720,6 +721,8 @@ public class AddonItems {
 	public static final Item particle_cloud = new AddonItemBaked("particle_cloud").setCreativeTab(MainRegistry.controlTab);
 	public static final Item grenade_cloud = new AddonItemBaked("grenade_cloud").setCreativeTab(MainRegistry.controlTab);
 	public static final Item grenade_pink_cloud = new AddonItemBaked("grenade_pink_cloud").setCreativeTab(MainRegistry.controlTab);
+
+	public static final Item pill_meltdown = new PillMeltdownItem("pill_meltdown").setMaxStackSize(1);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {
