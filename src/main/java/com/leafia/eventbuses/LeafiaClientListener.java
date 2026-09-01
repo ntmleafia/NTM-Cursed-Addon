@@ -531,7 +531,7 @@ public class LeafiaClientListener {
 							TileEntity fuckoff = null;
 							try {
 								fuckoff = prov.createNewTileEntity(Minecraft.getMinecraft().world,12);
-							} catch (Exception ignored) {}
+							} catch (Throwable ignored) {} // literally go kys
 							ccpSupported.put(prov.hashCode(),fuckoff instanceof IControllable);
 						}
 					}
