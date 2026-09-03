@@ -150,7 +150,7 @@ public class ItemRendererInit {
 
 		register(AddonBlocks.sol_blaster,new SolBlasterItemRender());
 
-		register(Shields.mysticite_shield,new AddonShieldRender("S_MYS",
+		Shields.mysticite_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_MYS",
 				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png"),
 				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png")
 		));

@@ -22,6 +22,7 @@ import com.leafia.contents.AddonItems.LeafiaRods;
 import com.leafia.contents.AddonItems.Resources;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodCrafting;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
+import com.leafia.contents.gear.combat.shields.AddonShieldCraftingRecipe;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisCrafting;
 import com.leafia.init.AddonOreDict;
 import com.leafia.settings.AddonConfig;
@@ -61,6 +62,7 @@ public class AddonCraftingRecipes {
 			}
 		}
 		hack.getRegistry().register(new LeafiaRodCrafting().setRegistryName(new ResourceLocation("leafia", "generic_fuel_handler")));
+		hack.getRegistry().register(new AddonShieldCraftingRecipe().setRegistryName(new ResourceLocation("leafia", "shield_decoration")));
 		// A NOTE TO SELF: Ingredient keys are supposed to be chars, not strings.
 		// If they're strings, they things its part of the shape and probably shits your bed off.
 
