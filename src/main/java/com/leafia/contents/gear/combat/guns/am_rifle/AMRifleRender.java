@@ -1,4 +1,4 @@
-package com.leafia.contents.gear.guns.am_rifle;
+package com.leafia.contents.gear.combat.guns.am_rifle;
 
 import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.items.weapon.sedna.mods.XWeaponModManager;

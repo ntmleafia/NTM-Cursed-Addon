@@ -11,6 +11,7 @@ import com.leafia.contents.AddonBlocks.ModularTurbines;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.ElevatorStyles;
 import com.leafia.contents.AddonItems.Guns;
+import com.leafia.contents.AddonItems.Shields;
 import com.leafia.contents.bomb.chud.NukeChudRender.NukeChudItemRender;
 import com.leafia.contents.bomb.missile.customnuke.CustomNukeMissileItemRender;
 import com.leafia.contents.building.storage.broof.BroofRender.BroofItemRender;
@@ -19,7 +20,8 @@ import com.leafia.contents.building.light.LightRender.LightItemRender;
 import com.leafia.contents.building.sign.SignRender.SignItemRender;
 import com.leafia.contents.building.storage.rack.RackRender.RackItemRender;
 import com.leafia.contents.gear.advisor.AdvisorRender;
-import com.leafia.contents.gear.guns.am_rifle.AMRifleRender;
+import com.leafia.contents.gear.combat.guns.am_rifle.AMRifleRender;
+import com.leafia.contents.gear.combat.shields.AddonShieldRender;
 import com.leafia.contents.gear.utility.fuzzy.FuzzyIdentifierRender;
 import com.leafia.contents.machines.elevators.EvBufferRender.EvBufferItemRender;
 import com.leafia.contents.machines.elevators.EvPulleyRender.EvPulleyItemRender;
@@ -49,6 +51,7 @@ import com.leafia.contents.nonmachines.storage.fluid.fftank.FFTankRender.FFTankI
 import com.leafia.settings.AddonConfig;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -146,6 +149,11 @@ public class ItemRendererInit {
 		register(Guns.am_rifle,new AMRifleRender());
 
 		register(AddonBlocks.sol_blaster,new SolBlasterItemRender());
+
+		register(Shields.mysticite_shield,new AddonShieldRender("S_MYS",
+				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png"),
+				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png")
+		));
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

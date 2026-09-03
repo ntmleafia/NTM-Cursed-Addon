@@ -1,4 +1,4 @@
-package com.leafia.contents.gear.guns;
+package com.leafia.contents.gear.combat.guns;
 
 import com.hbm.entity.projectile.EntityBulletBeamBase;
 import com.hbm.items.weapon.sedna.factory.LegoClient;

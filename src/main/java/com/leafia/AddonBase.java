@@ -9,7 +9,7 @@ import com.leafia.contents.AddonBlocks;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.AddonFluids.AddonFF;
 import com.leafia.contents.AddonItems;
-import com.leafia.contents.gear.guns.GunInit;
+import com.leafia.contents.gear.combat.guns.GunInit;
 import com.leafia.contents.machines.controlpanel.AddonNodesRegister;
 import com.leafia.contents.machines.controlpanel.instruments.AddonInstrumentRegister;
 import com.leafia.contents.machines.processing.solblaster.recipes.SolBlasterRecipes;
@@ -121,10 +121,12 @@ public class AddonBase {
 		AddonOreDict.registerGroups();
 		AddonFluids.init();
 		AddonFF.init();
+		AddonToolMaterials.init();
 		staticLoadingStage = AddonLoadingStage.BLOCKS;
 		AddonBlocks.preInit();
 		staticLoadingStage = AddonLoadingStage.ITEMS;
 		AddonItems.preInit();
+		AddonToolMaterials.initFixMaterials();
 		if (AddonConfig.enableSellacity) {
 			AddonBiomesGenerator gen = new AddonBiomesGenerator();
 			MinecraftForge.EVENT_BUS.register(gen);

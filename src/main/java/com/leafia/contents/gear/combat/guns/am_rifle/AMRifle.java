@@ -1,13 +1,11 @@
-package com.leafia.contents.gear.guns.am_rifle;
+package com.leafia.contents.gear.combat.guns.am_rifle;
 
-import com.hbm.entity.projectile.EntityBulletBeamBase;
 import com.hbm.items.weapon.sedna.BulletConfig;
 import com.hbm.items.weapon.sedna.GunConfig;
 import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.items.weapon.sedna.Receiver;
 import com.hbm.items.weapon.sedna.mags.IMagazine;
 import com.hbm.items.weapon.sedna.mods.XWeaponModManager;
-import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
 import com.hbm.render.anim.sedna.AnimationEnums;
 import com.hbm.render.anim.sedna.AnimationEnums.GunAnimation;
@@ -17,7 +15,6 @@ import com.hbm.render.anim.sedna.BusAnimationSequenceSedna;
 import com.leafia.contents.gear.ILockonWeapon;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.init.LeafiaSoundEvents;
-import com.leafia.passive.EntityAttachedSounds;
 import com.leafia.passive.EntityAttachedSounds.AttachedSoundPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,7 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
 import static com.hbm.items.weapon.sedna.factory.Lego.spawnBullet;
-import static com.hbm.items.weapon.sedna.factory.XFactoryEnergy.energy_las;
-import static com.leafia.contents.gear.guns.GunInit.am_beam;
+import static com.leafia.contents.gear.combat.guns.GunInit.am_beam;
 
 public class AMRifle extends ItemGunBaseNT implements ILockonWeapon {
 	public AMRifle(WeaponQuality quality,String s,GunConfig... cfg) {

@@ -3,6 +3,8 @@ package com.leafia.dev.custompacket;
 import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.packet.threading.ThreadedPacket;
+import com.leafia.contents.control.upgrades.AddonUpgradeItem;
+import com.leafia.contents.control.upgrades.AddonUpgradeItem.ControlUpgradeFreqPacket;
 import com.leafia.contents.gear.ILockonWeapon.GetLockonPacket;
 import com.leafia.contents.gear.advisor.AdvisorItem;
 import com.leafia.contents.gear.advisor.AdvisorItem.AdvisorPacket;
@@ -91,6 +93,7 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		ATTACHED_SOUND(new AttachedSoundPacket()),
 		GET_LOCKON(new GetLockonPacket()),
 		REQUEST_POINT(new RequestLaserPointPacket()),
+		CONTROL_UPGRADE(new ControlUpgradeFreqPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }

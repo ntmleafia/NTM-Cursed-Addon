@@ -15,8 +15,10 @@ import com.leafia.contents.building.sign.SignBlock;
 import com.leafia.contents.consumable.medication.PillMeltdownItem;
 import com.leafia.contents.control.fuel.AddonRTGPelletItem;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
+import com.leafia.contents.control.upgrades.AddonUpgradeItem;
 import com.leafia.contents.gear.advisor.AdvisorItem;
-import com.leafia.contents.gear.guns.GunInit;
+import com.leafia.contents.gear.combat.guns.GunInit;
+import com.leafia.contents.gear.combat.shields.AddonShieldItem;
 import com.leafia.contents.gear.ntmfbottle.ItemNTMFBottle;
 import com.leafia.contents.gear.utility.fuzzy.FuzzyIdentifierItem;
 import com.leafia.contents.gear.utility.radglasses.RadGlassesItem;
@@ -38,6 +40,8 @@ import com.leafia.dev.blocks.ICustomItemBlockProvider;
 import com.leafia.dev.blocks.blockbase.meta.IMetaPlacable;
 import com.leafia.dev.blocks.blockbase.meta.MetaPlacableItemBlock;
 import com.leafia.dev.items.itembase.AddonItemHazardBaked;
+import com.leafia.init.AddonOreDict;
+import com.leafia.init.AddonToolMaterials;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.hazards.ItemRads;
 import com.leafia.dev.items.itembase.AddonItemBaked;
@@ -707,6 +711,9 @@ public class AddonItems {
 	public static class Guns {
 		public static ItemGunBaseNT am_rifle;
 	}
+	public static class Shields {
+		public static Item mysticite_shield = new AddonShieldItem(AddonOreDict.MYSTICITE.ingot(),AddonToolMaterials.tmMysticite,"mysticite_shield");
+	}
 
 	public static final Item radglasses = new RadGlassesItem(ArmorMaterial.IRON, -1, EntityEquipmentSlot.HEAD, "radglasses").setMaxStackSize(1);
 
@@ -723,6 +730,8 @@ public class AddonItems {
 	public static final Item grenade_pink_cloud = new AddonItemBaked("grenade_pink_cloud").setCreativeTab(MainRegistry.controlTab);
 
 	public static final Item pill_meltdown = new PillMeltdownItem("pill_meltdown").setMaxStackSize(1);
+
+	public static final Item upgrade_control = new AddonUpgradeItem("upgrade_control").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {

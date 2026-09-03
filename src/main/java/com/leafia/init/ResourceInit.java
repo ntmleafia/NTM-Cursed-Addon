@@ -12,7 +12,7 @@ import com.leafia.contents.building.light.LightRender;
 import com.leafia.contents.building.storage.rack.RackRender;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.gear.advisor.AdvisorRender;
-import com.leafia.contents.gear.guns.am_rifle.AMRifleRender;
+import com.leafia.contents.gear.combat.guns.am_rifle.AMRifleRender;
 import com.leafia.contents.machines.controlpanel.instruments.types.AddonInstrumentModels;
 import com.leafia.contents.machines.elevators.EvBufferRender;
 import com.leafia.contents.machines.elevators.EvPulleyRender;

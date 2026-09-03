@@ -1,18 +1,15 @@
-package com.leafia.contents.gear.guns;
+package com.leafia.contents.gear.combat.guns;
 
 import com.hbm.entity.projectile.EntityBulletBeamBase;
-import com.hbm.inventory.RecipesCommon;
 import com.hbm.inventory.RecipesCommon.ComparableStack;
 import com.hbm.items.ModItems;
 import com.hbm.items.weapon.sedna.BulletConfig;
 import com.hbm.items.weapon.sedna.GunConfig;
 import com.hbm.items.weapon.sedna.ItemGunBaseNT.WeaponQuality;
 import com.hbm.items.weapon.sedna.Receiver;
-import com.hbm.items.weapon.sedna.factory.ConfettiUtil;
 import com.hbm.items.weapon.sedna.factory.GunFactory;
 import com.hbm.items.weapon.sedna.factory.GunFactory.EnumModSpecial;
 import com.hbm.items.weapon.sedna.mags.MagazineInfinite;
-import com.hbm.items.weapon.sedna.mods.WeaponModScope;
 import com.hbm.items.weapon.sedna.mods.XWeaponModManager;
 import com.hbm.items.weapon.sedna.mods.XWeaponModManager.WeaponModDefinition;
 import com.hbm.render.misc.RenderScreenOverlay.Crosshair;
@@ -20,19 +17,16 @@ import com.hbm.util.DamageResistanceHandler;
 import com.hbm.util.EntityDamageUtil;
 import com.leafia.AddonBase;
 import com.leafia.contents.AddonItems.Guns;
-import com.leafia.contents.gear.guns.am_rifle.AMRifle;
+import com.leafia.contents.gear.combat.guns.am_rifle.AMRifle;
 import com.leafia.contents.miscellanous.slop.SlopTE;
 import com.leafia.init.LeafiaDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.RayTraceResult;
 
 import java.util.function.BiConsumer;
 
-import static com.hbm.items.weapon.sedna.factory.XFactoryEnergy.*;
 import static com.hbm.items.weapon.sedna.mods.XWeaponModManager.ID_LAS_SHOTGUN;
 import static com.hbm.items.weapon.sedna.mods.XWeaponModManager.ID_SCOPE;
 

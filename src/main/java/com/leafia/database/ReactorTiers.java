@@ -17,6 +17,7 @@ public class ReactorTiers {
 	public static final Map<Item,Integer> redirection = new HashMap<>();
 	static int tier = 0;
 	public static void register() {
+		addTier("zirnox","fission",ModBlocks.reactor_zirnox);
 		addTier("pwr","fission",
 				PWR.element,PWR.element_old,PWR.element_old_blank,
 				PWR.control,PWR.reactor_control,
@@ -26,7 +27,6 @@ public class ReactorTiers {
 				PWR.port,PWR.occs_in,PWR.occs_out,
 				PWR.computer
 		);
-		addTier("zirnox","fission",ModBlocks.reactor_zirnox);
 		addTier("rbmk","fission",
 				ModBlocks.rbmk_absorber,ModBlocks.rbmk_autoloader,
 				ModBlocks.rbmk_blank,ModBlocks.rbmk_boiler,
