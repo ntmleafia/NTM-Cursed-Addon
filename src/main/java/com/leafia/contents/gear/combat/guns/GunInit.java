@@ -57,7 +57,7 @@ public class GunInit {
 		am_beam = new BulletConfig().setupDamageClass(DamageResistanceHandler.DamageClass.LASER).setBeam().setSpread(0.0F).setLife(5).setRenderRotations(false).setOnBeamImpact(LAMBDA_AM_BEAM_HIT).setDoesPenetrate(true);
 		// the real bullshit that needs you to read code to find out-
 		Guns.am_rifle = new AMRifle(
-				WeaponQuality.LEGENDARY,"gun_leafia_amrifle",new GunConfig() // no longer secret because fucking jei exposes its recipe
+				WeaponQuality.SECRET,"gun_leafia_amrifle",new GunConfig() // no longer secret because fucking jei exposes its recipe
 				.dura(50).draw(10).crosshair(Crosshair.CIRCLE)
 				.rec(
 						new Receiver(0)

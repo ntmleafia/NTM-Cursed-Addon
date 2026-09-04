@@ -2,8 +2,10 @@ package com.leafia.passive;
 
 import com.hbm.inventory.control_panel.nodes.Node;
 import com.hbm.saveddata.TomSaveData;
+import com.leafia.AddonBase;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.gear.ILockonWeapon.GetLockonPacket;
+import com.leafia.contents.gear.combat.shields.AddonShieldItem;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.machines.reactors.pwr.blocks.wreckage.PWRMeshedWreck;
 import com.leafia.contents.potion.LeafiaPotion;
@@ -17,9 +19,14 @@ import com.leafia.overwrite_contents.interfaces.IMixinTomSaveData;
 import com.leafia.savedata.FalloutSavedData;
 import com.leafia.unsorted.StructuralIntegrityHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -92,6 +99,26 @@ public class LeafiaPassiveServer {
 				} else
 					tag.removeTag("pillMeltdownCooldown");
 			}
+		}
+		for (EntityPlayer plr : world.playerEntities) {
+			int cooldown = AddonBase.getExpirable(AddonShieldItem.chargeCooldown,plr,0);
+			if (cooldown > 60-15) {
+				double range = 0.35;
+				List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(plr,new AxisAlignedBB(
+						plr.posX-range,plr.posY-1,plr.posZ+range,
+						plr.posX+range,plr.posY+plr.getEyeHeight()+0.05,plr.posZ+range
+				));
+				for (Entity entity : entities) {
+					if (entity instanceof EntityLivingBase living) {
+						living.attackEntityFrom(DamageSource.causePlayerDamage(plr),8);
+						living.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS,20*8));
+					}
+				}
+			}
+			if (cooldown-1 > 0)
+				AddonBase.addExpirable(AddonShieldItem.chargeCooldown,plr,cooldown-1);
+			else
+				AddonShieldItem.chargeCooldown.remove(plr);
 		}
 
 		WorldGlobalSyncPacket sync = new WorldGlobalSyncPacket();

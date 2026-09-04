@@ -50,6 +50,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -94,10 +97,31 @@ public class LeafiaCustomPacket extends RecordablePacket {
 		GET_LOCKON(new GetLockonPacket()),
 		REQUEST_POINT(new RequestLaserPointPacket()),
 		CONTROL_UPGRADE(new ControlUpgradeFreqPacket()),
+		SYNC_VELOCITY(new SyncVelocityPacket()),
 		;
 		final LeafiaCustomPacketEncoder encoder;
 		CustomPacketType() { encoder = null; }
 		CustomPacketType(LeafiaCustomPacketEncoder encoder) { this.encoder = encoder; }
+	}
+	public static class SyncVelocityPacket implements LeafiaCustomPacketEncoder {
+		public Vec3d velocity;
+		public SyncVelocityPacket() { }
+		public SyncVelocityPacket(Vec3d velocity) {
+			this.velocity = velocity;
+		}
+		@Override
+		public void encode(LeafiaBuf buf) {
+			buf.writeVec3d(velocity);
+		}
+		@SideOnly(Side.CLIENT)
+		public void onReceiveSignal(Vec3d velocity) {
+			Minecraft.getMinecraft().player.setVelocity(velocity.x,velocity.y,velocity.z);
+		}
+		@Override
+		public @Nullable Consumer<MessageContext> decode(LeafiaBuf buf) {
+			Vec3d velocity = buf.readVec3d();
+			return (ctx)->onReceiveSignal(velocity);
+		}
 	}
 	CustomPacketType packetType = CustomPacketType.NONE;
 	LeafiaCustomPacketEncoder encoder = null;

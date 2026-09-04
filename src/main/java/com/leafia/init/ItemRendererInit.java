@@ -56,6 +56,8 @@ import net.minecraft.util.ResourceLocation;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.leafia.AddonBase.getIntegrated;
+
 public class ItemRendererInit {
 	public static HashMap<Item,TEISRBase> renderers = new HashMap<>();
 	//public static List<Item> fixFuckingLocations = new ArrayList<>();
@@ -151,8 +153,28 @@ public class ItemRendererInit {
 		register(AddonBlocks.sol_blaster,new SolBlasterItemRender());
 
 		Shields.mysticite_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_MYS",
-				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png"),
-				new ResourceLocation("leafia","textures/items/shields/mysticite_shield.png")
+				getIntegrated("items/shields/mysticite.png"),
+				getIntegrated("items/shields/mysticite.png")
+		));
+		Shields.fissite_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_FSA",
+				getIntegrated("items/shields/fissite.png"),
+				getIntegrated("items/shields/fissite.png")
+		));
+		Shields.steel_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_STEEL",
+				getIntegrated("items/shields/steel_shield.png"),
+				getIntegrated("items/shields/steel_shield_blank.png")
+		));
+		Shields.titanium_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_TI",
+				getIntegrated("items/shields/titanium_shield.png"),
+				getIntegrated("items/shields/titanium_shield_blank.png")
+		));
+		Shields.elec_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_ELEC",
+				getIntegrated("items/shields/elec_shield.png"),
+				getIntegrated("items/shields/elec_shield_blank.png")
+		));
+		Shields.pu238_shield.setTileEntityItemStackRenderer(new AddonShieldRender("S_PU238",
+				getIntegrated("items/shields/pu238.png"),
+				getIntegrated("items/shields/pu238.png")
 		));
 
 		/*fix(AddonItems.ams_focus_blank);

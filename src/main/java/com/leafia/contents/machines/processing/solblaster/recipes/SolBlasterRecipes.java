@@ -12,6 +12,7 @@ import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemRTGPellet;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.Resources;
+import com.leafia.contents.AddonItems.Shields;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.init.AddonMats;
 import com.leafia.init.AddonOreDict;
@@ -144,6 +145,12 @@ public class SolBlasterRecipes {
 					return newStack;
 				}
 			}
+			return stack;
+		});
+		// mysticite shield
+		fallbackEvaluators.add(stack->{
+			if (stack.getItem() == Shields.fissite_shield)
+				return new ItemStack(Shields.mysticite_shield);
 			return stack;
 		});
 	}

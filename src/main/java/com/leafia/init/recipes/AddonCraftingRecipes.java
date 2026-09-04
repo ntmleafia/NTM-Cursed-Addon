@@ -20,6 +20,7 @@ import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.Guns;
 import com.leafia.contents.AddonItems.LeafiaRods;
 import com.leafia.contents.AddonItems.Resources;
+import com.leafia.contents.AddonItems.Shields;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodCrafting;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.gear.combat.shields.AddonShieldCraftingRecipe;
@@ -171,8 +172,6 @@ public class AddonCraftingRecipes {
 		addRecipeAuto(new ItemStack(AddonItems.am_rifle_cell_fissite),"---","# #","---",'-',AddonOreDict.FSALLOY.plate(),'#',AddonOreDict.FSALLOY.ingot());
 		addShapelessAuto(new ItemStack(AddonItems.am_rifle_cell_mysticite_filled),new ItemStack(AddonItems.am_rifle_cell_mysticite),new ItemStack(ModItems.battery_sc,1,EnumBatterySC.AU198.ordinal()),EUPH.ingot(),EUPH.ingot(),EUPH.ingot(),EUPH.ingot());
 
-		addRecipeAuto(new ItemStack(Guns.am_rifle)," v ","brc","mg ",'v',new ItemStack(ModItems.circuit,1,EnumCircuitType.BISMOID.ordinal()),'b',ANY_BISMOIDBRONZE.lightBarrel(),'r',ANY_ULTRAALLOY.lightReceiver(),'c',AddonItems.am_rifle_cell_mysticite_filled,'m',BIGMT.mechanism(),'g',ANY_HARDPLASTIC.grip());
-
 		addShapelessAuto(new ItemStack(AddonItems.particle_taint, 1), ModItems.particle_empty, TN.dust(), ModItems.pellet_charged );
 
 		addRecipeAuto(new ItemStack(AddonItems.grenade_cloud,2),"SPS","CTC","SPS",'S',S.dust(),'P',ModItems.powder_poison,'C',AddonItems.particle_cloud,'T',new ItemStack(ModItems.fluid_tank_full,1,Fluids.PEROXIDE.getID()));
@@ -183,6 +182,12 @@ public class AddonCraftingRecipes {
 		CraftingManager.addRecipeAuto(new ItemStack(AddonItems.radglasses, 1),"I I", "GPG"," C ",'C',new ItemStack(ModItems.circuit,1,EnumCircuitType.ADVANCED.ordinal()) , 'I', ANY_RUBBER.ingot(), 'G', Blocks.GLASS_PANE, 'P', ANY_PLASTIC.ingot() );
 
 		addShapelessAuto(new ItemStack(AddonItems.pill_meltdown),COAL.dust(),U.dust(),F.dust(),ModItems.powder_magic);
+
+		addRecipeAuto(new ItemStack(Shields.steel_shield, 1), "IAI", "III", " I ", 'I', STEEL.ingot(), 'A', IRON.ingot());
+		addRecipeAuto(new ItemStack(Shields.titanium_shield, 1), "IAI", "III", " I ", 'I', TI.ingot(), 'A', IRON.ingot());
+		addRecipeAuto(new ItemStack(Shields.elec_shield, 1), "IAI", "IAI", "IAI", 'I', POLYMER.ingot(), 'A', "paneGlassColorless");
+		addRecipeAuto(new ItemStack(Shields.pu238_shield, 1), "IXI", "PIP", " P ", 'I', ModItems.plate_polymer, 'P', POLYMER.ingot() , 'X', PU238.ingot());
+		addRecipeAuto(new ItemStack(Shields.fissite_shield, 1), "IAI", "III", " I ", 'I', ANY_HARDPLASTIC.ingot(), 'A', FSALLOY.ingot());
 
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}

@@ -13,6 +13,7 @@ import com.leafia.contents.building.storage.rack.RackRender;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.gear.advisor.AdvisorRender;
 import com.leafia.contents.gear.combat.guns.am_rifle.AMRifleRender;
+import com.leafia.contents.gear.combat.shields.AddonShieldRender;
 import com.leafia.contents.machines.controlpanel.instruments.types.AddonInstrumentModels;
 import com.leafia.contents.machines.elevators.EvBufferRender;
 import com.leafia.contents.machines.elevators.EvPulleyRender;
@@ -103,6 +104,7 @@ public class ResourceInit {
 		_initClass(NukeChudRender.class);
 		_initClass(AMRifleRender.class);
 		_initClass(SolBlasterRender.class);
+		_initClass(AddonShieldRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");

@@ -2,9 +2,11 @@ package com.leafia.contents;
 
 import com.hbm.blocks.ICustomBlockItem;
 import com.hbm.blocks.generic.BlockModDoor;
+import com.hbm.inventory.OreDictManager;
 import com.hbm.items.ModItems;
 import com.hbm.items.weapon.sedna.ItemGunBaseNT;
 import com.hbm.main.MainRegistry;
+import com.hbm.main.MaterialRegistry;
 import com.hbm.util.I18nUtil;
 import com.leafia.AddonBase;
 import com.leafia.AddonBase.AddonLoadingStage;
@@ -712,6 +714,11 @@ public class AddonItems {
 		public static ItemGunBaseNT am_rifle;
 	}
 	public static class Shields {
+		public static Item steel_shield = new AddonShieldItem(OreDictManager.STEEL.ingot(),MaterialRegistry.enumToolMaterialSteel,"steel_shield");
+		public static Item titanium_shield = new AddonShieldItem(OreDictManager.TI.ingot(),MaterialRegistry.enumToolMaterialTitanium,"titanium_shield");
+		public static Item elec_shield = new AddonShieldItem(OreDictManager.POLYMER.ingot(),450,"elec_shield");
+		public static Item pu238_shield = new AddonShieldItem(OreDictManager.PU238.ingot(),AddonToolMaterials.tmPu238,"pu238_shield");
+		public static Item fissite_shield = new AddonShieldItem(AddonOreDict.FSALLOY.ingot(),AddonToolMaterials.tmFissite,"fissite_shield");
 		public static Item mysticite_shield = new AddonShieldItem(AddonOreDict.MYSTICITE.ingot(),AddonToolMaterials.tmMysticite,"mysticite_shield");
 	}
 

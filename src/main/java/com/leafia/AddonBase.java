@@ -1,5 +1,6 @@
 package com.leafia;
 
+import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.generic.BlockHazard;
 import com.hbm.handler.GuiHandler;
@@ -49,6 +50,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
 		dependencies = "required-after:hbm@[2.6.0.0,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
@@ -72,6 +77,23 @@ public class AddonBase {
 
 	static {
 		//LeafiaSoundEvents.init();
+	}
+
+	public static <K,V> void handleExpiration(Map<K,Pair<V,Long>> map) {
+		List<K> keyList = new ArrayList<>(map.keySet());
+		for (K key : keyList) {
+			if (map.get(key).getB() < System.currentTimeMillis()-60_000)
+				map.remove(key);
+		}
+	}
+	public static <K,V> void addExpirable(Map<K,Pair<V,Long>> map,K key,V value) {
+		map.put(key,new Pair<>(value,System.currentTimeMillis()));
+	}
+	public static <K,V> V getExpirable(Map<K,Pair<V,Long>> map,K key,V def) {
+		Pair<V,Long> pair = map.get(key);
+		if (pair != null)
+			return pair.getA();
+		return def;
 	}
 
 	public static void _initMemberClasses(Class<?> c) {

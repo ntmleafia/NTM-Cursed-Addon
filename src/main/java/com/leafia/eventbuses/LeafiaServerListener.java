@@ -1,5 +1,6 @@
 package com.leafia.eventbuses;
 
+import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
 import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
 import com.hbm.hazard.HazardEntry;
@@ -10,6 +11,7 @@ import com.hbm.util.ContaminationUtil;
 import com.hbm.util.ContaminationUtil.ContaminationType;
 import com.hbm.util.ContaminationUtil.HazardType;
 import com.leafia.contents.AddonItems;
+import com.leafia.contents.gear.combat.shields.AddonShieldItem;
 import com.leafia.contents.machines.reactors.pwr.PWRDiagnosis;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.element.PWRElementTE;
 import com.leafia.contents.potion.LeafiaPotion;
@@ -36,6 +38,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -272,6 +275,33 @@ public class LeafiaServerListener {
 			if (src.isFireDamage()) {
 				if (rng.nextInt(5+5*LeafiaPotion.getSkinDamage(entity)/*HbmPotion.getSkinDamage(entity)*/) == 0)
 					LeafiaPotion.hurtSkin(entity,3);
+			}
+		}
+		public boolean isBlocking(EntityLivingBase a,Entity b) {
+			Vec3d vec3d = new Vec3d(b.posX,b.posY+b.getEyeHeight(),b.posZ);
+			Vec3d vec3d1 = a.getLook(1.0F);
+			Vec3d vec3d2 = vec3d.subtractReverse(new Vec3d(a.posX, a.posY, a.posZ)).normalize();
+			vec3d2 = new Vec3d(vec3d2.x, 0.0D, vec3d2.z);
+			return vec3d2.dotProduct(vec3d1) < 0.0D;
+		}
+		@SubscribeEvent
+		public void onEntityHit(LivingAttackEvent evt) {
+			EntityLivingBase entity = evt.getEntityLiving();
+			Entity cause = evt.getSource().getImmediateSource();
+			if(entity instanceof EntityPlayer player && cause != null) {
+				if (player.isActiveItemStackBlocking() && isBlocking(entity,cause)) {
+					ItemStack mainHand = player.getHeldItemMainhand();
+					ItemStack offHand = player.getHeldItemOffhand();
+					boolean cancel = false;
+					if(!mainHand.isEmpty() && mainHand.getItem() instanceof AddonShieldItem shield)
+						cancel = shield.handleImpact(mainHand, cause, evt.getAmount());
+					else if(!offHand.isEmpty() && offHand.getItem() instanceof AddonShieldItem shield)
+						cancel = shield.handleImpact(offHand, cause, evt.getAmount());
+					if (cancel) {
+						evt.setCanceled(true);
+						player.world.playSound(null,player.posX,player.posY,player.posZ,SoundEvents.ITEM_SHIELD_BLOCK,SoundCategory.PLAYERS,1,1);
+					}
+				}
 			}
 		}
 	}
