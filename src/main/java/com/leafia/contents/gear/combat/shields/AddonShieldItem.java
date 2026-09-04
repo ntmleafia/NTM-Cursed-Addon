@@ -98,7 +98,7 @@ public class AddonShieldItem extends ItemShield {
 	}
 
 	public boolean canBlockBullets() {
-		return this == Shields.mysticite_shield;
+		return this == Shields.mysticite_shield || this == Shields.elec_shield;
 	}
 
 	public boolean handleImpact(ItemStack stack,Entity attacker,float amount) {
