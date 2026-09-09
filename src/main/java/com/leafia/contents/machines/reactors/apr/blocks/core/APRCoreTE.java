@@ -6,21 +6,24 @@ import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
 import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMBUI;
 import com.leafia.dev.machine.LCETileEntityMachineBase;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider {
 	public final Map<BlockPos,IBlockState> mbRequirement = new HashMap<>();
-	public final List<Integer> chambers = new ArrayList<>();
+	public List<Integer> chambers = new ArrayList<>();
 	public boolean assembled = false;
 	public APRCoreTE() {
 		super(6);
@@ -78,6 +81,40 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider 
 	@Override
 	public String getDefaultName() {
 		return "container.apr";
+	}
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		assembled = nbt.getBoolean("assembled");
+		chambers.clear();
+		for (int r : nbt.getIntArray("chambers"))
+			chambers.add(r);
+	}
+	@Override
+	public @NotNull NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		nbt.setBoolean("assembled",assembled);
+		int[] radii = new int[chambers.size()];
+		for (int i = 0; i < radii.length; i++)
+			radii[i] = chambers.get(i);
+		nbt.setIntArray("chambers",radii);
+		return super.writeToNBT(nbt);
+	}
+	@Override
+	public void serialize(ByteBuf buf) {
+		super.serialize(buf);
+		buf.writeBoolean(assembled);
+		buf.writeByte(chambers.size());
+		for (Integer r : chambers)
+			buf.writeByte(r);
+	}
+	@Override
+	public void deserialize(ByteBuf buf) {
+		super.deserialize(buf);
+		assembled = buf.readBoolean();
+		List<Integer> received = new ArrayList<>();
+		for (int i = buf.readByte(); i > 0; i--)
+			received.add((int)buf.readByte());
+		chambers = received;
 	}
 	AxisAlignedBB bb = null;
 	@Override

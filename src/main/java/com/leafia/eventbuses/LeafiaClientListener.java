@@ -297,7 +297,8 @@ public class LeafiaClientListener {
 			NetHandlerPlayClient connection = mc.getConnection();
 			if (connection != null) {
 				ServerData data = mc.getCurrentServerData();
-				if (data != null && data.serverIP.trim().toLowerCase().substring(0,7).hashCode() == -679612522)
+				String ip = data == null ? "" : data.serverIP.trim().toLowerCase();
+				if (ip.length() >= 7 && ip.substring(0,7).hashCode() == -679612522)
 					connection.cleanup(); // I hate both of you, you're not welcome to use my mod
 			} // you can decide whatever to do, but that means
 			// I can also decide whether you can use my mod or not because I made this fucking addon

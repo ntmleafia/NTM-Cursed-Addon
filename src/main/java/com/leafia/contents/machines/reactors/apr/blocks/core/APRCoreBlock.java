@@ -1,5 +1,6 @@
 package com.leafia.contents.machines.reactors.apr.blocks.core;
 
+import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.TileEntityProxyCombo;
 import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
@@ -16,6 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -102,12 +104,11 @@ public class APRCoreBlock extends AddonBlockDummyable {
 			if (offset.getX() == 0 || offset.getZ() == 0)
 				state = support;
 			for (int y = 0; y >= -depth; y--) {
-				if (isInner && y < 0 && y > -depth)
-					state = inner;
-				poses.put(center.add(offset.getX(),y,offset.getZ()),state);
-				poses.put(center.add(-offset.getX(),y,offset.getZ()),state);
-				poses.put(center.add(offset.getX(),y,-offset.getZ()),state);
-				poses.put(center.add(-offset.getX(),y,-offset.getZ()),state);
+				IBlockState layer = (isInner && y < 0 && y > -depth) ? inner : state;
+				poses.put(center.add(offset.getX(),y,offset.getZ()),layer);
+				poses.put(center.add(-offset.getX(),y,offset.getZ()),layer);
+				poses.put(center.add(offset.getX(),y,-offset.getZ()),layer);
+				poses.put(center.add(-offset.getX(),y,-offset.getZ()),layer);
 			}
 		}
 	}
@@ -129,6 +130,14 @@ public class APRCoreBlock extends AddonBlockDummyable {
 	}
 	@Override
 	public boolean onBlockActivated(World worldIn,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
+		if (worldIn.isRemote) {
+			if (playerIn.isSneaking())
+				return true;
+			BlockPos core = findCore(worldIn,pos);
+			if (core != null && worldIn.getTileEntity(core) instanceof APRCoreTE te && !te.assembled)
+				FMLNetworkHandler.openGui(playerIn,MainRegistry.instance,0,worldIn,core.getX(),core.getY(),core.getZ());
+			return true;
+		}
 		return standardOpenBehavior(worldIn,pos,playerIn,0);
 	}
 }

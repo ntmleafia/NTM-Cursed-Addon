@@ -2,12 +2,13 @@ package com.leafia.contents.machines.reactors.apr.blocks.core.container;
 
 import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreTE;
 import com.leafia.dev.gui.GuiScreenLeafia;
-import com.leafia.transformer.LeafiaGls;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hbm.render.NTMRenderHelper.bindTexture;
 import static com.leafia.AddonBase.getIntegrated;
 
 public class APRMBUI extends GuiScreenLeafia {
@@ -23,6 +24,8 @@ public class APRMBUI extends GuiScreenLeafia {
 	@Override
 	protected void drawGuiScreenBackgroundLayer(float partialTicks,int mouseX,int mouseY) {
 		drawDefaultBackground();
+		GlStateManager.color(1,1,1,1);
+		bindTexture(tex);
 		drawTexturedModalRect(guiLeft,guiTop,0,0,xSize,ySize);
 	}
 }
