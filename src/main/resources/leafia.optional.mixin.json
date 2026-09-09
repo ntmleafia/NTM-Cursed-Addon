@@ -10,7 +10,6 @@
     "MixinGuiMainMenu_WackySplashes"
   ],
   "mixins": [
-    "MixinRadiationSystemNT"
   ],
   "server": [],
   "setSourceFile": true,

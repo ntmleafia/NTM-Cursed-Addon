@@ -2,6 +2,7 @@ package com.leafia.database;
 
 import com.hbm.blocks.ModBlocks;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.AddonBlocks.PWR;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -42,6 +43,9 @@ public class ReactorTiers {
 				ModBlocks.watz,ModBlocks.struct_watz_core,
 				ModBlocks.watz_casing,ModBlocks.watz_cooler,
 				ModBlocks.watz_element,ModBlocks.watz_pump
+		);
+		addTier("apr","particle",
+				APR.apr_component
 		);
 		addTier("fusion","fusion",
 				ModBlocks.fusion_torus,ModBlocks.fusion_klystron,

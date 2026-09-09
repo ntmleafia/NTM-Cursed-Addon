@@ -739,6 +739,10 @@ public class AddonItems {
 	public static final Item pill_meltdown = new PillMeltdownItem("pill_meltdown").setMaxStackSize(1);
 
 	public static final Item upgrade_control = new AddonUpgradeItem("upgrade_control").setMaxStackSize(1).setCreativeTab(MainRegistry.controlTab);
+	public static final Item blanket_fissite = new AddonItemHazardBaked("blanket_fissite","resources/plates/fissite_thin").addRad(ItemRads.fissite.multiply(1/16d)).setCreativeTab(MainRegistry.partsTab);
+	public static final Item blanket_mysticite = new AddonItemBaked("blanket_mysticite","resources/plates/mysticite_thin").setCreativeTab(MainRegistry.partsTab);
+	public static final Item blanket_fissite_bundle = new AddonItemHazardBaked("blanket_fissite_bundle","resources/plates/fissite_thin_bundle").addRad(ItemRads.fissite.multiply(1/2d)).setCreativeTab(MainRegistry.partsTab);
+	public static final Item blanket_mysticite_bundle = new AddonItemBaked("blanket_mysticite_bundle","resources/plates/mysticite_thin_bundle").setCreativeTab(MainRegistry.partsTab);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {

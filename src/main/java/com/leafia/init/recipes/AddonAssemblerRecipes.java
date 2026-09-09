@@ -379,7 +379,7 @@ public class AddonAssemblerRecipes {
 							new OreDictStack("dyeRed",4)
 					)
 			);
-			INSTANCE.register(new GenericRecipe("ass.leafia.solblaster").setup(2000,100)
+			INSTANCE.register(new GenericRecipe("ass.leafia.solblaster").setup(200,100)
 					.outputItems(new ItemStack(AddonBlocks.sol_blaster))
 					.inputItems(
 							new OreDictStack(STEEL.plateCast(),3),
@@ -387,6 +387,18 @@ public class AddonAssemblerRecipes {
 							new OreDictStack(MINGRADE.wireFine(),8),
 							new ComparableStack(ModBlocks.brick_concrete,6),
 							new OreDictStack(PB.plateCast(),2)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.fissite_bundle").setup(20,10)
+					.outputItems(new ItemStack(AddonItems.blanket_fissite_bundle))
+					.inputItems(
+							new ComparableStack(AddonItems.blanket_fissite,16)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.mysticite_bundle").setup(20,10)
+					.outputItems(new ItemStack(AddonItems.blanket_mysticite_bundle))
+					.inputItems(
+							new ComparableStack(AddonItems.blanket_mysticite,16)
 					)
 			);
 		}

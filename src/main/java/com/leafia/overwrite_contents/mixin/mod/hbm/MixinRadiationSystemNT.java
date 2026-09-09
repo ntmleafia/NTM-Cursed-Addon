@@ -1,4 +1,4 @@
-package com.leafia.overwrite_contents.mixin;
+package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.handler.ArmorUtil;
 import com.hbm.handler.radiation.RadiationSystemNT;

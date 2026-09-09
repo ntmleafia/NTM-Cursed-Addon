@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
+import static com.leafia.init.AddonOreDict.TNALLOY;
 import static com.leafia.init.AddonOreDict.XN;
 
 public class AddonArcWelderRecipes {
@@ -23,6 +24,13 @@ public class AddonArcWelderRecipes {
 				20_000_000L,
 				new FluidStack(Fluids.REFORMGAS, 16_000),
 				new OreDictStack(XN.plateCast(), 2))
+		);
+		recipes.add(new ArcWelderRecipe(
+				new ItemStack(ModItems.plate_welded, 1, AddonMats.MAT_TNALLOY.id),
+				400,
+				1_000_000L,
+				new FluidStack(Fluids.OXYGEN,500),
+				new OreDictStack(TNALLOY.plateCast(), 2))
 		);
 	}
 }

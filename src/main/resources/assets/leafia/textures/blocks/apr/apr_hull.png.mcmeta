@@ -1,0 +1,15 @@
+{
+    "ctm":{
+        "ctm_version": 1,
+        "type":"CTM",
+        "textures":[
+            "leafia:blocks/apr/apr_hull_ctm"
+        ],
+        "extra": {
+            "connect_to": [
+                { "block": "leafia:apr_component", "predicate": { "variant": "hull" } },
+                { "block": "leafia:apr_component", "predicate": { "variant": "hull_assembled" } }
+            ]
+        }
+    }
+}

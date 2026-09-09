@@ -5,6 +5,7 @@ import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.passive.LeafiaPassiveLocal;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -101,6 +102,22 @@ public class FalloutSavedData extends WorldSavedData {
 		return ret;
 	}
 	public int syncTimer = 0;
+	public static int getHeight(World world,int x,int z) {
+		int y = world.getActualHeight();
+		MutableBlockPos bp = new MutableBlockPos();
+		bp.setPos(x,y-1,z);
+		while (bp.getY() >= 0) {
+			IBlockState state = world.getBlockState(bp);
+			if (state.getMaterial().isReplaceable()) {
+				y--;
+				bp.setPos(x,y-1,z);
+			} else break;
+		}
+		if (y < world.getActualHeight())
+			return y;
+		else
+			return world.getActualHeight()-1;
+	}
 	public void tick() {
 		syncTimer--;
 		Set<Integer> ignoreX = new HashSet<>();
@@ -126,7 +143,7 @@ public class FalloutSavedData extends WorldSavedData {
 							bp.setPos(cx*16+world.rand.nextInt(16),0,cz*16+world.rand.nextInt(16));
 							Vec3d p = new Vec3d(bp.getX()+0.5,0,bp.getZ()+0.5);
 							if (data.pos.distanceTo(p) <= data.radius) {
-								bp.setY(world.getHeight(bp.getX(),bp.getZ()));
+								bp.setY(getHeight(world,bp.getX(),bp.getZ()));
 								if (ModBlocks.fallout.canPlaceBlockAt(world,bp))
 									world.setBlockState(bp,ModBlocks.fallout.getDefaultState());
 							}

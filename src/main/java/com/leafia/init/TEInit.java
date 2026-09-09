@@ -36,6 +36,7 @@ import com.leafia.contents.machines.powercores.dfc.components.pulser.CoreDetonat
 import com.leafia.contents.machines.processing.mixingvat.MixingVatTE;
 import com.leafia.contents.machines.processing.mixingvat.proxy.MixingVatProxy;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterTE;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreTE;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlTE;
 import com.leafia.contents.machines.reactors.lftr.components.ejector.MSREjectorTE;
@@ -153,6 +154,7 @@ public class TEInit {
 		register(AMSPReceiverTE.class,"amsp_receiver_te");
 		register(NukeChudTE.class,"nuke_chud_te");
 		register(SolBlasterTE.class,"sol_blaster_te");
+		register(APRCoreTE.class,"apr_core_te");
 	}
 	private static void register(Class<? extends TileEntity> clazz,String res) {
 		GameRegistry.registerTileEntity(clazz,new ResourceLocation(AddonBase.MODID,res));

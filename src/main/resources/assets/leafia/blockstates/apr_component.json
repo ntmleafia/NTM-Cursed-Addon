@@ -1,0 +1,12 @@
+{
+	"variants": {
+		"variant=support": { "model": "leafia:apr_support" },
+		"variant=hull": { "model": "leafia:apr_hull" },
+		"variant=hull_assembled": { "model": "leafia:apr_hull_assembled" },
+		"variant=plating": { "model": "leafia:apr_plating" },
+		"variant=plating_dark": { "model": "leafia:apr_plating_dark" },
+		"variant=blades": { "model": "leafia:apr_blades" },
+		"variant=mechanical": { "model": "leafia:apr_parts" },
+		"variant=coil": { "model": "leafia:apr_coil" }
+	}
+}

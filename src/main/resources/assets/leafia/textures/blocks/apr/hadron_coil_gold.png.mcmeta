@@ -1,0 +1,14 @@
+{
+	"ctm": {
+		"ctm_version": 1,
+		"type": "CTM",
+		"textures": [
+			"leafia:blocks/apr/hadron_coil_gold_ctm"
+		],
+		"extra": {
+			"connect_to": [
+				{ "block": "leafia:apr_component", "predicate": { "variant": "coil" } }
+			]
+		}
+	}
+}

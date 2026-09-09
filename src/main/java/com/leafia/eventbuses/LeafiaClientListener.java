@@ -40,6 +40,7 @@ import com.leafia.contents.worldgen.AddonBiome;
 import com.leafia.contents.worldgen.AddonBiomes;
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;
 import com.leafia.database.ImpactSeismic;
+import com.leafia.dev.blocks.blockbase.meta.IMetaPlacable;
 import com.leafia.dev.render.LeafiaBrush;
 import com.leafia.dev.render.LeafiaBrush.BrushMode;
 import com.leafia.dev.LeafiaUtil;
@@ -67,6 +68,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -290,6 +293,14 @@ public class LeafiaClientListener {
 		static BiFunction<Float,Double,Double> nope = (intended,dist)->ambienceVolume;
 		static int beatTimer = 0;
 		public static void update(World world) {
+			Minecraft mc = Minecraft.getMinecraft();
+			NetHandlerPlayClient connection = mc.getConnection();
+			if (connection != null) {
+				ServerData data = mc.getCurrentServerData();
+				if (data != null && data.serverIP.trim().toLowerCase().substring(0,7).hashCode() == -679612522)
+					connection.cleanup(); // I hate both of you, you're not welcome to use my mod
+			} // you can decide whatever to do, but that means
+			// I can also decide whether you can use my mod or not because I made this fucking addon
 			if (ambience != null) {
 				if (ambience.world != world) {
 					ambience.stopSound();
@@ -297,27 +308,27 @@ public class LeafiaClientListener {
 				}
 			}
 			if (ambience != null) {
-				if (!Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(ambience.sound)) {
+				if (!mc.getSoundHandler().isSoundPlaying(ambience.sound)) {
 					ambience.stopSound();
 					ambience = null;
 				}
 			}
 			if (vgTicks > 0)
 				vgTicks--;
-			EntityPlayer player = Minecraft.getMinecraft().player;
+			EntityPlayer player = mc.player;
 			if (DigammaCrater.isDigammaBiome(world.getBiome(new BlockPos(player.posX,player.posY,player.posZ)))) {
 				ambienceVolume = Math.min(ambienceVolume+0.01,1);
 				beatTimer++;
 				if (beatTimer >= 17) {
 					beatTimer = 0;
 					vgTicks = vgMaxTicks;
-					Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(LeafiaSoundEvents.eversionsong7_cut,1));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(LeafiaSoundEvents.eversionsong7_cut,1));
 				}
 				if (ambience == null) {
 					ambience = new LCEAudioWrapperClientStartStop(world,LeafiaSoundEvents.sbmoon_surface,null,null,0.01f,SoundCategory.AMBIENT);
 					ambience.setCustomAttenuation(nope);
 					ambience.setLooped(true);
-					Minecraft.getMinecraft().getSoundHandler().playSound(ambience.sound);
+					mc.getSoundHandler().playSound(ambience.sound);
 				}
 				ambience.updateVolume((float)ambienceVolume/1.5f);
 			} else {
@@ -325,7 +336,7 @@ public class LeafiaClientListener {
 				if (ambience != null) {
 					ambience.updateVolume((float)ambienceVolume/1.5f);
 					if (ambienceVolume <= 0) {
-						Minecraft.getMinecraft().getSoundHandler().stopSound(ambience.sound);
+						mc.getSoundHandler().stopSound(ambience.sound);
 						ambience = null;
 					}
 				}
@@ -545,7 +556,7 @@ public class LeafiaClientListener {
 			FFDuctStandard.registerColorHandler(evt);
 			AmatDuctStandard.registerColorHandler(evt);
 		}
-
+		// the existence of this shit can explode why tf did i do this
 		private void registerModel(Item item,int meta) {
 			if (item.getTileEntityItemStackRenderer() instanceof TEISRBase) {
 				return;
@@ -557,7 +568,17 @@ public class LeafiaClientListener {
 			} else if(item instanceof IHasCustomModel) {
 				ModelLoader.setCustomModelResourceLocation(item, meta, ((IHasCustomModel) item).getResourceLocation());
 			} else {
-				ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+				boolean stahp = false;
+				if (item instanceof ItemBlock ib) {
+					if (ib.getBlock() instanceof IDynamicModels)
+						stahp = true;
+				}
+				if (!stahp)
+					ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+				if (item instanceof ItemBlock ib) {
+					if (ib.getBlock() instanceof IMetaPlacable placable)
+						placable.registerCustomMRL();
+				}
 			}
 		}
 

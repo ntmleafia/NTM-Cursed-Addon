@@ -83,7 +83,7 @@ public class AddonUpgradeItem extends ItemMachineUpgrade {
 		ItemStack stack = player.getHeldItem(hand);
 		if (hand != EnumHand.MAIN_HAND) return new ActionResult<>(EnumActionResult.FAIL,stack);
 		if (this == AddonItems.upgrade_control) {
-			if (!world.isRemote)
+			if (world.isRemote)
 				openGUI(stack);
 			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		}

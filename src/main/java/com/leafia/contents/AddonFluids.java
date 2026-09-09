@@ -37,11 +37,13 @@ public class AddonFluids {
 		public static Fluid balecorium = new BaleCoriumFluid("balecorium").setDensity(31200).setViscosity(500).setTemperature(5000+273);
 		public static Fluid osmiridium = new OsmiridiumFluid("corecomponent").setDensity(31200).setViscosity(2000).setTemperature(3200+273);
 		public static Fluid concrete = new ConcreteFluid("leafia_concrete").setDensity(31200).setViscosity(2000);
+		public static Fluid lox = new LOXFluid("oxygen").setTemperature(-100+273);
 		public static void init() {
 			registerFluid(fluoride);
 			registerFluid(balecorium);
 			registerFluid(osmiridium);
 			registerFluid(concrete);
+			registerFluid(lox);
 		}
 		private static void registerFluid(Fluid fluid) {
 			FluidRegistry.registerFluid(fluid);
@@ -52,6 +54,7 @@ public class AddonFluids {
 			balecorium = FluidRegistry.getFluid("balecorium");
 			osmiridium = FluidRegistry.getFluid("corecomponent");
 			concrete = FluidRegistry.getFluid("leafia_concrete");
+			lox = FluidRegistry.getFluid("oxygen");
 		}
 	}
 	public static void addCompatFluid(FluidType fluid) {

@@ -189,6 +189,11 @@ public class AddonCraftingRecipes {
 		addRecipeAuto(new ItemStack(Shields.pu238_shield, 1), "IXI", "PIP", " P ", 'I', ModItems.plate_polymer, 'P', POLYMER.ingot() , 'X', PU238.ingot());
 		addRecipeAuto(new ItemStack(Shields.fissite_shield, 1), "IAI", "III", " I ", 'I', ANY_HARDPLASTIC.ingot(), 'A', FSALLOY.ingot());
 
+		addRecipeAuto(new ItemStack(AddonItems.upgrade_control,1),"CIC","ITI","CIC",'C',new ItemStack(ModItems.circuit,1,EnumCircuitType.CAPACITOR.ordinal()),'I',new ItemStack(ModItems.circuit,1,EnumCircuitType.BASIC.ordinal()),'T',ModItems.upgrade_template);
+
+		addShapelessAuto(new ItemStack(AddonItems.blanket_fissite,16),AddonItems.blanket_fissite_bundle);
+		addShapelessAuto(new ItemStack(AddonItems.blanket_mysticite,16),AddonItems.blanket_mysticite_bundle);
+
 		hack.getRegistry().register(new PWRDebrisCrafting().setRegistryName(new ResourceLocation("leafia", "lwr_debris_crafting_handler")));
 	}
 	static void removeRecipesForItem(ForgeRegistry<IRecipe> reg,Item item) {

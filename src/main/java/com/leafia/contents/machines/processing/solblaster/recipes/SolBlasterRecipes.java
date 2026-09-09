@@ -45,9 +45,12 @@ public class SolBlasterRecipes {
 		addRecipe(AddonOreDict.FS.ingot(),Resources.ingot_chydalium,0);
 		addRecipe(AddonOreDict.FS.billet(),Resources.billet_chydalium,0);
 		addRecipe(AddonOreDict.FSALLOY.ingot(),Resources.ingot_mysticite,0);
-		addRecipe(AddonOreDict.FSALLOY.plate(),Resources.plate_mysticite,0);
+		addFallback(AddonOreDict.FSALLOY.plate(),Resources.plate_mysticite,0);
 		addFallback(AddonOreDict.FSALLOY.lightReceiver(),ModItems.part_receiver_light,AddonMats.MAT_MYSTICITE.id); // supposed to be secret lmao
 		addFallback(AddonItems.am_rifle_cell_fissite,0,AddonItems.am_rifle_cell_mysticite,0);
+
+		addRecipe(AddonItems.blanket_fissite,0,AddonItems.blanket_mysticite,0);
+		addRecipe(AddonItems.blanket_fissite_bundle,0,AddonItems.blanket_mysticite_bundle,0);
 
 		addFallback(ModItems.egg_balefire_shard,0);
 		addFallback(ModItems.egg_balefire,0);
@@ -116,7 +119,7 @@ public class SolBlasterRecipes {
 			return stack;
 		});
 		// organics
-		fallbackEvaluators.add((stack)->{
+		fallbackEvaluators.add(0,(stack)->{
 			if (stack.getItem() instanceof ItemFood)
 				stack = ItemStack.EMPTY;
 			else {
@@ -131,7 +134,7 @@ public class SolBlasterRecipes {
 			return stack;
 		});
 		// nuclear fuels
-		fallbackEvaluators.add(stack->{
+		fallbackEvaluators.add(0,stack->{
 			if (stack.getItem() instanceof ItemRTGPellet rtg)
 				return rtg.getDecayItem();
 			else if (stack.getItem() instanceof LeafiaRodItem rod) {
@@ -148,7 +151,7 @@ public class SolBlasterRecipes {
 			return stack;
 		});
 		// mysticite shield
-		fallbackEvaluators.add(stack->{
+		fallbackEvaluators.add(0,stack->{
 			if (stack.getItem() == Shields.fissite_shield)
 				return new ItemStack(Shields.mysticite_shield);
 			return stack;

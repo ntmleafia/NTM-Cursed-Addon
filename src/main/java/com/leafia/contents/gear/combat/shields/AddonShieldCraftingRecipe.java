@@ -55,7 +55,7 @@ public class AddonShieldCraftingRecipe extends IForgeRegistryEntry.Impl<IRecipe>
 	// Congratulations for finding the recipe of the rifle, now good luck making it.
 	public boolean checkForRifle(InventoryCrafting inv) {
 		return
-				checkForItem(inv.getStackInRowAndColumn(0,0),new OreDictStack(OreDictManager.SA326.crystal())) &&
+				checkForItem(inv.getStackInRowAndColumn(0,0),new OreDictStack(OreDictManager.SRN.crystal())) &&
 				checkForItem(inv.getStackInRowAndColumn(1,0),new ComparableStack(ModItems.circuit,1,EnumCircuitType.BISMOID)) &&
 
 				checkForItem(inv.getStackInRowAndColumn(0,1),new OreDictStack(OreDictManager.ANY_BISMOIDBRONZE.lightBarrel())) &&

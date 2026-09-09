@@ -1,5 +1,6 @@
 package com.leafia.contents.gear.wands;
 
+import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.machine.rbmk.RBMKBase;
 import com.hbm.lib.Library;
 import com.hbm.main.MainRegistry;
@@ -151,6 +152,7 @@ public class ItemWandV extends AddonItemBaked {
 									TextFormatting.GREEN+"BLK: !isPassable: "+pfx(!block.isPassable(world,pos)),
 									"BLK: isCollidable: "+pfx(block.isCollidable()),
 									"BLK: isNormalCube: "+pfx(block.isNormalCube(state,world,pos)),
+									"TEST: "+pfx(ModBlocks.fallout.canPlaceBlockAt(world,pos)),
 									TextFormatting.YELLOW+"-----------",
 									"STAT: isFullBlock: "+pfx(state.isFullBlock()),
 									"STAT: isFullCube: "+pfx(state.isFullCube()),

@@ -7,6 +7,7 @@ import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
 import com.leafia.passive.LeafiaPassiveServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -29,6 +30,20 @@ public class LeafiaPotion extends Potion {
 		this.setPotionName(name);
 		this.setRegistryName("leafia", name);
 		this.setIconIndex(x, y);
+		if (name.equals("frigid")) {
+			registerPotionAttributeModifier(
+					SharedMonsterAttributes.MOVEMENT_SPEED,
+					"4086080f-0097-44d3-b54a-ef6a618e8889",
+					-0.15,
+					2
+			);
+			registerPotionAttributeModifier(
+					SharedMonsterAttributes.ATTACK_SPEED,
+					"ed998a18-d755-4cce-917a-7b9895a5db06",
+					-0.15,
+					2
+			);
+		}
 	}
 
 	/**

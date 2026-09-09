@@ -10,6 +10,7 @@ import com.hbm.items.machine.ItemStamp.StampType;
 import com.hbm.util.Tuple.Pair;
 import static com.leafia.init.AddonOreDict.*;
 
+import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.Resources;
 import net.minecraft.item.ItemStack;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class AddonPressRecipes {
 	public static HashMap<Pair<AStack, StampType>,ItemStack> recipes = PressRecipes.recipes;
 	public static void register() {
-		makeRecipe(StampType.PLATE,new OreDictStack(FSALLOY.plate()),Resources.plate_fissite);
+		makeRecipe(StampType.PLATE,new OreDictStack(FSALLOY.ingot()),Resources.plate_fissite);
+		makeRecipe(StampType.PLATE,new OreDictStack(FSALLOY.plate()),new ItemStack(AddonItems.blanket_fissite,16));
 	}
 }

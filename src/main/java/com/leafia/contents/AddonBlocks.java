@@ -33,6 +33,7 @@ import com.leafia.contents.building.pinkdoor.BlockPinkDoor;
 import com.leafia.contents.building.sign.SignBlock;
 import com.leafia.contents.building.storage.rack.RackBlock;
 import com.leafia.contents.debug.blackhole_test.DebugBHBlock;
+import com.leafia.contents.debug.circle_test.CircleTestBlock;
 import com.leafia.contents.debug.explosion_test.DebugBoomBlock;
 import com.leafia.contents.debug.ff_test.source.DebugSourceBlock;
 import com.leafia.contents.debug.ff_test.tank.DebugTankBlock;
@@ -45,6 +46,8 @@ import com.leafia.contents.fluids.BaleCoriumFluid.BaleCoriumFluidBlock;
 import com.leafia.contents.fluids.ConcreteFluid;
 import com.leafia.contents.fluids.ConcreteFluid.ConcreteFluidBlock;
 import com.leafia.contents.fluids.FluorideFluid.FluorideFluidBlock;
+import com.leafia.contents.fluids.LOXFluid;
+import com.leafia.contents.fluids.LOXFluid.LOXFluidBlock;
 import com.leafia.contents.fluids.OsmiridiumFluid.OsmiridiumFluidBlock;
 import com.leafia.contents.machines.elevators.EvBuffer;
 import com.leafia.contents.machines.elevators.EvPulley;
@@ -75,6 +78,8 @@ import com.leafia.contents.machines.powercores.dfc.AddonCoreComponent;
 import com.leafia.contents.machines.powercores.dfc.OsmiridiumBlock;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatBlock;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterBlock;
+import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreBlock;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlExtension;
@@ -336,6 +341,7 @@ public class AddonBlocks {
 		public static final Block voider = new VoiderBlock(Material.ANVIL,"test_fluid_voider");
 		public static final Block render = new DebugRenderTestBlock(Material.ANVIL,"test_render");
 		public static final Block tom = new TomTest(Material.ANVIL,"test_tom");
+		public static final Block circle = new CircleTestBlock(Material.ANVIL,"test_circle");
 	}
 
 	public static final Block salt_separator = new SaltSeparatorBlock(Material.IRON,"salt_separator").setHardness(5.0F).setResistance(20.0F).setCreativeTab(MainRegistry.machineTab);
@@ -597,6 +603,13 @@ public class AddonBlocks {
 		public static final Block ore_corium_zetalite = new CoriumOreBase("ore_corium_zetalite",3,"zetalite").setCreativeTab(MainRegistry.resourceTab).setHardness(50).setResistance(9000.0F);
 	}
 
+	static boolean apr_dummy = APR.dummy;
+	public static class APR {
+		static boolean dummy = false;
+		public static final Block apr_core = new APRCoreBlock(Material.IRON,"apr_core").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
+		public static final Block apr_component = new APRComponentBlock("apr_component").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
+	}
+
 	static {
 		if (Loader.isModLoaded("opencomputers")) {
 			oc_cable = new ComputerCableBlock(Material.IRON, "integ_cable_oc",false,"leafia/sealed_network/audio/cable_audio").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab);
@@ -698,10 +711,12 @@ public class AddonBlocks {
 
 	}.setImmovableMobility());
 	public static Block fluid_concrete = new ConcreteFluidBlock(AddonFF.concrete, material_concrete, "leafia_concrete_fluid");
+	public static Block fluid_lox = new LOXFluidBlock(AddonFF.lox,Material.WATER,"oxygen_fluid");
 	private static void registerFluidBlocks() {
 		AddonFF.fluoride.setBlock(fluid_fluoride);
 		AddonFF.balecorium.setBlock(fluid_balecorium);
 		AddonFF.osmiridium.setBlock(fluid_osmiridium);
 		AddonFF.concrete.setBlock(fluid_concrete);
+		AddonFF.lox.setBlock(fluid_lox);
 	}
 }

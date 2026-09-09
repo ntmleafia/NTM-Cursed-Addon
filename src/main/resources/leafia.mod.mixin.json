@@ -7,7 +7,6 @@
   "target": "@env(MOD)",
   "client": [
     "hbm.MixinCoriumBlock",
-    "hbm.MixinCoriumFinite",
     "hbm.MixinFT_HEatable",
     "hbm.MixinGuiControlEdit",
     "hbm.MixinGUIDiFurnaceRTG",
@@ -28,6 +27,7 @@
     "hbm.MixinRrenderControlPanel"
   ],
   "mixins": [
+    "hbm.FuckOff",
     "hbm.MixinBalefire",
     "hbm.MixinBlockControlPanel",
     "hbm.MixinBlockGasExplosive",
@@ -47,6 +47,7 @@
     "hbm.MixinControlType",
     "hbm.MixinCoreComponent",
     "hbm.MixinCoreCore",
+    "hbm.MixinCoriumFinite",
     "hbm.MixinDiamondPronter",
     "hbm.MixinDictFrame",
     "hbm.MixinEntityChemical",
@@ -96,6 +97,7 @@
     "hbm.MixinModEventHandler",
     "hbm.MixinModItems",
     "hbm.MixinOreDictManager",
+    "hbm.MixinRadiationSystemNT",
     "hbm.MixinRBMKColumn$ControlColumn",
     "hbm.MixinSerializableRecipe",
     "hbm.MixinSpaceship",
