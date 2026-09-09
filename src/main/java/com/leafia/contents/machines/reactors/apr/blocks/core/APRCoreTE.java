@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider {
+public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider, ITickable {
 	public final Map<BlockPos,IBlockState> mbRequirement = new HashMap<>();
-	public List<Integer> chambers = new ArrayList<>();
+	public final List<Integer> chambers = new ArrayList<>();
 	public boolean assembled = false;
 	public APRCoreTE() {
 		super(6);
@@ -111,10 +112,9 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider 
 	public void deserialize(ByteBuf buf) {
 		super.deserialize(buf);
 		assembled = buf.readBoolean();
-		List<Integer> received = new ArrayList<>();
+		chambers.clear();
 		for (int i = buf.readByte(); i > 0; i--)
-			received.add((int)buf.readByte());
-		chambers = received;
+			chambers.add((int)buf.readByte());
 	}
 	AxisAlignedBB bb = null;
 	@Override
@@ -145,5 +145,15 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider 
 			return new APRMBUI(this);
 		// TODO: add actual gui
 		return null;
+	}
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return true;
+	}
+	@Override
+	public void update() {
+		if (!world.isRemote) {
+			networkPackNT(250);
+		}
 	}
 }
