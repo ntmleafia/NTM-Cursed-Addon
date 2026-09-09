@@ -143,6 +143,12 @@ public class APRMBUI extends GuiScreenLeafia {
 		super.keyTyped(typedChar,keyCode);
 	}
 	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		if (!chambers.equals(te.chambers))
+			te.requestChambers(chambers);
+	}
+	@Override
 	protected void drawGuiScreenBackgroundLayer(float partialTicks,int mouseX,int mouseY) {
 		drawDefaultBackground();
 		GlStateManager.color(1,1,1,1);

@@ -5,16 +5,17 @@ import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
 import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMBUI;
+import com.leafia.dev.container_utility.LeafiaPacket;
+import com.leafia.dev.container_utility.LeafiaPacketReceiver;
 import com.leafia.dev.machine.LCETileEntityMachineBase;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,15 +23,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider, ITickable {
+public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,LeafiaPacketReceiver {
+	static final byte idChambers = 0;
+	static final byte idAssembled = 1;
+	// TODO: placeholder bounds
+	public static final int maxChamberRadius = 32;
+	public static final int maxChambers = 8;
 	public final Map<BlockPos,IBlockState> mbRequirement = new HashMap<>();
-	public final List<Integer> chambers = new ArrayList<>();
+	public List<Integer> chambers = new ArrayList<>();
 	public boolean assembled = false;
 	public APRCoreTE() {
 		super(6);
 	}
 	public void sortChambers() {
 		chambers.sort(Comparator.naturalOrder());
+	}
+	static int[] toArray(List<Integer> radii) {
+		int[] array = new int[radii.size()];
+		for (int i = 0; i < array.length; i++)
+			array[i] = radii.get(i);
+		return array;
 	}
 	public void rebuildMBRequirement() {
 		sortChambers();
@@ -87,34 +99,51 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		assembled = nbt.getBoolean("assembled");
-		chambers.clear();
-		for (int r : nbt.getIntArray("chambers"))
-			chambers.add(r);
+		setChambers(nbt.getIntArray("chambers"));
 	}
 	@Override
 	public @NotNull NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("assembled",assembled);
-		int[] radii = new int[chambers.size()];
-		for (int i = 0; i < radii.length; i++)
-			radii[i] = chambers.get(i);
-		nbt.setIntArray("chambers",radii);
+		nbt.setIntArray("chambers",toArray(chambers));
 		return super.writeToNBT(nbt);
 	}
 	@Override
-	public void serialize(ByteBuf buf) {
-		super.serialize(buf);
-		buf.writeBoolean(assembled);
-		buf.writeByte(chambers.size());
-		for (Integer r : chambers)
-			buf.writeByte(r);
+	public String getPacketIdentifier() {
+		return "APR_CORE";
+	}
+	LeafiaPacket writeState(LeafiaPacket packet) {
+		return packet.__write(idAssembled,assembled).__write(idChambers,toArray(chambers));
 	}
 	@Override
-	public void deserialize(ByteBuf buf) {
-		super.deserialize(buf);
-		assembled = buf.readBoolean();
-		chambers.clear();
-		for (int i = buf.readByte(); i > 0; i--)
-			chambers.add((int)buf.readByte());
+	public void onPlayerValidate(EntityPlayer plr) {
+		writeState(LeafiaPacket._start(this)).__sendToClient(plr);
+	}
+	public void requestChambers(List<Integer> edited) {
+		LeafiaPacket._start(this).__write(idChambers,toArray(edited)).__sendToServer();
+	}
+	@Override
+	public void onReceivePacketLocal(byte key,Object value) {
+		switch (key) {
+			case idAssembled -> assembled = (boolean)value;
+			case idChambers -> setChambers(value);
+		}
+	}
+	@Override
+	public void onReceivePacketServer(byte key,Object value,EntityPlayer plr) {
+		if (key != idChambers || assembled) return;
+		setChambers(value);
+		markDirty();
+		writeState(LeafiaPacket._start(this)).__sendToAffectedClients();
+	}
+	void setChambers(Object received) {
+		Set<Integer> unique = new TreeSet<>();
+		if (received instanceof int[] radii)
+			for (int r : radii) {
+				if (unique.size() >= maxChambers) break;
+				unique.add(MathHelper.clamp(r,1,maxChamberRadius));
+			}
+		chambers = new ArrayList<>(unique);
+		rebuildMBRequirement();
 	}
 	AxisAlignedBB bb = null;
 	@Override
@@ -145,15 +174,5 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 			return new APRMBUI(this);
 		// TODO: add actual gui
 		return null;
-	}
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return true;
-	}
-	@Override
-	public void update() {
-		if (!world.isRemote) {
-			networkPackNT(250);
-		}
 	}
 }
