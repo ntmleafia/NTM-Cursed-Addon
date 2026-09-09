@@ -23,6 +23,7 @@ import com.leafia.init.LeafiaDamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.RayTraceResult;
 
 import java.util.function.BiConsumer;
@@ -38,19 +39,20 @@ public class GunInit {
 
 			if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getHealth() <= 0) return;
 
+			DamageSource source = LeafiaDamageSource.amRifle(bullet,bullet.getThrower());
 			if (entity instanceof EntityLivingBase living) {
 				float health = living.getHealth();
-				EntityDamageUtil.attackEntityFromIgnoreIFrame(entity,LeafiaDamageSource.am_rifle,bullet.damage);
+				EntityDamageUtil.attackEntityFromIgnoreIFrame(entity,source,bullet.damage);
 				float desiredHealth = Math.max(0,health-bullet.damage);
 				if (living.getHealth() > desiredHealth) {
 					living.setHealth(desiredHealth);
 					if (desiredHealth <= 0) {
 						SlopTE.tryKill(living);
-						living.onDeath(LeafiaDamageSource.am_rifle);
+						living.onDeath(source);
 					}
 				}
 			} else
-				EntityDamageUtil.attackEntityFromIgnoreIFrame(entity,LeafiaDamageSource.am_rifle,bullet.damage);
+				EntityDamageUtil.attackEntityFromIgnoreIFrame(entity,source,bullet.damage);
 		}
 	};
 	public static void init() {

@@ -1,6 +1,8 @@
 package com.leafia.init;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 
 public class LeafiaDamageSource extends DamageSource {
 
@@ -16,7 +18,9 @@ public class LeafiaDamageSource extends DamageSource {
 	public static DamageSource drinkacid = new DamageSource("drinkacid").setDamageAllowedInCreativeMode().setDamageIsAbsolute().setDamageBypassesArmor().setFireDamage();
 	public static DamageSource flywheel = new DamageSource("flywheel").setDamageIsAbsolute().setDamageBypassesArmor();
 	public static DamageSource mine_player = (new DamageSource("mine_player")).setDamageIsAbsolute();
-	public static DamageSource am_rifle = (new DamageSource("am_rifle")).setDamageIsAbsolute().setDamageAllowedInCreativeMode().setDamageBypassesArmor().setMagicDamage();
+	public static DamageSource amRifle(Entity beam,Entity shooter) {
+		return new EntityDamageSourceIndirect("am_rifle",beam,shooter).setDamageIsAbsolute().setDamageAllowedInCreativeMode().setDamageBypassesArmor().setMagicDamage();
+	}
 	public static DamageSource pillMeltdown = new DamageSource("pillMeltdown").setDamageAllowedInCreativeMode().setDamageIsAbsolute().setDamageBypassesArmor();
 	public static DamageSource cryo = new DamageSource("cryo");
 
