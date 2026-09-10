@@ -53,8 +53,10 @@ public class ConcreteFluid extends Fluid {
 		public void onEntityCollision(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Entity entity) {
 			if (entity instanceof EntityPlayerMP playerMP && (playerMP.isSpectator() || playerMP.isCreative())) return;
 			entity.setInWeb();
-			if (new BlockPos(entity.posX,entity.posY+entity.getEyeHeight(),entity.posZ).equals(pos))
-				entity.attackEntityFrom(DamageSource.IN_WALL, 4F);
+			if (entity instanceof EntityLivingBase) {
+				if (new BlockPos(entity.posX,entity.posY+entity.getEyeHeight(),entity.posZ).equals(pos))
+					entity.attackEntityFrom(DamageSource.IN_WALL, 1F);
+			}
 		}
 
 		@Override

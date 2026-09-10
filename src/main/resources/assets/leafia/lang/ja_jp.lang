@@ -415,6 +415,7 @@ tile.apr_component.plating.name=APRプレーテイング
 tile.apr_component.plating_dark.name=APRプレーテイング (黒)
 tile.apr_component.blades.name=APRタービンブレード
 tile.apr_component.mechanical.name=APR機械部品とパイプ
+tile.apr_component.coil.name=APRコイル
 tile.apr_core.name=APRコア
 tile.ash_balefire.name=熱核の灰
 tile.baleonite_0.name=べーレオナイト

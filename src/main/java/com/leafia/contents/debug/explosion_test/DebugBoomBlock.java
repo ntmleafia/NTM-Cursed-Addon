@@ -1,5 +1,6 @@
 package com.leafia.contents.debug.explosion_test;
 
+import com.custom_hbm.contents.torex.LCETorex;
 import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.blocks.generic.BlockSellafieldSlaked;
@@ -8,6 +9,8 @@ import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IBomb;
 import com.hbm.particle.helper.ExplosionCreator;
 import com.leafia.CommandLeaf;
+import com.leafia.contents.effects.nuke.NukeLCA;
+import com.leafia.contents.effects.nuke.NukeLCA.ExplosionType;
 import com.leafia.dev.LeafiaUtil;
 import com.leafia.dev.blocks.blockbase.AddonBlockBase;
 import com.leafia.dev.optimization.LeafiaParticlePacket.SmokeShockwaveParticle;
@@ -36,7 +39,10 @@ public class DebugBoomBlock extends AddonBlockBase implements IBomb {
 	@Override
 	public boolean onBlockActivated(World world,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
 		int x = pos.getX(), y = pos.getY(), z = pos.getZ();
-		if (world.isRemote) {
+		if (!world.isRemote) {
+			LCETorex.statFacEndo(world,x,y,z,50);
+			NukeLCA fah = NukeLCA.statFac(world,50,x,y,z).setExplosionType(ExplosionType.ENDOTHERMIC);
+			world.spawnEntity(fah);
 			//ParticleNuke nuke = new ParticleNuke(world,pos);
 			//Minecraft.getMinecraft().effectRenderer.addEffect(nuke);
 			//ParticleSmokeShockwave uwu = new ParticleSmokeShockwave(world,x+0.5,y+2,z+0.5);

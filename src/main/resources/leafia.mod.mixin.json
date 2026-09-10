@@ -66,6 +66,8 @@
     "hbm.MixinEnumGrenadeFilling",
     "hbm.MixinExplosionBalefire",
     "hbm.MixinExplosionNukeGeneric",
+    "hbm.MixinExplosionNukeRayBatched",
+    "hbm.MixinExplosionNukeRayParallelized",
     "hbm.MixinExplosionSolinium",
     "hbm.MixinFluidNetMK2",
     "hbm.MixinFluids",

@@ -23,6 +23,7 @@ public class LeafiaDamageSource extends DamageSource {
 	}
 	public static DamageSource pillMeltdown = new DamageSource("pillMeltdown").setDamageAllowedInCreativeMode().setDamageIsAbsolute().setDamageBypassesArmor();
 	public static DamageSource cryo = new DamageSource("cryo");
+	public static DamageSource endothermic = new DamageSource("endothermic").setMagicDamage().setDamageBypassesArmor().setExplosion();
 
 	public LeafiaDamageSource(String damageTypeIn) {
 		super(damageTypeIn);

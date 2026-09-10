@@ -36,7 +36,7 @@ public abstract class MixinEntityNukeExplosionMK5 extends EntityExplosionChunklo
 	@Redirect(method = "onUpdate",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),require = 1)
 	public boolean onUpdate(World world,Entity entity) {
 		if (entity instanceof IMixinEntityFalloutRain rain && digammaFallout) {
-			rain.setDigammaFallout();
+			rain.leafia$setDigammaFallout();
 			EntityFalloutRain fallout = (EntityFalloutRain)rain;
 			fallout.setScale(fallout.getScale()*5);
 		}

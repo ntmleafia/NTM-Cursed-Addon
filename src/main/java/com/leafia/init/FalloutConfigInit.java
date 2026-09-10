@@ -24,6 +24,7 @@ import java.util.List;
 public class FalloutConfigInit {
 	public static final List<FalloutEntry> entries = FalloutConfigJSON.entries;
 	public static final List<FalloutEntry> digammaEntries = new ArrayList<>();
+	public static final List<FalloutEntry> endoEntries = new ArrayList<>();
 	public static void onInit() {
 		for (int i = 1; i <= 6; i++) {
 			int meta = 6-i;
@@ -42,6 +43,41 @@ public class FalloutConfigInit {
 					.matchingMaterial(Material.ROCK)
 					.build());
 		}
+		endoEntries.add(FalloutEntry.builder()
+				.addPrimary(ModBlocks.frozen_grass.getDefaultState(), 1)
+				.max(6 * 7.5)
+				.opaque(true)
+				.solid(true)
+				.matchesBlock(Blocks.GRASS)
+				.build());
+		endoEntries.add(FalloutEntry.builder()
+				.addPrimary(ModBlocks.frozen_dirt.getDefaultState(), 1)
+				.max(6 * 7.5)
+				.opaque(true)
+				.solid(true)
+				.matchingMaterial(Material.GROUND)
+				.build());
+		endoEntries.add(FalloutEntry.builder()
+				.addPrimary(ModBlocks.frozen_log.getDefaultState(), 1)
+				.max(6 * 7.5)
+				.opaque(true)
+				.solid(true)
+				.matchesBlock(Blocks.LOG)
+				.build());
+		endoEntries.add(FalloutEntry.builder()
+				.addPrimary(ModBlocks.frozen_log.getDefaultState(), 1)
+				.max(6 * 7.5)
+				.opaque(true)
+				.solid(true)
+				.matchesBlock(Blocks.LOG2)
+				.build());
+		endoEntries.add(FalloutEntry.builder()
+				.addPrimary(ModBlocks.frozen_planks.getDefaultState(), 1)
+				.max(6 * 7.5)
+				.opaque(true)
+				.solid(true)
+				.matchesBlock(Blocks.PLANKS)
+				.build());
 
 		removeByMatchingMaterial(Material.GRASS);
 		removeByMatchingMaterial(Material.GROUND);

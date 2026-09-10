@@ -75,6 +75,8 @@ import com.leafia.contents.machines.processing.mixingvat.MixingVatRenderNeo;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatTE;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterRender;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterTE;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreRender;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreTE;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryRender;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryTE;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
@@ -244,9 +246,12 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(NukeChudTE.class,new NukeChudRender());
 
 			ClientRegistry.bindTileEntitySpecialRenderer(SolBlasterTE.class,new SolBlasterRender());
+
+			ClientRegistry.bindTileEntitySpecialRenderer(APRCoreTE.class,new APRCoreRender());
 		}
 		AddonJars.initJars();
 	}
+
 	@Override
 	public File getDataDir() {
 		return Minecraft.getMinecraft().gameDir;

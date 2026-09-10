@@ -607,7 +607,7 @@ public class AddonBlocks {
 	public static class APR {
 		static boolean dummy = false;
 		public static final Block apr_core = new APRCoreBlock(Material.IRON,"apr_core").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
-		public static final Block apr_component = new APRComponentBlock("apr_component").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
+		public static final Block apr_component = new APRComponentBlock("apr_component").setHardness(5.0F).setCreativeTab(MainRegistry.machineTab);
 	}
 
 	static {

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = TileEntityVolcanoCore.class)
 public class FuckOff extends TileEntity {
-	@Inject(method = "update",at = @At(value = "HEAD"),require = 1)
+	@Inject(method = "update",at = @At(value = "HEAD"),require = 1,cancellable = true)
 	public void leafia$onUpdate(CallbackInfo ci) {
 		//System.out.println("Volcano location: "+getPos().getX()+", "+getPos().getZ());
 		if (world.isRemote) return;

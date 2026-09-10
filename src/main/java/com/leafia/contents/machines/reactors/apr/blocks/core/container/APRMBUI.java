@@ -5,12 +5,15 @@ import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreTE;
 import com.leafia.dev.gui.FiaUIRect;
 import com.leafia.dev.gui.GuiScreenLeafia;
 import com.leafia.transformer.LeafiaGls;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -24,18 +27,33 @@ public class APRMBUI extends GuiScreenLeafia {
 	public APRMBUI(APRCoreTE te) {
 		this.te = te;
 		xSize = 195;
-		ySize = 130;
+		ySize = 130+5;
 		chambers.addAll(te.chambers);
+	}
+	public enum ErrorType {
+		INTERSECTION,TOO_LARGE,TOO_SMALL,MALFORMED
 	}
 	public static class ScrollItem {
 		public GuiTextField field;
 		public int index;
 		public FiaUIRect deleteOrAdd;
+		public ErrorType errorType = null;
 	}
+	public GuiButton highlight;
 	@Override
 	public void initGui() {
 		super.initGui();
 		regenItems();
+		highlight = new GuiButton(43,guiLeft+xSize/2-50,guiTop+110,100,20,I18nUtil.resolveKey(Minecraft.getMinecraft().player.isCreative() ? "desc.leafia.apr_mb.autobuild" : "desc.leafia.apr_mb.highlight"));
+		buttonList.add(highlight);
+	}
+	public boolean highlightOnClose = false;
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException {
+		if (button.id == 43) {
+			highlightOnClose = true;
+			this.mc.player.closeScreen();
+		}
 	}
 	public final List<ScrollItem> items = new ArrayList<>();
 	public void regenItems() {
@@ -78,24 +96,40 @@ public class APRMBUI extends GuiScreenLeafia {
 	}
 	public void renderItems(int i,ScrollItem item,int mouseX,int mouseY) {
 		if (item.field != null) {
-			drawTexturedModalRect(guiLeft+9,guiTop+9-(scrollPos-i)*25,0,130,160,23);
+			drawTexturedModalRect(guiLeft+9,guiTop+9-(scrollPos-i)*25,0,130+5,160,23);
 			fontRenderer.drawString(I18nUtil.resolveKey("desc.leafia.apr_mb.radius"),guiLeft+15,guiTop+17-(scrollPos-i)*25,4210752);
 			bindTexture(tex);
+			item.field.setTextColor(0x5BBC00);
+			item.field.setDisabledTextColour(0x499500);
+			LeafiaGls.color(1,1,1);
+			if (item.errorType != null) {
+				drawTexturedModalRect(guiLeft+113,guiTop+13-(scrollPos-i)*25,195,15,32,15);
+				item.field.setTextColor(0xFF0000);
+				item.field.setDisabledTextColour(0x950000);
+			} else if (item.field.isFocused())
+				drawTexturedModalRect(guiLeft+113,guiTop+13-(scrollPos-i)*25,195,0,32,15);
 			item.field.drawTextBox();
 			bindTexture(tex);
 			LeafiaGls.color(0.9f,0.9f,0.9f);
 			if (item.deleteOrAdd.isMouseIn(mouseX,mouseY))
-				drawTexturedModalByFiaRect(item.deleteOrAdd,139,132);
+				drawTexturedModalByFiaRect(item.deleteOrAdd,139,132+5);
 			LeafiaGls.color(1,1,1);
 		} else {
 			if (item.deleteOrAdd.isMouseIn(mouseX,mouseY))
 				LeafiaGls.color(0.9f,0.9f,0.9f);
-			drawTexturedModalByFiaRect(item.deleteOrAdd,160,130);
+			drawTexturedModalByFiaRect(item.deleteOrAdd,160,130+5);
 			LeafiaGls.color(1,1,1);
 		}
 	}
+	public boolean isHoveringOnField(GuiTextField field,int mouseX,int mouseY) {
+		return mouseX >= field.x && mouseX < field.x+field.width && mouseY >= field.y && mouseY < field.y+field.height;
+	}
 	public void renderHoveredInfo(int i,ScrollItem item,int mouseX,int mouseY) {
 		if (item.field != null) {
+			if (isHoveringOnField(item.field,mouseX,mouseY)) {
+				if (item.errorType != null)
+					drawHoveringText(I18nUtil.resolveKey("desc.leafia_apr_mb.error."+item.errorType.name()),mouseX,mouseY);
+			}
 			if (item.deleteOrAdd.isMouseIn(mouseX,mouseY))
 				drawHoveringText(I18nUtil.resolveKey("desc.leafia.apr_mb.delete"),mouseX,mouseY);
 		} else {
@@ -112,7 +146,7 @@ public class APRMBUI extends GuiScreenLeafia {
 			}
 		} else {
 			if (item.deleteOrAdd.isMouseIn(mouseX,mouseY)) {
-				chambers.add(5);
+				chambers.add(APRCoreTE.minChamberRadius);
 				regenItems();
 				playClick(1);
 			}
@@ -145,8 +179,12 @@ public class APRMBUI extends GuiScreenLeafia {
 	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
-		if (!chambers.equals(te.chambers))
-			te.requestChambers(chambers);
+		te.requestChambers(chambers,highlightOnClose);
+	}
+	public void putIntersectionError(int i) {
+		ScrollItem item = items.get(i);
+		if (item.errorType == null)
+			item.errorType = ErrorType.INTERSECTION;
 	}
 	@Override
 	protected void drawGuiScreenBackgroundLayer(float partialTicks,int mouseX,int mouseY) {
@@ -154,6 +192,36 @@ public class APRMBUI extends GuiScreenLeafia {
 		GlStateManager.color(1,1,1,1);
 		bindTexture(tex);
 		drawTexturedModalRect(guiLeft,guiTop,0,0,xSize,ySize);
+		for (int i = 0; i < items.size(); i++) {
+			ScrollItem item = items.get(i);
+			if (item.field != null) {
+				item.errorType = null;
+				try {
+					int v = Integer.parseInt(item.field.getText());
+					if (v < APRCoreTE.minChamberRadius)
+						item.errorType = ErrorType.TOO_SMALL;
+					else if (v > APRCoreTE.maxChamberRadius)
+						item.errorType = ErrorType.TOO_LARGE;
+					else
+						chambers.set(i,v);
+				} catch (NumberFormatException ignored) {
+					item.errorType = ErrorType.MALFORMED;
+				}
+			}
+		}
+		List<Integer> sorted = new ArrayList<>(chambers);
+		sorted.sort(Comparator.naturalOrder());
+		int lastR = 0;
+		int lastI = 0;
+		for (int i = 0; i < sorted.size(); i++) {
+			int r = sorted.get(i);
+			if (r-lastR <= 3) {
+				putIntersectionError(i);
+				putIntersectionError(lastI);
+			}
+			lastI = i;
+			lastR = r;
+		}
 		forItems(this::updatePosition,mouseX,mouseY);
 		forItems(this::renderItems,mouseX,mouseY);
 	}

@@ -1,5 +1,7 @@
 package com.leafia.overwrite_contents.interfaces;
 
 public interface IMixinEntityFalloutRain {
-	void setDigammaFallout();
+	void leafia$setDigammaFallout();
+	void leafia$setEndothermic();
+	void leafia$setFloodHeight(int height);
 }

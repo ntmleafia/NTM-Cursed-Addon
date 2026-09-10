@@ -29,6 +29,8 @@ import com.leafia.contents.building.catwalk.railing.CatwalkRailingBase;
 import com.leafia.contents.control.fuel.nuclearfuel.LeafiaRodItem;
 import com.leafia.contents.effects.folkvangr.EntityNukeFolkvangr;
 import com.leafia.contents.gear.IADSWeapon;
+import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreRender;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.ejector.MSREjectorBlock;
 import com.leafia.contents.machines.reactors.lftr.components.element.MSRElementBlock;
@@ -1211,6 +1213,25 @@ public class LeafiaClientListener {
 		@SubscribeEvent
 		public void dammit(RenderGameOverlayEvent.Text debug) {
 			//LeafiaGeneralLocal.injectDebugInfoLeft(debug.getLeft());
+		}
+
+		@SubscribeEvent
+		public void textureStitchPost(TextureStitchEvent.Post evt) {
+			String aprBase = "leafia:apr_component:";
+			APRCoreRender.sprs.put(aprBase+APRComponentType.BLADES.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_blades"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.HULL_ASSEMBLED.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_hull"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.MECHANICAL.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_parts"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.PLATING.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_plating"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.PLATING_DARK.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_plating_dark"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.SUPPORT.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_support"));
+			APRCoreRender.sprs.put(aprBase+APRComponentType.COIL.ordinal(),
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/hadron_coil_gold"));
 		}
 
 		/*static final Field mapRegisteredSprites;

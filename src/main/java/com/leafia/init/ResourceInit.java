@@ -27,6 +27,7 @@ import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.powercores.dfc.render.DFCCoreRender;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatRender;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterRender;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreRender;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender;
 import com.leafia.contents.machines.reactors.pwr.blocks.components.control.PWRControlRender;
 import com.leafia.contents.machines.reactors.pwr.debris.RenderPWRDebris;
@@ -105,6 +106,7 @@ public class ResourceInit {
 		_initClass(AMRifleRender.class);
 		_initClass(SolBlasterRender.class);
 		_initClass(AddonShieldRender.class);
+		_initClass(APRCoreRender.class);
 		/*{
 			setWreckModel("intact");
 			setWreckModel("metal_rubble_0");

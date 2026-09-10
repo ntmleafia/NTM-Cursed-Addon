@@ -88,6 +88,10 @@ public class AddonConfig {
         maxOptimalTurbineLength = builder._integer("maxOptimalTurbineLength", 5);
         builder._comment("Multiplier of steam input surge turbulence for modular turbines");
         surgeTurbulenceMultiplier = builder._double("surgeTurbulenceMultiplier", 1.0);
+
+        builder._comment("(HEAVILY W.I.P.) Whether the sellacity biome should generate or not");
+        enableSellacity = builder._boolean("enableSellacity", false);
+
         builder._comment("Every biome acts like the digamma crater biome");
         schizoMode = builder._boolean("enableSchizoMode", false);
         builder._comment("(WIP) Changes this mod from using units you know to some bullshit units that god knows");
