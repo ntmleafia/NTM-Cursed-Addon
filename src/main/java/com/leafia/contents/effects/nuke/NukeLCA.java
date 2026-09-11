@@ -169,7 +169,7 @@ public class NukeLCA extends EntityExplosionChunkloading {
 				IMixinEntityFalloutRain mixin = (IMixinEntityFalloutRain)fallout;
 				if (type == ExplosionType.ENDOTHERMIC) {
 					mixin.leafia$setEndothermic();
-					mixin.leafia$setFloodHeight(lowestHeight+(int)Math.round(Math.pow(radius,0.65)/2.5));
+					mixin.leafia$setFloodHeight(lowestHeight+1+(int)Math.round(Math.pow(radius,0.65)/2.5));
 				}
 				this.world.spawnEntity(fallout);
 			}

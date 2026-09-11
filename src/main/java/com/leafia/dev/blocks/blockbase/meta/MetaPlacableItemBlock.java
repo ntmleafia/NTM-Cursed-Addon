@@ -9,6 +9,7 @@ public class MetaPlacableItemBlock extends ItemBlock {
 	public MetaPlacableItemBlock(Block block) {
 		super(block);
 		imeta = (IMetaPlacable)block;
+		setHasSubtypes(true);
 	}
 	@Override
 	public String getTranslationKey(ItemStack stack) {

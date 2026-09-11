@@ -9,10 +9,7 @@ import com.hbm.inventory.fluid.trait.FT_Heatable.HeatingType;
 import com.hbm.inventory.fluid.trait.FluidTrait;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.fluids.AddonFluidType;
-import com.leafia.contents.fluids.traits.FT_DFCFuel;
-import com.leafia.contents.fluids.traits.FT_Description;
-import com.leafia.contents.fluids.traits.FT_LFTRCoolant;
-import com.leafia.contents.fluids.traits.FT_Magnetic;
+import com.leafia.contents.fluids.traits.*;
 import com.leafia.contents.machines.misc.modular_turbine.core.MTCoreTE;
 
 import java.util.HashMap;
@@ -28,13 +25,15 @@ public class AddonFluidTraits {
 		registerTrait("desc",FT_Description.class);
 		registerTrait("lftrcoolant",FT_LFTRCoolant.class);
 		registerTrait("magnetic",FT_Magnetic.class);
+		registerTrait("aprcoolant",FT_APRCoolant.class);
+		registerTrait("aprcoolable",FT_APRCoolable.class);
 	}
 	public static final Map<AddonFluidType,FluidType> copyTraits = new HashMap<>();
 	public static final FT_Magnetic MAGNETIC = new FT_Magnetic();
 	public static void preInit() {
 		Fluids.DEUTERIUM.addTraits(new FT_DFCFuel(1.2F));
 		Fluids.TRITIUM.addTraits(new FT_DFCFuel(1.3F));
-		Fluids.OXYGEN.addTraits(new FT_DFCFuel(1.1F),MAGNETIC);
+		Fluids.OXYGEN.addTraits(new FT_DFCFuel(1.1F),MAGNETIC,new FT_Heatable().setEff(HeatingType.BOILER,1).addStep(3,1,AddonFluids.OXYGEN_GAS,50));
 		Fluids.HYDROGEN.addTraits(new FT_DFCFuel(1F));
 		Fluids.NITAN.addTraits(new FT_DFCFuel(1.6F));
 		Fluids.UF6.addTraits(new FT_DFCFuel(1.3F));
@@ -87,6 +86,8 @@ public class AddonFluidTraits {
 		AddonFluids.N2O.addTraits(new FT_Description("Will you stop begging me?",false));
 		AddonFluids.CRYOINTER.addTraits(new FT_Heatable().setEff(HeatingType.PA,2.5).setEff(HeatingType.BOILER,1).addStep(750,1,Fluids.COOLANT,1));
 		Fluids.CRYOGEL.addTraits(new FT_Description("Lord bob asked me to$change his horrendous snowball recipe",false));
+
+		AddonFluids.OXYGEN_GAS.addTraits(new FT_APRCoolant(Fluids.OXYGEN,50,1));
 
 		for (Entry<AddonFluidType,FluidType> entry : copyTraits.entrySet()) {
 			if (entry.getKey().copyFunction != null)

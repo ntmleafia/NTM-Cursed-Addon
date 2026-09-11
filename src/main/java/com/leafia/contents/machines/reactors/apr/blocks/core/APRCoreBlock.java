@@ -130,13 +130,19 @@ public class APRCoreBlock extends AddonBlockDummyable {
 	}
 	@Override
 	public boolean onBlockActivated(World worldIn,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
-		if (worldIn.isRemote) {
-			if (playerIn.isSneaking())
-				return true;
-			BlockPos core = findCore(worldIn,pos);
-			if (core != null && worldIn.getTileEntity(core) instanceof APRCoreTE te && !te.assembled)
-				FMLNetworkHandler.openGui(playerIn,MainRegistry.instance,0,worldIn,core.getX(),core.getY(),core.getZ());
+		if (playerIn.isSneaking())
 			return true;
+		BlockPos core = findCore(worldIn,pos);
+		if (core != null && worldIn.getTileEntity(core) instanceof APRCoreTE te) {
+			boolean assembled = te.checkAssembled();
+			if (worldIn.isRemote) {
+				if (!te.assembled && !assembled)
+					FMLNetworkHandler.openGui(playerIn,MainRegistry.instance,0,worldIn,core.getX(),core.getY(),core.getZ());
+				return true;
+			} else {
+				if (!te.assembled)
+					te.assembled = assembled;
+			}
 		}
 		return standardOpenBehavior(worldIn,pos,playerIn,0);
 	}

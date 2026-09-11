@@ -1,10 +1,19 @@
 package com.leafia.contents.machines.reactors.apr.blocks.core;
 
+import com.hbm.api.fluidmk2.IFluidStandardReceiverMK2;
+import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
+import com.hbm.inventory.fluid.FluidType;
+import com.hbm.inventory.fluid.tank.FluidTankNTM;
 import com.hbm.tileentity.IGUIProvider;
 import com.leafia.contents.AddonBlocks.APR;
+import com.leafia.contents.AddonFluids;
+import com.leafia.contents.fluids.traits.FT_APRCoolant;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
 import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMBUI;
+import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMainContainer;
+import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMainUI;
+import com.leafia.contents.machines.reactors.apr.blocks.port.APRFluidIOBlock;
 import com.leafia.dev.LeafiaDebug.Tracker.Action;
 import com.leafia.dev.LeafiaDebug.Tracker.LeafiaTrackerPacket;
 import com.leafia.dev.container_utility.LeafiaPacket;
@@ -31,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,LeafiaPacketReceiver,ITickable {
+public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider, LeafiaPacketReceiver, ITickable, IFluidStandardReceiverMK2, IFluidStandardSenderMK2 {
 	static final byte idChambers = 0;
 	static final byte idAssembled = 1;
 	static final byte idHighlight = 2;
@@ -40,6 +49,21 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public final Map<BlockPos,IBlockState> mbRequirement = new HashMap<>();
 	public final List<Integer> chambers = new ArrayList<>();
 	public boolean assembled = false;
+	public final List<FluidTankNTM> inputs = new ArrayList<>();
+	public final List<FluidTankNTM> outputs = new ArrayList<>();
+	public FluidTankNTM oxygen;
+	public FluidTankNTM lox;
+	public int getCapacityFromRadius(int radius) {
+		return radius*1000;
+	}
+	public void setupMainTank(FluidType type) {
+		int capacity = 0;
+		for (Integer r : chambers)
+			capacity += getCapacityFromRadius(r);
+		oxygen = new FluidTankNTM(type,capacity);
+		FT_APRCoolant info = type.getTrait(FT_APRCoolant.class);
+		lox = new FluidTankNTM(info.conversion,capacity*info.out/info.in);
+	}
 	public APRCoreTE() {
 		super(6);
 	}
@@ -222,16 +246,14 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public Container provideContainer(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
 		if (!assembled)
 			return null;
-		// TODO: add actual container
-		return null;
+		return new APRMainContainer(entityPlayer,this);
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
 	public GuiScreen provideGUI(int i,EntityPlayer entityPlayer,World world,int i1,int i2,int i3) {
 		if (!assembled)
 			return new APRMBUI(this);
-		// TODO: add actual gui
-		return null;
+		return new APRMainUI(entityPlayer,this);
 	}
 	@Override
 	public double affectionRange() {
@@ -255,7 +277,8 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 							return true;
 					}
 				} else if (desired.getValue(APRComponentBlock.VARIANT) == APRComponentType.SUPPORT) {
-					// TODO: account for fluid ports (which havent been added yet)
+					if (state.getBlock() instanceof APRFluidIOBlock)
+						return true;
 				}
 			}
 			return false;
@@ -265,5 +288,23 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	@Override
 	public void update() {
 		if (!world.isRemote) return;
+		LeafiaPacket._start(this)
+				.__write(idAssembled,assembled)
+				.__sendToAffectedClients();
+	}
+
+	@Override
+	public @NotNull FluidTankNTM[] getReceivingTanks() {
+		return new FluidTankNTM[0];
+	}
+
+	@Override
+	public @NotNull FluidTankNTM[] getSendingTanks() {
+		return new FluidTankNTM[0];
+	}
+
+	@Override
+	public FluidTankNTM[] getAllTanks() {
+		return new FluidTankNTM[0];
 	}
 }

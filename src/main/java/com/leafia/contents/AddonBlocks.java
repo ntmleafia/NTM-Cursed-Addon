@@ -80,6 +80,7 @@ import com.leafia.contents.machines.processing.mixingvat.MixingVatBlock;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreBlock;
+import com.leafia.contents.machines.reactors.apr.blocks.port.APRFluidIOBlock;
 import com.leafia.contents.machines.reactors.lftr.components.arbitrary.MSRArbitraryBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlBlock;
 import com.leafia.contents.machines.reactors.lftr.components.control.MSRControlExtension;
@@ -607,6 +608,7 @@ public class AddonBlocks {
 	public static class APR {
 		static boolean dummy = false;
 		public static final Block apr_core = new APRCoreBlock(Material.IRON,"apr_core").setHardness(5.0F).setResistance(30.0F).setCreativeTab(MainRegistry.machineTab);
+		public static final Block apr_port = new APRFluidIOBlock(Material.IRON,"apr_port").setHardness(5.0F).setCreativeTab(MainRegistry.machineTab);
 		public static final Block apr_component = new APRComponentBlock("apr_component").setHardness(5.0F).setCreativeTab(MainRegistry.machineTab);
 	}
 
