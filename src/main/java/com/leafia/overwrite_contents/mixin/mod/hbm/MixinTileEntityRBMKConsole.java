@@ -2,6 +2,7 @@ package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.tileentity.machine.rbmk.TileEntityRBMKConsole;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityRBMKControlAuto;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +19,7 @@ public class MixinTileEntityRBMKConsole extends TileEntity {
 	@Shadow(remap = false) private int targetZ;
 
 	@Inject(method = "receiveControl",at = @At(value = "HEAD"),remap = false)
-	void leafia$onReceiveControl(NBTTagCompound data,CallbackInfo ci) {
+	void leafia$onReceiveControl(EntityPlayerMP player,NBTTagCompound data,CallbackInfo ci) {
 		if (data.hasKey("fuckingstopalldamnautocontrolrods")) {
 			for (int i = -7; i <= 7; i++) {
 				for (int j = -7; j <= 7; j++) {

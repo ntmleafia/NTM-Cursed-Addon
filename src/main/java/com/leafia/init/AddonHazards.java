@@ -21,6 +21,7 @@ import com.leafia.init.hazards.ItemRads;
 import com.leafia.init.hazards.types.HazardTypeAlkaline;
 import com.leafia.init.hazards.types.HazardTypeSharpEdges;
 import com.leafia.init.hazards.types.LCERad;
+import com.leafia.init.hazards.types.containment.HazardTypeEndothermic;
 import com.leafia.init.hazards.types.radiation.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,7 @@ import java.util.function.Function;
 public class AddonHazards {
 	public static final IHazardType SHARP = new HazardTypeSharpEdges();
 	public static final IHazardType ALKALINE = new HazardTypeAlkaline();
+	public static final IHazardType CONTAINER_ENDO = new HazardTypeEndothermic();
 	//call after com.hbm.hazard.HazardRegistry.registerItems
 	public static void register() {
 		//cobalt60.register(ModItems.ingot_co60);
@@ -141,6 +143,8 @@ public class AddonHazards {
 		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,3),makeData(DIGAMMA,0.6F));
 		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,4),makeData(DIGAMMA,0.8F));
 		HazardSystem.register(new ItemStack(AddonBlocks.digammitite,1,5),makeData(DIGAMMA,1F));
+
+		HazardSystem.register(AddonItems.particle_absorption,makeData(CONTAINER_ENDO,15));
 
 		for (AddonItemHazardBase hazardItem : AddonItemHazardBase.ALL_HAZARD_ITEMS) {
 			HazardEntry entry_contamination = null;

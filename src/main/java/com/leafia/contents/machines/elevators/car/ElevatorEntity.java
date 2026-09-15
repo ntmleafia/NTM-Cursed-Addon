@@ -839,7 +839,7 @@ public class ElevatorEntity extends Entity implements IEntityMultiPart, IEntityC
 		this.dataManager.register(PULLEY_Y,1);
 		this.dataManager.register(PULLEY_Z,1);
 		this.dataManager.register(MUSIC,-1);
-		width = 30/16f;
+		width = /*32*/36/16f;
 		height = world.isRemote ? 0.1f : 2.5f;
 	}
 	public ElevatorEntity(World worldIn) {

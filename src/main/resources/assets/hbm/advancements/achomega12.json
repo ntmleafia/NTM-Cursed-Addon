@@ -11,7 +11,7 @@
 		},
 		"frame": "challenge"
 	},
-	"parent": "hbm:achrbmk",
+	"parent": "leafia:pa",
 	"criteria": {
 		"impossible": {
 			"trigger": "minecraft:impossible"

@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:ingot_cft"
+		},
+		"title": {
+			"translate": "advancement.leafia.fullerene"
+		},
+		"description": {
+			"translate": "advancement.leafia.fullerene.desc"
+		}
+	},
+	"parent": "hbm:achfusion",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:ingot_cft"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 30
+    }
+}

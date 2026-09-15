@@ -34,6 +34,7 @@ import com.llib.exceptions.messages.TextWarningLeafia;
 import com.llib.group.LeafiaMap;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -457,7 +458,7 @@ public class SaltSeparatorTE extends TileEntityMachineBase implements ITickable,
 	@Override public boolean hasPermission(EntityPlayer player) { return this.isUseableByPlayer(player); }
 
 	@Override
-	public void receiveControl(NBTTagCompound data) {
+	public void receiveControl(EntityPlayerMP plr,NBTTagCompound data) {
 		if(data.hasKey("index") && data.hasKey("selection")) {
 			int index = data.getInteger("index");
 			String selection = data.getString("selection");

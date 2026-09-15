@@ -11,6 +11,8 @@ public class AddonAdvancements {
 	public static Advancement nukebwr;
 	public static Advancement genericfuel;
 	public static Advancement loseadvisor;
+	public static Advancement nukeapr;
+	public static Advancement dgomega;
 	public static void init(MinecraftServer serv) {
 		AdvancementManager adv = serv.getAdvancementManager();
 		openpwr = get(adv,"openpwr");
@@ -18,6 +20,8 @@ public class AddonAdvancements {
 		nukebwr = get(adv,"nukebwr");
 		genericfuel = get(adv,"genericfuel");
 		loseadvisor = get(adv,"loseadvisor");
+		nukeapr = get(adv,"nukeapr");
+		dgomega = get(adv,"dgomega");
 	}
 	static Advancement get(AdvancementManager manager,String path) {
 		return manager.getAdvancement(new ResourceLocation("leafia",path));

@@ -1,0 +1,32 @@
+{
+	"display": {
+		"icon": {
+			"item": "leafia:ore_corium_zetalite"
+		},
+		"title": {
+			"translate": "advancement.leafia.zetalite"
+		},
+		"description": {
+			"translate": "advancement.leafia.zetalite.desc"
+		}
+	},
+	"parent": "hbm:achbismuth",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "leafia:ingot_nc279"
+                    },
+                  {
+                    "item": "leafia:ingot_taintium"
+                  }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 30
+    }
+}

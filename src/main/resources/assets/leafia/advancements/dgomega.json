@@ -1,0 +1,28 @@
+{
+	"display": {
+      "frame": "challenge",
+		"icon": {
+			"item": "leafia:leafia_rod_dgomega"
+		},
+		"title": {
+			"translate": "advancement.leafia.dgomega"
+		},
+		"description": {
+			"translate": "advancement.leafia.dgomega.desc"
+		}
+	},
+	"parent": "hbm:achomega12",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ],
+    "rewards": {
+        "experience": 1000
+    }
+}

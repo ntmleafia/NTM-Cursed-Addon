@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.controlpanel.ic10;
 
 import com.leafia.settings.AddonConfig;
+import com.llib.math.MathLeafia;
 import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
@@ -223,7 +224,7 @@ public class IC10 {
 								"mod",make(
 										args("register",REGISTER,"a",NUMBER,"b",NUMBER),
 										(env,args)->{
-											env.setRegister((int)args[0],MathHelper.positiveModulo((double)args[1],(double)args[2]));
+											env.setRegister((int)args[0],MathLeafia.positiveModulo((double)args[1],(double)args[2]));
 										},
 										"Register = a mod b (positive modulo)"
 								),

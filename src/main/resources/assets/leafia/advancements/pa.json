@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:pa_detector"
+		},
+		"title": {
+			"translate": "advancement.leafia.pa"
+		},
+		"description": {
+			"translate": "advancement.leafia.pa.desc"
+		}
+	},
+	"parent": "hbm:achfusion",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:pa_detector"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 30
+    }
+}

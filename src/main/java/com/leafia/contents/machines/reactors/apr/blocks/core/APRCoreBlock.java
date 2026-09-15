@@ -1,5 +1,7 @@
 package com.leafia.contents.machines.reactors.apr.blocks.core;
 
+import com.hbm.handler.MultiblockHandlerXR;
+import com.hbm.lib.ForgeDirection;
 import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.TileEntityProxyCombo;
 import com.leafia.contents.AddonBlocks.APR;
@@ -16,8 +18,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -114,11 +118,33 @@ public class APRCoreBlock extends AddonBlockDummyable {
 	}
 	@Override
 	public int[] getDimensions() {
-		return new int[]{0,0,1,1,1,1};
+		return new int[]{0,0,2,2,1,1};
 	}
 	@Override
 	public int getOffset() {
-		return 0;
+		return 2;
+	}
+	@Override
+	protected void fillSpace(World world,int x,int y,int z,ForgeDirection dir,int o) {
+		super.fillSpace(world,x,y,z,dir,o);
+		x += dir.offsetX * o;
+		z += dir.offsetZ * o;
+		MultiblockHandlerXR.fillSpace(world,x,y,z,new int[]{0,0,1,1,2,-2},this,dir);
+		MultiblockHandlerXR.fillSpace(world,x,y,z,new int[]{0,0,1,1,-2,2},this,dir);
+		MultiblockHandlerXR.fillSpace(world,x,y,z,new int[]{1,-1,0,0,0,0},this,dir);
+		makeExtra(world,x,y+1,z);
+	}
+	@Override
+	public boolean checkRequirement(World world,int x,int y,int z,ForgeDirection dir,int o) {
+		x += dir.offsetX * o;
+		z += dir.offsetZ * o;
+		if (!MultiblockHandlerXR.checkSpace(world,x,y,z,new int[]{0,0,1,1,2,-2},x,y,z,dir))
+			return false;
+		if (!MultiblockHandlerXR.checkSpace(world,x,y,z,new int[]{0,0,1,1,-2,2},x,y,z,dir))
+			return false;
+		if (!MultiblockHandlerXR.checkSpace(world,x,y,z,new int[]{1,-1,0,0,0,0},x,y,z,dir))
+			return false;
+		return MultiblockHandlerXR.checkSpace(world,x,y,z,getDimensions(),x,y,z,dir);
 	}
 	@Override
 	public @Nullable TileEntity createNewTileEntity(World worldIn,int meta) {
@@ -140,10 +166,28 @@ public class APRCoreBlock extends AddonBlockDummyable {
 					FMLNetworkHandler.openGui(playerIn,MainRegistry.instance,0,worldIn,core.getX(),core.getY(),core.getZ());
 				return true;
 			} else {
-				if (!te.assembled)
+				if (!te.assembled) {
 					te.assembled = assembled;
+					if (assembled)
+						te.onAssemble();
+					return true;
+				}
 			}
 		}
 		return standardOpenBehavior(worldIn,pos,playerIn,0);
+	}
+	@Override
+	public void breakBlock(@NotNull World world,@NotNull BlockPos pos,IBlockState state) {
+		BlockPos core = findCore(world,pos);
+		if (core != null && world.getTileEntity(core) instanceof APRCoreTE te)
+			te.disassemble(core);
+		super.breakBlock(world,pos,state);
+	}
+	@Override
+	public void onBlockExploded(World world,BlockPos pos,Explosion explosion) {
+		BlockPos core = findCore(world,pos);
+		if (core != null && world.getTileEntity(core) instanceof APRCoreTE te)
+			te.disassemble(core);
+		super.onBlockExploded(world,pos,explosion);
 	}
 }

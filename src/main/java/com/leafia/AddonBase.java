@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.6.0.0,);required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.6.1.0,);required:mixinbooter;after:ntmspace")
 public class AddonBase {
 	public enum AddonLoadingStage {
 		BLOCKS,

@@ -59,8 +59,10 @@ public class LOXFluid extends Fluid {
 		@Override
 		public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entity) {
 			//entity.setInWeb();
-			if (entity instanceof EntityLivingBase living)
+			if (entity instanceof EntityLivingBase living) {
 				living.addPotionEffect(new PotionEffect(LeafiaPotion.frigid,10*20,1));
+				living.attackEntityFrom(LeafiaDamageSource.cryo,1);
+			}
 		}
 
 		@Override

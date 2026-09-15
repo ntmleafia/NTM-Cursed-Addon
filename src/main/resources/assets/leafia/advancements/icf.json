@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:icf"
+		},
+		"title": {
+			"translate": "advancement.leafia.icf"
+		},
+		"description": {
+			"translate": "advancement.leafia.icf.desc"
+		}
+	},
+	"parent": "leafia:fullerene",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:struct_icf_core"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 30
+    }
+}

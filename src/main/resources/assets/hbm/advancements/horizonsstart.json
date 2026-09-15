@@ -10,7 +10,7 @@
 			"translate": "achievement.horizonsStart.desc"
 		}
 	},
-	"parent": "hbm:bossworm",
+	"parent": "leafia:icf",
 	"criteria": {
 		"impossible": {
 			"trigger": "minecraft:impossible"

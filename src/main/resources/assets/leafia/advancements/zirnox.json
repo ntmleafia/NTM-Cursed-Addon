@@ -1,0 +1,29 @@
+{
+	"display": {
+		"icon": {
+			"item": "hbm:machine_zirnox"
+		},
+		"title": {
+			"translate": "advancement.leafia.zirnox"
+		},
+		"description": {
+			"translate": "advancement.leafia.zirnox.desc"
+		}
+	},
+	"parent": "hbm:achcentrifuge",
+	"criteria": {
+        "crafting_table": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "hbm:machine_zirnox"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "experience": 30
+    }
+}

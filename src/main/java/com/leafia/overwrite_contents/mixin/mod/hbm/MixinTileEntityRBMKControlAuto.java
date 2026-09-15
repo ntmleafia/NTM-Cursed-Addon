@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -83,7 +84,7 @@ public abstract class MixinTileEntityRBMKControlAuto extends TileEntityRBMKContr
 		}
 	}
 	@Inject(method = "receiveControl",at = @At(value = "HEAD"),remap = false,require = 1,cancellable = true)
-	void onReceiveControl(NBTTagCompound data,CallbackInfo ci) {
+	void onReceiveControl(EntityPlayerMP player,NBTTagCompound data,CallbackInfo ci) {
 		if (data.hasKey("acknowledge")) {
 			// acknowledge set to false means only this rod
 			leafia$scrammed = false;

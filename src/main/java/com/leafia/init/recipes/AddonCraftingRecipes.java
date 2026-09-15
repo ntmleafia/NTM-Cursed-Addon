@@ -100,6 +100,7 @@ public class AddonCraftingRecipes {
 
 		addShapelessAuto(new ItemStack(AddonBlocks.fluid_duct_valve_mdl),new ItemStack(ModBlocks.fluid_duct_neo,1,2),AL.plate());
 		addShapelessAuto(new ItemStack(AddonBlocks.fluid_duct_valve_mdl_rs),new ItemStack(ModBlocks.fluid_duct_neo,1,2),new ItemStack(ModItems.motor));
+		addShapelessAuto(new ItemStack(AddonBlocks.fluid_duct_gauge_mdl),new ItemStack(ModBlocks.fluid_duct_neo,1,2),IRON.plate());
 
 		addShapelessAuto(new ItemStack(AddonBlocks.block_welded_osmiridium),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id),new ItemStack(ModItems.plate_welded,1,Mats.MAT_OSMIRIDIUM.id));
 		addShapelessAuto(new ItemStack(ModItems.plate_welded,9,Mats.MAT_OSMIRIDIUM.id),new ItemStack(AddonBlocks.block_welded_osmiridium));

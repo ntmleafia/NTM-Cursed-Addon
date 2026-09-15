@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
@@ -21,18 +22,35 @@ import static com.leafia.AddonBase.getIntegrated;
 import static com.leafia.init.ResourceInit.getVAO;
 
 public class APRCoreRender extends TileEntitySpecialRenderer<APRCoreTE> {
-	public static final WaveFrontObjectVAO vao = getVAO(getIntegrated("machines/reactors/apr/aprcore.obj"));
+	public static final WaveFrontObjectVAO vao = getVAO(getIntegrated("machines/reactors/apr/apr_core_better.obj"));
+	public static final ResourceLocation tex = getIntegrated("machines/reactors/apr/apr_core.png");
 	public static final Map<String,TextureAtlasSprite> sprs = new HashMap<>();
+	public static double ctrl(double v) {
+		return Math.pow((v-10)/90d,1.25);
+	}
 	@Override
 	public void render(APRCoreTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
 		LeafiaGls.pushMatrix();
 		LeafiaGls.translate(x+0.5,y,z+0.5);
-		bindTexture(AddonBase.solid);
-		vao.renderAll();
+		bindTexture(tex);
+		vao.renderPart("Core");
+		float funnelAngle = (float)(60*(ctrl(te.lastControl)+(ctrl(te.control)-ctrl(te.lastControl))*partialTicks));
+		LeafiaGls.pushMatrix();
+		LeafiaGls.rotate(15,0,1,0);
+		for (int i = 0; i < 12; i++) {
+			LeafiaGls.rotate(30,0,1,0);
+			LeafiaGls.pushMatrix();
+			LeafiaGls.translate(0,-0.25,-1.44889);
+			LeafiaGls.rotate(-funnelAngle,1,0,0);
+			LeafiaGls.translate(0,0.25,1.44889);
+			vao.renderPart("Funnel");
+			LeafiaGls.popMatrix();
+		}
+		LeafiaGls.popMatrix();
 		LeafiaGls.popMatrix();
 		if (!te.assembled) {
 			LeafiaGls.pushMatrix();
-			LeafiaGls.translate(x-te.getPos().getX(),y-te.getPos().getY(),z-te.getPos().getZ());
+			LeafiaGls.translate(x,y,z);
 			SmallBlockPronter.startDrawing();
 			NTMRenderHelper.bindBlockTexture();
 			NTMRenderHelper.startDrawingTexturedQuads();
@@ -43,7 +61,7 @@ public class APRCoreRender extends TileEntitySpecialRenderer<APRCoreTE> {
 					Minecraft.getMinecraft().player.sendMessage(new TextWarningLeafia("Couldn't find preview sprite for "+spr+"!"));
 					continue;
 				}
-				SmallBlockPronter.renderSimpleBlockAt(sprs.get(spr),entry.getKey().getX(),entry.getKey().getY(),entry.getKey().getZ());
+				SmallBlockPronter.renderSimpleBlockAt(sprs.get(spr),entry.getKey().getX()-te.getPos().getX(),entry.getKey().getY()-te.getPos().getY(),entry.getKey().getZ()-te.getPos().getZ());
 			}
 			NTMRenderHelper.draw();
 			LeafiaGls.disableBlend();

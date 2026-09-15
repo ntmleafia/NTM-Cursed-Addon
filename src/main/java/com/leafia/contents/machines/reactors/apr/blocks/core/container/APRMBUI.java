@@ -2,6 +2,7 @@ package com.leafia.contents.machines.reactors.apr.blocks.core.container;
 
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreTE;
+import com.leafia.dev.LeafiaUtil.ScrollUtil;
 import com.leafia.dev.gui.FiaUIRect;
 import com.leafia.dev.gui.GuiScreenLeafia;
 import com.leafia.transformer.LeafiaGls;
@@ -40,12 +41,16 @@ public class APRMBUI extends GuiScreenLeafia {
 		public ErrorType errorType = null;
 	}
 	public GuiButton highlight;
+	public boolean scrollin = false;
+	public FiaUIRect scrollRect;
 	@Override
 	public void initGui() {
 		super.initGui();
 		regenItems();
+		buttonList.clear();
 		highlight = new GuiButton(43,guiLeft+xSize/2-50,guiTop+110,100,20,I18nUtil.resolveKey(Minecraft.getMinecraft().player.isCreative() ? "desc.leafia.apr_mb.autobuild" : "desc.leafia.apr_mb.highlight"));
 		buttonList.add(highlight);
+		scrollRect = new FiaUIRect(this,175,9,12,98);
 	}
 	public boolean highlightOnClose = false;
 	@Override
@@ -156,6 +161,8 @@ public class APRMBUI extends GuiScreenLeafia {
 	public void drawScreen(int mouseX,int mouseY,float partialTicks) {
 		super.drawScreen(mouseX,mouseY,partialTicks);
 		forItems(this::renderHoveredInfo,mouseX,mouseY);
+		if (te.assembled)
+			this.mc.player.closeScreen();
 	}
 	@Override
 	protected void mouseClicked(int mouseX,int mouseY,int mouseButton) throws IOException {
@@ -165,6 +172,14 @@ public class APRMBUI extends GuiScreenLeafia {
 				item.field.mouseClicked(mouseX,mouseY,mouseButton);
 		}
 		forItems(this::onClick,mouseX,mouseY);
+		if (scrollRect.isMouseIn(mouseX,mouseY) && mouseButton == 0)
+			scrollin = true;
+	}
+	@Override
+	protected void mouseReleased(int mouseX,int mouseY,int state) {
+		super.mouseReleased(mouseX,mouseY,state);
+		if (state == 0)
+			scrollin = false;
 	}
 	@Override
 	protected void keyTyped(char typedChar,int keyCode) throws IOException {
@@ -192,6 +207,14 @@ public class APRMBUI extends GuiScreenLeafia {
 		GlStateManager.color(1,1,1,1);
 		bindTexture(tex);
 		drawTexturedModalRect(guiLeft,guiTop,0,0,xSize,ySize);
+		int maxScroll = Math.max(0,items.size()-4);
+		int scrollBarPos = 0;
+		if (maxScroll > 0) {
+			if (scrollin)
+				scrollPos = ScrollUtil._getScrollOffset(15,98,mouseY-9-guiTop,maxScroll);
+			scrollBarPos = ScrollUtil.getScrollBarPos(15,98,ScrollUtil._getScrollRatio(scrollPos,maxScroll));
+		}
+		drawTexturedModalRect(guiLeft+175,guiTop+9+scrollBarPos,(maxScroll > 0) ? 232 : 244,0,12,15);
 		for (int i = 0; i < items.size(); i++) {
 			ScrollItem item = items.get(i);
 			if (item.field != null) {

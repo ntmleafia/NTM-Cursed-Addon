@@ -1,6 +1,5 @@
 package com.leafia.eventbuses;
 
-import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.entity.logic.EntityNukeExplosionMK3;
 import com.hbm.entity.logic.EntityNukeExplosionMK3.ATEntry;
 import com.hbm.hazard.HazardEntry;
@@ -20,6 +19,7 @@ import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater.NullEntity;
 import com.leafia.contents.worldgen.biomes.effects.HasAcidicRain;
 import com.leafia.dev.optimization.LeafiaParticlePacket;
 import com.leafia.dev.optimization.LeafiaParticlePacket.Sweat;
+import com.leafia.eventbuses.interfaces.INotifyEventListener;
 import com.leafia.init.LeafiaDamageSource;
 import com.leafia.init.LeafiaSoundEvents;
 import com.leafia.init.hazards.types.HazardTypeSharpEdges;
@@ -230,9 +230,12 @@ public class LeafiaServerListener {
 				);
 			}
 		}
+		public static Map<INotifyEventListener,Long> notifyEventListeners = new HashMap<>();
 		@SubscribeEvent
 		public void onBlockNotify(NeighborNotifyEvent evt) {
 			if (!evt.getWorld().isRemote) {
+				for (INotifyEventListener listener : notifyEventListeners.keySet())
+					listener.onBlockNotify(evt);
 				//LeafiaDebug.debugPos(evt.getWorld(),evt.getPos(),3,0xFF0000,"NeighborNotifyEvent");
 				for (Entry<PWRElementTE,LeafiaSet<BlockPos>> entry : PWRElementTE.listeners.entrySet()) {
 					if (entry.getKey().isInvalid()) {

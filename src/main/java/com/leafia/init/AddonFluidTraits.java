@@ -33,7 +33,7 @@ public class AddonFluidTraits {
 	public static void preInit() {
 		Fluids.DEUTERIUM.addTraits(new FT_DFCFuel(1.2F));
 		Fluids.TRITIUM.addTraits(new FT_DFCFuel(1.3F));
-		Fluids.OXYGEN.addTraits(new FT_DFCFuel(1.1F),MAGNETIC,new FT_Heatable().setEff(HeatingType.BOILER,1).addStep(3,1,AddonFluids.OXYGEN_GAS,50));
+		Fluids.OXYGEN.addTraits(new FT_DFCFuel(1.1F),MAGNETIC,new FT_Heatable().setEff(HeatingType.BOILER,1).addStep(1,1,AddonFluids.OXYGEN_GAS,50));
 		Fluids.HYDROGEN.addTraits(new FT_DFCFuel(1F));
 		Fluids.NITAN.addTraits(new FT_DFCFuel(1.6F));
 		Fluids.UF6.addTraits(new FT_DFCFuel(1.3F));
@@ -54,7 +54,7 @@ public class AddonFluidTraits {
 		Fluids.BALEFIRE.addTraits(new FT_DFCFuel(2.4F));
 		Fluids.STELLAR_FLUX.addTraits(new FT_DFCFuel(2.65F),MAGNETIC);
 		AddonFluids.N2O.addTraits(new FT_DFCFuel(1.4F));
-		AddonFluids.PYROGEL.addTraits(new FT_DFCFuel(2.0F));
+		AddonFluids.PYROGEL.addTraits(new FT_DFCFuel(2.0F),new FT_APRCoolable(Fluids.CRYOGEL,1,1));
 
 		Fluids.COOLANT_HOT.addTraits(new FT_Heatable().setEff(HeatingType.BOILER, 1.0D).setEff(HeatingType.HEATEXCHANGER, 1.0D).addStep(700, 1, AddonFluids.COOLANT_MAL, 1));
 		AddonFluids.COOLANT_MAL.addTraits(new FT_Coolable(Fluids.COOLANT_HOT, 1, 1, 700).setEff(CoolingType.HEATEXCHANGER, 1.0D));

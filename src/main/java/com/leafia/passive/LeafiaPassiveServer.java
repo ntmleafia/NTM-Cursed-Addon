@@ -15,6 +15,7 @@ import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.custompacket.LeafiaCustomPacketEncoder;
 import com.leafia.dev.optimization.bitbyte.LeafiaBuf;
 import com.leafia.eventbuses.LeafiaServerListener.Unsorted;
+import com.leafia.eventbuses.interfaces.INotifyEventListener;
 import com.leafia.overwrite_contents.interfaces.IMixinTomSaveData;
 import com.leafia.savedata.FalloutSavedData;
 import com.leafia.unsorted.StructuralIntegrityHandler;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -49,6 +51,18 @@ public class LeafiaPassiveServer {
 		PWRDiagnosis.preventScan.clear();
 		PWRMeshedWreck.rmCache.clear();
 		Unsorted.digammaRainCounter = (Unsorted.digammaRainCounter+1)%70;
+		AddonBase.handleExpiration(AddonShieldItem.chargeCooldown);
+		List<INotifyEventListener> listeners = new ArrayList<>(Unsorted.notifyEventListeners.keySet());
+		for (INotifyEventListener listener : listeners) {
+			if (Unsorted.notifyEventListeners.get(listener) < System.currentTimeMillis()-60_000) {
+				Unsorted.notifyEventListeners.remove(listener);
+				continue;
+			}
+			if (listener instanceof TileEntity te) {
+				if (te.isInvalid())
+					Unsorted.notifyEventListeners.remove(listener);
+			}
+		}
 	}
 	public static void onTickWorld(World world) {
 		Tracker.postTick(world);

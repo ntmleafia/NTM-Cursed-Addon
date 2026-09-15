@@ -1,5 +1,5 @@
 {
-  "parent": "hbm:achcentrifuge",
+  "parent": "leafia:zirnox",
   "display": {
     "icon": {
       "item": "hbm:ingot_desh"

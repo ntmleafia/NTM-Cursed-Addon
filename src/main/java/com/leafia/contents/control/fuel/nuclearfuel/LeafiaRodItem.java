@@ -17,8 +17,10 @@ import com.hbm.hazard.modifier.IHazardModifier;
 import com.hbm.interfaces.IHasCustomModel;
 import com.hbm.items.ModItems;
 import com.hbm.lib.Library;
+import com.hbm.main.AdvancementManager;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.AddonItems.LeafiaRods;
+import com.leafia.init.AddonAdvancements;
 import com.leafia.init.hazards.ItemRads.MultiRadContainer;
 import com.leafia.dev.items.itembase.AddonItemBase;
 import com.leafia.dev.items.itembase.AddonItemHazardBase;
@@ -190,6 +192,10 @@ public class LeafiaRodItem extends AddonItemHazardBase implements IHasCustomMode
 							double dg = HbmLivingProps.getDigamma(living);
 							double level = Math.max(dg,Math.min(50-distance/20,9.99999999));
 							HbmLivingProps.setDigamma(living,level);
+							if (living instanceof EntityPlayer player) {
+								if (level > dg)
+									AdvancementManager.grantAchievement(player,AddonAdvancements.dgomega);
+							}
 						}
 					}
 				} catch (ConcurrentModificationException ignored) {} // fuck off

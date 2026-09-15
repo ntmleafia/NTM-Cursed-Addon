@@ -248,7 +248,7 @@ public class AddonItems {
 				leafRodMES326
 				= new LeafiaRodItem("MESa-326",3000000, 2750)
 				.setAppearance(ModItems.billet_schrabidium_fuel, BILLET, FUEL)
-				.setDecayProduct("depletedmsa326")
+				.setDecayProduct("depletedmesa326")
 				.addRad(ItemRads.schrabidiumMedium)
 				.addBlinding()
 				.setCreativeTab(MainRegistry.controlTab);
@@ -743,6 +743,15 @@ public class AddonItems {
 	public static final Item blanket_mysticite = new AddonItemBaked("blanket_mysticite","resources/plates/mysticite_thin").setCreativeTab(MainRegistry.partsTab);
 	public static final Item blanket_fissite_bundle = new AddonItemHazardBaked("blanket_fissite_bundle","resources/plates/fissite_thin_bundle").addRad(ItemRads.fissite.multiply(1/2d)).setCreativeTab(MainRegistry.partsTab);
 	public static final Item blanket_mysticite_bundle = new AddonItemBaked("blanket_mysticite_bundle","resources/plates/mysticite_thin_bundle").setCreativeTab(MainRegistry.partsTab);
+
+	public static final Item particle_chydalium = new AddonItemBaked("particle_chydalium").setCreativeTab(MainRegistry.controlTab);
+	public static final Item particle_absorption = new AddonItemBaked("particle_absorption") {
+		@Override
+		public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+			for (String s : I18nUtil.resolveKey("item.particle_absorption.desc").split("\\$"))
+				tooltip.add(TextFormatting.YELLOW+s);
+		}
+	}.setCreativeTab(MainRegistry.controlTab);
 
 	private static void modifyItemParams() {
 		if (!AddonConfig.disableAddonPWR) {

@@ -35,8 +35,10 @@ import com.leafia.contents.debug.blackhole_test.DebugBHRender;
 import com.leafia.contents.debug.blackhole_test.DebugBHTE;
 import com.leafia.contents.debug.render_test.DebugRenderTestRender;
 import com.leafia.contents.debug.render_test.DebugRenderTestTE;
+import com.leafia.contents.effects.RenderNothing;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudFleija;
 import com.leafia.contents.effects.folkvangr.visual.LCERenderCloudRainbow;
+import com.leafia.contents.effects.nuke.NukeLCA;
 import com.leafia.contents.gear.combat.guns.GunInitLocal;
 import com.leafia.contents.gear.combat.guns.am_rifle.AMRifleBeam;
 import com.leafia.contents.machines.elevators.*;
@@ -171,6 +173,8 @@ public class LeafiaClientProxy extends LeafiaServerProxy {
 			RenderingRegistry.registerEntityRenderingHandler(NullEntity.class,NullRender.FACTORY);
 
 			RenderingRegistry.registerEntityRenderingHandler(AMRifleBeam.class,RenderBeamProjectile.FACTORY);
+
+			RenderingRegistry.registerEntityRenderingHandler(NukeLCA.class,RenderNothing.FACTORY);
 		}
 		{
 			LCERenderSpinnyLight spinnyLightRender = new LCERenderSpinnyLight();

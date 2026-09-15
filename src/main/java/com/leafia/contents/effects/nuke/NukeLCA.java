@@ -15,10 +15,13 @@ import com.hbm.explosion.ExplosionNukeRayBatched;
 import com.hbm.explosion.ExplosionNukeRayParallelized;
 import com.hbm.interfaces.IExplosionRay;
 import com.hbm.items.weapon.sedna.factory.ConfettiUtil;
+import com.hbm.lib.HBMSoundHandler;
 import com.hbm.lib.Library;
 import com.hbm.lib.ModDamageSource;
 import com.hbm.main.AdvancementManager;
 import com.hbm.main.MainRegistry;
+import com.hbm.particle.helper.AshesCreator;
+import com.hbm.particle.helper.SkeletonCreator;
 import com.hbm.saveddata.satellites.SatelliteDetector;
 import com.hbm.saveddata.satellites.SatelliteDetector.BurstIntensity;
 import com.hbm.util.ContaminationUtil;
@@ -36,6 +39,7 @@ import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -298,7 +302,7 @@ public class NukeLCA extends EntityExplosionChunkloading {
 					if (e instanceof EntityLivingBase living && e.isEntityAlive()) {
 						doKnockback = EntityDamageUtil.attackEntityFromNT(living, LeafiaDamageSource.endothermic,
 								(float) damage, true, true, 0, 100F, 0);
-						if (!e.isEntityAlive()) ConfettiUtil.pulverize(living);
+						if (!e.isEntityAlive()) pulverize(living);
 					} else {
 						e.attackEntityFrom(LeafiaDamageSource.endothermic, (float) damage);
 					}
@@ -314,5 +318,10 @@ public class NukeLCA extends EntityExplosionChunkloading {
 				}
 			}
 		}
+	}
+	public static void pulverize(EntityLivingBase entity) {
+		int amount = MathHelper.clamp((int) (entity.width * entity.height * entity.width * 25), 5, 50);
+		AshesCreator.composeEffect(entity.world, entity, amount, 0.25F);
+		entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, HBMSoundHandler.fireDisintegration, SoundCategory.PLAYERS, 2.0F, 0.9F + entity.getRNG().nextFloat() * 0.2F);
 	}
 }

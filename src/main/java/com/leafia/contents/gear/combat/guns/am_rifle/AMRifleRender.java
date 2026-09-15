@@ -142,6 +142,7 @@ public class AMRifleRender extends ItemRenderWeaponBase {
 		LeafiaGls.enableLighting();
 
 		LeafiaGls.translate(0,0.5,-1.5);
+		LeafiaGls.shadeModel(GL11.GL_SMOOTH);
 		Minecraft.getMinecraft().renderEngine.bindTexture(tex);
 		mdl.renderPart("Gun");
 		LeafiaGls.pushMatrix();

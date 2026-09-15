@@ -40,9 +40,6 @@ public class DebugBoomBlock extends AddonBlockBase implements IBomb {
 	public boolean onBlockActivated(World world,BlockPos pos,IBlockState state,EntityPlayer playerIn,EnumHand hand,EnumFacing facing,float hitX,float hitY,float hitZ) {
 		int x = pos.getX(), y = pos.getY(), z = pos.getZ();
 		if (!world.isRemote) {
-			LCETorex.statFacEndo(world,x,y,z,50);
-			NukeLCA fah = NukeLCA.statFac(world,50,x,y,z).setExplosionType(ExplosionType.ENDOTHERMIC);
-			world.spawnEntity(fah);
 			//ParticleNuke nuke = new ParticleNuke(world,pos);
 			//Minecraft.getMinecraft().effectRenderer.addEffect(nuke);
 			//ParticleSmokeShockwave uwu = new ParticleSmokeShockwave(world,x+0.5,y+2,z+0.5);

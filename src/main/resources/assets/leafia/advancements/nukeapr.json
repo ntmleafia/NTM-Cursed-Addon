@@ -1,19 +1,19 @@
 {
-  "parent": "hbm:achfusion",
+  "parent": "leafia:zetalite",
   "display": {
     "icon": {
-      "item": "hbm:powder_balefire"
+      "item": "leafia:particle_absorption"
     },
     "title": {
-      "translate": "achievement.meltdown"
+      "translate": "advancement.leafia.nukeapr"
     },
     "description": {
-      "translate": "achievement.meltdown.desc"
+      "translate": "advancement.leafia.nukeapr.desc"
     },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "impossible": {
