@@ -40,22 +40,25 @@ public abstract class MixinEnumBatteryPack {
     private static void leafia$extendEnum(CallbackInfo ci) {
         int base = $VALUES.length;
         var desh = leafia$ctor_bool("BATTERY_DESH", base, "battery_desh", 175_000L, false);
-        var euphemium = leafia$ctor_bool("BATTERY_EUPHEMIUM", base + 1, "battery_euphemium", 900_000L, false);
+        var euphemium = leafia$ctor_bool("BATTERY_EUPHEMIUM", base + 1, "battery_euphemium", 1_500_000L, false);
         var slop = leafia$ctor_duration("BATTERY_SLOP", base + 2, "battery_slop", 12_222_222L, 20L * 60L * 10L);
         var spk = leafia$ctor_duration("BATTERY_SPK", base + 3, "battery_spk", 16_666_666_667L, 20L * 60L * 5L);
         var electro = leafia$ctor_duration("BATTERY_ELECTRO", base + 4, "battery_electro", 166_666_666_667L, 20L * 60L * 5L);
-        var ext = Arrays.copyOf($VALUES, base + 5);
+        var saturnite = leafia$ctor_bool("BATTERY_SATURNITE", base + 5, "battery_saturnite", 800_000L,false);
+        var ext = Arrays.copyOf($VALUES, base + 6);
         ext[base] = desh;
         ext[base + 1] = euphemium;
         ext[base + 2] = slop;
         ext[base + 3] = spk;
         ext[base + 4] = electro;
+        ext[base + 5] = saturnite;
         $VALUES = VALUES = ext;
         AddonEnumBatteryPack.BATTERY_DESH = desh;
         AddonEnumBatteryPack.BATTERY_EUPHEMIUM = euphemium;
         AddonEnumBatteryPack.BATTERY_SLOP = slop;
         AddonEnumBatteryPack.BATTERY_SPK = spk;
         AddonEnumBatteryPack.BATTERY_ELECTRO = electro;
+        AddonEnumBatteryPack.BATTERY_SATURNITE = saturnite;
     }
 
     @Inject(method = "valueOf", at = @At("HEAD"), cancellable = true)
@@ -75,6 +78,9 @@ public abstract class MixinEnumBatteryPack {
                 return;
             case "BATTERY_ELECTRO":
                 cir.setReturnValue(AddonEnumBatteryPack.BATTERY_ELECTRO);
+                return;
+            case "BATTERY_SATURNITE":
+                cir.setReturnValue(AddonEnumBatteryPack.BATTERY_SATURNITE);
                 return;
             default:
         }

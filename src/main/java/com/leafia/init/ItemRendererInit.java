@@ -5,6 +5,7 @@ import com.hbm.main.client.NTMClientRegistry;
 import com.hbm.render.item.TEISRBase;
 import com.hbm.render.tileentity.IItemRendererProvider;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.AddonBlocks.Elevators;
 import com.leafia.contents.AddonBlocks.LetterSigns;
 import com.leafia.contents.AddonBlocks.ModularTurbines;
@@ -42,6 +43,8 @@ import com.leafia.contents.machines.powercores.ams.stabilizer.AMSStabilizerRende
 import com.leafia.contents.machines.powercores.dfc.render.DFCComponentRender;
 import com.leafia.contents.machines.processing.mixingvat.MixingVatRenderNeo.MixingVatItemRenderNeo;
 import com.leafia.contents.machines.processing.solblaster.SolBlasterRender.SolBlasterItemRender;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreRender;
+import com.leafia.contents.machines.reactors.apr.blocks.core.APRCoreRender.APRCoreItemRender;
 import com.leafia.contents.machines.reactors.lftr.processing.separator.SaltSeparatorRender.SaltSeparatorItemRender;
 import com.leafia.contents.machines.reactors.pwr.debris.PWRDebrisItemRender;
 import com.leafia.contents.network.ff_duct.utility.FFDuctUtilityRender.FFDuctUtilityItemRender;
@@ -176,6 +179,8 @@ public class ItemRendererInit {
 				getIntegrated("items/shields/pu238.png"),
 				getIntegrated("items/shields/pu238.png")
 		));
+
+		register(APR.apr_core,new APRCoreItemRender());
 
 		/*fix(AddonItems.ams_focus_blank);
 		fix(AddonItems.ams_focus_booster);

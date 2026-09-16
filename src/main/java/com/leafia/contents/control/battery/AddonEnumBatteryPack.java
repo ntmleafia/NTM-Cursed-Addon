@@ -12,4 +12,6 @@ public class AddonEnumBatteryPack {
     public static EnumBatteryPack BATTERY_SPK;
 
     public static EnumBatteryPack BATTERY_ELECTRO;
+
+    public static EnumBatteryPack BATTERY_SATURNITE;
 }

@@ -1,6 +1,7 @@
 package com.leafia.contents.machines.reactors.apr.blocks.core;
 
 import com.custom_hbm.contents.torex.LCETorex;
+import com.custom_hbm.sound.LCEAudioWrapper;
 import com.custom_hbm.util.LCETuple.Pair;
 import com.hbm.api.fluidmk2.IFluidStandardReceiverMK2;
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
@@ -15,6 +16,7 @@ import com.hbm.lib.ForgeDirection;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.AdvancementManager;
 import com.hbm.tileentity.IGUIProvider;
+import com.leafia.AddonBase;
 import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.AddonFluids;
 import com.leafia.contents.AddonItems;
@@ -29,7 +31,6 @@ import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMainCo
 import com.leafia.contents.machines.reactors.apr.blocks.core.container.APRMainUI;
 import com.leafia.contents.machines.reactors.apr.blocks.port.APRFluidIOBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.port.APRFluidIOTE;
-import com.leafia.dev.LeafiaDebug;
 import com.leafia.dev.LeafiaDebug.Tracker.Action;
 import com.leafia.dev.LeafiaDebug.Tracker.LeafiaTrackerPacket;
 import com.leafia.dev.LeafiaUtil;
@@ -40,6 +41,7 @@ import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
 import com.leafia.eventbuses.interfaces.INotifyEventListener;
 import com.leafia.init.AddonAdvancements;
+import com.leafia.init.LeafiaSoundEvents;
 import com.llib.technical.FifthString;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -81,7 +83,6 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public static final byte idDamage = 9;
 	public static final int minChamberRadius = 6;
 	public static final int maxChamberRadius = 32;
-	public int reqCapsules = 0;
 	public final Map<BlockPos,IBlockState> mbRequirement = new HashMap<>();
 	public final List<Integer> chambers = new ArrayList<>();
 	public boolean assembled = false;
@@ -113,7 +114,7 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 			blanketTemp = nbt.getDouble("temp");
 		}
 	}
-	public double hullTemp;
+	public double hullTemp = 20;
 	public FluidTankNTM oxygen = new FluidTankNTM(Fluids.NONE,0);
 	public FluidTankNTM lox = new FluidTankNTM(Fluids.NONE,0);
 	public double particles = 0;
@@ -289,6 +290,7 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 					BlockPos p = new BlockPos(pos.getX()+x,pos.getY(),pos.getZ()+z);
 					if (Math.sqrt(p.distanceSq(getPos())) <= radius) {
 						IBlockState cover = (x == 0 || z == 0) ? dark : plate;
+						if (x == 0 && z == 0) cover = APR.apr_outlet.getDefaultState();
 						mbRequirement.put(p.down(),cover);
 						mbRequirement.put(p.down(2),parts);
 						mbRequirement.put(p.down(3),parts);
@@ -335,14 +337,36 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		assembled = nbt.getBoolean("assembled");
-		setChambers(nbt.getIntArray("chambers"),false);
+		setChambers(nbt.getIntArray("radius"),false);
+		if (chambers.isEmpty())
+			assembled = false; // fuck you
 		if (assembled)
 			onAssemble();
+		readChamberData(nbt);
+		particles = nbt.getDouble("particles");
+		damage = nbt.getInteger("damage");
+		if (nbt.hasKey("convIn"))
+			conversionInput = nbt.getInteger("convIn");
+		if (nbt.hasKey("convOut"))
+			conversionOutput = nbt.getInteger("convOut");
+		if (nbt.hasKey("controlC"))
+			control = nbt.getDouble("controlC");
+		if (nbt.hasKey("controlD"))
+			targetControl = nbt.getDouble("controlD");
+		page = nbt.getInteger("page");
 	}
 	@Override
 	public @NotNull NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("assembled",assembled);
-		nbt.setIntArray("chambers",toArray(chambers));
+		nbt.setIntArray("radius",toArray(chambers));
+		addChamberData(nbt);
+		nbt.setDouble("particles",particles);
+		nbt.setInteger("damage",damage);
+		nbt.setInteger("convIn",conversionInput);
+		nbt.setInteger("convOut",conversionOutput);
+		nbt.setDouble("controlC",control);
+		nbt.setDouble("controlD",targetControl);
+		nbt.setInteger("page",page);
 		return super.writeToNBT(nbt);
 	}
 	@Override
@@ -563,7 +587,12 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 							fte.targetPos = getPos();
 						return true;
 					}
-				}
+				}/* else if (desired.getValue(APRComponentBlock.VARIANT) == APRComponentType.PLATING_DARK) {
+					if (state.getBlock() instanceof APRPowerOutletBlock) {
+						if (pos.getX() == this.getPos().getX() && pos.getZ() == this.getPos().getZ())
+							return true;
+					}
+				}*/
 			}
 			return false;
 		} else
@@ -598,8 +627,84 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public long getPowerOutput() {
 		return (long)(rps*particleCap*100/3/20/5);
 	}
+	LCEAudioWrapper controlSnd = null;
+	LCEAudioWrapper turbineSnd = null;
+	public double attenuationFunc(float vol,double dist) {
+		double radius = 1;
+		if (!chambers.isEmpty())
+			radius = chambers.get(chambers.size()-1);
+		double maxRadius = radius+30;
+		double ratio = (dist-radius)/(maxRadius-radius);
+		return Math.pow(1-Math.min(Math.max(ratio,0),1),2)*0.25;
+	}
+	boolean controlSoundPlaying = false;
+	public int stressSoundTimer = 0;
+	public double stressTimer = 300;
+	@Override
+	public void onChunkUnload() {
+		if (controlSnd != null)
+			controlSnd.stopSound();
+		controlSnd = null;
+		if (turbineSnd != null)
+			turbineSnd.stopSound();
+		turbineSnd = null;
+		super.onChunkUnload();
+	}
+	@Override
+	public void invalidate() {
+		if (controlSnd != null)
+			controlSnd.stopSound();
+		controlSnd = null;
+		if (turbineSnd != null)
+			turbineSnd.stopSound();
+		turbineSnd = null;
+		super.invalidate();
+	}
 	@SideOnly(Side.CLIENT)
-	public void emitParticles() {
+	public void updateLocal() {
+		if (turbineSnd == null) {
+			controlSnd = AddonBase.proxy.getLoopedSoundStartStop(world,LeafiaSoundEvents.pwrRodLoop,LeafiaSoundEvents.pwrRodStart,LeafiaSoundEvents.pwrRodStop,SoundCategory.BLOCKS,pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,0.15f,0.75f);
+			turbineSnd = AddonBase.proxy.getLoopedSoundStartStop(
+					world,
+					LeafiaSoundEvents.modular_turbine,
+					null,null,
+					SoundCategory.BLOCKS,
+					pos.getX()+0.5f,pos.getY()+0.5f,pos.getZ()+0.5f,
+					0.01f,0.5f
+			).setLooped(true).setCustomAttenuation(this::attenuationFunc).startSound();
+		}
+		if (control != targetControl) {
+			if (!controlSoundPlaying) {
+				controlSoundPlaying = true;
+				controlSnd.startSound();
+			}
+		} else {
+			if (controlSoundPlaying) {
+				controlSoundPlaying = false;
+				controlSnd.stopSound();
+			}
+		}
+		float ratio = (float)(Math.pow(rps/60,0.75));
+		turbineSnd.updatePitch(0.5f+ratio);
+		turbineSnd.updateVolume(ratio);
+		if (stressSoundTimer <= 0) {
+			stressSoundTimer = 70;
+			double vol = Math.pow((Math.max(rps-65,0)/35),3)*0.8;
+			if (vol > 0) {
+				world.playSound(
+						null,
+						pos,
+						LeafiaSoundEvents.pipestressed,
+						SoundCategory.BLOCKS,
+						(float)vol,0.65f
+				);
+			}
+		}
+		stressSoundTimer--;
+		double stress = damage/(double)maxDamage;
+		stressTimer -= Math.pow(stress, 0.9) * 64;
+		if (stressTimer <= 0)
+			getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
 		if (hullTemp >= 650) {
 			for (Entry<BlockPos,IBlockState> entry : mbRequirement.entrySet()) {
 				if (entry.getValue().getBlock() == APR.apr_component) {
@@ -649,7 +754,7 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 					data.graph[graphXSegments-1] = sub*(world.rand.nextDouble()*(sub/(8192-20))*0.75+0.35)+20;
 				}
 			}
-			emitParticles();
+			updateLocal();
 			return;
 		}
 		subscribeToBlockNotification();
@@ -667,69 +772,72 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 		if (LeafiaUtil.setTypeBy(oxygen,2,3,inventory,APRCoreTE::isValidCoolant,oxygen.getTankType()))
 			setupMainTank(oxygen.getTankType());
 
-		if (Math.abs(targetControl-control) < controlSpeed/20)
-			control = targetControl;
-		else
-			control += Math.signum(targetControl-control)*(controlSpeed/20);
-		double highest = 0;
-		for (APRChamber chamber : chamberDatas)
-			highest = Math.max(highest,chamber.blanketTemp);
-		hullTemp = hullTemp+(highest-hullTemp)*0.05;
-		int cycles = getAvailableCycles(conversionInput,conversionOutput,(int)(accountForParticles(oxygen.getFill())/20d*(control/100)),lox.getFill(),lox.getMaxFill());
-		if (cycles > 0) {
-			oxygen.setFill(oxygen.getFill()-cycles*conversionInput);
-			lox.setFill(lox.getFill()+cycles*conversionOutput);
-			double fah = (cycles*conversionInput)/(double)oxygen.getMaxFill();
-			hullTemp = (hullTemp-20)*(1-Math.pow(Math.max(fah/*-5 nuh uh that was a bad idea*/,0),0.25)*0.65)+20;
-			double energy = energyFor(getEnergy(oxygen.getTankType()),cycles*conversionInput);
-			if (energy > 0) {
-				addRPSFromEnergy(energy);
-				addHeatFromEnergy(energy,chamberDatas);
-			}
-		}
-		rps *= Math.pow(0.99,1/(particleCap/30000d));
-		int curPage = 0;
-		boolean damaging = rps > 110;
-		double highestTemp = 0;
-		for (APRChamber data : chamberDatas) {
-			if (curPage == page && LeafiaUtil.setTypeBy(data.input,4,5,inventory,APRCoreTE::isValidFluid,data.input.getTankType()))
-				data.output.setTankType(getFinalConversionTo(data.input.getTankType()));
-			Pair<Integer,Integer> rate = getFinalConversionRates(data.input.getTankType());
-			int cyclesProcess = getAvailableCycles(rate.getA(),rate.getB(),accountForParticles(data.input.getFill()),data.output.getFill(),data.output.getMaxFill());
-			if (cyclesProcess > 0) {
-				data.input.setFill(data.input.getFill()-cyclesProcess*rate.getA());
-				data.output.setFill(data.output.getFill()+cyclesProcess*rate.getB());
-				double energy = energyFor(getFinalEnergy(data.input.getTankType()),cyclesProcess*rate.getA());
+		if (assembled) {
+			if (Math.abs(targetControl-control) < controlSpeed/20)
+				control = targetControl;
+			else
+				control += Math.signum(targetControl-control)*(controlSpeed/20);
+			double highest = 0;
+			for (APRChamber chamber : chamberDatas)
+				highest = Math.max(highest,chamber.blanketTemp);
+			hullTemp = hullTemp+(highest-hullTemp)*0.05;
+			int cycles = getAvailableCycles(conversionInput,conversionOutput,(int)(accountForParticles(oxygen.getFill())/20d*(control/100)),lox.getFill(),lox.getMaxFill());
+			if (cycles > 0) {
+				oxygen.setFill(oxygen.getFill()-cycles*conversionInput);
+				lox.setFill(lox.getFill()+cycles*conversionOutput);
+				double fah = (cycles*conversionInput)/(double)oxygen.getMaxFill();
+				hullTemp = (hullTemp-20)*(1-Math.pow(Math.max(fah/*-5 nuh uh that was a bad idea*/,0),0.25)*0.65)+20;
+				double energy = energyFor(getEnergy(oxygen.getTankType()),cycles*conversionInput);
 				if (energy > 0) {
 					addRPSFromEnergy(energy);
-					addHeatFromEnergy(energy,data);
+					addHeatFromEnergy(energy,chamberDatas);
 				}
 			}
-			data.blanketTemp = (data.blanketTemp-20)*0.998+20;
-			curPage++;
-			highestTemp = Math.max(highest,data.blanketTemp);
-			if (data.blanketTemp > 8192)
-				damaging = true;
-		}
-		if (damaging) {
-			damage++;
-			if (damage > maxDamage) {
-				// adios
-				damage = maxDamage;
-				for (int i = 0; i < chambers.size(); i++) {
-					if (chamberDatas.get(i).blanketTemp > 8192) {
-						FiaMatrix mat = new FiaMatrix(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
-						mat = mat.rotate(RotationOrder.XYZ,0,world.rand.nextDouble()*360,0).translate(0,0,-chambers.get(i));
-						world.createExplosion(null,mat.getX(),mat.getY(),mat.getZ(),8,true);
+			rps *= Math.pow(0.99,1/(particleCap/30000d));
+			int curPage = 0;
+			boolean damaging = rps > 110;
+			double highestTemp = 0;
+			for (APRChamber data : chamberDatas) {
+				if (curPage == page && LeafiaUtil.setTypeBy(data.input,4,5,inventory,APRCoreTE::isValidFluid,data.input.getTankType()))
+					data.output.setTankType(getFinalConversionTo(data.input.getTankType()));
+				Pair<Integer,Integer> rate = getFinalConversionRates(data.input.getTankType());
+				int cyclesProcess = getAvailableCycles(rate.getA(),rate.getB(),accountForParticles(data.input.getFill()),data.output.getFill(),data.output.getMaxFill());
+				if (cyclesProcess > 0) {
+					data.input.setFill(data.input.getFill()-cyclesProcess*rate.getA());
+					data.output.setFill(data.output.getFill()+cyclesProcess*rate.getB());
+					double energy = energyFor(getFinalEnergy(data.input.getTankType()),cyclesProcess*rate.getA());
+					if (energy > 0) {
+						addRPSFromEnergy(energy);
+						addHeatFromEnergy(energy,data);
 					}
 				}
-				if (rps > 110)
-					disassemble(pos);
+				data.blanketTemp = (data.blanketTemp-20)*0.998+20;
+				curPage++;
+				highestTemp = Math.max(highest,data.blanketTemp);
+				if (data.blanketTemp > 8192)
+					damaging = true;
 			}
-		} else if (highestTemp < 500)
-			damage = Math.max(damage-1,0);
-		if (hullTemp > 1538)
-			disassemble(pos);
+			if (damaging) {
+				damage++;
+				if (damage > maxDamage) {
+					// adios
+					damage = maxDamage;
+					for (int i = 0; i < chambers.size(); i++) {
+						if (chamberDatas.get(i).blanketTemp > 8192) {
+							FiaMatrix mat = new FiaMatrix(new Vec3d(pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5));
+							mat = mat.rotate(RotationOrder.XYZ,0,world.rand.nextDouble()*360,0).translate(0,0,-chambers.get(i));
+							world.createExplosion(null,mat.getX(),mat.getY(),mat.getZ(),8,true);
+						}
+					}
+					if (rps > 110)
+						disassemble(pos);
+				}
+			} else if (highestTemp < 500)
+				damage = Math.max(damage-1,0);
+			if (hullTemp > 1538)
+				disassemble(pos);
+		} else
+			rps = 0;
 		/*
 		LeafiaDebug.debugLog(world,"-----------------------------");
 		LeafiaDebug.debugLog(world,"RPS: "+rps);

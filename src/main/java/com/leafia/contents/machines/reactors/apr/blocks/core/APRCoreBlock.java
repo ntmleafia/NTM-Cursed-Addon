@@ -8,11 +8,14 @@ import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock;
 import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
 import com.leafia.dev.blocks.blockbase.AddonBlockDummyable;
+import com.leafia.dev.machine.MachineTooltip;
 import com.leafia.dev.math.FiaMatrix;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -24,6 +27,7 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,6 +94,12 @@ public class APRCoreBlock extends AddonBlockDummyable {
 			}
 		}
 		*/
+	}
+	@Override
+	public void addInformation(ItemStack stack,@Nullable World worldIn,List<String> tooltip,ITooltipFlag flagIn) {
+		MachineTooltip.addMultiblock(tooltip);
+		MachineTooltip.addCore(tooltip);
+		super.addInformation(stack,worldIn,tooltip,flagIn);
 	}
 	public static void generateCircle(BlockPos center,double radius,Map<BlockPos,IBlockState> poses,int depth,boolean isInner) {
 		double subdivs = Math.floor(radius*2*Math.PI/4);

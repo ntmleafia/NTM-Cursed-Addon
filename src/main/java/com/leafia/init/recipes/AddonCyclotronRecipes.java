@@ -23,5 +23,10 @@ public class AddonCyclotronRecipes {
 				new ItemStack(AddonItems.particle_cloud),
 				coA
 		);
+		makeRecipe(new ComparableStack(ModItems.powder_magic),
+				new ComparableStack(AddonItems.particle_chydalium),
+				new ItemStack(AddonItems.particle_absorption),
+				150
+		);
 	}
 }

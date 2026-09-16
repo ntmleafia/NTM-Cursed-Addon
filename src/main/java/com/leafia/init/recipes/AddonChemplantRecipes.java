@@ -40,6 +40,19 @@ public class AddonChemplantRecipes {
 				)
 				.outputItems(new ItemStack(ModItems.battery_pack,1,AddonEnumBatteryPack.BATTERY_DESH.ordinal()))
 		);
+		INSTANCE.register(new GenericRecipe("chem.leafia.battery_saturnite").setup(100, 35_000)
+				.inputItems(
+						new OreDictStack(BIGMT.ingot(),32),
+						new OreDictStack(ANY_HARDPLASTIC.ingot(),16)
+				)
+				.inputFluids(
+						new FluidStack(Fluids.PERFLUOROMETHYL_COLD,2000)
+				)
+				.outputItems(new ItemStack(ModItems.battery_pack,1,AddonEnumBatteryPack.BATTERY_SATURNITE.ordinal()))
+				.outputFluids(
+						new FluidStack(Fluids.PERFLUOROMETHYL,2000)
+				)
+		);
 		INSTANCE.register(new GenericRecipe("chem.leafia.battery_euphemium").setup(100, 50_000)
 				.inputItems(
 						new OreDictStack(EUPH.ingot(),24),

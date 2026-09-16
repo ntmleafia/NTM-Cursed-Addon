@@ -532,7 +532,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				stressTimer -= Math.pow(stress, 0.9) * 64;
 				if (stressTimer <= 0) {
 					BlockPos pos = (BlockPos) members.toArray()[getWorld().rand.nextInt(members.size())];
-					getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 2.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
+					getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
 				}
 			}
 			if (tanks[3].getMaxFill() > 0 && coolantId == Fluids.COOLANT.getID()) {

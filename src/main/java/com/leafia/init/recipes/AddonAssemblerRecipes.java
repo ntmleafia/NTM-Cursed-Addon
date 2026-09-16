@@ -13,6 +13,7 @@ import com.hbm.inventory.recipes.loader.GenericRecipe;
 import com.hbm.items.ItemEnums.EnumCircuitType;
 import com.hbm.items.ModItems;
 import com.leafia.contents.AddonBlocks;
+import com.leafia.contents.AddonBlocks.APR;
 import com.leafia.contents.AddonBlocks.Elevators;
 import com.leafia.contents.AddonBlocks.LetterSigns;
 import com.leafia.contents.AddonBlocks.PWR;
@@ -20,6 +21,7 @@ import com.leafia.contents.AddonFluids;
 import com.leafia.contents.AddonItems;
 import com.leafia.contents.AddonItems.ElevatorStyles;
 import com.leafia.contents.control.battery.AddonEnumBatteryPack;
+import com.leafia.contents.machines.reactors.apr.blocks.APRComponentBlock.APRComponentType;
 import com.leafia.settings.AddonConfig;
 import com.llib.exceptions.LeafiaDevFlaw;
 import net.minecraft.block.Block;
@@ -30,6 +32,7 @@ import net.minecraftforge.fml.common.Loader;
 import java.util.Map.Entry;
 
 import static com.hbm.inventory.OreDictManager.*;
+import static com.leafia.init.AddonOreDict.*;
 
 public class AddonAssemblerRecipes {
 	public static final AssemblyMachineRecipes INSTANCE = AssemblyMachineRecipes.INSTANCE;
@@ -399,6 +402,89 @@ public class AddonAssemblerRecipes {
 					.outputItems(new ItemStack(AddonItems.blanket_mysticite_bundle))
 					.inputItems(
 							new ComparableStack(AddonItems.blanket_mysticite,16)
+					)
+			);
+
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_core").setup(200,100)
+					.outputItems(new ItemStack(APR.apr_core))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),4),
+							new OreDictStack(KEY_ANYPANE,2),
+							new OreDictStack(W.bolt(),6),
+							new ComparableStack(ModItems.motor,12),
+							new OreDictStack(STEEL.plate(),6),
+							new OreDictStack(WC.ingot(),1),
+							new OreDictStack("dyeGray",2)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.support").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,8,APRComponentType.SUPPORT.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(W.bolt(),6),
+							new OreDictStack(ANY_ULTRAALLOY.plate(),2)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.hull").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,8,APRComponentType.HULL.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(CU.pipe(),2),
+							new OreDictStack("dyeGray",1)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.plating").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,4,APRComponentType.PLATING.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(TI.ingot(),1)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.plating_dark").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,4,APRComponentType.PLATING_DARK.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(WC.ingot(),1)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.coil").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,4,APRComponentType.COIL.ordinal()))
+					.inputItems(
+							new OreDictStack(GOLD.wireDense(),4),
+							new OreDictStack(WC.ingot(),1)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.blades").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,8,APRComponentType.BLADES.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(W.bolt(),6),
+							new OreDictStack(ANY_ULTRAALLOY.plate(),1),
+							new OreDictStack("container1000lubricant",1)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_component.mechanical").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_component,4,APRComponentType.MECHANICAL.ordinal()))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(STEEL.pipe(),4)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_port").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_port,8))
+					.inputItems(
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(W.bolt(),6),
+							new OreDictStack(ANY_ULTRAALLOY.plate(),2),
+							new OreDictStack(CU.pipe(),2)
+					)
+			);
+			INSTANCE.register(new GenericRecipe("ass.leafia.apr_outlet").setup(100,100)
+					.outputItems(new ItemStack(APR.apr_outlet,1))
+					.inputItems(
+							new OreDictStack(MINGRADE.wireDense(),2),
+							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),1),
+							new OreDictStack(WC.ingot(),1)
 					)
 			);
 		}

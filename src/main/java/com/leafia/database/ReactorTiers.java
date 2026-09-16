@@ -45,7 +45,10 @@ public class ReactorTiers {
 				ModBlocks.watz_element,ModBlocks.watz_pump
 		);
 		addTier("apr","particle",
-				APR.apr_component
+				APR.apr_core,
+				APR.apr_port,
+				APR.apr_component,
+				APR.apr_outlet
 		);
 		addTier("fusion","fusion",
 				ModBlocks.fusion_torus,ModBlocks.fusion_klystron,

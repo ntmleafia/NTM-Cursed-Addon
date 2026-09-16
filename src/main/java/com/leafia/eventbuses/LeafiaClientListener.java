@@ -1232,6 +1232,8 @@ public class LeafiaClientListener {
 					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_support"));
 			APRCoreRender.sprs.put(aprBase+APRComponentType.COIL.ordinal(),
 					evt.getMap().getAtlasSprite("leafia:blocks/apr/hadron_coil_gold"));
+			APRCoreRender.sprs.put("leafia:apr_outlet:0",
+					evt.getMap().getAtlasSprite("leafia:blocks/apr/apr_outlet"));
 		}
 
 		/*static final Field mapRegisteredSprites;

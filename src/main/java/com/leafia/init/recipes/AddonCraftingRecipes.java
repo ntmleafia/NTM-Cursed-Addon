@@ -174,6 +174,7 @@ public class AddonCraftingRecipes {
 		addShapelessAuto(new ItemStack(AddonItems.am_rifle_cell_mysticite_filled),new ItemStack(AddonItems.am_rifle_cell_mysticite),new ItemStack(ModItems.battery_sc,1,EnumBatterySC.AU198.ordinal()),EUPH.ingot(),EUPH.ingot(),EUPH.ingot(),EUPH.ingot());
 
 		addShapelessAuto(new ItemStack(AddonItems.particle_taint, 1), ModItems.particle_empty, TN.dust(), ModItems.pellet_charged );
+		addShapelessAuto(new ItemStack(AddonItems.particle_chydalium, 1), ModItems.particle_empty, CH.dust(), ModItems.pellet_charged );
 
 		addRecipeAuto(new ItemStack(AddonItems.grenade_cloud,2),"SPS","CTC","SPS",'S',S.dust(),'P',ModItems.powder_poison,'C',AddonItems.particle_cloud,'T',new ItemStack(ModItems.fluid_tank_full,1,Fluids.PEROXIDE.getID()));
 		addRecipeAuto(new ItemStack(AddonItems.grenade_pink_cloud), " S ", "ECE", " E ", 'S', ModItems.powder_spark_mix, 'E', ModItems.powder_magic, 'C', AddonItems.grenade_cloud);

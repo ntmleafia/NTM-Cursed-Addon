@@ -4,15 +4,18 @@ import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.hbm.render.util.SmallBlockPronter;
 import com.leafia.AddonBase;
+import com.leafia.dev.render.LeafiaItemRenderer;
 import com.leafia.transformer.LeafiaGls;
 import com.llib.exceptions.messages.TextWarningLeafia;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +28,39 @@ public class APRCoreRender extends TileEntitySpecialRenderer<APRCoreTE> {
 	public static final WaveFrontObjectVAO vao = getVAO(getIntegrated("machines/reactors/apr/apr_core_better.obj"));
 	public static final ResourceLocation tex = getIntegrated("machines/reactors/apr/apr_core.png");
 	public static final Map<String,TextureAtlasSprite> sprs = new HashMap<>();
+	public static class APRCoreItemRender extends LeafiaItemRenderer {
+		@Override
+		protected double _sizeReference() {
+			return 7.8;
+		}
+		@Override
+		protected double _itemYoffset() {
+			return 0.09;
+		}
+		@Override
+		protected ResourceLocation __getTexture() {
+			return tex;
+		}
+		@Override
+		protected WaveFrontObjectVAO __getModel() {
+			return vao;
+		}
+		@Override
+		public void renderCommon() {
+			GL11.glScaled(0.5, 0.5, 0.5);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			bindTexture(tex);
+			vao.renderPart("Core");
+			LeafiaGls.pushMatrix();
+			LeafiaGls.rotate(15,0,1,0);
+			for (int i = 0; i < 12; i++) {
+				LeafiaGls.rotate(30,0,1,0);
+				vao.renderPart("Funnel");
+			}
+			LeafiaGls.popMatrix();
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+		}
+	}
 	public static double ctrl(double v) {
 		return Math.pow((v-10)/90d,1.25);
 	}
@@ -32,6 +68,7 @@ public class APRCoreRender extends TileEntitySpecialRenderer<APRCoreTE> {
 	public void render(APRCoreTE te,double x,double y,double z,float partialTicks,int destroyStage,float alpha) {
 		LeafiaGls.pushMatrix();
 		LeafiaGls.translate(x+0.5,y,z+0.5);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		bindTexture(tex);
 		vao.renderPart("Core");
 		float funnelAngle = (float)(60*(ctrl(te.lastControl)+(ctrl(te.control)-ctrl(te.lastControl))*partialTicks));
@@ -48,6 +85,7 @@ public class APRCoreRender extends TileEntitySpecialRenderer<APRCoreTE> {
 		}
 		LeafiaGls.popMatrix();
 		LeafiaGls.popMatrix();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
 		if (!te.assembled) {
 			LeafiaGls.pushMatrix();
 			LeafiaGls.translate(x,y,z);
