@@ -119,12 +119,12 @@ public class APRMainUI extends LCEGuiInfoContainer {
 		GL11.glClipPlane(GL11.GL_CLIP_PLANE1,dbuf);
 
 		GL11.glEnable(GL11.GL_CLIP_PLANE2);
-		dbuf.put(new double[]{ 0,0,1,0 });
+		dbuf.put(new double[]{ 0,1,0,0 });
 		dbuf.rewind();
 		GL11.glClipPlane(GL11.GL_CLIP_PLANE2,dbuf);
 
 		GL11.glEnable(GL11.GL_CLIP_PLANE3);
-		dbuf.put(new double[]{ 0,0,-1,25 });
+		dbuf.put(new double[]{ 0,-1,0,25 });
 		dbuf.rewind();
 		GL11.glClipPlane(GL11.GL_CLIP_PLANE3,dbuf);
 	}

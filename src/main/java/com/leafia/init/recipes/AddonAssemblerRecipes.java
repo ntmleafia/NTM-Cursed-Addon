@@ -409,6 +409,7 @@ public class AddonAssemblerRecipes {
 					.outputItems(new ItemStack(APR.apr_core))
 					.inputItems(
 							new OreDictStack(ANY_RESISTANTALLOY.plateWelded(),4),
+							new ComparableStack(ModItems.circuit,12,EnumCircuitType.BASIC.ordinal()),
 							new OreDictStack(KEY_ANYPANE,2),
 							new OreDictStack(W.bolt(),6),
 							new ComparableStack(ModItems.motor,12),
