@@ -96,6 +96,9 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 	public static final int graphXSegments = 16;
 	public static final int graphRefreshRate = 10;
 	public int graphTimer = 0;
+	double lerp(double a,double b,double t) {
+		return a+(b-a)*t;
+	}
 	public static class APRChamber {
 		public FluidTankNTM input = new FluidTankNTM(Fluids.NONE,0);
 		public FluidTankNTM output = new FluidTankNTM(Fluids.NONE,0);
@@ -751,7 +754,7 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 					for (int i = 0; i < graphXSegments-1; i++)
 						data.graph[i] = data.graph[i+1];
 					double sub = data.blanketTemp-20;
-					data.graph[graphXSegments-1] = sub*(world.rand.nextDouble()*(sub/(8192-20))*0.75+0.35)+20;
+					data.graph[graphXSegments-1] = lerp(data.blanketTemp,sub*(world.rand.nextDouble()*(sub/(8192-20))*0.75+0.35)+20,particles/(double)particleCap);
 				}
 			}
 			updateLocal();

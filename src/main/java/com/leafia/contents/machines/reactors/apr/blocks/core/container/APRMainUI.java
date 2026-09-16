@@ -309,7 +309,7 @@ public class APRMainUI extends LCEGuiInfoContainer {
 			drawTexturedModalRect(damage.absX(),damage.absY(),0,247,barLength,damage.h);
 		}
 		{
-			int rps = (int)Math.ceil(te.rps);
+			int rps = (int)Math.round(te.rps);
 			int x = guiLeft+194;
 			boolean firstDigit = true;
 			while (firstDigit || rps > 0) {
