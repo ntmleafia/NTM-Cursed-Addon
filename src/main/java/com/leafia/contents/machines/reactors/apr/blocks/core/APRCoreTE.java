@@ -635,7 +635,7 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 			radius = chambers.get(chambers.size()-1);
 		double maxRadius = radius+30;
 		double ratio = (dist-radius)/(maxRadius-radius);
-		return Math.pow(1-Math.min(Math.max(ratio,0),1),2)*0.25;
+		return Math.pow(1-Math.min(Math.max(ratio,0),1),2)*0.25*vol;
 	}
 	boolean controlSoundPlaying = false;
 	public int stressSoundTimer = 0;
