@@ -95,6 +95,9 @@ public class LeafiaServerListener {
 		@SubscribeEvent
 		public void onPlayerLogin(PlayerLoggedInEvent evt) {
 			if (evt.player instanceof EntityPlayerMP player) {
+				if (!player.getEntityData().hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+					player.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+				}
 				NBTTagCompound tag = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 				if (!tag.hasKey("receivedAdvisor") || !tag.getBoolean("receivedAdvisor")) {
 					tag.setBoolean("receivedAdvisor",true);
