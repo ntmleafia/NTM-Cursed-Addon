@@ -204,6 +204,8 @@ public class AddonBase {
 	// postInit "Handle interaction with other mods, complete your setup based on this." (Remove if not needed)
 	public void postInit(FMLPostInitializationEvent event) {
 		AddonFF.setFromRegistry();
+		AddonSmeltingRecipes.register();
+		SolBlasterRecipes.register();
 		ArmorInit.postInit();
 		LeafiaBlockReplacer.addReplacementMap();
 		StructLoader.init();
@@ -222,7 +224,6 @@ public class AddonBase {
 		AddonCentrifugeRecipes.register();
 		AddonArcWelderRecipes.register();
 		AddonDFCRecipes.register();
-		AddonSmeltingRecipes.register();
 		AddonSolderingRecipes.register();
 		AddonMixerRecipes.register();
 		AddonCompressorRecipes.register();
@@ -230,7 +231,6 @@ public class AddonBase {
 		AddonShredderRecipes.register();
 		AddonPARecipes.register();
 		AddonExposureChamberRecipes.register();
-		SolBlasterRecipes.register();
 		AddonMatDistribution.register();
 		AddonArcFurnaceRecipes.register();
 		AddonCrucibleRecipes.register();
