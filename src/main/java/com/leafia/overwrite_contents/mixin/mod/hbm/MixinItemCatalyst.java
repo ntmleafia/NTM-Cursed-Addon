@@ -45,13 +45,9 @@ public class MixinItemCatalyst extends Item {
 		tooltip.add(TextFormatting.LIGHT_PURPLE + "Required to contain the deadly stellar core of DFC");
 	}
 
-	NBTTagCompound getTag(ItemStack stack) {
+	private double leafia$damage(ItemStack stack) {
 		NBTTagCompound compound = stack.getTagCompound();
-		if (compound == null) {
-			compound = new NBTTagCompound();
-			stack.setTagCompound(compound);
-		}
-		return compound;
+		return compound == null ? 0 : compound.getDouble("damage") / 100d;
 	}
 
 	@Override
@@ -61,13 +57,13 @@ public class MixinItemCatalyst extends Item {
 
 	@Override
 	public double getDurabilityForDisplay(ItemStack stack) {
-		return getTag(stack).getDouble("damage") / 100d; //super.getDurabilityForDisplay(stack);
+		return leafia$damage(stack); //super.getDurabilityForDisplay(stack);
 	}
 
 	@Override
 	public int getRGBDurabilityForDisplay(ItemStack stack) {
 		LeafiaColor fiac = new LeafiaColor(color);
-		double damage = getTag(stack).getDouble("damage") / 100d;
+		double damage = leafia$damage(stack);
 		fiac = fiac.lerp(new LeafiaColor(0.1, 0.1, 0.1), damage);
 		if (damage > 0.666 && Math.floorMod(System.currentTimeMillis(), 400) >= 200)
 			fiac = new LeafiaColor(1, 0, 0);

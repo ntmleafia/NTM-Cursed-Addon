@@ -164,9 +164,11 @@ public class PWRDebrisEntity extends EntityDebrisBase {
 				case CHANNEL_1X:
 					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.plate_steel)))
 						this.setDead();
+					break;
 				case CHANNEL_3X:
 					if(player.inventory.addItemStackToInventory(new ItemStack(ModItems.pipe,2,Mats.MAT_STEEL.id)))
 						this.setDead();
+					break;
 				default:
 					Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.getDataManager().get(BLOCK_RSC)));
 					if (block == null) break;
@@ -174,7 +176,7 @@ public class PWRDebrisEntity extends EntityDebrisBase {
 					if (ShredderRecipes.shredderRecipes.containsKey(stack)) {
 						ItemStack out = ShredderRecipes.shredderRecipes.get(stack);
 						if (out != null) {
-							if(player.inventory.addItemStackToInventory(out))
+							if(player.inventory.addItemStackToInventory(out.copy()))
 								this.setDead();
 						}
 					}

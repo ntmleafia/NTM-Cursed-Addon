@@ -68,7 +68,7 @@ public abstract class PWRMeshedWreck extends AddonBlockBase implements ITileEnti
 			//nbt.setBoolean("ntmPyrophoric",wreck.scorch > 4);
 			stack.setTagCompound(nbt);
 			for (int i = rand.nextInt(3); i < 5+fortune; i++)
-				drops.add(stack);
+				drops.add(stack.copy());
 		}
 	}
 	@Override
