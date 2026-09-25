@@ -66,6 +66,8 @@
   "music.lsplash.elevator_jam.end": {"category": "music", "sounds": [{"name": "leafia:elevators/radio/elevator_jam_end", "stream": true}]},
   "music.incompetech.local_forecast": {"category": "music", "sounds": [{"name": "leafia:elevators/radio/local_forecast", "stream": true}]},
 
+  "music.bgm013_50": {"category": "music", "sounds": [{"name": "leafia:misc/bgm_013-50", "stream": false}]},
+
   "item.pointed": {"subtitle": "subtitles.item.pointed", "category": "neutral", "sounds": ["leafia:entity/slicer3","leafia:weapon/hit_metal0"]},
   "elevators.s6beep": { "category": "block", "sounds": ["leafia:elevators/s6_beep"]},
   "elevators.s6bell": { "category": "block", "sounds": ["leafia:elevators/s6_bell"]},

@@ -5,6 +5,8 @@ import com.hbm.util.I18nUtil;
 import com.leafia.contents.worldgen.biomes.effects.HasAcidicRain;
 import com.leafia.contents.worldgen.biomes.effects.ParticleCloudSmall;
 import com.leafia.dev.optimization.diagnosis.RecordablePacket;
+import com.leafia.eventbuses.LeafiaClientListener;
+import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.llib.math.SIPfx;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -87,5 +89,8 @@ public class LeafiaGeneralLocal {
 		splashes.add("This addon sends string characters in just 5 bits!");
 		splashes.add("Core game community nowadays is really toxic!");
 		splashes.add("OWO MEOW, MEOWMEOWMEOW, OWOOWOOWOOWO, MEOWMEOWMEOW, MEOWMEOWMEOW, MEOW MEOW MEOW MEOWMEOWMEOWM");
+		if (HandlerClient.actuallySeenEasterEgg)
+			splashes.clear();
+		splashes.add("Remove 1.7.10");
 	}
 }

@@ -17,7 +17,7 @@ public class MixinExplosionNukeRayBatched implements IMixinExplosionRay {
 	public int leafia$getLowestHeight() {
 		return lowestHeight;
 	}
-	@Inject(method = "processChunkBlocks",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockToAir(Lnet/minecraft/util/math/BlockPos;)Z"),require = 1,remap = false)
+	@Inject(method = "processChunkBlocks",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockToAir(Lnet/minecraft/util/math/BlockPos;)Z",remap = true),require = 1,remap = false)
 	public void leafia$onProcessChunkBlocks(long start,int time,CallbackInfo ci,@Local(name = "pos") MutableBlockPos pos) {
 		if (pos.getY() < lowestHeight)
 			lowestHeight = pos.getY();

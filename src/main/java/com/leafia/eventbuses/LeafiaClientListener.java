@@ -2,6 +2,7 @@ package com.leafia.eventbuses;
 
 import com.custom_hbm.GuiAssentialWarning;
 import com.custom_hbm.GuiBackupsWarning;
+import com.custom_hbm.GuiEasterEgg;
 import com.custom_hbm.sound.LCEAudioWrapperClientStartStop;
 import com.google.gson.JsonSyntaxException;
 import com.hbm.blocks.BlockDummyable;
@@ -952,8 +953,20 @@ public class LeafiaClientListener {
 		public static boolean seenWarning = false;
 		public static boolean assentialWarning = false;
 		public static boolean seenAssentialWarning = false;
+		public static boolean seenEasterEgg = false;
+		public static boolean actuallySeenEasterEgg = false;
 		@SubscribeEvent
 		public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+			if (event.getGui() instanceof net.minecraft.client.gui.GuiMainMenu) {
+				if (!seenEasterEgg) {
+					seenEasterEgg = true;
+					if (new Random().nextInt(512) == 0) {
+						Minecraft.getMinecraft().displayGuiScreen(new GuiEasterEgg());
+						actuallySeenEasterEgg = true;
+						return;
+					}
+				}
+			}
 			if (Minecraft.getMinecraft().currentScreen instanceof GuiCTMWarning) return;
 			if (event.getGui() instanceof GuiCTMWarning) {
 				seenWarning = false;
