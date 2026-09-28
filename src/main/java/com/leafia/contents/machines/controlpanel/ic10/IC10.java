@@ -1,8 +1,20 @@
 package com.leafia.contents.machines.controlpanel.ic10;
 
+import com.hbm.inventory.control_panel.IControllable;
+import com.hbm.inventory.control_panel.types.DataValue;
+import com.hbm.inventory.control_panel.types.DataValueFloat;
+import com.hbm.inventory.control_panel.types.DataValueString;
+import com.hbm.tileentity.network.RTTYSystem;
+import com.hbm.tileentity.network.RTTYSystem.RTTYChannel;
 import com.leafia.settings.AddonConfig;
 import com.llib.math.MathLeafia;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -706,6 +718,292 @@ public class IC10 {
 						},
 						"Pauses execution for a minecraft ticks",
 						"assuming this node is in the tick event"
+				),
+				"ror",map(
+						"lr",make(
+								args("register",REGISTER,"frequency",STRING),
+								(env,args)->{
+									World world = env.node.ctrl.panel.parent.getControlWorld();
+									RTTYChannel chan = RTTYSystem.listen(world,(String)args[1]);
+									if (chan != null)
+										env.setRegister((int)args[0],chan.signal);
+									else
+										env.setRegister((int)args[0],"");
+								},
+								"Register = value from RoR signal with",
+								"specified frequency (as string)"
+						),
+						"lnr",make(
+								args("register",REGISTER,"frequency",STRING),
+								(env,args)->{
+									World world = env.node.ctrl.panel.parent.getControlWorld();
+									RTTYChannel chan = RTTYSystem.listen(world,(String)args[1]);
+									if (chan != null && chan.signal instanceof String s) {
+										Double num = tonumberd(s);
+										env.setRegister((int)args[0],num != null ? num : -1D);
+									} else
+										env.setRegister((int)args[0],-1);
+								},
+								"Register = value from RoR signal with",
+								"specified frequency (as string)"
+						),
+						"sr",make(
+								args("frequency",STRING,"a",STRING),
+								(env,args)->{
+									World world = env.node.ctrl.panel.parent.getControlWorld();
+									RTTYSystem.broadcast(world,(String)args[0],args[1]);
+								},
+								"RoR signal with specified frequency",
+								"= a (as string)"
+						),
+						"snr",make(
+								args("frequency",STRING,"a",INTEGER),
+								(env,args)->{
+									World world = env.node.ctrl.panel.parent.getControlWorld();
+									RTTYSystem.broadcast(world,(String)args[0],args[1]);
+								},
+								"RoR signal with specified frequency",
+								"= a (as number)"
+						)
+				),
+				"variables",map(
+						"llv",make(
+								args("register",REGISTER,"name",STRING),
+								(env,args)->{
+									DataValue var = env.node.ctrl.getVar((String)args[1]);
+									switch(var.getType()) {
+										case ENUM -> env.setRegister((int)args[0],"< ENUM >");
+										case NUMBER -> env.setRegister((int)args[0],(double)var.getNumber());
+										case STRING -> env.setRegister((int)args[0],var.toString());
+										case COMPOSITE -> env.setRegister((int)args[0],"< PACKED >");
+										default -> env.setRegister((int)args[0],"< ERROR >");
+									}
+								},
+								"Register =",
+								"Local variable with specified name"
+						),
+						"lgv",make(
+								args("register",REGISTER,"name",STRING),
+								(env,args)->{
+									DataValue var = env.node.ctrl.getGlobalVar((String)args[1]);
+									switch(var.getType()) {
+										case ENUM -> env.setRegister((int)args[0],"< ENUM >");
+										case NUMBER -> env.setRegister((int)args[0],(double)var.getNumber());
+										case STRING -> env.setRegister((int)args[0],var.toString());
+										case COMPOSITE -> env.setRegister((int)args[0],"< PACKED >");
+										default -> env.setRegister((int)args[0],"< ERROR >");
+									}
+								},
+								"Register =",
+								"Global variable with specified name"
+						),
+						"slv",make(
+								args("name",STRING,"a",STRING),
+								(env,args)->{
+									env.node.ctrl.vars.put((String)args[0],new DataValueString((String)args[1]));
+								},
+								"Local variable with specified name",
+								"= a (as string)"
+						),
+						"snlv",make(
+								args("name",STRING,"a",NUMBER),
+								(env,args)->{
+									env.node.ctrl.vars.put((String)args[0],new DataValueFloat((float)(double)args[1]));
+								},
+								"Local variable with specified name",
+								"= a (as number)"
+						),
+						"sgv",make(
+								args("name",STRING,"a",STRING),
+								(env,args)->{
+									env.node.ctrl.panel.globalVars.put((String)args[0],new DataValueString((String)args[1]));
+								},
+								"Global variable with specified name",
+								"= a (as string)"
+						),
+						"sngv",make(
+								args("name",STRING,"a",NUMBER),
+								(env,args)->{
+									env.node.ctrl.panel.globalVars.put((String)args[0],new DataValueFloat((float)(double)args[1]));
+								},
+								"Global variable with specified name",
+								"= a (as number)"
+						)
+				),
+				"print",make(
+						args("a",STRING,"b",ANY),
+						(env,args)->{
+							World world = env.node.ctrl.panel.parent.getControlWorld();
+							BlockPos pos = env.node.ctrl.panel.parent.getControlPos();
+							String msg = "null";
+							if (args[1] != null)
+								msg = args[1].toString();
+							for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null,new AxisAlignedBB(pos).grow(1.25))) {
+								entity.sendMessage(new TextComponentString(TextFormatting.GREEN+(String)args[0]+": "+TextFormatting.RESET+msg));
+							}
+						},
+						"Sends message to players in 3x3x3 area",
+						"in form of a: b"
+				),
+				"querying",map(
+						"query",make(
+								args("register",REGISTER,"link",STRING,"property",STRING),
+								(env,args)->{
+									DataValue var = null;
+									String tag = (String)args[1];
+									String property = (String)args[2];
+									if (env.node.ctrl.taggedLinks.containsKey(tag)) {
+										BlockPos pos = env.node.ctrl.taggedLinks.get(tag);
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te)
+											var = te.getQueryData().get(property);
+									}
+									if (var == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else {
+										switch(var.getType()) {
+											case ENUM -> env.setRegister((int)args[0],"< ENUM >");
+											case NUMBER -> env.setRegister((int)args[0],(double)var.getNumber());
+											case STRING -> env.setRegister((int)args[0],var.toString());
+											case COMPOSITE -> env.setRegister((int)args[0],"< PACKED >");
+											default -> env.setRegister((int)args[0],"< ERROR >");
+										}
+									}
+								},
+								"Register = property of linked machine"
+						),
+						"queryadd",make(
+								args("register",REGISTER,"property",STRING),
+								(env,args)->{
+									String property = (String)args[1];
+									Double value = null;
+									for (BlockPos pos : env.node.ctrl.taggedLinks.values()) {
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te) {
+											DataValue dv = te.getQueryData().get(property);
+											if (dv instanceof DataValueFloat) {
+												if (value == null)
+													value = 0d;
+												value += dv.getNumber();
+											} else {
+												value = null;
+												break;
+											}
+										}
+									}
+									if (value == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else
+										env.setRegister((int)args[0],value);
+								},
+								"Register = bulk query ADD with property"
+						),
+						"queryavg",make(
+								args("register",REGISTER,"property",STRING),
+								(env,args)->{
+									String property = (String)args[1];
+									Double value = null;
+									int div = 0;
+									for (BlockPos pos : env.node.ctrl.taggedLinks.values()) {
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te) {
+											DataValue dv = te.getQueryData().get(property);
+											if (dv instanceof DataValueFloat) {
+												if (value == null)
+													value = 0d;
+												value += dv.getNumber();
+												div++;
+											} else {
+												value = null;
+												break;
+											}
+										}
+									}
+									if (value == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else
+										env.setRegister((int)args[0],value);
+								},
+								"Register = bulk query AVERAGE with property"
+						),
+						"querymul",make(
+								args("register",REGISTER,"property",STRING),
+								(env,args)->{
+									String property = (String)args[1];
+									Double value = null;
+									for (BlockPos pos : env.node.ctrl.taggedLinks.values()) {
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te) {
+											DataValue dv = te.getQueryData().get(property);
+											if (dv instanceof DataValueFloat) {
+												if (value == null)
+													value = 0d;
+												value *= dv.getNumber();
+											} else {
+												value = null;
+												break;
+											}
+										}
+									}
+									if (value == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else
+										env.setRegister((int)args[0],value);
+								},
+								"Register = bulk query MULTIPLY with property"
+						),
+						"queryh",make(
+								args("register",REGISTER,"property",STRING),
+								(env,args)->{
+									String property = (String)args[1];
+									Double value = null;
+									for (BlockPos pos : env.node.ctrl.taggedLinks.values()) {
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te) {
+											DataValue dv = te.getQueryData().get(property);
+											if (dv instanceof DataValueFloat) {
+												if (value == null)
+													value = (double)dv.getNumber();
+												value = Math.max(dv.getNumber(),value);
+											} else {
+												value = null;
+												break;
+											}
+										}
+									}
+									if (value == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else
+										env.setRegister((int)args[0],value);
+								},
+								"Register = bulk query HIGHEST with property"
+						),
+						"queryl",make(
+								args("register",REGISTER,"property",STRING),
+								(env,args)->{
+									String property = (String)args[1];
+									Double value = null;
+									for (BlockPos pos : env.node.ctrl.taggedLinks.values()) {
+										World world = env.node.ctrl.panel.parent.getControlWorld();
+										if (world.isBlockLoaded(pos) && world.getTileEntity(pos) instanceof IControllable te) {
+											DataValue dv = te.getQueryData().get(property);
+											if (dv instanceof DataValueFloat) {
+												if (value == null)
+													value = (double)dv.getNumber();
+												value = Math.min(dv.getNumber(),value);
+											} else {
+												value = null;
+												break;
+											}
+										}
+									}
+									if (value == null)
+										env.setRegister((int)args[0],"< ERROR >");
+									else
+										env.setRegister((int)args[0],value);
+								},
+								"Register = bulk query LOWEST with property"
+						)
 				)
 		);
 		rebuildInsnTable();

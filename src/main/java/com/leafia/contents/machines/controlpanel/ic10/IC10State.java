@@ -104,7 +104,7 @@ public class IC10State {
 	}
 
 	public void setRegister(int index,Object value) {
-		if (value instanceof String s) {
+		/*if (value instanceof String s) {
 			if (s.isEmpty()) {
 				register.remove(index);
 				return;
@@ -114,7 +114,7 @@ public class IC10State {
 				register.remove(index);
 				return;
 			}
-		}
+		}*/ // what was i thinking
 		if (index < -2 || index > AddonConfig.ic10maxregisters+1)
 			error = "OutOfRegisterBounds";
 		else
