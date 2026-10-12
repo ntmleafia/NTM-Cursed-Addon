@@ -582,8 +582,17 @@ public class SubElementIC10Editor extends SubElement {
 	public static DoubleBuffer dbuf = null;
 	public static final int scrollAreaX = 178;
 	public static final int scrollAreaY = 188;
+	public boolean isConnected = false;
 	@Override
 	protected void drawScreen() {
+		if (!isConnected) {
+			int cX = gui.width/2;
+			int cY = gui.height/2;
+			String hint = "Needs to be connected to output nodes!";
+			gui.getFontRenderer().drawString(hint, cX - gui.getFontRenderer().getStringWidth(hint) / 2F + 45, cY-108, 0xFFFF0000, false);
+		}
+		LeafiaGls.color(1,1,1);
+
 		if (dbuf == null)
 			dbuf = GLAllocation.createDirectByteBuffer(16*4).asDoubleBuffer(); // i have no idea how this even works
 

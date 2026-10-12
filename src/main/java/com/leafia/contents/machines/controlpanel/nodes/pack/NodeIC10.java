@@ -62,6 +62,12 @@ public class NodeIC10 extends Node {
 				IMixinGuiControlEdit mixin = (IMixinGuiControlEdit)subElement.gui;
 				SubElementIC10Editor editor = mixin.leafia$ic10Editor();
 				editor.instructions = instructions;
+				boolean connected = false;
+				for (NodeConnection output : outputs) {
+					if (output.connection != null)
+						connected = true;
+				}
+				editor.isConnected = connected;
 				mixin.leafia$pushElement(editor);
 			}
 		});
