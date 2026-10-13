@@ -96,12 +96,14 @@ public class SubElementIC10Editor extends SubElement {
 	}
 	public GuiButton btn_back;
 	public GuiButton btn_funcs;
+	public GuiButton btn_examples;
 	@Override
 	public void initGui() {
 		int cX = gui.width/2;
 		int cY = gui.height/2;
 		btn_back = gui.addButton(new GuiButton(gui.currentButtonId(), gui.getGuiLeft()+7, gui.getGuiTop()+13, 30, 20, "Back"));
 		btn_funcs = gui.addButton(new GuiButton(gui.currentButtonId(), gui.getGuiLeft()+54, gui.getGuiTop()+13, 58, 20, "Functions"));
+		btn_examples = gui.addButton(new GuiButton(gui.currentButtonId(), gui.getGuiLeft()+117, gui.getGuiTop()+13, 58, 20, "Examples"));
 		super.initGui();
 		scrollXRect = new FiaUIRect(gui,65,237,178,5);
 		scrollYRect = new FiaUIRect(gui,244,48,5,188);
@@ -111,8 +113,10 @@ public class SubElementIC10Editor extends SubElement {
 		IMixinGuiControlEdit mixin = (IMixinGuiControlEdit)gui;
 		if(button == btn_back)
 			mixin.leafia$popElement();
-		//if (button == btn_funcs)
-		//	mixin.leafia$pushElement(gui.variables);
+		if (button == btn_funcs)
+			mixin.leafia$pushElement(mixin.leafia$ic10Funcs());
+		if (button == btn_examples)
+			mixin.leafia$pushElement(mixin.leafia$ic10Examples());
 	}
 	@Override
 	protected void enableButtons(boolean enable){
@@ -120,6 +124,8 @@ public class SubElementIC10Editor extends SubElement {
 		btn_back.visible = enable;
 		btn_funcs.enabled = enable;
 		btn_funcs.visible = enable;
+		btn_examples.enabled = enable;
+		btn_examples.visible = enable;
 	}
 	public static ResourceLocation texture = new ResourceLocation("leafia","textures/gui/control_panel/gui_ic10_editor.png");
 	@Override
@@ -585,12 +591,12 @@ public class SubElementIC10Editor extends SubElement {
 	public boolean isConnected = false;
 	@Override
 	protected void drawScreen() {
-		if (!isConnected) {
+		//if (!isConnected) {
 			int cX = gui.width/2;
 			int cY = gui.height/2;
 			String hint = "Needs to be connected to output nodes!";
-			gui.getFontRenderer().drawString(hint, cX - gui.getFontRenderer().getStringWidth(hint) / 2F + 45, cY-108, 0xFFFF0000, false);
-		}
+			gui.getFontRenderer().drawString(hint, cX - gui.getFontRenderer().getStringWidth(hint) / 2F+15, cY-108+17, 0xFF777777, false);
+		//}
 		LeafiaGls.color(1,1,1);
 
 		if (dbuf == null)

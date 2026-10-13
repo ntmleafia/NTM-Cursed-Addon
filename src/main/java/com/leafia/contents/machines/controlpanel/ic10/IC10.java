@@ -7,6 +7,7 @@ import com.hbm.inventory.control_panel.types.DataValueString;
 import com.hbm.tileentity.network.RTTYSystem;
 import com.hbm.tileentity.network.RTTYSystem.RTTYChannel;
 import com.leafia.settings.AddonConfig;
+import com.llib.group.LeafiaMap;
 import com.llib.math.MathLeafia;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -77,7 +78,7 @@ public class IC10 {
 		return list;
 	}
 	public static Map<String,Object> map(Object... objects) {
-		Map<String,Object> map = new HashMap<>();
+		Map<String,Object> map = new LeafiaMap<>(); // Let's not use HashMap and actually keep the order?
 		int i = 0;
 		String key = null;
 		for (Object obj : objects) {
@@ -149,7 +150,7 @@ public class IC10 {
 	}
 	static {
 		insn_def = map(
-				"setup",map(
+				"Setup",map(
 						"alias",make(
 								args("name",NAME,"target",REGISTER),
 								(env,args)->{ },
@@ -189,7 +190,7 @@ public class IC10 {
 						},
 						"Value of key in Output = a for 1 tick, then b"
 				),
-				"math",map(
+				"Math",map(
 						"rand",make(
 								args("register",REGISTER),
 								(env,args)->{
@@ -197,7 +198,7 @@ public class IC10 {
 								},
 								"Register = A random decimal value between 0 and 1"
 						),
-						"ops",map(
+						"Operators",map(
 								"move",make(
 										args("register",REGISTER,"a",ANY),
 										(env,args)->{
@@ -248,7 +249,7 @@ public class IC10 {
 										"Register = a ^ b"
 								)
 						),
-						"advanced",map(
+						"Advanced",map(
 								"sqrt",make(
 										args("register",REGISTER,"a",NUMBER),
 										(env,args)->{
@@ -271,7 +272,7 @@ public class IC10 {
 										"Register = log(a)"
 								)
 						),
-						"utility",map(
+						"Utility",map(
 								"max",make(
 										args("register",REGISTER,"a",NUMBER,"b",NUMBER),
 										(env,args)->{
@@ -291,7 +292,7 @@ public class IC10 {
 										(env,args)->{
 											env.setRegister((int)args[0],(int)Math.floor((double)args[1]));
 										},
-										"Register = Register = largest integer less than or equal a"
+										"Register = largest integer less than or equal a"
 								),
 								"ceil",make(
 										args("register",REGISTER,"a",NUMBER),
@@ -308,7 +309,7 @@ public class IC10 {
 										"Register = a rounded to nearest integer"
 								)
 						),
-						"trigonometry",map(
+						"Trigonometry",map(
 								"sin",make(
 										args("register",REGISTER,"a",NUMBER),
 										(env,args)->{
@@ -360,8 +361,8 @@ public class IC10 {
 								)
 						)
 				),
-				"conditionals",map(
-						"register",map(
+				"Conditionals",map(
+						"Register",map(
 								"seq",make(
 										args("register",REGISTER,"a",ANY,"b",ANY),
 										(env,args)->{
@@ -447,7 +448,7 @@ public class IC10 {
 										"Register = 1 if a <= 0, otherwise 0"
 								)
 						),
-						"branch",map(
+						"Branch",map(
 								"beq",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
@@ -545,7 +546,7 @@ public class IC10 {
 										"Branch to line b if a <= 0"
 								)
 						),
-						"relative branch",map(
+						"Relative Branch",map(
 								"breq",make(
 										args("a",ANY,"b",ANY,"c",INTEGER),
 										(env,args)->{
@@ -644,7 +645,7 @@ public class IC10 {
 								)
 						)
 				),
-				"stack",map(
+				"Stack",map(
 						"push",make(
 								args("a",ANY),
 								(env,args)->{
@@ -719,7 +720,7 @@ public class IC10 {
 						"Pauses execution for a minecraft ticks",
 						"assuming this node is in the tick event"
 				),
-				"ror",map(
+				"Redstone Over Radio",map(
 						"lr",make(
 								args("register",REGISTER,"frequency",STRING),
 								(env,args)->{
@@ -742,10 +743,10 @@ public class IC10 {
 										Double num = tonumberd(s);
 										env.setRegister((int)args[0],num != null ? num : -1D);
 									} else
-										env.setRegister((int)args[0],-1);
+										env.setRegister((int)args[0],0);
 								},
 								"Register = value from RoR signal with",
-								"specified frequency (as string)"
+								"specified frequency (as number)"
 						),
 						"sr",make(
 								args("frequency",STRING,"a",STRING),
@@ -766,7 +767,7 @@ public class IC10 {
 								"= a (as number)"
 						)
 				),
-				"variables",map(
+				"Variables",map(
 						"llv",make(
 								args("register",REGISTER,"name",STRING),
 								(env,args)->{
@@ -845,7 +846,7 @@ public class IC10 {
 						"Sends message to players in 3x3x3 area",
 						"in form of a: b"
 				),
-				"querying",map(
+				"Querying",map(
 						"query",make(
 								args("register",REGISTER,"link",STRING,"property",STRING),
 								(env,args)->{

@@ -24,7 +24,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class NodeIC10 extends Node {
 	// \{(.*)\};
-	// asList($1),
+	// asArrayList($1),
 	static <T> ArrayList<T> asArrayList(T ...a) {
 		return new ArrayList<>(Arrays.asList(a));
 	}
@@ -62,12 +62,15 @@ public class NodeIC10 extends Node {
 				IMixinGuiControlEdit mixin = (IMixinGuiControlEdit)subElement.gui;
 				SubElementIC10Editor editor = mixin.leafia$ic10Editor();
 				editor.instructions = instructions;
+				/* this fucking doesnt work
 				boolean connected = false;
 				for (NodeConnection output : outputs) {
-					if (output.connection != null)
+					if (output.connection != null) {
 						connected = true;
-				}
-				editor.isConnected = connected;
+						break;
+					}
+				}*/
+				//editor.isConnected = connected;
 				mixin.leafia$pushElement(editor);
 			}
 		});
