@@ -361,6 +361,37 @@ public class IC10 {
 								)
 						)
 				),
+				"String",map(
+						"concat",make(
+								args("register",REGISTER,"a",ANY,"b",ANY),
+								(env,args)->{
+									env.setRegister((int)args[0],args[1].toString()+args[2].toString());
+								},
+								"Register = a + b (as string)"
+						),
+						"substr",make(
+								args("register",REGISTER,"a",ANY,"b",INTEGER,"c",INTEGER),
+								(env,args)->{
+									String s = args[1].toString();
+									int start = (int)args[2];
+									int end = (int)args[3];
+									if (start < 0)
+										start = s.length()-Math.abs(start);
+									else
+										start = Math.max(0,start-1);
+									if (end < 0)
+										end = s.length()-Math.abs(end)+1;
+									try {
+										s = s.substring(start,end);
+									} catch (IndexOutOfBoundsException e) {
+										s = "ERROR";
+									}
+									env.setRegister((int)args[0],s);
+								},
+								"Register = a substring beginning",
+								"at b and ending at c"
+						)
+				),
 				"Conditionals",map(
 						"Register",map(
 								"seq",make(
