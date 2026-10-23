@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2026 SampoPro <ze61ogqzs@mozmail.com>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.jei;
 
 import com.hbm.blocks.ModBlocks;

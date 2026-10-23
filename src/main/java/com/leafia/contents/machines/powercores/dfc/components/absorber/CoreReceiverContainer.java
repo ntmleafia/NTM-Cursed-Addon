@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.dfc.components.absorber;
 
 import com.hbm.tileentity.machine.TileEntityCoreReceiver;

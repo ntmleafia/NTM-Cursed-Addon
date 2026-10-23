@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.effects.folkvangr;
 
 import com.hbm.entity.logic.IChunkLoader;
@@ -240,24 +244,27 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 	}
 	protected boolean carveChunk(int cx,int cy,int cz) {
 		long radius = cloudBound.getMaxSize();
+		var center = getPosition();
+		int sectionBottom = cy * 16;
+		int sectionTop = sectionBottom + 15;
 		//if (getPositionVector().distanceTo(new Vec3d(cx*16+MathHelper.positiveModulo(posX,16),cy*16+MathHelper.positiveModulo(posY,16),cz*16+MathHelper.positiveModulo(posZ,16))) > radius+14) return;
 		ChunkPos chunkPos = new ChunkPos(cx,cz);
 		boolean carved = false; // optimization
 		for (int x = chunkPos.getXStart(); x <= chunkPos.getXEnd(); x++) {
 			for (int z = chunkPos.getZStart(); z <= chunkPos.getZEnd(); z++) {
 				// make sure it don't carve empty chunks in the air
-				if (world.getHeight(x,z) < cy*16) continue;
+				if (world.getHeight(x,z) < sectionBottom) continue;
 				carved = true;
-				long rx = x-getPosition().getX();
-				long rz = z-getPosition().getZ();
+				long rx = x-center.getX();
+				long rz = z-center.getZ();
 				// horizontal radius
 				double distFromRing = radius*radius-(rx*rx + rz*rz);
 				if (distFromRing > 1) {
 					// y length
 					int ylength = (int)Math.sqrt(Math.max(0,distFromRing-1));
 					// what the hell even is this
-					int ystart = Math.max(getPosition().getY()-ylength,cy*16);//MathHelper.clamp(getPosition().getY()-ylength,cy*16,cy*16+15);
-					int yend = Math.min(getPosition().getY()+ylength,cy*16+15);//MathHelper.clamp(getPosition().getY()+ylength,cy*16,cy*16+15);
+					int ystart = Math.max(center.getY()-ylength,sectionBottom);
+					int yend = Math.min(center.getY()+ylength,sectionTop);
 					// avoid deleting the bedrock
 					if (ystart <= 0) ystart++;
 					if (yend <= 0) yend++;
@@ -326,7 +333,7 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 		if (min > max) return false;
 		List<BlockPos> removeQueue = new ArrayList<>(); // ConcurrentModificationException sucks >:(
 		for (BlockPos pos : chunk.getTileEntityMap().keySet()) {
-			if ((pos.getY() >= min*16) && (pos.getY() < max*16))
+			if ((pos.getY() >= min*16) && (pos.getY() < (max+1)*16))
 				removeQueue.add(pos);
 		}
 		for (BlockPos pos : removeQueue) {
@@ -363,43 +370,29 @@ public class EntityNukeFolkvangr extends Entity implements IChunkLoader {
 	}
 	@Override
 	public void init(ForgeChunkManager.Ticket ticket) {
-		if(!world.isRemote) {
-			if(ticket != null) {
-				if(loaderTicket == null) {
-					loaderTicket = ticket;
-					loaderTicket.bindEntity(this);
-					loaderTicket.getModData();
-				}
-				ForgeChunkManager.forceChunk(loaderTicket, new ChunkPos(chunkCoordX, chunkCoordZ));
-			}
+		if (world.isRemote || ticket == null) return;
+		if (loaderTicket == null) {
+			loaderTicket = ticket;
+			ticket.bindEntity(this);
+			ticket.getModData();
 		}
+		ForgeChunkManager.forceChunk(loaderTicket, new ChunkPos(chunkCoordX, chunkCoordZ));
 	}
-	List<ChunkPos> loadedChunks = new ArrayList<ChunkPos>();
+	private static final int[] NEIGHBOR_OFFSETS = {
+			0, 0, 1, 1, -1, -1, 1, -1, -1, 1,
+			1, 0, 0, 1, -1, 0, 0, -1
+	};
+	List<ChunkPos> loadedChunks = new ArrayList<>(9);
 	@Override
 	public void loadNeighboringChunks(int newChunkX, int newChunkZ) {
-		if(!world.isRemote && loaderTicket != null)
-		{
-			for(ChunkPos chunk : loadedChunks)
-			{
-				ForgeChunkManager.unforceChunk(loaderTicket, chunk);
-			}
-
-			loadedChunks.clear();
-			loadedChunks.add(new ChunkPos(newChunkX, newChunkZ));
-			loadedChunks.add(new ChunkPos(newChunkX + 1, newChunkZ + 1));
-			loadedChunks.add(new ChunkPos(newChunkX - 1, newChunkZ - 1));
-			loadedChunks.add(new ChunkPos(newChunkX + 1, newChunkZ - 1));
-			loadedChunks.add(new ChunkPos(newChunkX - 1, newChunkZ + 1));
-			loadedChunks.add(new ChunkPos(newChunkX + 1, newChunkZ));
-			loadedChunks.add(new ChunkPos(newChunkX, newChunkZ + 1));
-			loadedChunks.add(new ChunkPos(newChunkX - 1, newChunkZ));
-			loadedChunks.add(new ChunkPos(newChunkX, newChunkZ - 1));
-
-			for(ChunkPos chunk : loadedChunks)
-			{
-				ForgeChunkManager.forceChunk(loaderTicket, chunk);
-			}
+		if (world.isRemote || loaderTicket == null) return;
+		loadedChunks.forEach(chunk -> ForgeChunkManager.unforceChunk(loaderTicket, chunk));
+		loadedChunks.clear();
+		for (int offset = 0; offset < NEIGHBOR_OFFSETS.length; offset += 2) {
+			loadedChunks.add(new ChunkPos(newChunkX + NEIGHBOR_OFFSETS[offset],
+					newChunkZ + NEIGHBOR_OFFSETS[offset + 1]));
 		}
+		loadedChunks.forEach(chunk -> ForgeChunkManager.forceChunk(loaderTicket, chunk));
 	}
 	private ChunkPos mainChunk;
 	public void loadMainChunk() {

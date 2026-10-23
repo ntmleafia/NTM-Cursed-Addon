@@ -1,6 +1,11 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.unsorted;
 
 import com.hbm.main.client.NTMClientRegistry;
+import com.leafia.dev.particles.ParticleQuad;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.Entity;
@@ -10,79 +15,67 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ParticleBasicSmoke extends Particle {
+    private int age;
+    public int maxAge;
+    public float scale = 1;
+    public float alphaMultiplier = 1;
 
-	private int age;
-	public int maxAge;
-	public float scale = 1;
-	public float alphaMultiplier = 1;
+    public ParticleBasicSmoke(World world, double x, double y, double z) {
+        super(world, x, y, z);
+        maxAge = 100 + rand.nextInt(40);
+        setParticleTexture(NTMClientRegistry.contrail);
+        setParticleColor(0.25F, 0.25F, 0.25F);
+    }
 
-	public ParticleBasicSmoke(World worldIn,double posXIn,double posYIn,double posZIn) {
-		super(worldIn, posXIn, posYIn, posZIn);
-		maxAge = 100 + rand.nextInt(40);
-		this.setParticleTexture(NTMClientRegistry.contrail);
-		setParticleColor(0.25f,0.25f,0.25f);
-	}
+    public void setParticleColor(float red, float green, float blue) {
+        setRBGColorF(red, green, blue);
+    }
 
-	public void setParticleColor(float r,float g,float b) {
-		particleRed = r;
-		particleGreen = g;
-		particleBlue = b;
-	}
+    public void setMotion(double x, double y, double z) {
+        motionX = x;
+        motionY = y;
+        motionZ = z;
+    }
 
-	public void setMotion(double x, double y, double z){
-		this.motionX = x;
-		this.motionY = y;
-		this.motionZ = z;
-	}
+    @Override
+    public void onUpdate() {
+        prevPosX = posX;
+        prevPosY = posY;
+        prevPosZ = posZ;
+        particleAlpha = (1 - (float) age / (float) maxAge) * alphaMultiplier;
+        age++;
+        if (age == maxAge)
+            setExpired();
+        motionX *= 0.7599999785423279D;
+        motionY *= 0.7599999785423279D;
+        motionZ *= 0.7599999785423279D;
+        move(motionX, motionY, motionZ);
+    }
 
-	@Override
-	public void onUpdate() {
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+    @Override
+    public int getFXLayer() {
+        return 1;
+    }
 
-		particleAlpha = (1 - ((float) age / (float) maxAge))*alphaMultiplier;
+    @Override
+    public boolean shouldDisableDepth() {
+        return true;
+    }
 
-		++this.age;
+    @Override
+    public int getBrightnessForRender(float partialTicks) {
+        return 240;
+    }
 
-		if (this.age == this.maxAge) {
-			this.setExpired();
-		}
-
-		this.motionX *= 0.7599999785423279D;
-		this.motionY *= 0.7599999785423279D;
-		this.motionZ *= 0.7599999785423279D;
-
-		this.move(this.motionX, this.motionY, this.motionZ);
-	}
-
-	@Override
-	public int getFXLayer() {
-		return 1;
-	}
-
-	@Override
-	public boolean shouldDisableDepth() {
-		return true;
-	}
-
-	@Override
-	public void renderParticle(BufferBuilder buffer,Entity entityIn,float partialTicks,float rotationX,float rotationZ,float rotationYZ,float rotationXY,float rotationXZ) {int j = this.getBrightnessForRender(partialTicks);
-		int k = j >> 16 & 65535;
-		int l = j & 65535;
-
-		float pX = (float) ((this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX));
-		float pY = (float) ((this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY));
-		float pZ = (float) ((this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ));
-
-		buffer.pos((double)(pX - rotationX * scale - rotationXY * scale), (double)(pY - rotationZ * scale), (double)(pZ - rotationYZ * scale - rotationXZ * scale)).tex(particleTexture.getMaxU(), particleTexture.getMaxV()).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(k, l).endVertex();
-		buffer.pos((double)(pX - rotationX * scale + rotationXY * scale), (double)(pY + rotationZ * scale), (double)(pZ - rotationYZ * scale + rotationXZ * scale)).tex(particleTexture.getMaxU(), particleTexture.getMinV()).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(k, l).endVertex();
-		buffer.pos((double)(pX + rotationX * scale + rotationXY * scale), (double)(pY + rotationZ * scale), (double)(pZ + rotationYZ * scale + rotationXZ * scale)).tex(particleTexture.getMinU(), particleTexture.getMinV()).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(k, l).endVertex();
-		buffer.pos((double)(pX + rotationX * scale - rotationXY * scale), (double)(pY - rotationZ * scale), (double)(pZ + rotationYZ * scale - rotationXZ * scale)).tex(particleTexture.getMinU(), particleTexture.getMaxV()).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(k, l).endVertex();
-	}
-
-	@Override
-	public int getBrightnessForRender(float p_189214_1_) {
-		return 240;
-	}
+    @Override
+    public void renderParticle(BufferBuilder buffer, Entity camera, float partialTicks,
+                               float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        ParticleQuad.emit(buffer,
+                (float) (prevPosX + (posX - prevPosX) * (double) partialTicks - interpPosX),
+                (float) (prevPosY + (posY - prevPosY) * (double) partialTicks - interpPosY),
+                (float) (prevPosZ + (posZ - prevPosZ) * (double) partialTicks - interpPosZ),
+                rotationX, rotationYZ, rotationZ, rotationXY, rotationXZ, scale,
+                particleTexture.getMinU(), particleTexture.getMaxU(), particleTexture.getMinV(), particleTexture.getMaxV(),
+                particleRed, particleGreen, particleBlue, particleAlpha, getBrightnessForRender(partialTicks));
+    }
 }

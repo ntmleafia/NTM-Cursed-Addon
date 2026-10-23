@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025 Vidarin <smeds.vidar@gmail.com>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.api.fluidmk2.FluidNode;

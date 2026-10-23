@@ -28,3 +28,8 @@ blowdryerSetup {
 }
 
 rootProject.name = rootProject.projectDir.getName()
+
+include('lgpl-assets')
+project(':lgpl-assets').projectDir = file('modules/lgpl-assets')
+include('lgpl-code')
+project(':lgpl-code').projectDir = file('modules/lgpl-code')

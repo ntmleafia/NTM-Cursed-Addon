@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2025 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.effects.folkvangr.visual;
 
 import com.hbm.entity.effect.EntityCloudFleija;

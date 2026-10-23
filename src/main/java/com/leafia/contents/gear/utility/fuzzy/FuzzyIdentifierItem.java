@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.gear.utility.fuzzy;
 
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
@@ -149,40 +153,35 @@ public class FuzzyIdentifierItem extends AddonItemBase implements IItemFluidIden
 		}
 		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
-	public static void spreadType(World worldIn, BlockPos pos, FluidType hand, FluidType pipe, int x){
-		if(x > 0){
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof TileEntityPipeBaseNT duct){
-				if(duct.getType() == pipe){
-					duct.setType(hand);
-					duct.markDirty();
-					spreadType(worldIn, pos.add(1, 0, 0), hand, pipe, x-1);
-					spreadType(worldIn, pos.add(0, 1, 0), hand, pipe, x-1);
-					spreadType(worldIn, pos.add(0, 0, 1), hand, pipe, x-1);
-					spreadType(worldIn, pos.add(-1, 0, 0), hand, pipe, x-1);
-					spreadType(worldIn, pos.add(0, -1, 0), hand, pipe, x-1);
-					spreadType(worldIn, pos.add(0, 0, -1), hand, pipe, x-1);
-				}
-			}
-		}
-	}
-	public static void spreadTypeFF(World worldIn, BlockPos pos, FluidType hand, FluidType pipe, int x){
-		if(x > 0){
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof FFDuctTE duct){
-				if(duct.getType() == pipe){
-					duct.setType(hand);
-					duct.markDirty();
-					spreadTypeFF(worldIn, pos.add(1, 0, 0), hand, pipe, x-1);
-					spreadTypeFF(worldIn, pos.add(0, 1, 0), hand, pipe, x-1);
-					spreadTypeFF(worldIn, pos.add(0, 0, 1), hand, pipe, x-1);
-					spreadTypeFF(worldIn, pos.add(-1, 0, 0), hand, pipe, x-1);
-					spreadTypeFF(worldIn, pos.add(0, -1, 0), hand, pipe, x-1);
-					spreadTypeFF(worldIn, pos.add(0, 0, -1), hand, pipe, x-1);
-				}
-			}
-		}
-	}
+    private static final EnumFacing[] SPREAD_ORDER = {
+            EnumFacing.EAST, EnumFacing.UP, EnumFacing.SOUTH,
+            EnumFacing.WEST, EnumFacing.DOWN, EnumFacing.NORTH
+    };
+
+    public static void spreadType(World worldIn, BlockPos pos, FluidType hand, FluidType pipe, int depth) {
+        spreadDuctType(worldIn, pos, hand, pipe, depth, false);
+    }
+
+    public static void spreadTypeFF(World worldIn, BlockPos pos, FluidType hand, FluidType pipe, int depth) {
+        spreadDuctType(worldIn, pos, hand, pipe, depth, true);
+    }
+
+    private static void spreadDuctType(World world, BlockPos position, FluidType replacement,
+                                       FluidType expected, int remaining, boolean ff) {
+        if (remaining <= 0) return;
+        var tile = world.getTileEntity(position);
+        if (ff) {
+            if (!(tile instanceof FFDuctTE duct) || duct.getType() != expected) return;
+            duct.setType(replacement);
+        } else {
+            if (!(tile instanceof TileEntityPipeBaseNT duct) || duct.getType() != expected) return;
+            duct.setType(replacement);
+        }
+        tile.markDirty();
+        for (var direction : SPREAD_ORDER) {
+            spreadDuctType(world, position.offset(direction), replacement, expected, remaining - 1, ff);
+        }
+    }
 	@Override
 	public ModelResourceLocation getResourceLocation() {
 		return fuzzyModel;

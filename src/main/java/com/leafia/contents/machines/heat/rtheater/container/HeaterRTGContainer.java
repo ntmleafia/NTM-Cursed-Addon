@@ -1,91 +1,33 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.heat.rtheater.container;
 
 import com.leafia.contents.machines.heat.rtheater.HeaterRTGTE;
+import com.leafia.dev.container_utility.LeafiaItemTransferable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
 
-public class HeaterRTGContainer extends Container {
+public class HeaterRTGContainer extends LeafiaItemTransferable {
+    private static final int[] MACHINE_POSITIONS = {26,22,44,22,62,22,80,22,98,22,26,40,44,40,62,40,80,40,98,40,26,58,44,58,62,58,80,58,98,58,4,40};
+    private static final int[] IMPORT_RANGES = {0,15};
+    private final HeaterRTGTE machine;
 
-	private HeaterRTGTE heater;
-	private int heat;
-	
-	public HeaterRTGContainer(InventoryPlayer invPlayer,HeaterRTGTE tedf) {
-		heat = 0;
-		
-		heater = tedf;
-		
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 0, 26, 22));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 1, 44, 22));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 2, 62, 22));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 3, 80, 22));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 4, 98, 22));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 5, 26, 40));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 6, 44, 40));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 7, 62, 40));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 8, 80, 40));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 9, 98, 40));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 10, 26, 58));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 11, 44, 58));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 12, 62, 58));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 13, 80, 58));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 14, 98, 58));
-		this.addSlotToContainer(new SlotItemHandler(tedf.inventory, 15, 4, 40));
-		
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 9; j++)
-			{
-				this.addSlotToContainer(new Slot(invPlayer, j + i * 9 + 9, 8 + j * 18, 94 + i * 18));
-			}
-		}
-		
-		for(int i = 0; i < 9; i++)
-		{
-			this.addSlotToContainer(new Slot(invPlayer, i, 8 + i * 18, 152));
-		}
-	}
-	
-	@Override
-    public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int par2)
-    {
-		ItemStack var3 = ItemStack.EMPTY;
-		Slot var4 = (Slot) this.inventorySlots.get(par2);
-		
-		if (var4 != null && var4.getHasStack())
-		{
-			ItemStack var5 = var4.getStack();
-			var3 = var5.copy();
-			
-            if (par2 <= 14) {
-				if (!this.mergeItemStack(var5, 15, this.inventorySlots.size(), true))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-			else if (!this.mergeItemStack(var5, 0, 15, false))
-			{
-					return ItemStack.EMPTY;
-			}
-			
-			if (var5.isEmpty())
-			{
-				var4.putStack(ItemStack.EMPTY);
-			}
-			else
-			{
-				var4.onSlotChanged();
-			}
-		}
-		
-		return var3;
+    public HeaterRTGContainer(InventoryPlayer player, HeaterRTGTE machine) {
+        this.machine = machine;
+        addMachineSlots(machine.inventory, MACHINE_POSITIONS);
+        addPlayerInventory(player, 8, 94);
     }
 
     @Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return heater.isUseableByPlayer(player);
-	}
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        return shiftClick(index, 14, 15, IMPORT_RANGES);
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return machine.isUseableByPlayer(player);
+    }
 }

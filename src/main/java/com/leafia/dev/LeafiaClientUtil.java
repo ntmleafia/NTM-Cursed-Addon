@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.dev;
 
 import com.hbm.inventory.fluid.FluidStack;
@@ -17,6 +21,7 @@ import com.leafia.contents.machines.reactors.lftr.components.MSRTEBase;
 import com.leafia.contents.machines.reactors.lftr.components.element.MSRElementTE.MSRFuel;
 import com.leafia.dev.custompacket.LeafiaCustomPacket;
 import com.leafia.dev.gui.LCEGuiInfoContainer;
+import com.leafia.dev.render.FluidGaugeRenderer;
 import com.leafia.settings.AddonConfig;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,7 +45,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +118,7 @@ public class LeafiaClientUtil {
 		double r = ((color & 0xff0000) >> 16) / 255D;
 		double g = ((color & 0x00ff00) >> 8) / 255D;
 		double b = ((color & 0x0000ff) >> 0) / 255D;
-		GL11.glColor3d(r, g, b);
+		GlStateManager.color((float) r, (float) g, (float) b, 1.0F);
 		boolean wasBlendEnabled = RenderUtil.isBlendEnabled();
 		if (!wasBlendEnabled) GlStateManager.enableBlend();
 		Minecraft.getMinecraft().getTextureManager().bindTexture(type.getTexture());
@@ -335,110 +339,47 @@ public class LeafiaClientUtil {
 		}
 		return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(f.getStill().toString());
 	}
-	// Drillgon200: Wow that took a while to fix. Now the code is ugly and I'll
-	// probably never fix it because it works. Dang it.
-	/**
-	 * Tessellates a ForgeFluid type liquid texture across a rectangle without looking weird and
-	 * stretched.
-	 * <p>TO CORRECTLY RENDER, PUT 28 ON Y OFFSET.
-	 *
-	 * @param tank
-	 *            - the tank with the fluid to render
-	 * @param guiLeft
-	 *            - the left side of the gui
-	 * @param guiTop
-	 *            - the top of the gui
-	 * @param zLevel
-	 *            - the z level of the gui
-	 * @param sizeX
-	 *            - how big the rectangle should be
-	 * @param sizeY
-	 *            - how tall the rectangle should be
-	 * @param offsetX
-	 *            - where the starting x of the rectangle should be on screen
-	 * @param offsetY
-	 *            - where the starting y of the rectangle should be on screen
-	 */
-	@SideOnly(Side.CLIENT)
-	public static void drawLiquid(FluidTank tank,int guiLeft,int guiTop,float zLevel,int sizeX,int sizeY,int offsetX,int offsetY){
-		drawLiquid(tank, guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY, false);
-	}
+    @SideOnly(Side.CLIENT)
+    public static void drawLiquid(FluidTank tank, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY) {
+        drawLiquid(tank, guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY, false);
+    }
 
-	/// draw ForgeFluid type fluids
-	@SideOnly(Side.CLIENT)
-	public static void drawLogLiquid(FluidTank tank, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY){
-		drawLiquid(tank, guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY, true);
-	}
+    @SideOnly(Side.CLIENT)
+    public static void drawLogLiquid(FluidTank tank, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY) {
+        drawLiquid(tank, guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY, true);
+    }
 
-	/// draw ForgeFluid type fluids
-	@SideOnly(Side.CLIENT)
-	public static void drawLiquid(FluidTank tank, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY, boolean log){
-		// This is retarded, but it would be too much of a pain to fix it
-		offsetY -= 44;
-		NTMRenderHelper.bindBlockTexture();
+    @SideOnly(Side.CLIENT)
+    public static void drawLiquid(FluidTank tank, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY, boolean log) {
+        NTMRenderHelper.bindBlockTexture();
+        var contents = tank.getFluid();
+        if (contents == null) return;
+        var amount = tank.getFluidAmount();
+        var fraction = log ? (amount > 0 ? Math.log(amount) / Math.log(tank.getCapacity()) : 0)
+                : (double) amount / tank.getCapacity();
+        drawForgeGauge(contents.getFluid(), guiLeft + offsetX, guiTop + offsetY - 28,
+                zLevel, sizeX, (int) (sizeY * fraction));
+    }
 
-		if(tank.getFluid() != null) {
-			TextureAtlasSprite liquidIcon = getTextureFromFluid(tank.getFluid().getFluid());
+    @SideOnly(Side.CLIENT)
+    public static void drawLiquid(net.minecraftforge.fluids.FluidStack fluid, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY) {
+        if (fluid != null && fluid.getFluid() != null)
+            drawLiquid(fluid.getFluid(), guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY);
+    }
 
-			if(liquidIcon != null) {
-				int level = 0;
-				if(log){
-					if(tank.getFluidAmount() > 0){
-						level = (int)(sizeY * (Math.log(tank.getFluidAmount()) / Math.log(tank.getCapacity())));
-					}
-				} else{
-					level = (int)(((double)tank.getFluidAmount() / (double)tank.getCapacity()) * sizeY);
-				}
+    @SideOnly(Side.CLIENT)
+    public static void drawLiquid(Fluid fluid, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY) {
+        NTMRenderHelper.bindBlockTexture();
+        if (fluid != null)
+            drawForgeGauge(fluid, guiLeft + offsetX, guiTop + offsetY + 16, zLevel, sizeX, sizeY);
+    }
 
-				drawFull(tank.getFluid().getFluid(), guiLeft, guiTop, zLevel, liquidIcon, level, sizeX, offsetX, offsetY, sizeY);
-			}
-		}
-	}
-
-	/// draw ForgeFluid type fluids
-	@SideOnly(Side.CLIENT)
-	public static void drawLiquid(net.minecraftforge.fluids.FluidStack fluid,int guiLeft,int guiTop,float zLevel,int sizeX,int sizeY,int offsetX,int offsetY){
-		if(fluid == null || fluid.getFluid() == null)
-			return;
-		drawLiquid(fluid.getFluid(), guiLeft, guiTop, zLevel, sizeX, sizeY, offsetX, offsetY);
-	}
-
-	/// draw ForgeFluid type fluids
-	@SideOnly(Side.CLIENT)
-	public static void drawLiquid(Fluid fluid, int guiLeft, int guiTop, float zLevel, int sizeX, int sizeY, int offsetX, int offsetY){
-		NTMRenderHelper.bindBlockTexture();
-		if(fluid != null) {
-			TextureAtlasSprite liquidIcon = getTextureFromFluid(fluid);
-			if(liquidIcon != null) {
-				drawFull(fluid, guiLeft, guiTop, zLevel, liquidIcon, sizeY, sizeX, offsetX, offsetY, sizeY);
-			}
-		}
-	}
-
-	/**
-	 * Internal method to actually render the fluid
-	 *
-	 * @param guiLeft
-	 * @param guiTop
-	 * @param zLevel
-	 * @param liquidIcon
-	 * @param level
-	 * @param sizeX
-	 * @param offsetX
-	 * @param offsetY
-	 */
-	@SideOnly(Side.CLIENT)
-	private static void drawFull(Fluid f, int guiLeft, int guiTop, float zLevel, TextureAtlasSprite liquidIcon, int level, int sizeX, int offsetX, int offsetY, int sizeY){
-		int color = f.getColor();
-		NTMRenderHelper.setColor(color);
-		NTMRenderHelper.startDrawingTexturedQuads();
-		for(int i = 0; i < level; i += 16) {
-			for(int j = 0; j < sizeX; j += 16) {
-				int drawX = Math.min(16, sizeX - j);
-				int drawY = Math.min(16, level - i);
-				NTMRenderHelper.drawScaledTexture(liquidIcon, guiLeft + offsetX + j, guiTop + offsetY - i + (16 - drawY), drawX, drawY, zLevel);
-			}
-		}
-		NTMRenderHelper.draw();
-	}
+    @SideOnly(Side.CLIENT)
+    private static void drawForgeGauge(Fluid fluid, int left, int bottom, float z, int width, int height) {
+        var sprite = getTextureFromFluid(fluid);
+        if (sprite != null) {
+            NTMRenderHelper.setColor(fluid.getColor());
+            FluidGaugeRenderer.draw(sprite, left, bottom, z, width, height);
+        }
+    }
 }

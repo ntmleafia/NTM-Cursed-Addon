@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.pipe_amat.charger;
 
 import com.hbm.api.energymk2.IEnergyReceiverMK2;
@@ -36,24 +40,14 @@ public class AmatDuctChargerTE extends AmatDuctTE implements ITickable, IEnergyR
 	@Override
 	public void update() {
 		if(!world.isRemote) {
-			for (EnumFacing facing : EnumFacing.values()) {
+			for (EnumFacing facing : EnumFacing.VALUES) {
 				BlockPos offset = pos.offset(facing);
 				ForgeDirection dir = ForgeDirection.getOrientation(facing);
 				trySubscribe(world,offset,dir);
 				//System.out.println(power);
 			}
 			if (canUpdate()) {
-				if (this.node == null || this.node.expired) {
-
-					if (this.shouldCreateNode()) {
-						this.node = UniNodespace.getNode(world,pos,AmatNet.getProvider(type));
-
-						if (this.node == null || this.node.expired) {
-							this.node = this.createNodeAmat(type);
-							UniNodespace.createNode(world,this.node);
-						}
-					}
-				}
+				ensureAmatNode();
 				if (node != null && node.net != null) {
 					long demand = AmatNet.maxPower-node.net.power;
 					long transfer = Math.min(power,demand);
@@ -66,36 +60,11 @@ public class AmatDuctChargerTE extends AmatDuctTE implements ITickable, IEnergyR
 			LeafiaPacket._start(this).__write(31,power).__sendToAffectedClients();
 		}
 	}
-	@Override
-	public void invalidate() {
-		super.invalidate();
-
-		if(!world.isRemote) {
-			if(this.node != null) {
-				UniNodespace.destroyNode(world, pos, AmatNet.getProvider(type));
-			}
-		}
-	}
-
 	public void sendTypeUpdatePacket() {
 		LeafiaPacket._start(this).__write(30,type.getID()).__sendToAffectedClients();
 	}
 	public void setType(FluidType type) {
-		FluidType prev = this.type;
-		this.type = type;
-		this.markDirty();
-
-		if (world instanceof WorldServer) {
-			IBlockState state = world.getBlockState(pos);
-			world.notifyBlockUpdate(pos, state, state, 3);
-			world.markBlockRangeForRenderUpdate(pos, pos);
-		}
-
-		UniNodespace.destroyNode(world, pos, AmatNet.getProvider(prev));
-
-		if(this.node != null) {
-			this.node = null;
-		}
+		super.setType(type);
 		sendTypeUpdatePacket();
 	}
 	public FluidType getType() {

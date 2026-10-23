@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.ff_duct.utility.pump;
 
 import com.hbm.inventory.fluid.FluidType;

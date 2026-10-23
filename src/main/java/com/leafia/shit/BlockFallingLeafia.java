@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025 MrNorwood
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.shit;
 
 import net.minecraft.block.SoundType;

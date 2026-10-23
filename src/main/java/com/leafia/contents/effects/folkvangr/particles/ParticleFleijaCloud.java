@@ -1,24 +1,17 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.effects.folkvangr.particles;
 
-
-import com.hbm.render.NTMRenderHelper;
+import com.leafia.dev.particles.AddonBillboardParticle;
 import com.leafia.overwrite_contents.interfaces.IMixinEntityCloudFleija;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
 
-public class ParticleFleijaCloud extends Particle {
+public class ParticleFleijaCloud extends AddonBillboardParticle {
 
 	private static final ResourceLocation texture = new ResourceLocation("hbm" + ":textures/particle/particle_base.png");
 	IMixinEntityCloudFleija cloud;
@@ -33,7 +26,7 @@ public class ParticleFleijaCloud extends Particle {
 		this.posZ = ((Entity)cloud).posZ+lookVector.z*s+rightVector.z*s;
 	}
 	public ParticleFleijaCloud(World world,Vec3d forward,Vec3d right,IMixinEntityCloudFleija cloud) {
-		super(world, ((Entity)cloud).posX, ((Entity)cloud).posY, ((Entity)cloud).posZ);
+		super(world, ((Entity)cloud).posX, ((Entity)cloud).posY, ((Entity)cloud).posZ, texture, true);
 		this.particleScale = 3;
 		this.particleRed = this.particleGreen = this.particleBlue = 0.9F + world.rand.nextFloat() * 0.05F;
 		this.canCollide = false;
@@ -74,48 +67,4 @@ public class ParticleFleijaCloud extends Particle {
 			this.setExpired();
 		}
 	}
-	
-	@Override
-	public int getFXLayer(){
-		return 3;
-	}
-	
-	@Override
-	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ){
-		NTMRenderHelper.resetParticleInterpPos(entityIn, partialTicks);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-
-		GlStateManager.disableLighting();
-		GlStateManager.enableBlend();
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
-		GlStateManager.depthMask(false);
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
-		RenderHelper.disableStandardItemLighting();
-		Tessellator tes = Tessellator.getInstance();
-		BufferBuilder buf = tes.getBuffer();
-
-		int i = this.getBrightnessForRender(partialTicks);
-        int j = i >> 16 & 65535;
-        int k = i & 65535;
-		
-		GlStateManager.glNormal3f(0, 1, 0);
-		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-
-		float scale = this.particleScale;
-		float pX = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-		float pY = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-		float pZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
-
-		buf.pos((double) (pX - rotationX * scale - rotationXY * scale), (double) (pY - rotationZ * scale), (double) (pZ - rotationYZ * scale - rotationXZ * scale)).tex(1, 1).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buf.pos((double) (pX - rotationX * scale + rotationXY * scale), (double) (pY + rotationZ * scale), (double) (pZ - rotationYZ * scale + rotationXZ * scale)).tex(1, 0).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buf.pos((double) (pX + rotationX * scale + rotationXY * scale), (double) (pY + rotationZ * scale), (double) (pZ + rotationYZ * scale + rotationXZ * scale)).tex(0, 0).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buf.pos((double) (pX + rotationX * scale - rotationXY * scale), (double) (pY - rotationZ * scale), (double) (pZ + rotationYZ * scale - rotationXZ * scale)).tex(0, 1).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		tes.draw();
-
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
-		GlStateManager.enableLighting();
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-	}
-
 }

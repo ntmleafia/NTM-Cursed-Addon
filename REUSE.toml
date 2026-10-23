@@ -1,0 +1,115 @@
+version = 1
+
+[[annotations]]
+path = [".gitattributes", ".gitignore", "CODEOWNERS", "README.md", "NOTICE", "META-INF/MANIFEST.MF", "META-INF/licenses/leafia/NOTICE", "mcmod.info", "docs/jarjar.md", "gradle/jarjar.gradle", "src/main/resources/**", "assets/**", "blender_saves/**", "*.json", "*.mcmeta", "*.cfg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LicenseRef-PolyForm-Shield-1.0.0"
+
+[[annotations]]
+path = ["build.gradle", "settings.gradle", "dependencies.gradle", "repositories.gradle", "gradle.properties", "buildscript.properties", "spotless/**", "docs/jabel.md", "docs/shadow.md", ".github/workflows/build.yml", ".github/workflows/build-packages.yml", ".github/workflows/buildscript-maintenance.yml", ".github/workflows/validate_gradle_wrapper.yml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2024 GregTechCEu", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "MIT AND LicenseRef-PolyForm-Shield-1.0.0"
+SPDX-FileComment = "MIT applies to inherited build-template portions; PolyForm Shield applies to addon-authored changes."
+
+[[annotations]]
+path = ["gradlew", "gradlew.bat", "gradle/wrapper/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Gradle, Inc. and contributors"]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["gradle/lgpl-code.gradle", "component-sources/*.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/**/*.ogg", "assets/leafia/sounds/**/*.ogg", "src/main/resources/assets/leafia/sounds/leafia/dfc_boom.flp", "assets/leafia/sounds/leafia/dfc_boom.flp"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "LicenseRef-No-Grant"
+SPDX-FileComment = "Existing recording-specific rights remain with their holders; no new grant is asserted for unresolved material."
+
+[[annotations]]
+path = "srg-mcp.srg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileComment = "Uncopyrightable generated name mappings."
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/elevators/radio/local_forecast.ogg", "assets/leafia/sounds/elevators/radio/local_forecast.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Kevin MacLeod (incompetech.com)"]
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/elevators/radio/elevator_jam_loop.ogg", "assets/leafia/sounds/elevators/radio/elevator_jam_loop.ogg", "src/main/resources/assets/leafia/sounds/elevators/radio/elevator_jam_end.ogg", "assets/leafia/sounds/elevators/radio/elevator_jam_end.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Lightning Splash"]
+SPDX-License-Identifier = "CC-BY-SA-3.0"
+
+[[annotations]]
+path = ["libs/NTM-CE-*.jar", "libs/kris you fool.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Contributors to HBM's Nuclear Tech Mod Community Edition"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["libs/Backups-1.12.2-1.5.7.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2020 Silly511"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["libs/Computronics-1.12.2-1.6.6-deobf.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["asiekierka", "Techokami", "Vexatos"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["libs/CTM-MC1.12.2-1.0.2.31.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["tterrag", "Drullkus", "minecreatr", "Chisel Team contributors"]
+SPDX-License-Identifier = "GPL-2.0-only"
+
+[[annotations]]
+path = ["libs/TickrateChanger-1.0.14.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Guichaguri"]
+SPDX-License-Identifier = "LGPL-2.1-only"
+
+[[annotations]]
+path = ["libs/NaturesCompass-1.12.2-1.8.5.jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["ChaosTheDude (MattCzyr / Chaosyr)"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]]
+path = ["libs/worldedit-forge-mc1.12.2-6.1.10-dist (1).jar"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["sk89q", "WorldEdit team and contributors"]
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/textures/items/leafia/textured_rods/rod_balefire.png", "assets/leafia/textures/items/leafia/textured_rods/rod_balefire.png"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2024-2025 Leafia <https://github.com/ntmleafia>"
+SPDX-License-Identifier = "LicenseRef-PolyForm-Shield-1.0.0"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/leafia/dfc_boom.flp", "assets/leafia/sounds/leafia/dfc_boom.flp"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025 Leafia <https://github.com/ntmleafia>", "NOASSERTION"]
+SPDX-License-Identifier = "LicenseRef-PolyForm-Shield-1.0.0 AND LicenseRef-No-Grant"
+SPDX-FileComment = "Leafia's original arrangement, automation and effect settings are covered by PolyForm Shield. The project also embeds an Edison recording and references third-party samples; unresolved recording/sample rights receive no new grant."
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/external/7509847163.ogg", "assets/leafia/sounds/external/7509847163.ogg", "src/main/resources/assets/leafia/sounds/external/7509847163_start.ogg", "assets/leafia/sounds/external/7509847163_start.ogg", "src/main/resources/assets/leafia/sounds/external/7509847163_end.ogg", "assets/leafia/sounds/external/7509847163_end.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Northwood Studios and SCP: Secret Laboratory contributors"
+SPDX-License-Identifier = "CC-BY-SA-3.0"
+SPDX-FileContributor = "Leafia"
+SPDX-FileComment = "SCP: Secret Laboratory BigDoorOpen1, with Leafia trimming/looping/re-encoding. Source: https://store.steampowered.com/eula/700330_eula_0; the game-distributed license has no recording exceptions."

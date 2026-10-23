@@ -1,3 +1,10 @@
+// SPDX-FileCopyrightText: 2023-2024 HbmMods (Bob/Boblet) <hbmmods@gmail.com>
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2024-2025 TheSlize <r.region-4@yandex.ru>
+// SPDX-FileCopyrightText: 2025 Vladimir
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.heat.hpboiler;
 
 import com.google.common.math.IntMath;
@@ -108,30 +115,32 @@ public class HPBoilerTE extends TileEntityMachineBase implements ITickable, Leaf
 					.__write(4,heatReq)
 					.__sendToAffectedClients();
 		} else {
-			if (this.isOn) audioTime = 20;
-
-			if (audioTime > 0) {
-
-				audioTime--;
-
-				if (audio == null) {
-					audio = createAudioLoop();
-					audio.startSound();
-				} else if (!audio.isPlaying()) {
-					audio = rebootAudio(audio);
-				}
-
-				audio.updateVolume(getVolume(1F));
-				audio.keepAlive();
-
-			} else {
-
-				if (audio != null) {
-					audio.stopSound();
-					audio = null;
-				}
-			}
+			tickSound();
 		}
+	}
+
+	private void tickSound() {
+		int remaining = isOn ? 20 : audioTime;
+		if (remaining == 0) {
+			stopAudio();
+			return;
+		}
+		audioTime = remaining - 1;
+		var previous = audio;
+		if (previous == null) {
+			audio = createAudioLoop();
+			audio.startSound();
+		} else if (!previous.isPlaying()) {
+			audio = rebootAudio(previous);
+		}
+		audio.updateVolume(getVolume(1F));
+		audio.keepAlive();
+	}
+
+	private void stopAudio() {
+		var previous = audio;
+		audio = null;
+		if (previous != null) previous.stopSound();
 	}
 	protected DirPos[] getConPos() {
 		ForgeDirection dir = ForgeDirection.getOrientation(this.getBlockMetadata() - BlockDummyable.offset).getRotation(ForgeDirection.UP);
@@ -269,19 +278,13 @@ public class HPBoilerTE extends TileEntityMachineBase implements ITickable, Leaf
 	@Override
 	public void onChunkUnload() {
 		super.onChunkUnload();
-		if (audio != null) {
-			audio.stopSound();
-			audio = null;
-		}
+		stopAudio();
 	}
 
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		if (audio != null) {
-			audio.stopSound();
-			audio = null;
-		}
+		stopAudio();
 	}
 	@Override
 	public String getDefaultName() {

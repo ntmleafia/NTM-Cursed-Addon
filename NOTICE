@@ -1,0 +1,21 @@
+Leafia's Cursed Addon
+
+Required Notice: Copyright 2025-2026 Leafia (https://github.com/ntmleafia)
+Required Notice: Copyright 2025-2026 movblock <admin@movblock.mov> (https://github.com/mlbv)
+
+Main-addon material covered by the Leafia/movblock relicensing grant is offered
+under the PolyForm Shield License 1.0.0 in LICENSE. Separately licensed
+components and third-party exceptions are described below.
+Existing rights received under previous licenses are not withdrawn by this file.
+
+Separately licensed components
+-----------------------------
+leafia_lgpl_assets retains upstream artwork, meshes, contributor translations,
+Xenoulexi's models/textures and their editable sources under the existing LGPL
+version 3 terms, preserving file-specific exceptions. Its source artifact carries
+the supplied editable inputs. See modules/lgpl-assets/NOTICE.
+
+leafia_lgpl_code retains adapted upstream implementation under LGPL version 3,
+including the addon modifications in those retained implementation classes.
+Its build integration in gradle/lgpl-code.gradle is also supplied under LGPL
+version 3. See modules/lgpl-code/NOTICE.

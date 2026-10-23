@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.pwr.blocks.components.occs.outlet;
 
 import com.hbm.api.fluidmk2.IFluidStandardReceiverMK2;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 xlzv
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin;
 
 import com.leafia.contents.worldgen.biomes.artificial.DigammaCrater;

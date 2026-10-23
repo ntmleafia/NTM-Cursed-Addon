@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.controlpanel.instruments.types.starbound;
 
 import com.hbm.inventory.control_panel.*;
@@ -24,9 +28,10 @@ import java.util.List;
 
 import static com.leafia.AddonBase.getIntegrated;
 
-public class LargeButton extends Control {
+public class LargeButton extends com.hbm.inventory.control_panel.controls.ButtonPush {
 	public LargeButton(String name,String registryName,ControlPanel panel) {
 		super(name,registryName,panel);
+        vars.remove("color");
 		vars.put("isPushed",new DataValueFloat(0));
 		vars.put("isLit",new DataValueFloat(0));
 	}
@@ -83,45 +88,25 @@ public class LargeButton extends Control {
 	public Control newControl(ControlPanel controlPanel) {
 		return new LargeButton(name,registryName,controlPanel);
 	}
-	/// mostly stolen code uwu
 	@Override
 	public void populateDefaultNodes(List<ControlEvent> receiveEvents) {
-		NodeSystem ctrl_press = new NodeSystem(this);
-		{
-			NodeSounder node0 = new NodeSounder(230,90-(140-90));
-			node0.snd = NodeSnd.BUTTON;
-			ctrl_press.addNode(node0);
+        super.populateDefaultNodes(receiveEvents);
+        var tick = receiveNodeMap.get("tick");
+        ((NodeBuffer) tick.nodes.get(1)).inputs.get(1).setDefault(new DataValueFloat(45));
 
-			NodeMath nodeBruh = new NodeMath(170,100).setData(Operation.ADD);
-			nodeBruh.inputs.get(0).setDefault(new DataValueFloat(1));
-			ctrl_press.addNode(nodeBruh); // the set variable node values doesn't get saved. BRUH
-
-			NodeSetVar node2 = new NodeSetVar(230, 140, this).setData("isLit", false);
-			node2.inputs.get(0).setData(nodeBruh,0,true);
-			ctrl_press.addNode(node2);
-			NodeSetVar node3 = new NodeSetVar(230, 90, this).setData("isPushed", false);
-			node3.inputs.get(0).setData(nodeBruh,0,true);
-			ctrl_press.addNode(node3);
-		}
-		receiveNodeMap.put("ctrl_press", ctrl_press);
-		NodeSystem tick = new NodeSystem(this);
-		{
-			NodeGetVar node0 = new NodeGetVar(170, 100, this).setData("isPushed", false);
-			tick.addNode(node0);
-			NodeBuffer node1 = new NodeBuffer(230, 120);
-			node1.inputs.get(0).setData(node0, 0, true);
-			node1.inputs.get(1).setDefault(new DataValueFloat(45));
-			tick.addNode(node1);
-			NodeFunction node2 = new NodeFunction(290, 130);
-			NodeSystem node2_subsystem = new NodeSystem(this);
-			{
-				node2_subsystem.addNode(new NodeSetVar(290, 90, this).setData("isPushed", false));
-				node2_subsystem.addNode(new NodeSetVar(290, 140, this).setData("isLit", false));
-			}
-			node2.inputs.get(0).setData(node1, 0, true);
-			tick.subSystems.put(node2, node2_subsystem);
-			tick.addNode(node2);
-		}
-		receiveNodeMap.put("tick", tick);
+        var press = new NodeSystem(this);
+        var sound = new NodeSounder(230, 40);
+        sound.snd = NodeSnd.BUTTON;
+        press.addNode(sound);
+        var one = new NodeMath(170, 100).setData(Operation.ADD);
+        one.inputs.get(0).setDefault(new DataValueFloat(1));
+        press.addNode(one);
+        String[] targets = {"isLit", "isPushed"};
+        for (int target = 0; target < targets.length; target++) {
+            var write = new NodeSetVar(230, target == 0 ? 140 : 90, this).setData(targets[target], false);
+            write.inputs.get(0).setData(one, 0, true);
+            press.addNode(write);
+        }
+        receiveNodeMap.put("ctrl_press", press);
 	}
 }

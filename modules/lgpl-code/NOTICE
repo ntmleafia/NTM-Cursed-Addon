@@ -1,0 +1,16 @@
+Leafia LGPL Code
+
+This component retains and adapts implementation from HBM's Nuclear Tech Mod,
+its Community and Extended editions, and contributions to Leafia's Cursed Addon.
+The retained implementation is supplied under the existing GNU LGPL version 3
+terms, preserving any file-specific notices and applicable upstream terms.
+LICENSE contains GPL version 3, incorporated by LICENSE.LESSER.
+
+Copyright remains with the respective original authors and contributors.
+This notice does not assert sole authorship by importing or modifying committers.
+
+The parent addon supplies shared application interfaces.
+A modified interface-compatible component may be rebuilt and supplied as
+an external mod with ID leafia_lgpl_code; it takes precedence over the bundled copy.
+Its LGPL modification, redistribution, debugging and replacement rights
+remain independently available.

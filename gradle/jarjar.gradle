@@ -1,0 +1,131 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.tasks.PathSensitivity
+
+import java.nio.file.Files
+import java.security.MessageDigest
+import java.util.jar.JarFile
+
+configurations {
+    jarJar {
+        description = 'Distributable Forge mods bundled as independently replaceable nested JARs'
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    jarJarOnly {
+        description = 'Nested distributable mods with a separately supplied compilation/development API'
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+for (def bundled : [configurations.jarJar, configurations.jarJarOnly]) {
+    bundled.attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+    }
+}
+
+configurations.matching { it.name in ['compileOnly', 'runtimeOnlyNonPublishable'] }.configureEach {
+    extendsFrom(configurations.jarJar)
+}
+
+abstract class GenerateNestedModResources extends DefaultTask {
+    @InputFiles
+    @PathSensitive(PathSensitivity.NONE)
+    abstract ConfigurableFileCollection getJars()
+
+    @OutputDirectory
+    abstract DirectoryProperty getDestinationDirectory()
+
+    @Inject
+    abstract FileSystemOperations getFileSystemOperations()
+
+    @TaskAction
+    void generate() {
+        def destination = destinationDirectory.get().asFile
+        fileSystemOperations.delete { delete(destination) }
+        Files.createDirectories(destination.toPath())
+        def nested = new TreeMap<String, Map>()
+        for (def file : jars.files) {
+            def modId
+            new JarFile(file).withCloseable { jar ->
+                def entry = jar.getJarEntry('mcmod.info')
+                if (entry == null) {
+                    throw new GradleException("Nested mod ${file.name} must provide mcmod.info")
+                }
+                def metadata = jar.getInputStream(entry).withCloseable { stream ->
+                    new JsonSlurper().parse(stream, 'UTF-8')
+                }
+                if (!(metadata instanceof List) || metadata.size() != 1) {
+                    throw new GradleException("Nested mod ${file.name} must describe exactly one mod in mcmod.info")
+                }
+                modId = metadata[0].modid
+                if (!(modId instanceof String) || !(modId ==~ /[a-z][a-z0-9_]{0,63}/)) {
+                    throw new GradleException("Nested mod ${file.name} has an invalid or unexpanded mod ID: ${modId}")
+                }
+            }
+            def digest = MessageDigest.getInstance('SHA-256')
+            file.withInputStream { stream ->
+                def buffer = new byte[65536]
+                int count
+                while ((count = stream.read(buffer)) != -1) {
+                    digest.update(buffer, 0, count)
+                }
+            }
+            def hash = digest.digest().encodeHex().toString()
+            def previous = nested[modId]
+            if (previous != null) {
+                if (previous.sha256 != hash) {
+                    throw new GradleException("Multiple bundled JARs declare nested mod ${modId}")
+                }
+                continue
+            }
+            def path = "META-INF/jarjar/${modId}-${hash}.jar"
+            def target = new File(destination, path)
+            Files.createDirectories(target.parentFile.toPath())
+            Files.copy(file.toPath(), target.toPath())
+            nested[modId] = [modid: modId, path: path, sha256: hash]
+        }
+        if (!nested.isEmpty()) {
+            def catalog = new File(destination, 'META-INF/leafia/nested-mods.json')
+            Files.createDirectories(catalog.parentFile.toPath())
+            catalog.setText(JsonOutput.prettyPrint(JsonOutput.toJson([
+                    formatVersion: 1,
+                    jars: nested.values().toList()
+            ])) + '\n', 'UTF-8')
+        }
+    }
+}
+
+def generateNestedModResources = tasks.register('generateNestedModResources', GenerateNestedModResources) {
+    group = 'build'
+    description = 'Packages nested Forge mods and their content-addressed catalog'
+    jars.from(configurations.jarJar, configurations.jarJarOnly)
+    destinationDirectory.set(layout.buildDirectory.dir('generated/nestedModResources'))
+}
+
+sourceSets.main.output.dir(generateNestedModResources)
+
+tasks.withType(Jar).matching {
+    it.name in ['jar', 'jarJava25', 'sourcesJar', 'shadowJar', 'shadowJarJava25']
+}.configureEach {
+    from(layout.projectDirectory.file('REUSE.toml'))
+    from(layout.projectDirectory) {
+        include('LICENSE', 'NOTICE', 'LICENSES/**')
+        into('META-INF/licenses/leafia')
+    }
+}
+
+tasks.named('sourcesJar', Jar) {
+    from(layout.projectDirectory.dir('src/api/java'))
+    from(layout.projectDirectory.dir('LICENSES')) {
+        include('LicenseRef-PolyForm-Shield-1.0.0.txt', 'LGPL-3.0-only.txt',
+                'MIT.txt', 'CC-BY-4.0.txt', 'CC-BY-SA-3.0.txt', 'LicenseRef-No-Grant.txt')
+        into('LICENSES')
+    }
+}

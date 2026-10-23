@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.controlpanel.instruments.types.lever;
 
 import com.hbm.inventory.control_panel.*;
@@ -24,10 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class LeverBase extends Control {
+public abstract class LeverBase extends com.hbm.inventory.control_panel.controls.SliderVertical {
 	float curLevel = 0.5f;
 	public LeverBase(String name,String registryName,ControlPanel panel) {
 		super(name,registryName,panel);
+        vars.remove("value");
 		vars.put("position",new DataValueFloat(50f));
 	}
 	@Override
@@ -97,27 +102,19 @@ public abstract class LeverBase extends Control {
 	}
 	@Override
 	public void populateDefaultNodes(List<ControlEvent> receiveEvents) {
-		NodeSystem ctrl_press = new NodeSystem(this);
-		{
-			Map<String, DataValue> vars = new HashMap<>(receiveEvents.get(0).vars);
-			vars.put("from index", new DataValueFloat(0));
-			NodeInput node0 = new NodeInput(170, 100, "Event Data").setVars(vars);
-			ctrl_press.addNode(node0);
-			NodeGetVar node1 = new NodeGetVar(170, 150, this).setData("position", false);
-			ctrl_press.addNode(node1);
-			NodeConditional node2 = new NodeConditional(230, 110);
-			node2.inputs.get(0).setData(node0, 1, true);
-			node2.inputs.get(1).setDefault(new DataValueFloat(-10f));
-			node2.inputs.get(2).setDefault(new DataValueFloat(10f));
-			ctrl_press.addNode(node2);
-			NodeMath node3 = new NodeMath(290, 130).setData(NodeMath.Operation.ADD);
-			node3.inputs.get(0).setData(node2, 0, true);
-			node3.inputs.get(1).setData(node1, 0, true);
-			ctrl_press.addNode(node3);
-			NodeSetVar node5 = new NodeSetVar(350, 130, this).setData("position", false);
-			node5.inputs.get(0).setData(node3, 0, true);
-			ctrl_press.addNode(node5);
-		}
-		receiveNodeMap.put("ctrl_press", ctrl_press);
+        super.populateDefaultNodes(receiveEvents);
+        var press = receiveNodeMap.get("ctrl_press");
+        var read = (NodeGetVar) press.nodes.get(1);
+        var direction = (NodeConditional) press.nodes.get(2);
+        var addition = (NodeMath) press.nodes.get(3);
+        var clamp = (NodeMath) press.nodes.get(4);
+        var write = (NodeSetVar) press.nodes.get(5);
+        read.setData("position", false);
+        direction.inputs.get(1).setDefault(new DataValueFloat(-10));
+        direction.inputs.get(2).setDefault(new DataValueFloat(10));
+        write.setData("position", false);
+        write.setPosition(350, 130);
+        write.inputs.get(0).setData(addition, 0, true);
+        press.nodes.remove(clamp);
 	}
 }

@@ -1,0 +1,50 @@
+version = 1
+
+[[annotations]]
+path = [".gitignore", "*.gradle", "README.md", "NOTICE", "META-INF/MANIFEST.MF", "parent-build/**/*.gradle", "src/main/resources/**", "mcmod.info"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/**", "assets/**", "source-art/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Contributors to HBM's Nuclear Tech Mod and its ports", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/lang/ru_ru.lang", "assets/leafia/lang/ru_ru.lang"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["mrmotya <norichun700@gmail.com>", "Other upstream translation contributors", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/lang/tr_tr.lang", "assets/leafia/lang/tr_tr.lang"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Gobumen <banenedesanane@gmail.com>", "Other upstream translation contributors", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/lang/uk_ua.lang", "assets/leafia/lang/uk_ua.lang"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Bohdan <mrdiamond617@gmail.com>", "Other upstream translation contributors", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/lang/zh_cn.lang", "assets/leafia/lang/zh_cn.lang"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Magic1578", "Other upstream translation contributors", "2025-2026 Leafia <https://github.com/ntmleafia>", "2025-2026 movblock <admin@movblock.mov>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/models/xenoulexi/**", "src/main/resources/assets/leafia/textures/models/xenoulexi/**", "assets/leafia/models/xenoulexi/**", "assets/leafia/textures/models/xenoulexi/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Xenoulexi"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
+path = ["src/main/resources/assets/leafia/sounds/tool/geiger*.ogg", "assets/leafia/sounds/tool/geiger*.ogg", "src/main/resources/assets/leafia/sounds/weapon/*.ogg", "assets/leafia/sounds/weapon/*.ogg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Contributors to HBM's Nuclear Tech Mod and its ports", "2025-2026 Leafia <https://github.com/ntmleafia>"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+SPDX-FileComment = "Published upstream recording terms and Leafia's adaptations are retained; recording-origin qualifications are described in NOTICE."

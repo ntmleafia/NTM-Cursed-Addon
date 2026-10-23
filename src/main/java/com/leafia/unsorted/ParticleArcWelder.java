@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.unsorted;
 
 import com.hbm.util.RenderUtil;
@@ -10,7 +14,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import com.leafia.dev.particles.ParticleQuad;
+import com.leafia.dev.particles.ParticleRenderState;
 import net.minecraft.world.World;
 
 public class ParticleArcWelder extends ParticleCloud {
@@ -50,68 +55,56 @@ public class ParticleArcWelder extends ParticleCloud {
 	}
 	@Override
 	public void renderParticle(BufferBuilder buffer,Entity entityIn,float partialTicks,float rotationX,float rotationZ,float rotationYZ,float rotationXY,float rotationXZ) {
-		Tessellator tes = Tessellator.getInstance();
-		boolean prevBlend = RenderUtil.isBlendEnabled();
-		tes.draw();
-
-		float f = ((float)this.particleAge + partialTicks) / (float)this.particleMaxAge * 32.0F;
-		f = MathHelper.clamp(f, 0.0F, 1.0F);
-		this.particleScale = scale * f;
-
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(SourceFactor.SRC_COLOR, DestFactor.ONE);
-		buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-		superSuperRenderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-		tes.draw();
-
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-		if (!prevBlend) GlStateManager.disableBlend();
-
-		buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+        var tessellator = Tessellator.getInstance();
+        var blend = RenderUtil.isBlendEnabled();
+        var factors = ParticleRenderState.blendFactors();
+        tessellator.draw();
+        var building = false;
+        try {
+            var growth = ((float) particleAge + partialTicks) / (float) particleMaxAge * 32.0F;
+            particleScale = scale * MathHelper.clamp(growth, 0.0F, 1.0F);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(SourceFactor.SRC_COLOR, DestFactor.ONE);
+            buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+            building = true;
+            superSuperRenderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+            building = false;
+            tessellator.draw();
+        } finally {
+            if (building) buffer.finishDrawing();
+            ParticleRenderState.restoreBlend(blend, factors);
+            buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+        }
 	}
 
-	public void superSuperRenderParticle(BufferBuilder buffer,Entity entityIn,float partialTicks,float rotationX,float rotationZ,float rotationYZ,float rotationXY,float rotationXZ)
-	{
-		float f = (float)this.particleTextureIndexX / 16.0F;
-		float f1 = f + 0.0624375F;
-		float f2 = (float)this.particleTextureIndexY / 16.0F;
-		float f3 = f2 + 0.0624375F;
-		float f4 = 0.1F * this.particleScale;
-
-		if (this.particleTexture != null)
-		{
-			f = this.particleTexture.getMinU();
-			f1 = this.particleTexture.getMaxU();
-			f2 = this.particleTexture.getMinV();
-			f3 = this.particleTexture.getMaxV();
-		}
-
-		float f5 = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
-		float f6 = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);
-		float f7 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
-		int i = this.getBrightnessForRender(partialTicks);
-		int j = i >> 16 & 65535;
-		int k = i & 65535;
-		Vec3d[] avec3d = new Vec3d[] {new Vec3d((double)(-rotationX * f4 - rotationXY * f4), (double)(-rotationZ * f4), (double)(-rotationYZ * f4 - rotationXZ * f4)), new Vec3d((double)(-rotationX * f4 + rotationXY * f4), (double)(rotationZ * f4), (double)(-rotationYZ * f4 + rotationXZ * f4)), new Vec3d((double)(rotationX * f4 + rotationXY * f4), (double)(rotationZ * f4), (double)(rotationYZ * f4 + rotationXZ * f4)), new Vec3d((double)(rotationX * f4 - rotationXY * f4), (double)(-rotationZ * f4), (double)(rotationYZ * f4 - rotationXZ * f4))};
-
-		if (this.particleAngle != 0.0F)
-		{
-			float f8 = this.particleAngle + (this.particleAngle - this.prevParticleAngle) * partialTicks;
-			float f9 = MathHelper.cos(f8 * 0.5F);
-			float f10 = MathHelper.sin(f8 * 0.5F) * (float)cameraViewDir.x;
-			float f11 = MathHelper.sin(f8 * 0.5F) * (float)cameraViewDir.y;
-			float f12 = MathHelper.sin(f8 * 0.5F) * (float)cameraViewDir.z;
-			Vec3d vec3d = new Vec3d((double)f10, (double)f11, (double)f12);
-
-			for (int l = 0; l < 4; ++l)
-			{
-				avec3d[l] = vec3d.scale(2.0D * avec3d[l].dotProduct(vec3d)).add(avec3d[l].scale((double)(f9 * f9) - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(avec3d[l]).scale((double)(2.0F * f9)));
-			}
-		}
-
-		buffer.pos((double)f5 + avec3d[0].x, (double)f6 + avec3d[0].y, (double)f7 + avec3d[0].z).tex((double)f1, (double)f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buffer.pos((double)f5 + avec3d[1].x, (double)f6 + avec3d[1].y, (double)f7 + avec3d[1].z).tex((double)f1, (double)f2).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buffer.pos((double)f5 + avec3d[2].x, (double)f6 + avec3d[2].y, (double)f7 + avec3d[2].z).tex((double)f, (double)f2).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-		buffer.pos((double)f5 + avec3d[3].x, (double)f6 + avec3d[3].y, (double)f7 + avec3d[3].z).tex((double)f, (double)f3).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(j, k).endVertex();
-	}
+    public void superSuperRenderParticle(BufferBuilder buffer, Entity camera, float partialTicks,
+                                         float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        var minU = (float) particleTextureIndexX / 16.0F;
+        var maxU = minU + 0.0624375F;
+        var minV = (float) particleTextureIndexY / 16.0F;
+        var maxV = minV + 0.0624375F;
+        if (particleTexture != null) {
+            minU = particleTexture.getMinU();
+            maxU = particleTexture.getMaxU();
+            minV = particleTexture.getMinV();
+            maxV = particleTexture.getMaxV();
+        }
+        float w = 1;
+        double qx = 0, qy = 0, qz = 0;
+        if (particleAngle != 0) {
+            var halfAngle = (particleAngle + (particleAngle - prevParticleAngle) * partialTicks) * 0.5F;
+            w = MathHelper.cos(halfAngle);
+            var sine = MathHelper.sin(halfAngle);
+            qx = sine * (float) cameraViewDir.x;
+            qy = sine * (float) cameraViewDir.y;
+            qz = sine * (float) cameraViewDir.z;
+        }
+        ParticleQuad.emitRotated(buffer,
+                (float) (prevPosX + (posX - prevPosX) * (double) partialTicks - interpPosX),
+                (float) (prevPosY + (posY - prevPosY) * (double) partialTicks - interpPosY),
+                (float) (prevPosZ + (posZ - prevPosZ) * (double) partialTicks - interpPosZ),
+                rotationX, rotationYZ, rotationZ, rotationXY, rotationXZ, 0.1F * particleScale,
+                minU, maxU, minV, maxV, particleRed, particleGreen, particleBlue, particleAlpha,
+                getBrightnessForRender(partialTicks), w, qx, qy, qz);
+    }
 }

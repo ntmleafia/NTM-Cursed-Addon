@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2024 Alcater <alcater.fallout4@gmail.com>
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 TheSlize <r.region-4@yandex.ru>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.miscellanous.regex_filter.pneumatic;
 
 import com.hbm.tileentity.IGUIProvider;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.blocks.machine.rbmk.RBMKBase;

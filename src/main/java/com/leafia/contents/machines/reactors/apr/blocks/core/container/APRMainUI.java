@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.apr.blocks.core.container;
 
 import com.hbm.inventory.gui.element.GUIElements;

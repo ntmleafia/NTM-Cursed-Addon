@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.dfc.render;
 
 
@@ -13,6 +17,8 @@ import com.hbm.render.misc.BeamPronter.EnumWaveType;
 import com.hbm.tileentity.machine.TileEntityCore;
 import com.leafia.AddonBase;
 import com.leafia.dev.math.FiaMatrix;
+import com.leafia.dev.render.RenderState;
+import com.leafia.dev.render.SeededFlashMesh;
 import com.leafia.dev.math.FiaMatrix.RotationOrder;
 import com.leafia.eventbuses.LeafiaClientListener.HandlerClient;
 import com.leafia.overwrite_contents.interfaces.IMixinTileEntityCore;
@@ -38,12 +44,15 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ConcurrentModificationException;
-import java.util.Random;
+
 
 import static com.leafia.init.ResourceInit.getVAO;
 
 public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
-	public static WaveFrontObjectVAO[] deformSphere = new WaveFrontObjectVAO[10];
+	private static final ResourceLocation NOISE = new ResourceLocation("leafia", "textures/models/leafia/null-noisemap.png");
+    private static final ResourceLocation EMISSIVE = new ResourceLocation("leafia", "textures/solid_emissive.png");
+
+    public static WaveFrontObjectVAO[] deformSphere = new WaveFrontObjectVAO[10];
 	static {
 		for (int i = 0; i < 10; i++)
 			deformSphere[i] = getVAO(new ResourceLocation("leafia", "models/leafia/deformed_sphere/deform"+i+".obj"));
@@ -57,19 +66,20 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 
 	@Override
 	public void render(TileEntityCore core, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        try (var renderState = new RenderState()) {
 		IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
 		if (mixin.getDFCTemperature() < 100) {
 			renderStandby(core, x, y, z);
 		} else {
 
-			GL11.glPushMatrix();
-			GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
-			//GL11.glRotatef(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-			//GL11.glRotatef(Minecraft.getMinecraft().getRenderManager().playerViewX - 90, 1.0F, 0.0F, 0.0F);
-			GL11.glTranslated(-0.5, -0.5, -0.5);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
+			//GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+			//GlStateManager.rotate(Minecraft.getMinecraft().getRenderManager().playerViewX - 90, 1.0F, 0.0F, 0.0F);
+			GlStateManager.translate(-0.5, -0.5, -0.5);
 
 			renderOrb(core, 0, 0, 0, partialTicks);
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 			if (mixin.getDFCClientType() == Cores.glitch) {
 				//GlStateManager.matrixMode(GL11.GL_TEXTURE);
 				//GlStateManager.loadIdentity();
@@ -88,12 +98,12 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 				HandlerClient.rz = (float)core.getWorld().rand.nextGaussian()*mul*modifier2;
 
 				GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-				GL11.glTranslatef((core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier);
+				GlStateManager.translate((core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier,(core.getWorld().rand.nextFloat()-0.5f)*modifier);
 			}
 		}
 		if (mixin.getDFCJammerPos() != null) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			LeafiaColor colorBlast = new LeafiaColor(1, 0.5, 0);
 			LeafiaColor colorJammer = new LeafiaColor(0, 0.75, 1);
 			Vec3d vec = new Vec3d(mixin.getDFCJammerPos().subtract(core.getPos()));
@@ -111,78 +121,86 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 					(int) ((core.getWorld().getTotalWorldTime() + 500) % 1000),
 					(int) vec.length(), 0.5f, 1, 0.2f
 			);
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 		}
 		try {
 			for (DFCShock shock : mixin.getDfcShocks()) {
 				Vec3d lastPos = null;
 				LeafiaGls.pushMatrix();
-				GL11.glTranslated(x-core.getPos().getX(),y-core.getPos().getY(),z-core.getPos().getZ());
-				if (core.getWorld().rand.nextInt(4) >= 1) {
-					for (Vec3d pos : shock.poses) {
-						if (lastPos != null) {
-							if (pos.distanceTo(lastPos) < 0.1) continue;
-							LeafiaGls.pushMatrix();
-							LeafiaGls.translate(lastPos);
-							Vec3d vec3 = pos.subtract(lastPos);
-							BeamPronter.prontBeam(
-									vec3,
-									EnumWaveType.STRAIGHT,EnumBeamType.SOLID,
-									0x5B1D00,0x7F7F7F,
-									0,1,0,2,0.25f
-							);
-							LeafiaGls.popMatrix();
+				try {
+					GlStateManager.translate(x-core.getPos().getX(),y-core.getPos().getY(),z-core.getPos().getZ());
+					if (core.getWorld().rand.nextInt(4) >= 1) {
+						for (Vec3d pos : shock.poses) {
+							if (lastPos != null) {
+								if (pos.distanceTo(lastPos) < 0.1) continue;
+								LeafiaGls.pushMatrix();
+								try {
+									LeafiaGls.translate(lastPos);
+									Vec3d vec3 = pos.subtract(lastPos);
+									BeamPronter.prontBeam(
+											vec3,
+											EnumWaveType.STRAIGHT,EnumBeamType.SOLID,
+											0x5B1D00,0x7F7F7F,
+											0,1,0,2,0.25f
+									);
+								} finally {
+									LeafiaGls.popMatrix();
+								}
+							}
+							lastPos = pos;
 						}
-						lastPos = pos;
 					}
+				} finally {
+					LeafiaGls.popMatrix();
 				}
-				LeafiaGls.popMatrix();
 			}
 		} catch (ConcurrentModificationException ignored) {} // fuck you java array iterations
-	}
+	        }
+    }
 
 	public void renderStandby(TileEntityCore core, double x, double y, double z) {
-		IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
-		
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
-		GlStateManager.disableLighting();
-		GlStateManager.enableCull();
-		//GlStateManager.disableTexture2D();
-		NTMRenderHelper.bindTexture(AddonBase.solid);
-
-		GL11.glScalef(0.25F, 0.25F, 0.25F);
-		float brightness = (float) Math.pow(mixin.getDFCTemperature() / 100d, 1.5);
-		GlStateManager.color(0.1F + brightness * .9f, 0.1F + brightness * .9f, 0.1F + brightness * .9f);
-		ResourceManager.sphere_uv.renderAll();
-
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
-		GL11.glScalef(1.25F, 1.25F, 1.25F);
-		GlStateManager.color(0.1F + brightness * .9f, 0.2F + (((float) mixin.getDFCTemperature() / 100f) * 0.25f + brightness * 0.75f) * .8f, 0.4F + ((float) mixin.getDFCTemperature() / 100f) * .6f);
-		ResourceManager.sphere_uv.renderAll();
-		GlStateManager.disableBlend();
-
-		//GlStateManager.enableTexture2D();
-		GlStateManager.enableLighting();
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-
-		if (core.getWorld().rand.nextInt(50) == 0) {
-			for (int i = 0; i < 3; i++) {
-				RenderSparks.renderSpark((int) System.currentTimeMillis() / 100 + i * 10000, 0, 0, 0, 1.5F, 5, 10, 0x00FFFF, 0xFFFFFF);
-				RenderSparks.renderSpark((int) System.currentTimeMillis() / 50 + i * 10000, 0, 0, 0, 3F, 5, 10, 0x00FFFF, 0xFFFFFF);
-			}
-		}
-		GlStateManager.color(1F, 1F, 1F);
-		GL11.glPopMatrix();
-	}
+        try (var state = new RenderState()) {
+            GlStateManager.pushMatrix();
+            try {
+                GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
+                GlStateManager.disableLighting();
+                GlStateManager.enableCull();
+                NTMRenderHelper.bindTexture(AddonBase.solid);
+                GlStateManager.scale(0.25F, 0.25F, 0.25F);
+                var temperature = ((IMixinTileEntityCore) core).getDFCTemperature();
+                var brightness = (float) Math.pow(temperature / 100D, 1.5);
+                var normalized = (float) temperature / 100F;
+                var red = 0.1F + brightness * 0.9F;
+                GlStateManager.color(red, red, red);
+                ResourceManager.sphere_uv.renderAll();
+                GlStateManager.enableBlend();
+                GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+                GlStateManager.scale(1.25F, 1.25F, 1.25F);
+                GlStateManager.color(red, 0.2F + (normalized * 0.25F + brightness * 0.75F) * 0.8F,
+                        0.4F + normalized * 0.6F);
+                ResourceManager.sphere_uv.renderAll();
+                GlStateManager.disableBlend();
+                GlStateManager.enableLighting();
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+                if (core.getWorld().rand.nextInt(50) == 0) {
+                    for (var spark = 0; spark < 6; spark++) {
+                        var wide = (spark & 1) != 0;
+                        var seed = (int) System.currentTimeMillis() / (wide ? 50 : 100) + (spark / 2) * 10000;
+                        RenderSparks.renderSpark(seed, 0, 0, 0, wide ? 3F : 1.5F, 5, 10, 0x00FFFF, 0xFFFFFF);
+                    }
+                }
+            } finally {
+                GlStateManager.popMatrix();
+            }
+        }
+    }
 
 	public void renderDraconic(FiaMatrix face,double scale,double distance,float partialTicks) {
 		int segments = 6;
 		double startRadius = scale*0.5;
 		double endRadius = 0.3;
 		int resolution = 8;
-		bindTexture(new ResourceLocation("leafia","textures/models/leafia/null-noisemap.png"));
+		bindTexture(NOISE);
 		//CompositeBrush brush = CompositeBrush.instance;
 		//brush.startDrawingQuads();
 
@@ -197,7 +215,7 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		GlStateManager.loadIdentity();
 
 		float movement = (Minecraft.getMinecraft().player.ticksExisted + partialTicks) * 0.005F * 10;
-		GL11.glTranslatef(0, movement, 0);
+		GlStateManager.translate(0, movement, 0);
 
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		for (int i = 0; i < segments; i++) {
@@ -241,9 +259,9 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 	public void renderOrb(TileEntityCore core, double x, double y, double z, float partialTicks) {
 		IMixinTileEntityCore mixin = (IMixinTileEntityCore)core;
 		
-		GL11.glPushMatrix();
-		GL11.glTranslated(x+0.5,y+0.5,z+0.5);
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x+0.5,y+0.5,z+0.5);
+		GlStateManager.pushMatrix();
 
 		int color = core.color;
 		float r = (color>>16&255)/255F;
@@ -271,10 +289,10 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		float gC = (colorC>>8&255)/255F;
 		float bC = (colorC&255)/255F;
 
-		GL11.glScalef(scale,scale,scale);
+		GlStateManager.scale(scale,scale,scale);
 
 		GlStateManager.enableCull();
-		bindTexture(new ResourceLocation("leafia","textures/solid_emissive.png")); // shader fix
+		bindTexture(EMISSIVE); // shader fix
 		//GlStateManager.disableTexture2D();
 
 
@@ -295,59 +313,59 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		GlStateManager.color(r,g,b,1.0F);
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 
-		GL11.glRotated(rot,1,1,1);
-		GL11.glScalef(0.5F,0.5F,0.5F);
+		GlStateManager.rotate((float) (rot), 1, 1, 1);
+		GlStateManager.scale(0.5F,0.5F,0.5F);
 		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(2F, 2F, 2F);
+		GlStateManager.scale(2F, 2F, 2F);
 
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
 
 
 		if (mixin.getDFCClientType() == Cores.ams_core_eyeofharmony || mixin.getDFCClientType() == Cores.glitch) {
-			GL11.glScalef(0.5F,0.5F,0.5F);
-			//GL11.glPushMatrix();
-			//GL11.glRotatef(core.getWorld().rand.nextFloat()*360,1,0,0);
-			//GL11.glRotatef(core.getWorld().rand.nextFloat()*360,0,1,0);
-			//GL11.glRotatef(core.getWorld().rand.nextFloat()*360,0,0,1);
+			GlStateManager.scale(0.5F,0.5F,0.5F);
+			//GlStateManager.pushMatrix();
+			//GlStateManager.rotate(core.getWorld().rand.nextFloat()*360,1,0,0);
+			//GlStateManager.rotate(core.getWorld().rand.nextFloat()*360,0,1,0);
+			//GlStateManager.rotate(core.getWorld().rand.nextFloat()*360,0,0,1);
 		}
 		for (int i = 6; i <= 10; i++) {
-			GL11.glPushMatrix();
-			GL11.glScalef(i * 0.1F, i * 0.1F, i * 0.1F);
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(i * 0.1F, i * 0.1F, i * 0.1F);
 			if (mixin.getDFCClientType() == Cores.ams_core_eyeofharmony || mixin.getDFCClientType() == Cores.glitch)
 				deformSphere[core.getWorld().rand.nextInt(10)].renderAll();
 			else
 				ResourceManager.sphere_ruv.renderAll();
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 		}
 		if (mixin.getDFCClientType() == Cores.ams_core_eyeofharmony || mixin.getDFCClientType() == Cores.glitch) {
-			//GL11.glPopMatrix();
-			GL11.glScalef(2F,2F,2F);
+			//GlStateManager.popMatrix();
+			GlStateManager.scale(2F,2F,2F);
 		}
-		GL11.glPopMatrix();
-		GL11.glPushMatrix();
+		GlStateManager.popMatrix();
+		GlStateManager.pushMatrix();
 		if (mixin.getDFCClientType() == Cores.ams_core_sing) {
-			GL11.glPushMatrix();
+			GlStateManager.pushMatrix();
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.color(0.11f, 0.11f, 0.11f);
-			GL11.glScalef(-scale * 1.15f, -scale * 1.15f, -scale * 1.15f);
+			GlStateManager.scale(-scale * 1.15f, -scale * 1.15f, -scale * 1.15f);
 			ResourceManager.sphere_ruv.renderAll();
-			GL11.glPopMatrix();
+			GlStateManager.popMatrix();
 
 			GlStateManager.blendFunc(SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.color(0.529f, 0.722f, 1, 0.5f);
 			double tr = MathHelper.positiveModulo(System.currentTimeMillis() / 1000d, 3000) / 2 * Math.PI;
 			double add = 0.4; // 0.6
-			GL11.glRotated(tr / 3 * (180 / Math.PI), 0, 1, 2);
+			GlStateManager.rotate((float) (tr / 3 * (180 / Math.PI)), 0, 1, 2);
 			for (int d = 0; d < 16; d++) {
-				GL11.glPushMatrix();
+				GlStateManager.pushMatrix();
 				double t = tr + add * d;
-				GL11.glRotated(-MathLeafia.smoothLinear(Math.abs(MathHelper.positiveModulo(t / 3 / Math.PI, 2) - 1), 0.5) * 180 * 3, 0, 0, 1);
-				GL11.glRotated(Math.sin(t / 3) * 135, 0, 1, 0);
-				GL11.glTranslated(0, 0, -scale * 1.4 / 2);
-				GL11.glScalef(-0.25f, -0.25f, -0.25f);
+				GlStateManager.rotate((float) (-MathLeafia.smoothLinear(Math.abs(MathHelper.positiveModulo(t / 3 / Math.PI, 2) - 1), 0.5) * 180 * 3), 0, 0, 1);
+				GlStateManager.rotate((float) (Math.sin(t / 3) * 135), 0, 1, 0);
+				GlStateManager.translate(0, 0, -scale * 1.4 / 2);
+				GlStateManager.scale(-0.25f, -0.25f, -0.25f);
 				ResourceManager.sphere_ruv.renderAll();
-				GL11.glPopMatrix();
+				GlStateManager.popMatrix();
 			}
 		} else if (mixin.getDFCClientType() == Cores.ams_core_eyeofharmony) {
 			LeafiaGls.disableCull();
@@ -358,7 +376,7 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 			LeafiaGls.popMatrix();
 		}
 
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 
 		if (mixin.getDFCClientType() == Cores.ams_core_wormhole) {
 			LeafiaGls.disableCull();
@@ -382,59 +400,9 @@ public class DFCCoreRender extends TileEntitySpecialRenderer<TileEntityCore> {
 		GlStateManager.disableBlend();
 		GlStateManager.enableLighting();
 		//GlStateManager.enableTexture2D();
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
-	private void renderFlash(float scale, double intensity, double alpha, float r, float g, float b) {
-
-		GL11.glScalef(0.2F, 0.2F, 0.2F);
-
-		double inverse = 1.0D - intensity;
-
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buf = tessellator.getBuffer();
-		RenderHelper.disableStandardItemLighting();
-
-		Random random = new Random(432L);
-		//GlStateManager.disableTexture2D();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
-		GlStateManager.disableAlpha();
-		GlStateManager.enableCull();
-		GlStateManager.depthMask(false);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-
-		GL11.glPushMatrix();
-
-		for(int i = 0; i < 300; i++) {
-
-			GL11.glRotatef(random.nextFloat() * 360.0F, 1.0F, 0.0F, 0.0F);
-			GL11.glRotatef(random.nextFloat() * 360.0F, 0.0F, 1.0F, 0.0F);
-			GL11.glRotatef(random.nextFloat() * 360.0F, 0.0F, 0.0F, 1.0F);
-			GL11.glRotatef(random.nextFloat() * 360.0F, 1.0F, 0.0F, 0.0F);
-			GL11.glRotatef(random.nextFloat() * 360.0F, 0.0F, 1.0F, 0.0F);
-
-			float vert1 = (random.nextFloat() * 20.0F + 5.0F + 1 * 10.0F) * (float)(intensity * scale);
-			float vert2 = (random.nextFloat() * 2.0F + 1.0F + 1 * 2.0F) * (float)(intensity * scale);
-
-			buf.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-			buf.pos(0D, 0D, 0D).color(1.0F, 1.0F, 1.0F, (float)alpha/*(float) inverse*/).endVertex();
-			buf.pos(-0.866D * vert2, vert1, -0.5D * vert2).color(r,g,b, 0.0F).endVertex();
-			buf.pos(0.866D * vert2, vert1, -0.5D * vert2).color(r,g,b, 0.0F).endVertex();
-			buf.pos(0.0D, vert1, 1.0D * vert2).color(r,g,b, 0.0F).endVertex();
-			buf.pos(-0.866D * vert2, vert1, -0.5D * vert2).color(r,g,b, 0.0F).endVertex();
-			tessellator.draw();
-		}
-
-		GL11.glPopMatrix();
-
-		GlStateManager.depthMask(true);
-		GlStateManager.disableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.color(1, 1, 1, 1);
-		//GlStateManager.enableTexture2D();
-		GlStateManager.enableAlpha();
-		RenderHelper.enableStandardItemLighting();
-	}
+	private void renderFlash(float scale, double intensity, double alpha, float red, float green, float blue) {
+        SeededFlashMesh.draw(scale, intensity, alpha, red, green, blue);
+    }
 }

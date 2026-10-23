@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.transformer;
 
 import com.custom_hbm.render.amlfrom1710.CompositeBrush;
@@ -14,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-// Yeah uh this is bullsh*t i could have just used GL11.getState which i didn't know exis
+// Snapshots cached render state for nested addon rendering.
 public class LeafiaGls extends GlStateManager {
 	protected static boolean preventStackSyncing = false;
 	public static class GlStates {
@@ -30,42 +34,27 @@ public class LeafiaGls extends GlStateManager {
 		public final boolean blend = RenderUtil.isBlendEnabled();
 		public final int blendSrc = RenderUtil.getBlendSrcFactor();
 		public final int blendDst = RenderUtil.getBlendDstFactor();
+		public final int blendSrcAlpha = RenderUtil.getBlendSrcAlphaFactor();
+		public final int blendDstAlpha = RenderUtil.getBlendDstAlphaFactor();
+		public final int activeTexture = RenderUtil.getActiveTextureUnitEnum();
 		public final boolean tex2d = RenderUtil.isTexture2DEnabled();
 		public final boolean cull = RenderUtil.isCullEnabled();
 		public final boolean depthmask = RenderUtil.isDepthMaskEnabled();
 		public final int depthfunc = RenderUtil.getDepthFunc();
 		public void apply() {
-			LeafiaGls.color(r,g,b,a);
-			if (RenderUtil.isDepthEnabled() != depth) {
-				if (depth) LeafiaGls.enableDepth();
-				else LeafiaGls.disableDepth();
-			}
-			if (RenderUtil.isLightingEnabled() != lighting) {
-				if (lighting) LeafiaGls.enableLighting();
-				else LeafiaGls.disableLighting();
-			}
-			if (RenderUtil.isAlphaEnabled() != alpha) {
-				if (alpha) LeafiaGls.enableAlpha();
-				else LeafiaGls.disableAlpha();
-			}
-			if (RenderUtil.getAlphaFunc() != alphaFunc || RenderUtil.getAlphaRef() != alphaRef)
-				LeafiaGls.alphaFunc(alphaFunc,alphaRef);
-			if (RenderUtil.isBlendEnabled() != blend) {
-				if (blend) LeafiaGls.enableBlend();
-				else LeafiaGls.disableBlend();
-			}
-			if (RenderUtil.getBlendSrcFactor() != blendSrc || RenderUtil.getBlendDstFactor() != blendDst)
-				LeafiaGls.blendFunc(blendSrc,blendDst);
-			if (RenderUtil.isTexture2DEnabled() != tex2d) {
-				if (tex2d) LeafiaGls.enableTexture2D();
-				else LeafiaGls.disableTexture2D();
-			}
-			if (RenderUtil.isCullEnabled() != cull) {
-				if (cull) LeafiaGls.enableCull();
-				else LeafiaGls.disableCull();
-			}
-			if (RenderUtil.getDepthFunc() != depthfunc)
-				LeafiaGls.depthFunc(depthfunc);
+			if (r == -1 && g == -1 && b == -1 && a == -1) LeafiaGls.resetColor();
+			else LeafiaGls.color(r,g,b,a);
+			if (depth) LeafiaGls.enableDepth(); else LeafiaGls.disableDepth();
+			if (lighting) LeafiaGls.enableLighting(); else LeafiaGls.disableLighting();
+			if (alpha) LeafiaGls.enableAlpha(); else LeafiaGls.disableAlpha();
+			LeafiaGls.alphaFunc(alphaFunc,alphaRef);
+			if (blend) LeafiaGls.enableBlend(); else LeafiaGls.disableBlend();
+			LeafiaGls.tryBlendFuncSeparate(blendSrc, blendDst, blendSrcAlpha, blendDstAlpha);
+			LeafiaGls.setActiveTexture(activeTexture);
+			if (tex2d) LeafiaGls.enableTexture2D(); else LeafiaGls.disableTexture2D();
+			if (cull) LeafiaGls.enableCull(); else LeafiaGls.disableCull();
+			LeafiaGls.depthMask(depthmask);
+			LeafiaGls.depthFunc(depthfunc);
 		}
 	}
 	public static void resetEffects() {
@@ -81,7 +70,7 @@ public class LeafiaGls extends GlStateManager {
 		LeafiaGls.translate(vector.x,vector.y,vector.z);
 	}
 	public static void rotate(double angle,Vec3d normal) {
-		GL11.glRotated(angle,normal.x,normal.y,normal.z);
+		LeafiaGls.rotate((float) angle, (float) normal.x, (float) normal.y, (float) normal.z);
 	}
 	public static void scale(double factor) {
 		LeafiaGls.scale(factor,factor,factor);
@@ -91,8 +80,11 @@ public class LeafiaGls extends GlStateManager {
 	}
 	public static void inLocalSpace(Runnable callback) {
 		LeafiaGls.pushMatrix();
-		callback.run();
-		LeafiaGls.popMatrix();
+		try {
+			callback.run();
+		} finally {
+			LeafiaGls.popMatrix();
+		}
 	}
 	public static void setGradient(boolean smooth) {
 		LeafiaGls.shadeModel(smooth ? GL11.GL_SMOOTH : GL11.GL_FLAT);
@@ -128,7 +120,10 @@ public class LeafiaGls extends GlStateManager {
 	}
 	public static void inStack(Runnable callback) {
 		LeafiaGls._push();
-		callback.run();
-		LeafiaGls._pop();
+		try {
+			callback.run();
+		} finally {
+			LeafiaGls._pop();
+		}
 	}
 }

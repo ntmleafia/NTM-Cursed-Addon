@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 MrNorwood
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.bomb.balefire;
 
 import com.google.common.collect.ImmutableMap;

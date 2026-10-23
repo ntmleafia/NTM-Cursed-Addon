@@ -1,3 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Alcater <alcater.fallout4@gmail.com>
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025-2026 MrNorwood
+// SPDX-FileCopyrightText: 2025 yor42 <yoonch1022@naver.com>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.blocks.gas.BlockGasBase;

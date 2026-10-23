@@ -1,0 +1,83 @@
+import java.util.jar.JarFile
+
+def codeProject = project(':lgpl-code')
+def codeInput = providers.gradleProperty('lgplCodeSourceProject')
+        .map { file(it) }.getOrElse(codeProject.projectDir)
+def codeSources = new File(codeInput, 'src/main/java')
+
+sourceSets.main.java.srcDir(codeSources)
+
+def classPatterns = fileTree(codeSources).matching { include('**/*.java') }.files.collectMany { source ->
+    def relative = codeSources.toPath().relativize(source.toPath()).toString().replace('\\', '/')
+    def base = relative.substring(0, relative.length() - '.java'.length())
+    [base + '.class', base + '$*.class']
+}.sort()
+
+tasks.withType(Jar).matching {
+    it.name in ['jar', 'jarJava25', 'shadowJar', 'shadowJarJava25']
+}.configureEach {
+    exclude(classPatterns)
+}
+
+tasks.named('sourcesJar', Jar) {
+    exclude(fileTree(codeSources).matching { include('**/*.java') }.files.collect {
+        codeSources.toPath().relativize(it.toPath()).toString().replace('\\', '/')
+    })
+}
+
+gradle.projectsEvaluated {
+    def compilation = tasks.named('compileJava', JavaCompile)
+    def compileDirectory = compilation.flatMap { it.destinationDirectory }
+    def referenceFiles = files(compileDirectory, sourceSets.main.compileClasspath)
+
+    tasks.named('downgradeJar') {
+        classpath = referenceFiles
+    }
+
+    codeProject.tasks.named('jar', Jar) {
+        from(compileDirectory) { include(classPatterns) }
+    }
+    codeProject.tasks.named('downgradeJar') {
+        classpath = referenceFiles
+    }
+    codeProject.tasks.named('sourcesJar', Jar) {
+        from(codeSources) { into('src/main/java') }
+    }
+
+    def mappings = tasks.named('reobfJar').get()
+    def reobfuscateCode = codeProject.tasks.register('reobfJar', mappings.getClass().superclass) {
+        group = 'build'
+        description = 'Creates the independently replaceable LGPL implementation JAR'
+        inputJar.set(codeProject.tasks.named('shadeDowngradedApi', Jar).flatMap { it.archiveFile })
+        archiveClassifier.set('')
+        mcVersion.set(mappings.mcVersion.get())
+        srg.set(mappings.srg.get())
+        fieldCsv.set(mappings.fieldCsv.get())
+        methodCsv.set(mappings.methodCsv.get())
+        exceptorCfg.set(mappings.exceptorCfg.get())
+        recompMcJar.set(mappings.recompMcJar.get())
+        extraSrgEntries.set(mappings.extraSrgEntries.get())
+        extraSrgFiles.setFrom(mappings.extraSrgFiles.files)
+        referenceClasspath.setFrom(referenceFiles)
+        dependsOn(tasks.named('generateForgeSrgMappings'), tasks.named('packagePatchedMc'), tasks.named('packageMcLauncher'))
+    }
+
+    codeProject.artifacts.add('nestedElements', reobfuscateCode)
+    codeProject.artifacts.add('developmentElements', codeProject.tasks.named('shadeDowngradedApi', Jar))
+    codeProject.tasks.named('assemble') { dependsOn(reobfuscateCode) }
+
+    tasks.named('test') {
+        dependsOn(tasks.named('reobfJar'))
+        classpath += sourceSets.main.compileClasspath.filter { it.name.startsWith('lwjgl_util-') }
+        systemProperty('component.projectRoot', projectDir.absolutePath)
+        doFirst {
+            def hbm = sourceSets.main.compileClasspath.files.find { candidate ->
+                if (!candidate.isFile() || !candidate.name.endsWith('.jar')) return false
+                new JarFile(candidate).withCloseable {
+                    it.getJarEntry('com/hbm/main/MainRegistry.class') != null
+                }
+            }
+            systemProperty('component.hbmJar', hbm.absolutePath)
+        }
+    }
+}

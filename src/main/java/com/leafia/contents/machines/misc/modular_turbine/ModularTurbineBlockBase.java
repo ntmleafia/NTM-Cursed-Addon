@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.misc.modular_turbine;
 
 import com.hbm.api.block.IToolable;
@@ -30,7 +34,6 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -42,6 +45,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,70 +116,57 @@ public abstract class ModularTurbineBlockBase extends AddonBlockDummyable implem
 	}*/
 
 	@Override
-	public void onBlockPlacedBy(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull EntityLivingBase player, @NotNull ItemStack itemStack) {
-		if(!(player instanceof EntityPlayer pl))
-			return;
-		safeRem = true;
-		world.setBlockToAir(pos);
-		safeRem = false;
+	public void onBlockPlacedBy(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                @NotNull EntityLivingBase placer, @NotNull ItemStack itemStack) {
+        if (!(placer instanceof EntityPlayer player)) return;
+        safeRem = true;
+        try {
+            world.setBlockToAir(pos);
+        } finally {
+            safeRem = false;
+        }
+        var hand = player.getHeldItemMainhand() == itemStack ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+        double yaw = placer.rotationYaw + (placer.isSneaking() ? 180D : 0D);
+        int quarter = MathHelper.floor(yaw * 4F / 360F + 0.5D) & 3;
+        var facing = getDirModified(ForgeDirection.getOrientation(EnumFacing.byHorizontalIndex(quarter).getOpposite()));
+        int height = getHeightOffset();
+        int distance = -getOffset();
+        var anchor = pos.up(height);
+        if (placer.isSneaking()) anchor = anchor.offset(facing.toEnumFacing(), getDimensions()[2] - distance);
+        if (!checkRequirement(world, anchor.getX(), anchor.getY(), anchor.getZ(), facing, distance)) {
+            refundPlacement(player, hand, itemStack);
+            return;
+        }
+        if (!world.isRemote) {
+            var core = anchor.offset(facing.toEnumFacing(), distance);
+            int metadata = getMetaForCore(world, core, player, facing.ordinal() + offset);
+            world.setBlockState(core, getDefaultState().withProperty(META, metadata), 3);
+            IPersistentNBT.onBlockPlacedBy(world, core, itemStack);
+            fillSpace(world, anchor.getX(), anchor.getY(), anchor.getZ(), facing, distance);
+        }
+        var updatePos = anchor.down(height);
+        world.scheduleUpdate(updatePos, this, 1);
+        world.scheduleUpdate(updatePos, this, 2);
+    }
 
-		EnumHand hand = pl.getHeldItemMainhand() == itemStack ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
-
-		double ang = player.rotationYaw;
-		if (player.isSneaking())
-			ang += 180;
-
-		int i = MathHelper.floor((ang) * 4.0F / 360.0F + 0.5D) & 3;
-		int o = -getOffset();
-		pos = new BlockPos(pos.getX(), pos.getY() + getHeightOffset(), pos.getZ());
-
-		ForgeDirection dir = switch (i) {
-			case 0 -> ForgeDirection.getOrientation(2);
-			case 1 -> ForgeDirection.getOrientation(5);
-			case 2 -> ForgeDirection.getOrientation(3);
-			case 3 -> ForgeDirection.getOrientation(4);
-			default -> ForgeDirection.NORTH;
-		};
-
-		dir = getDirModified(dir);
-
-		if (player.isSneaking())
-			pos = pos.offset(dir.toEnumFacing(),getDimensions()[2]-o);
-
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
-
-		if(!checkRequirement(world, x, y, z, dir, o)) {
-			if(!pl.capabilities.isCreativeMode) {
-				ItemStack stack = pl.inventory.mainInventory.get(pl.inventory.currentItem);
-				Item item = Item.getItemFromBlock(this);
-
-				if(stack.isEmpty()) {
-					pl.inventory.mainInventory.set(pl.inventory.currentItem, new ItemStack(this));
-				} else {
-					if(stack.getItem() != item || stack.getCount() == stack.getMaxStackSize()) {
-						pl.inventory.addItemStackToInventory(new ItemStack(this));
-					} else {
-						pl.getHeldItem(hand).grow(1);
-					}
-				}
-			}
-
-			return;
-		}
-
-		if(!world.isRemote){
-			BlockPos cur = new BlockPos(x + dir.offsetX * o , y + dir.offsetY * o, z + dir.offsetZ * o);
-			int meta = getMetaForCore(world, cur, pl, dir.ordinal() + offset);
-			world.setBlockState(cur, this.getDefaultState().withProperty(META, meta), 3);
-			IPersistentNBT.onBlockPlacedBy(world, cur, itemStack);
-			fillSpace(world, x, y, z, dir, o);
-		}
-		pos = new BlockPos(pos.getX(), pos.getY() - getHeightOffset(), pos.getZ());
-		world.scheduleUpdate(pos, this, 1);
-		world.scheduleUpdate(pos, this, 2);
-	}
+    private static void refundPlacement(EntityPlayer player, EnumHand hand, ItemStack placementStack) {
+        if (player.capabilities.isCreativeMode) return;
+        var refund = placementStack.copy();
+        refund.setCount(1);
+        var held = player.getHeldItem(hand);
+        if (held.isEmpty()) {
+            player.setHeldItem(hand, refund);
+            return;
+        }
+        // ItemBlock consumes the placement stack after onBlockPlacedBy returns.
+        if (ItemHandlerHelper.canItemStacksStack(held, refund)
+                && held.getCount() < Math.min(held.getMaxStackSize(), player.inventory.getInventoryStackLimit())) {
+            held.grow(1);
+            return;
+        }
+        player.inventory.addItemStackToInventory(refund);
+        if (!refund.isEmpty() && !player.world.isRemote) player.dropItem(refund, false, false);
+    }
 	@SideOnly(Side.CLIENT)
 	void addCoreInfo(MTCoreTE c,List<String> texts) {
 		if (c.turbulence > 20) {

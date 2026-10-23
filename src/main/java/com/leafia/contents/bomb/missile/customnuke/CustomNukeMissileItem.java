@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.bomb.missile.customnuke;
 
 import com.hbm.config.BombConfig;
@@ -37,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -89,77 +94,42 @@ public class CustomNukeMissileItem extends ItemMissileStandard implements IGUIPr
 		private final AtomicBoolean isSaving = new AtomicBoolean(false);
 		private boolean isClearing = false;
 
+		private final float[] stageTotals = new float[8];
+        private final float[] stageMultipliers = new float[8];
+
 		public void update() {
-			float tnt = 0F,		tntMod = 1F;
-			float nuke = 0F,	nukeMod = 1F;
-			float hydro = 0F,	hydroMod = 1F;
-			float bale = 0F,	baleMod = 1F;
-			float dirty = 0F,	dirtyMod = 1F;
-			float schrab = 0F,	schrabMod = 1F;
-			float sol = 0F,		solMod = 1F;
-			float euph = 0F;
-
-			for(int i = 0; i < getSlots(); i ++) {
-				ItemStack stack = getStackInSlot(i);
-				if(stack.isEmpty())
-					continue;
-
-				ComparableStack comp = new NbtComparableStack(stack).makeSingular();
-				CustomNukeEntry ent = TileEntityNukeCustom.entries.get(comp);
-
-				if(ent == null)
-					continue;
-
-				if(ent.entry == EnumEntryType.ADD) {
-
-					switch(ent.type) {
-						case TNT: tnt += ent.value; break;
-						case NUKE: nuke += ent.value; break;
-						case HYDRO: hydro += ent.value; break;
-						case BALE: bale += ent.value; break;
-						case DIRTY: dirty += ent.value; break;
-						case SCHRAB: schrab += ent.value; break;
-						case SOL: sol += ent.value; break;
-						case EUPH: euph += ent.value; break;
-					}
-
-				} else if(ent.entry == EnumEntryType.MULT) {
-
-					switch(ent.type) {
-						case TNT: tntMod *= ent.value; break;
-						case NUKE: nukeMod *= ent.value; break;
-						case HYDRO: hydroMod *= ent.value; break;
-						case BALE: baleMod *= ent.value; break;
-						case DIRTY: dirtyMod *= ent.value; break;
-						case SOL: solMod *= ent.value; break;
-						case SCHRAB: schrabMod *= ent.value; break;
-					}
-				}
-			}
-			tnt *= tntMod;
-			nuke *= nukeMod;
-			hydro *= hydroMod;
-			bale *= baleMod;
-			dirty *= dirtyMod;
-			sol *= solMod;
-			schrab *= schrabMod;
-
-			if(tnt < 16) nuke = 0;
-			if(nuke < 100) hydro = 0;
-			if(nuke < 50) bale = 0;
-			if(nuke < 50) schrab = 0;
-			if(nuke < 25) sol = 0;
-			if(schrab < 1 || sol < 1) euph = 0;
-
-			this.tnt = Math.min(tnt, BombConfig.maxCustomTNTRadius);
-			this.nuke = Math.min(nuke, BombConfig.maxCustomNukeRadius);
-			this.hydro = Math.min(hydro, BombConfig.maxCustomHydroRadius);
-			this.bale = Math.min(bale, BombConfig.maxCustomBaleRadius);
-			this.dirty = Math.min(dirty, BombConfig.maxCustomDirtyRadius);
-			this.schrab = Math.min(schrab, BombConfig.maxCustomSchrabRadius);
-			this.sol = Math.min(sol, BombConfig.maxCustomSolRadius);
-			this.euph = Math.min(euph, BombConfig.maxCustomEuphLvl);
-		}
+            Arrays.fill(stageTotals, 0);
+            Arrays.fill(stageMultipliers, 1);
+            for (int slot = 0; slot < getSlots(); slot++) {
+                var stack = getStackInSlot(slot);
+                if (stack.isEmpty()) continue;
+                var entry = TileEntityNukeCustom.entries.get(new NbtComparableStack(stack).makeSingular());
+                if (entry == null) continue;
+                int stage = entry.type.ordinal();
+                if (entry.entry == EnumEntryType.ADD) {
+                    stageTotals[stage] += entry.value;
+                } else if (entry.entry == EnumEntryType.MULT && stage != 7) {
+                    stageMultipliers[stage] *= entry.value;
+                }
+            }
+            for (int stage = 0; stage < 7; stage++) stageTotals[stage] *= stageMultipliers[stage];
+            if (stageTotals[0] < 16) stageTotals[1] = 0;
+            if (stageTotals[1] < 100) stageTotals[2] = 0;
+            if (stageTotals[1] < 50) {
+                stageTotals[3] = 0;
+                stageTotals[5] = 0;
+            }
+            if (stageTotals[1] < 25) stageTotals[6] = 0;
+            if (stageTotals[5] < 1 || stageTotals[6] < 1) stageTotals[7] = 0;
+            tnt = Math.min(stageTotals[0], BombConfig.maxCustomTNTRadius);
+            nuke = Math.min(stageTotals[1], BombConfig.maxCustomNukeRadius);
+            hydro = Math.min(stageTotals[2], BombConfig.maxCustomHydroRadius);
+            bale = Math.min(stageTotals[3], BombConfig.maxCustomBaleRadius);
+            dirty = Math.min(stageTotals[4], BombConfig.maxCustomDirtyRadius);
+            schrab = Math.min(stageTotals[5], BombConfig.maxCustomSchrabRadius);
+            sol = Math.min(stageTotals[6], BombConfig.maxCustomSolRadius);
+            euph = Math.min(stageTotals[7], BombConfig.maxCustomEuphLvl);
+	}
 
 		public float tnt;
 		public float nuke;
@@ -170,44 +140,46 @@ public class CustomNukeMissileItem extends ItemMissileStandard implements IGUIPr
 		public float sol;
 		public float euph;
 		public float getNukeAdj() {
-
-			if(nuke == 0)
-				return 0;
-
-			return Math.min(nuke + tnt / 2, BombConfig.maxCustomNukeRadius);
-		}
+            return adjustedStage(1, BombConfig.maxCustomNukeRadius);
+	}
 
 		public float getHydroAdj() {
-
-			if(hydro == 0)
-				return 0;
-
-			return Math.min(hydro + nuke / 2 + tnt / 4, BombConfig.maxCustomHydroRadius);
-		}
+            return adjustedStage(2, BombConfig.maxCustomHydroRadius);
+	}
 
 		public float getBaleAdj() {
-
-			if(bale == 0)
-				return 0;
-
-			return Math.min(bale + hydro / 2 + nuke / 4 + tnt / 8, BombConfig.maxCustomBaleRadius);
-		}
+            return adjustedStage(3, BombConfig.maxCustomBaleRadius);
+	}
 
 		public float getSchrabAdj() {
-
-			if(schrab == 0)
-				return 0;
-
-			return Math.min(schrab + bale / 2 + hydro / 4 + nuke / 8 + tnt / 16, BombConfig.maxCustomSchrabRadius);
-		}
+            return adjustedStage(4, BombConfig.maxCustomSchrabRadius);
+	}
 
 		public float getSolAdj() {
+            return adjustedStage(5, BombConfig.maxCustomSolRadius);
+	}
 
-			if(sol == 0)
-				return 0;
+        public float stageValue(int stage) {
+            return switch (stage) {
+                case 0 -> tnt;
+                case 1 -> nuke;
+                case 2 -> hydro;
+                case 3 -> bale;
+                case 4 -> schrab;
+                case 5 -> sol;
+                case 6 -> euph;
+                default -> throw new IllegalArgumentException("Unknown blast stage: " + stage);
+            };
+        }
 
-			return Math.min(sol + schrab / 2 + bale / 4 + hydro / 8 + nuke / 16 + tnt / 32, BombConfig.maxCustomSolRadius);
-		}
+        private float adjustedStage(int stage, float maximum) {
+            float result = stageValue(stage);
+            if (result == 0) return 0;
+            for (int preceding = stage - 1, divisor = 2; preceding >= 0; preceding--, divisor *= 2) {
+                result += stageValue(preceding) / divisor;
+            }
+            return Math.min(result, maximum);
+        }
 
 		CustomNukeMissileInventory(EntityPlayer player,ItemStack box) {
 			super(27);
@@ -224,6 +196,7 @@ public class CustomNukeMissileItem extends ItemMissileStandard implements IGUIPr
 				return;
 			}
 			update();
+            if (player.world.isRemote) return;
 			this.isDirty.set(true);
 			scheduleSave();
 		}

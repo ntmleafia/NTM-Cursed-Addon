@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2026 xlzv
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.eventbuses;
 
 import com.custom_hbm.GuiAssentialWarning;

@@ -1,164 +1,118 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.ams.base;
 
-import com.hbm.inventory.fluid.Fluids;
 import com.hbm.main.ResourceManager;
 import com.hbm.render.loader.WaveFrontObjectVAO;
 import com.leafia.AddonBase;
+import com.leafia.dev.render.AMSRenderSupport;
 import com.leafia.dev.render.LeafiaItemRenderer;
+import com.leafia.dev.render.RenderState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import static com.leafia.AddonBase.getIntegrated;
 import static com.leafia.init.ResourceInit.getVAO;
 
 public class AMSBaseRender extends TileEntitySpecialRenderer<AMSBaseTE> {
-	public static final WaveFrontObjectVAO mdl0 = getVAO(getIntegrated("machines/ams/ams_base.obj"));
-	public static final ResourceLocation tex0 = getIntegrated("machines/ams/ams_base.png");
-	public static final ResourceLocation tex1 = getIntegrated("machines/ams/balefire/ams_base.png");
+    public static final WaveFrontObjectVAO mdl0 = getVAO(getIntegrated("machines/ams/ams_base.obj"));
+    public static final ResourceLocation tex0 = getIntegrated("machines/ams/ams_base.png");
+    public static final ResourceLocation tex1 = getIntegrated("machines/ams/balefire/ams_base.png");
+    private static final float[] SHELLS = {0.5F, 0.6F, 0.7F, 0.8F, 0.9F, 1F};
 
-	public static class AMSBaseItemRender extends LeafiaItemRenderer {
-		@Override
-		protected double _sizeReference() {
-			return 5.7;
-		}
-		@Override
-		protected double _itemYoffset() {
-			return -0.03;
-		}
-		@Override
-		protected ResourceLocation __getTexture() {
-			return tex0;
-		}
-		@Override
-		protected WaveFrontObjectVAO __getModel() {
-			return mdl0;
-		}
-	}
+    public static class AMSBaseItemRender extends LeafiaItemRenderer {
+        @Override protected double _sizeReference() { return 5.7; }
+        @Override protected double _itemYoffset() { return -0.03; }
+        @Override protected ResourceLocation __getTexture() { return tex0; }
+        @Override protected WaveFrontObjectVAO __getModel() { return mdl0; }
+    }
 
-	@Override
-	public void render(AMSBaseTE base, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y, z + 0.5D);
-		GlStateManager.enableLighting();
-		GlStateManager.disableCull();
-		GL11.glRotatef(180, 0F, 1F, 0F);
+    @Override
+    public void render(AMSBaseTE base, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        try (var state = new RenderState()) {
+            GlStateManager.pushMatrix();
+            try {
+                GlStateManager.translate(x + 0.5D, y, z + 0.5D);
+                GlStateManager.enableLighting();
+                GlStateManager.disableCull();
+                GlStateManager.rotate(180F, 0, 1, 0);
+                bindTexture(AMSRenderSupport.usesBalefire(base) ? tex1 : tex0);
+                mdl0.renderAll();
+            } finally {
+                GlStateManager.popMatrix();
+            }
+            if (base.color > -1) {
+                shadow(base, x, y, z);
+                colored(base, x, y, z);
+            }
+        }
+    }
 
-		if ((base.tanks[2].getTankType() == Fluids.ASCHRAB && base.tanks[3].getTankType() == Fluids.BALEFIRE) || (base.tanks[2].getTankType() == Fluids.BALEFIRE && base.tanks[3].getTankType() == Fluids.ASCHRAB))
-			bindTexture(tex1);
-		else
-			bindTexture(tex0);
-		mdl0.renderAll();
+    public void renderTileEntityAt2(TileEntity tileEntity, double x, double y, double z, float partialTicks) {
+        try (var state = new RenderState()) {
+            shadow((AMSBaseTE) tileEntity, x, y, z);
+            colored((AMSBaseTE) tileEntity, x, y, z);
+        }
+    }
 
-		GL11.glPopMatrix();
+    public void renderTileEntityAt3(TileEntity tileEntity, double x, double y, double z, float partialTicks) {
+        try (var state = new RenderState()) {
+            colored((AMSBaseTE) tileEntity, x, y, z);
+        }
+    }
 
-		if(base.color > -1)
-			renderTileEntityAt2(base, x, y, z, partialTicks);
-		GlStateManager.enableCull();
-	}
+    private void positionOrb(AMSBaseTE base, double x, double y, double z) {
+        GlStateManager.translate(x + 0.5D, y + 5.5D, z + 0.5D);
+        GlStateManager.disableLighting();
+        GlStateManager.enableCull();
+        GlStateManager.rotate(180F, 0, 1, 0);
+        var size = 0.5 + (base.tanks[2].getFluidAmount() / (double) base.tanks[2].getCapacity()
+                + base.tanks[3].getFluidAmount() / (double) base.tanks[3].getCapacity()) * 2.25;
+        GlStateManager.scale(size, size, size);
+        bindTexture(AddonBase.solid_e);
+    }
 
-	public void renderTileEntityAt2(TileEntity tileEntity,double x,double y,double z,float f)
-	{
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y + 5.5, z + 0.5D);
-		//GL11.glEnable(GL11.GL_LIGHTING);
-		GlStateManager.disableLighting();
-		GlStateManager.enableCull();
-		GL11.glRotatef(180, 0F, 1F, 0F);
+    private void shadow(AMSBaseTE base, double x, double y, double z) {
+        GlStateManager.pushMatrix();
+        try {
+            positionOrb(base, x, y, z);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+            GlStateManager.rotate((int) ((System.nanoTime() / 100000000) % 360) * 3, 0, 1, 0);
+            GlStateManager.scale(1.1F, 1.1F, 1.1F);
+            // The original integer component divisions produced a black shell.
+            GlStateManager.color(0, 0, 0);
+            ResourceManager.sphere_ruv.renderAll();
+        } finally {
+            GlStateManager.popMatrix();
+        }
+    }
 
-		int rot = (int) ((System.nanoTime()/100000000)%360) * 3;
-
-		AMSBaseTE base = (AMSBaseTE)tileEntity;
-
-		double maxSize = 5;
-		double minSize = 0.5;
-		double scale = minSize;
-		scale += ((((double)base.tanks[2].getFluidAmount()) / ((double)base.tanks[2].getCapacity())) + (((double)base.tanks[3].getFluidAmount()) / ((double)base.tanks[3].getCapacity()))) * ((maxSize - minSize) / 2);
-		GL11.glScaled(scale, scale, scale);
-
-		//GlStateManager.disableTexture2D();
-		bindTexture(AddonBase.solid_e);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-
-		GL11.glRotatef(rot, 0F, 1F, 0F);
-		GL11.glScalef(1.1F, 1.1F, 1.1F);
-		GlStateManager.color((byte)(0x20)/255, (byte)(0x20)/255, (byte)(0x40)/255);
-		ResourceManager.sphere_ruv.renderAll(); // used to ve sphere_iuv. What even is iuv?
-		GL11.glScalef(1/1.1F, 1/1.1F, 1/1.1F);
-
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.enableTexture2D();
-		GlStateManager.enableLighting();
-		GlStateManager.disableCull();
-		GL11.glPopMatrix();
-
-		renderTileEntityAt3(tileEntity, x, y, z, f);
-	}
-
-	public void renderTileEntityAt3(TileEntity tileEntity, double x, double y, double z, float f)
-	{
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y + 5.5, z + 0.5D);
-		//GL11.glEnable(GL11.GL_LIGHTING);
-		GlStateManager.disableLighting();
-		GlStateManager.enableCull();
-		GL11.glRotatef(180, 0F, 1F, 0F);
-
-		AMSBaseTE base = (AMSBaseTE)tileEntity;
-
-		double maxSize = 5;
-		double minSize = 0.5;
-		double scale = minSize;
-		scale += ((((double)base.tanks[2].getFluidAmount()) / ((double)base.tanks[2].getCapacity())) + (((double)base.tanks[3].getFluidAmount()) / ((double)base.tanks[3].getCapacity()))) * ((maxSize - minSize) / 2);
-		GL11.glScaled(scale, scale, scale);
-
-		//GL11.glColor3ub((byte)((base.color & 0xFF0000) >> 16), (byte)((base.color & 0x00FF00) >> 8), (byte)((base.color & 0x0000FF) >> 0));
-		GlStateManager.color(((base.color & 0xFF0000) >> 16)/255F, ((base.color & 0x00FF00) >> 8)/255F, ((base.color & 0x0000FF) >> 0)/255F);
-		//GlStateManager.disableTexture2D();
-		bindTexture(AddonBase.solid_e);
-
-		int rot = (int) ((System.nanoTime()/100000000)%360) * 3;
-
-		GL11.glRotatef(rot, 0F, 1F, 0F);
-		GL11.glScalef(0.5F, 0.5F, 0.5F);
-		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(1/0.5F, 1/0.5F, 1/0.5F);
-
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-
-		GL11.glRotatef(-rot * 2, 0F, 1F, 0F);
-		GL11.glScalef(0.6F, 0.6F, 0.6F);
-		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(1/0.6F, 1/0.6F, 1/0.6F);
-
-		GL11.glRotatef(rot * 2, 0F, 1F, 0F);
-		GL11.glScalef(0.7F, 0.7F, 0.7F);
-		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(1/0.7F, 1/0.7F, 1/0.7F);
-
-		GL11.glRotatef(-rot * 2, 0F, 1F, 0F);
-		GL11.glScalef(0.8F, 0.8F, 0.8F);
-		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(1/0.8F, 1/0.8F, 1/0.8F);
-
-		GL11.glRotatef(rot * 2, 0F, 1F, 0F);
-		GL11.glScalef(0.9F, 0.9F, 0.9F);
-		ResourceManager.sphere_ruv.renderAll();
-		GL11.glScalef(1/0.9F, 1/0.9F, 1/0.9F);
-
-		GL11.glRotatef(-rot * 2, 0F, 1F, 0F);
-		ResourceManager.sphere_ruv.renderAll();
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableLighting();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableCull();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-		GL11.glPopMatrix();
-	}
+    private void colored(AMSBaseTE base, double x, double y, double z) {
+        GlStateManager.pushMatrix();
+        try {
+            positionOrb(base, x, y, z);
+            GlStateManager.color((base.color >> 16 & 255) / 255F, (base.color >> 8 & 255) / 255F, (base.color & 255) / 255F);
+            var rotation = (int) ((System.nanoTime() / 100000000) % 360) * 3;
+            GlStateManager.rotate(rotation, 0, 1, 0);
+            for (var index = 0; index < SHELLS.length; index++) {
+                if (index == 1) {
+                    GlStateManager.enableBlend();
+                    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+                }
+                if (index > 0) GlStateManager.rotate((index & 1) == 0 ? rotation * 2 : -rotation * 2, 0, 1, 0);
+                var size = SHELLS[index];
+                GlStateManager.scale(size, size, size);
+                ResourceManager.sphere_ruv.renderAll();
+                if (size != 1) GlStateManager.scale(1F / size, 1F / size, 1F / size);
+            }
+            GlStateManager.disableBlend();
+        } finally {
+            GlStateManager.popMatrix();
+        }
+    }
 }

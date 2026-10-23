@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "leafia_lgpl_code",
+    "name": "Leafia LGPL Code",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "description": "Retained legacy NTM implementation, independently replaceable by mod ID.",
+    "url": "https://github.com/ntmleafia/NTM-Cursed-Addon",
+    "authorList": [],
+    "credits": "Original NTM authors and contributors; see NOTICE.",
+    "dependencies": ["hbm"]
+  }
+]

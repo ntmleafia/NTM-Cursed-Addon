@@ -1,6 +1,11 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.spk_cable;
 
 import com.hbm.lib.ForgeDirection;
+import com.leafia.contents.network.NetworkNodeLifecycle;
 import com.hbm.tileentity.TileEntityLoadedBase;
 import com.hbm.uninos.UniNodespace;
 import com.leafia.contents.network.spk_cable.uninos.ISPKConductor;
@@ -14,65 +19,55 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-/**
- * Copy-pasted TileEntityCableBaseNT
- */
 public class SPKCableTE extends TileEntityLoadedBase implements ISPKConductor, ITickable {
     protected SPKNode node;
 
     @Override
     public void update() {
         if (!world.isRemote) {
-
-            if (this.node == null || this.node.expired) {
-
-                if (this.shouldCreateNode()) {
-                    this.node = UniNodespace.getNode(world, pos, SPKNet.THE_NETWORK_PROVIDER);
-
-                    if (this.node == null || this.node.expired) {
-                        this.node = this.createNode();
-                        UniNodespace.createNode(world, node);
-                    }
-                }
+            if ((node == null || node.expired) && shouldCreateNode()) {
+                node = NetworkNodeLifecycle.attach(world, pos, SPKNet.THE_NETWORK_PROVIDER, this::createNode);
             }
-        } else if (isCorner) {
-            for (EffectLink link : links) {
-                boolean allow = getFromFacing(link.direction);
-                if (link.link != null) {
-                    if (!allow) link.reset();
-                    else {
-                        TileEntity te = world.getTileEntity(link.link);
-                        if (te != null && !te.isInvalid()) {
-                            if (te instanceof SPKCableTE && !link.nonCable) {
-                                SPKCableTE cab = (SPKCableTE)te;
-                                if (!pos.equals(cab.links[link.direction.getOpposite().ordinal()].link))
-                                    link.reset();
-                            } else if (!link.nonCable)
-                                link.reset();
-                        } else
-                            link.reset();
-                    }
+            return;
+        }
+        if (!isCorner) return;
+        var cursor = new BlockPos.MutableBlockPos();
+        for (var link : links) {
+            if (link.link != null) validateLink(link);
+            cursor.setPos(pos);
+            while (true) {
+                cursor.move(link.direction);
+                var tile = world.getTileEntity(cursor);
+                if (tile == null || tile.isInvalid()) break;
+                if (tile instanceof SPKCableTE cable) {
+                    if (!cable.isCorner) continue;
+                    if (link.link == cable.getPos() && !link.nonCable) break;
+                    if (!cable.getFromFacing(link.direction.getOpposite())) continue;
+                    link.setLink(cable);
+                    break;
                 }
-                for (int d = 1; true; d++) {
-                    TileEntity te = world.getTileEntity(pos.offset(link.direction,d));
-                    if (te instanceof SPKCableTE && !te.isInvalid()) {
-                        SPKCableTE cab = (SPKCableTE)te;
-                        if (!cab.isCorner) continue;
-                        if (link.link == cab.getPos() && !link.nonCable) break;
-                        if (cab.getFromFacing(link.direction.getOpposite())) {
-                            link.setLink(cab);
-                            break;
-                        }
-                    } else if (te instanceof ISPKReceiver && !te.isInvalid()) {
-                        if (link.link == te.getPos() && link.nonCable) break;
-                        link.setLinkNonCable(te.getPos());
-                        break;
-                    } else break;
+                if (tile instanceof ISPKReceiver) {
+                    if (link.link != tile.getPos() || !link.nonCable) link.setLinkNonCable(tile.getPos());
                 }
+                break;
             }
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    private void validateLink(EffectLink link) {
+        if (!getFromFacing(link.direction)) {
+            link.reset();
+            return;
+        }
+        var tile = world.getTileEntity(link.link);
+        if (tile == null || tile.isInvalid()) {
+            link.reset();
+        } else if (!link.nonCable && (!(tile instanceof SPKCableTE cable)
+                || !pos.equals(cable.links[link.direction.getOpposite().ordinal()].link))) {
+            link.reset();
+        }
+    }
     public boolean shouldCreateNode() {
         return true;
     }
@@ -116,7 +111,7 @@ public class SPKCableTE extends TileEntityLoadedBase implements ISPKConductor, I
         final SPKCableTE self;
         EffectLink(SPKCableTE self,int i) {
             this.self = self;
-            direction = EnumFacing.values()[i];
+            direction = EnumFacing.VALUES[i];
         }
         public void reset() {
             link = null;
@@ -140,9 +135,9 @@ public class SPKCableTE extends TileEntityLoadedBase implements ISPKConductor, I
             emit = true;
         }
     }
-    public EffectLink[] links = new EffectLink[EnumFacing.values().length];
+    public EffectLink[] links = new EffectLink[EnumFacing.VALUES.length];
     public SPKCableTE() {
-        for (int i = 0; i < EnumFacing.values().length; i++)
+        for (int i = 0; i < EnumFacing.VALUES.length; i++)
             links[i] = new EffectLink(this,i);
     }
 

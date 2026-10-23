@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.gear.combat.guns.am_rifle;
 
 import com.hbm.items.weapon.sedna.BulletConfig;

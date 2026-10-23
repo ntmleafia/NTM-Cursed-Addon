@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025 TheSlize <r.region-4@yandex.ru>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.ff_duct;
 
 import com.hbm.blocks.ICustomBlockItem;

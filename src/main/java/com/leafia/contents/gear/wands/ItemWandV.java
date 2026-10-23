@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.gear.wands;
 
 import com.hbm.blocks.ModBlocks;
@@ -197,32 +201,18 @@ public class ItemWandV extends AddonItemBaked {
 	
 	@SideOnly(Side.CLIENT)
 	public void clickClient(World world, EntityPlayer player, BlockPos pos, float hitX, float hitY, float hitZ){
-		Vec3d look = player.getLookVec();
-		int[] dl = BakedModelUtil.generateDecalMesh(world, look, 1, pos.getX()+hitX, pos.getY()+hitY, pos.getZ()+hitZ, DecalType.REGULAR);
-		//look = look.scale(0.001F);
-		//Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleDecal(world, dl[0], ResourceManager.blood_dec1, 80, pos.getX()+hitX-look.x, pos.getY()+hitY-look.y, pos.getZ()+hitZ-look.z));
-		
-		BlockPos[] blocks = new BlockPos[7];
-		blocks[0] = pos;
-		blocks[1] = pos.up();
-		blocks[2] = blocks[1].up();
-		blocks[3] = blocks[2].north();
-		blocks[4] = blocks[2].south();
-		blocks[5] = blocks[2].east();
-		blocks[6] = blocks[2].west();
-		//Minecraft.getMinecraft().effectRenderer.addEffect(new ParticlePhysicsBlocks(world, pos.getX(), pos.getY(), pos.getZ(), blocks[0], blocks));
-	
-		/*for(int i = 0; i < 4; i ++){
-			ParticleBloodParticle blood = new ParticleBloodParticle(world, pos.getX() + hitX, pos.getY() + hitY, pos.getZ() + hitZ, world.rand.nextInt(9), 2, 1, 10+world.rand.nextInt(5));
-			blood.color(0.5F, 0F, 0F);
-			Vec3d dir = BobMathUtil.randVecInCone(new Vec3d(0, 1, 0), 20);
-			dir = dir.scale(0.3F + world.rand.nextFloat()*0.3);
-			blood.motion((float)dir.x, (float)dir.y, (float)dir.z);
-			ParticleBatchRenderer.addParticle(blood);
-		}*/
-		int[] data = BakedModelUtil.generateDecalMesh(world, look, 1, pos.getX()+hitX, pos.getY()+hitY, pos.getZ()+hitZ, DecalType.FLOW, ResourceManager.blood_particles, world.rand.nextInt(9), 4);
-		look = look.scale(0.001F);
-		Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleDecalFlow(world, data, 120, pos.getX()+hitX-look.x, pos.getY()+hitY-look.y, pos.getZ()+hitZ-look.z).shader(ResourceManager.blood_dissolve));
+        var direction = player.getLookVec();
+        float x = pos.getX() + hitX;
+        float y = pos.getY() + hitY;
+        float z = pos.getZ() + hitZ;
+        // Preserve the random roll of the formerly discarded preview mesh.
+        world.rand.nextFloat();
+        int variant = world.rand.nextInt(9);
+        var mesh = BakedModelUtil.generateDecalMesh(world, direction, 1, x, y, z,
+                DecalType.FLOW, ResourceManager.blood_particles, variant, 4);
+        var inset = direction.scale(0.001F);
+        var particle = new ParticleDecalFlow(world, mesh, 120, x - inset.x, y - inset.y, z - inset.z);
+        Minecraft.getMinecraft().effectRenderer.addEffect(particle.shader(ResourceManager.blood_dissolve));
 	}
 	
 	@Override

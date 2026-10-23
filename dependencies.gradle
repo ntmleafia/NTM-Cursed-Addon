@@ -37,7 +37,19 @@
  *
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
+configurations {
+    componentSources {
+        description = 'Corresponding sources for independently licensed bundled components'
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
 dependencies {
+    jarJar project(':lgpl-assets')
+    componentSources project(path: ':lgpl-assets', configuration: 'sourcesElements')
+
     compileOnly('appeng:ae2-uel:v0.56.7') { transitive false } // or CE won't compile
 
     //implementation 'com.hbm:ntm-ce-java25:2.5.0.0'
@@ -49,11 +61,11 @@ dependencies {
     implementation files("libs/Computronics-1.12.2-1.6.6-deobf.jar")
     runtimeOnlyNonPublishable rfg.deobf(files("libs/Backups-1.12.2-1.5.7.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("libs/worldedit-forge-mc1.12.2-6.1.10-dist (1).jar"))
-	runtimeOnlyNonPublishable rfg.deobf(files("libs/extrautils2-1.12-1.9.9.jar"))
+	runtimeOnlyNonPublishable rfg.deobf("curse.maven:extra-utilities-225561:2678374")
     runtimeOnlyNonPublishable rfg.deobf(files("libs/CTM-MC1.12.2-1.0.2.31.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("libs/TickrateChanger-1.0.14.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("libs/NaturesCompass-1.12.2-1.8.5.jar"))
-	//runtimeOnlyNonPublishable rfg.deobf(files("libs/NBTTooltipViewer-1.0.jar"))
+	//runtimeOnlyNonPublishable rfg.deobf("curse.maven:nbt-tooltip-viewer-663156:3944804")
     /*
     runtimeOnlyNonPublishable rfg.deobf(files("../RedstoneFlux-1.12-2.1.1.1-universal.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("../ThermalFoundation-1.12.2-2.6.7.1-universal.jar"))
@@ -61,4 +73,16 @@ dependencies {
     runtimeOnlyNonPublishable rfg.deobf(files("../ThermalExpansion-1.12.2-5.5.7.1-universal.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("../CodeChickenLib-1.12.2-3.2.3.358-universal.jar"))
     runtimeOnlyNonPublishable rfg.deobf(files("../CoFHWorld-1.12.2-1.4.0.1-universal.jar"))*/
+}
+
+tasks.named('sourcesJar', Jar) {
+    from(configurations.componentSources) {
+        into('component-sources')
+    }
+}
+
+dependencies {
+    jarJarOnly project(path: ':lgpl-code', configuration: 'nestedElements')
+    runtimeOnlyNonPublishable project(path: ':lgpl-code', configuration: 'developmentElements')
+    componentSources project(path: ':lgpl-code', configuration: 'sourcesElements')
 }

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.passive;
 
 import com.hbm.inventory.control_panel.nodes.Node;

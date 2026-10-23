@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia;
 
 import com.custom_hbm.util.LCETuple.Pair;
@@ -55,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mod(modid = Tags.MODID, version = "Unknown", name = Tags.MODNAME, acceptedMinecraftVersions = "[1.12.2]",
-		dependencies = "required-after:hbm@[2.6.1.0,);required:mixinbooter;after:ntmspace")
+		dependencies = "required-after:hbm@[2.6.1.0,);required:mixinbooter;required-after:leafia_lgpl_assets;required-after:leafia_lgpl_code;after:ntmspace")
 public class AddonBase {
 	public enum AddonLoadingStage {
 		BLOCKS,

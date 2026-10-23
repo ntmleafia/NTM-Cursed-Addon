@@ -1,80 +1,67 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.unsorted.explosion_vnt;
 
 import com.hbm.blocks.ModBlocks;
 import com.hbm.explosion.vanillant.ExplosionVNT;
 import com.hbm.explosion.vanillant.interfaces.IBlockAllocator;
-import net.minecraft.block.Block;
+import com.leafia.dev.math.CubeSurfaceRays;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
 
 public class BlockAllocatorSteamExplosion implements IBlockAllocator {
+    private static final float STEP = 0.3F;
+    protected int resolution;
+    private int cachedResolution = Integer.MIN_VALUE;
+    private double[] directions = new double[0];
 
-	protected int resolution;
+    public BlockAllocatorSteamExplosion() {
+        this(16);
+    }
 
-	public BlockAllocatorSteamExplosion() {
-		this(16);
-	}
+    public BlockAllocatorSteamExplosion(int resolution) {
+        this.resolution = resolution;
+    }
 
-	public BlockAllocatorSteamExplosion(int resolution) {
-		this.resolution = resolution;
-	}
-
-	@Override
-	public HashSet<BlockPos> allocate(ExplosionVNT explosion, World world, double x, double y, double z, float size) {
-
-		HashSet<BlockPos> affectedBlocks = new HashSet();
-
-		for(int i = 0; i < this.resolution; ++i) {
-			for(int j = 0; j < this.resolution; ++j) {
-				for(int k = 0; k < this.resolution; ++k) {
-					
-					if(i == 0 || i == this.resolution - 1 || j == 0 || j == this.resolution - 1 || k == 0 || k == this.resolution - 1) {
-						
-						double d0 = (double) ((float) i / ((float) this.resolution - 1.0F) * 2.0F - 1.0F);
-						double d1 = (double) ((float) j / ((float) this.resolution - 1.0F) * 2.0F - 1.0F);
-						double d2 = (double) ((float) k / ((float) this.resolution - 1.0F) * 2.0F - 1.0F);
-						double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
-						
-						d0 /= d3;
-						d1 /= d3;
-						d2 /= d3;
-						
-						float powerRemaining = size * (0.7F + world.rand.nextFloat() * 0.6F);
-						double currentX = x;
-						double currentY = y;
-						double currentZ = z;
-
-						for(float stepSize = 0.3F; powerRemaining > 0.0F; powerRemaining -= stepSize * 2.75F) {
-							
-							int blockX = MathHelper.floor(currentX);
-							int blockY = MathHelper.floor(currentY);
-							int blockZ = MathHelper.floor(currentZ);
-							IBlockState state = world.getBlockState(new BlockPos(blockX, blockY, blockZ));
-							Block block = state.getBlock();
-
-							if(block.getMaterial(state) != Material.AIR && block.getMaterial(state) != Material.WATER && block.getMaterial(state) != ModBlocks.fluidcorium) {
-								float blockResistance = explosion.exploder != null ? explosion.exploder.getExplosionResistance(explosion.compat, world, new BlockPos(blockX, blockY, blockZ), state) : block.getExplosionResistance(world, new BlockPos(blockX, blockY, blockZ), explosion.exploder, explosion.compat);
-								powerRemaining -= (blockResistance/10 + 0.03F) * stepSize;
-							}
-
-							if(powerRemaining > 0.0F /*pw&& block.getMaterial(state) != ModBlocks.fluidcorium*/ && (explosion.exploder == null || explosion.exploder.canExplosionDestroyBlock(explosion.compat, world, new BlockPos(blockX, blockY, blockZ), state, powerRemaining))) {
-								affectedBlocks.add(new BlockPos(blockX, blockY, blockZ));
-							}
-
-							currentX += d0 * (double) stepSize;
-							currentY += d1 * (double) stepSize;
-							currentZ += d2 * (double) stepSize;
-						}
-					}
-				}
-			}
-		}
-		
-		return affectedBlocks;
-	}
+    @Override
+    public HashSet<BlockPos> allocate(ExplosionVNT explosion, World world,
+            double x, double y, double z, float size) {
+        if (cachedResolution != resolution) {
+            directions = CubeSurfaceRays.create(resolution);
+            cachedResolution = resolution;
+        }
+        var affected = new HashSet<BlockPos>();
+        for (int ray = 0; ray < directions.length; ray += 3) {
+            double px = x;
+            double py = y;
+            double pz = z;
+            float energy = size * (0.7F + world.rand.nextFloat() * 0.6F);
+            while (energy > 0) {
+                var pos = new BlockPos(px, py, pz);
+                var state = world.getBlockState(pos);
+                var block = state.getBlock();
+                var material = block.getMaterial(state);
+                if (material != Material.AIR && material != Material.WATER && material != ModBlocks.fluidcorium) {
+                    float resistance = explosion.exploder == null
+                            ? block.getExplosionResistance(world, pos, null, explosion.compat)
+                            : explosion.exploder.getExplosionResistance(explosion.compat, world, pos, state);
+                    energy -= (resistance / 10 + 0.03F) * STEP;
+                }
+                if (energy > 0 && (explosion.exploder == null
+                        || explosion.exploder.canExplosionDestroyBlock(explosion.compat, world, pos, state, energy))) {
+                    affected.add(pos);
+                }
+                px += directions[ray] * (double) STEP;
+                py += directions[ray + 1] * (double) STEP;
+                pz += directions[ray + 2] * (double) STEP;
+                energy -= STEP * 2.75F;
+            }
+        }
+        return affected;
+    }
 }

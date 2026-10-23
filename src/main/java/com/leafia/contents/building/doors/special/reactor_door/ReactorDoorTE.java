@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.building.doors.special.reactor_door;
 
 import com.hbm.blocks.BlockDummyable;
@@ -19,14 +23,11 @@ import com.leafia.init.LeafiaSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 public class ReactorDoorTE extends TileEntityDoorGeneric implements LeafiaPacketReceiver {
 	boolean syncNeeded = false;
@@ -38,7 +39,7 @@ public class ReactorDoorTE extends TileEntityDoorGeneric implements LeafiaPacket
 		}
 		if (getDoorType() == null && this.getBlockType() instanceof BlockDoorGeneric)
 			setDoorType(((BlockDoorGeneric) this.getBlockType()).type);
-		Consumer<TileEntityDoorGeneric> update = getDoorType().onDoorUpdate();
+		var update = getDoorType().onDoorUpdate();
 		if (update != null)
 			update.accept(this);
 		if (state == DoorState.OPENING) {
@@ -94,76 +95,64 @@ public class ReactorDoorTE extends TileEntityDoorGeneric implements LeafiaPacket
 			}
 		}
 
-		if (!world.isRemote) {
-			int[][] ranges = getDoorType().getDoorOpenRanges();
-			ForgeDirection dir = ForgeDirection.getOrientation(getBlockMetadata() - BlockDummyable.offset);
-			if (state == DoorState.OPENING) {
-				for (int i = 0; i < ranges.length; i++) {
-					int[] range = ranges[i];
-					BlockPos startPos = new BlockPos(range[0], range[1], range[2]);
-					float time = getDoorType().getDoorRangeOpenTime(openTicks, i);
-					for (int j = 0; j < Math.abs(range[3]); j++) {
-						if ((float) j / (Math.abs(range[3] - 1)) > time) break;
-						for (int k = 0; k < range[4]; k++) {
-							new BlockPos(0, 0, 0);
-							BlockPos add = switch (EnumFacing.Axis.values()[range[5]]) {
-								case X -> new BlockPos(0, k, Math.signum(range[3]) * j);
-								case Y -> new BlockPos(k, Math.signum(range[3]) * j, 0);
-								case Z -> new BlockPos(Math.signum(range[3]) * j, k, 0);
-							};
-							Rotation r = dir.getBlockRotation();
-							if (dir.toEnumFacing().getAxis() == EnumFacing.Axis.X) r = r.add(Rotation.CLOCKWISE_180);
-							BlockPos finalPos = startPos.add(add).rotate(r).add(pos);
-							if (finalPos.equals(this.pos)) {
-								this.shouldUseBB = true;
-							} else {
-								((BlockDummyable) getBlockType()).makeExtra(world, finalPos.getX(), finalPos.getY(), finalPos.getZ());
-							}
-						}
-					}
-				}
-			} else if (state == DoorState.CLOSING) {
-				for (int i = 0; i < ranges.length; i++) {
-					int[] range = ranges[i];
-					BlockPos startPos = new BlockPos(range[0], range[1], range[2]);
-					float time = getDoorType().getDoorRangeOpenTime(openTicks, i);
-					for (int j = Math.abs(range[3]) - 1; j >= 0; j--) {
-						if ((float) j / (Math.abs(range[3] - 1)) < time) break;
-						for (int k = 0; k < range[4]; k++) {
-							new BlockPos(0, 0, 0);
-							BlockPos add = switch (EnumFacing.Axis.values()[range[5]]) {
-								case X -> new BlockPos(0, k, Math.signum(range[3]) * j);
-								case Y -> new BlockPos(k, Math.signum(range[3]) * j, 0);
-								case Z -> new BlockPos(Math.signum(range[3]) * j, k, 0);
-							};
-							Rotation r = dir.getBlockRotation();
-							if (dir.toEnumFacing().getAxis() == EnumFacing.Axis.X) r = r.add(Rotation.CLOCKWISE_180);
-							BlockPos finalPos = startPos.add(add).rotate(r).add(pos);
-							if (finalPos.equals(this.pos)) {
-								this.shouldUseBB = false;
-							} else {
-								((BlockDummyable) getBlockType()).removeExtra(world, finalPos.getX(), finalPos.getY(), finalPos.getZ());
-							}
-						}
-					}
-				}
-			}
-			if (state == DoorState.OPENING && openTicks == getDoorType().timeToOpen()) {
-				state = DoorState.OPEN;
+		if (world.isRemote) return;
+		if (state == DoorState.OPENING || state == DoorState.CLOSING) {
+			boolean opening = state == DoorState.OPENING;
+			updateDoorCells(opening);
+			if (openTicks == (opening ? getDoorType().timeToOpen() : 0)) {
+				state = opening ? DoorState.OPEN : DoorState.CLOSED;
 				broadcastControlEvt();
+				if (!opening) RadiationSystemNT.markSectionsForRebuild(world, getOccupiedSections());
 			}
-			if (state == DoorState.CLOSING && openTicks == 0) {
-				state = DoorState.CLOSED;
-				broadcastControlEvt();
+		}
+		networkPackNT(100);
+	}
 
-				// With door finally closed, mark chunk for rad update since door is now rad resistant
-				// No need to update when open as well, as opening door should update
-				RadiationSystemNT.markSectionsForRebuild(world, getOccupiedSections());
+	private void updateDoorCells(boolean opening) {
+		var direction = ForgeDirection.getOrientation(getBlockMetadata() - BlockDummyable.offset);
+		var rotation = direction.getBlockRotation();
+		if (direction.offsetX != 0) rotation = rotation.add(Rotation.CLOCKWISE_180);
+		var ranges = getDoorType().getDoorOpenRanges();
+		var block = (BlockDummyable) getBlockType();
+		for (int row = 0; row < ranges.length; row++) {
+			var range = ranges[row];
+			int end = opening ? Math.abs(range[3]) : -1;
+			int stride = opening ? 1 : -1;
+			float phase = getDoorType().getDoorRangeOpenTime(openTicks, row);
+			for (int slice = opening ? 0 : Math.abs(range[3]) - 1; slice != end; slice += stride) {
+				float threshold = (float) slice / Math.abs(range[3] - 1);
+				if (opening ? threshold > phase : threshold < phase) break;
+				int displacement = range[3] < 0 ? -slice : slice;
+				for (int span = 0; span < range[4]; span++) {
+					int x = range[0];
+					int y = range[1];
+					int z = range[2];
+					switch (range[5]) {
+						case 0 -> { y += span; z += displacement; }
+						case 1 -> { x += span; y += displacement; }
+						case 2 -> { x += displacement; y += span; }
+						default -> throw new ArrayIndexOutOfBoundsException(range[5]);
+					}
+					int rotatedX = switch (rotation) {
+						case NONE -> x;
+						case CLOCKWISE_90 -> -z;
+						case CLOCKWISE_180 -> -x;
+						case COUNTERCLOCKWISE_90 -> z;
+					};
+					int rotatedZ = switch (rotation) {
+						case NONE -> z;
+						case CLOCKWISE_90 -> x;
+						case CLOCKWISE_180 -> -z;
+						case COUNTERCLOCKWISE_90 -> -x;
+					};
+					int worldX = pos.getX() + rotatedX;
+					int worldY = pos.getY() + y;
+					int worldZ = pos.getZ() + rotatedZ;
+					if ((rotatedX | y | rotatedZ) == 0) shouldUseBB = opening;
+					else if (opening) block.makeExtra(world, worldX, worldY, worldZ);
+					else block.removeExtra(world, worldX, worldY, worldZ);
+				}
 			}
-			//PacketDispatcher.wrapper.sendToAllAround(new TEDoorAnimationPacket(pos, (byte) state.ordinal(), (byte) (shouldUseBB ? 1 : 0)),
-			//        new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 100));
-
-			this.networkPackNT(100);
 		}
 	}
 

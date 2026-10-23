@@ -1,75 +1,36 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.dfc.components.injector;
 
 import com.hbm.inventory.slot.SlotTakeOnly;
 import com.hbm.tileentity.machine.TileEntityCoreInjector;
+import com.leafia.dev.container_utility.LeafiaItemTransferable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class CoreInjectorContainer extends Container {
+public class CoreInjectorContainer extends LeafiaItemTransferable {
+    private final TileEntityCoreInjector machine;
 
-	private TileEntityCoreInjector nukeBoy;
-	
-	public CoreInjectorContainer(InventoryPlayer invPlayer,TileEntityCoreInjector tedf) {
-		
-		nukeBoy = tedf;
-		this.addSlotToContainer(new SlotItemHandler(nukeBoy.inventory, 0, 15, 16));
-		this.addSlotToContainer(new SlotTakeOnly(nukeBoy.inventory, 1, 15, 52));
-		this.addSlotToContainer(new SlotItemHandler(nukeBoy.inventory, 2, 146, 17));
-		this.addSlotToContainer(new SlotTakeOnly(nukeBoy.inventory, 3, 146, 53));
-		
-		for(int i = 0; i < 3; i++)
-		{
-			for(int j = 0; j < 9; j++)
-			{
-				this.addSlotToContainer(new Slot(invPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
-		
-		for(int i = 0; i < 9; i++)
-		{
-			this.addSlotToContainer(new Slot(invPlayer, i, 8 + i * 18, 142));
-		}
-	}
-	
-	@Override
-    public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int par2)
-    {
-		ItemStack var3 = ItemStack.EMPTY;
-		Slot var4 = (Slot) this.inventorySlots.get(par2);
-		
-		if (var4 != null && var4.getHasStack())
-		{
-			ItemStack var5 = var4.getStack();
-			var3 = var5.copy();
-			
-            if (par2 <= 3) {
-				if (!this.mergeItemStack(var5, 4, this.inventorySlots.size(), true))
-				{
-					return ItemStack.EMPTY;
-				}
-			} else {
-				return ItemStack.EMPTY;
-			}
-            
-			if (var5.isEmpty())
-			{
-				var4.putStack(ItemStack.EMPTY);
-			}
-			else
-			{
-				var4.onSlotChanged();
-			}
-		}
-		
-		return var3;
+    public CoreInjectorContainer(InventoryPlayer player, TileEntityCoreInjector machine) {
+        this.machine = machine;
+        addSlotToContainer(new SlotItemHandler(machine.inventory, 0, 15, 16));
+        addSlotToContainer(new SlotTakeOnly(machine.inventory, 1, 15, 52));
+        addSlotToContainer(new SlotItemHandler(machine.inventory, 2, 146, 17));
+        addSlotToContainer(new SlotTakeOnly(machine.inventory, 3, 146, 53));
+        addPlayerInventory(player, 8, 84);
     }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return nukeBoy.isUseableByPlayer(player);
-	}
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        return shiftClick(index, 3, 4, NO_IMPORT_RANGES);
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return machine.isUseableByPlayer(player);
+    }
 }

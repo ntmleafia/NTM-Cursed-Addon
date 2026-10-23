@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.apr.blocks.core;
 
 import com.custom_hbm.contents.torex.LCETorex;
@@ -706,8 +710,10 @@ public class APRCoreTE extends LCETileEntityMachineBase implements IGUIProvider,
 		stressSoundTimer--;
 		double stress = damage/(double)maxDamage;
 		stressTimer -= Math.pow(stress, 0.9) * 64;
-		if (stressTimer <= 0)
+		if (stressTimer <= 0) {
+			stressTimer = 300;
 			getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
+		}
 		if (hullTemp >= 650) {
 			for (Entry<BlockPos,IBlockState> entry : mbRequirement.entrySet()) {
 				if (entry.getValue().getBlock() == APR.apr_component) {

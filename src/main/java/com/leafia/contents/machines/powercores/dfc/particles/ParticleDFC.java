@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.dfc.particles;
 
 import com.hbm.main.ResourceManager;

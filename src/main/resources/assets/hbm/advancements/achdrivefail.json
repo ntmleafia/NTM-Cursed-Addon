@@ -2,7 +2,8 @@
   "parent": "hbm:achpolymer",
   "display": {
     "icon": {
-      "item": "hbm:hard_drive_full"
+      "item": "hbm:drive",
+      "data": 3
     },
     "title": {
       "translate": "achievement.driveFail"

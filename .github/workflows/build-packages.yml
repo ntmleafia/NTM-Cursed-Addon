@@ -31,7 +31,6 @@ jobs:
                 -x "docs/*" \
                 \
                 -x "CODEOWNERS" \
-                -x "LICENSE" \
                 -x "README.md" \
                 \
                 -x "packages/" \
@@ -51,7 +50,6 @@ jobs:
                 -x "src/*" \
                 \
                 -x "CODEOWNERS" \
-                -x "LICENSE" \
                 -x "README.md" \
                 \
                 -x "packages/" \

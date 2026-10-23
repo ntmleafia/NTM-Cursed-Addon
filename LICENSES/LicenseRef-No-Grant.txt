@@ -1,0 +1,5 @@
+No license grant
+
+Copyright and other rights remain with their respective holders. This repository
+does not grant permission or additional rights in this material. Any permissions
+independently obtained from the rights holders remain unaffected.

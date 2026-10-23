@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2020 Drillgon200 <drillgon200@gmail.com>
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025 mn58835 <mn58835@tutanota.com>
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.rbmk.debris;
 
 import com.hbm.main.client.NTMClientRegistry;

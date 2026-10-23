@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.pwr;
 
 import com.hbm.blocks.ModBlocks;
@@ -531,6 +535,7 @@ public class PWRData implements ITickable, LeafiaPacketReceiver {
 				double stress = tanks[2].getFill() / (double) tanks[2].getMaxFill();
 				stressTimer -= Math.pow(stress, 0.9) * 64;
 				if (stressTimer <= 0) {
+					stressTimer = 300;
 					BlockPos pos = (BlockPos) members.toArray()[getWorld().rand.nextInt(members.size())];
 					getWorld().playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, LeafiaSoundEvents.stressSounds[getWorld().rand.nextInt(7)], SoundCategory.BLOCKS, (float) MathHelper.clampedLerp(0.25, 14, Math.pow(stress, 4)), 1.0F);
 				}

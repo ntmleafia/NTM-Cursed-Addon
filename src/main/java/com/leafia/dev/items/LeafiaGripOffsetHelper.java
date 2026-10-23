@@ -1,211 +1,181 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.dev.items;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * <h3>HOW TO SET UP:
- * Create a new static instance of LeafiaGripOffsetHelper like so:
- * <pre>{@code static final offsets = new LeafiaOffsetHelper();}</pre>
- * Put this in render method:
- * <pre>{@code offsets.apply(transformType);}</pre>
- * That's it!
- * <br><br>
- * <h3>HOW TO MOVE OFFSETS IN-GAME:</h3>
- * Enable <b>debug</b> static variable in this class. That's it.
- * <br>Controls are arrows, IJKL, ctrl+up/down, ctrl+I/K, and space.
- * <br>Hold TAB for smaller increments.
- * <br>Keep in mind that offsets are not automatically saved, and you have to write scale, position and rotations manually via code.
- * <br>FIRST_PERSON_LEFT_HAND is affected by FIRST_PERSON_RIGHT_HAND, and THIRD_PERSON_LEFT_HAND is affected by THIRD_PERSON_RIGHT_HAND.
- * <br><br>
- * <h3>HOW TO SET OFFSETS VIA CODE</h3>
- * Just take this for an example (ZIRNOX item render):
- * <pre>{@code static final LeafiaGripOffsetHelper offsets = new LeafiaGripOffsetHelper()
- * 			.get(TransformType.FIRST_PERSON_RIGHT_HAND)
- * 			.setScale(0.25).setPosition(0,10,-10.25).setRotation(25,0,-95).getHelper()
- *
- * 			.get(TransformType.FIRST_PERSON_LEFT_HAND)
- * 			.setPosition(-4.5,0,9.75).setRotation(0,-60,0).getHelper()
- *
- * 			.get(TransformType.GUI)
- * 			.setScale(2.2).setPosition(-2.55,-0.85,0).setRotation(65,0,-25).getHelper()
- *
- * 			.get(TransformType.GROUND)
- * 			.setScale(0.25).setPosition(5.25,3.25,-5.00).getHelper()
- *
- * 			.get(TransformType.FIXED)
- * 			.setScale(0.4).setPosition(0.75,2.75,-3.15).setRotation(0,0,-90).getHelper()
- *
- * 			.get(TransformType.THIRD_PERSON_RIGHT_HAND)
- * 			.setScale(0.25).setPosition(5,1.5,-3.75).getHelper();}</pre>
+ * Per-view model transforms, with optional keyboard editing.
+ * Left-hand views first apply their corresponding right-hand transform; NONE is
+ * applied last to every view. Debug edits are temporary and must be copied into
+ * the renderer's initialization code to persist.
  */
 public class LeafiaGripOffsetHelper {
-	/// Yes, yes I know ViewModelPositonDebugger exists. Scroll down for the reason why.
-	public boolean debug = false;
-	static boolean blockInput = false;
-	public Map<TransformType,LeafiaGripOffset> offsetMap;
-	protected int debugIndex = 0;
-	public static LeafiaGripOffsetHelper fixGrip = new LeafiaGripOffsetHelper()
-			.get(TransformType.GUI).setScale(1).setRotation(180,0,90).getHelper()
-			.get(TransformType.FIRST_PERSON_RIGHT_HAND).setScale(1).setRotation(180,0,90).setPosition(0.5,0.5,0.5).getHelper()
-			.get(TransformType.FIRST_PERSON_LEFT_HAND).setPosition(0,0,1.125).getHelper()
-			.get(TransformType.THIRD_PERSON_RIGHT_HAND).setScale(1).getHelper();
-	static final boolean fixNeeded = Loader.isModLoaded("vintagefix");
-	public static void fixGrip(TransformType type) {
-		if (fixNeeded)
-			fixGrip.apply(type);
-	}
-	public static class LeafiaGripOffset {
-		public double scale;
-		public Vec3d rotation;
-		public Vec3d position;
-		protected LeafiaGripOffsetHelper helper;
-		public LeafiaGripOffset(LeafiaGripOffsetHelper helper) {
-			scale = 1;
-			rotation = new Vec3d(0,0,0);
-			position = new Vec3d(0,0,0);
-			this.helper = helper;
-		}
-		public LeafiaGripOffset setPosition(double x,double y,double z) {
-			this.position = new Vec3d(x,y,z);
-			return this;
-		}
-		public LeafiaGripOffset setRotation(double x,double y,double z) {
-			this.rotation = new Vec3d(x,y,z);
-			return this;
-		}
-		public LeafiaGripOffset setScale(double scale) {
-			this.scale = scale;
-			return this;
-		}
-		public LeafiaGripOffset copySettings(TransformType type) {
-			LeafiaGripOffset offset = this.helper.get(type);
-			this.scale = offset.scale;
-			this.position = offset.position;
-			this.rotation = offset.rotation;
-			return this;
-		}
-		public LeafiaGripOffsetHelper getHelper() {
-			return this.helper;
-		}
-	}
-	public LeafiaGripOffsetHelper() {
-		offsetMap = new HashMap<>();
-		debugIndex = 0;
-		for (TransformType transform : TransformType.values()) {
-			LeafiaGripOffset offset = new LeafiaGripOffset(this);
-			offset.scale = 0.25;
-			offsetMap.put(transform,offset);
-			if (transform == TransformType.NONE)
-				offset.setScale(1);
-			if (transform == TransformType.FIRST_PERSON_LEFT_HAND)
-				offset.setScale(1);
-			if (transform == TransformType.THIRD_PERSON_LEFT_HAND)
-				offset.setScale(1);
-			if (transform == TransformType.FIXED)
-				offset.setScale(1);
-		}
-	}
-	public LeafiaGripOffset get(TransformType transform) {
-		return offsetMap.get(transform);
-	}
-	public void applyCustomOffset(LeafiaGripOffset offset) {
-		GL11.glScaled(offset.scale,offset.scale,offset.scale);
-		GL11.glTranslated(-offset.position.x,offset.position.y,offset.position.z);
-		GL11.glRotated(-offset.rotation.y,0,1,0);
-		GL11.glRotated(offset.rotation.x,1,0,0);
-		GL11.glRotated(-offset.rotation.z,0,0,1);
-	}
-	protected void render(TransformType type) {
-		LeafiaGripOffset offset = this.offsetMap.get(type);
-		applyCustomOffset(offset);
-	}
-	public void apply(TransformType type) {
-		GL11.glRotatef(-90f,0,1,0);
-		switch(type) {
-			case FIRST_PERSON_LEFT_HAND: render(TransformType.FIRST_PERSON_RIGHT_HAND); break;
-			case THIRD_PERSON_LEFT_HAND: render(TransformType.THIRD_PERSON_RIGHT_HAND); break;
-			//case FIXED: render(TransformType.GUI); break;
-			/// ^^^ This line isn't commented out in Community Edition, making it outdated
-		}
-		render(type);
-		render(TransformType.NONE);
-		if (debug)
-			tickDebug();
-	}
-	protected void tickDebug() {
-		//if (!debug) return;
-		boolean[] inputs = new boolean[]{Keyboard.isKeyDown(Keyboard.KEY_UP),Keyboard.isKeyDown(Keyboard.KEY_LEFT),Keyboard.isKeyDown(Keyboard.KEY_DOWN),Keyboard.isKeyDown(Keyboard.KEY_RIGHT),Keyboard.isKeyDown(Keyboard.KEY_I),Keyboard.isKeyDown(Keyboard.KEY_J),Keyboard.isKeyDown(Keyboard.KEY_K),Keyboard.isKeyDown(Keyboard.KEY_L),Keyboard.isKeyDown(Keyboard.KEY_SPACE),Keyboard.isKeyDown(Keyboard.KEY_RSHIFT),Keyboard.isKeyDown(Keyboard.KEY_RCONTROL),Keyboard.isKeyDown(Keyboard.KEY_ADD),Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)};
-		boolean doUnblock = true;
-		for (boolean input : inputs) {
-			if (input) {
-				doUnblock = false;
-				break;
-			}
-		}
-		if (doUnblock) blockInput = false;
-		if (!blockInput) {
-			if (!doUnblock) blockInput = true;
-			if (inputs[9])
-				debugIndex++;
-			if (inputs[10])
-				debugIndex--;
-			debugIndex = Math.floorMod(debugIndex,TransformType.values().length);
-			TransformType curTransform = TransformType.values()[debugIndex];
-			LeafiaGripOffset offset = this.offsetMap.get(curTransform);
-			double increment = 0.25;
-			double incrementAngle = 5;
-			double incrementScale = 0.05;
-			boolean damn = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
-			if (Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
-				increment=0.05;
-				incrementAngle=1;
-				incrementScale=0.01;
-			}
-			if (inputs[8] || inputs[9] || inputs[10]) {
-				EntityPlayer player = Minecraft.getMinecraft().player;
-				Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages(false);
-				player.sendMessage(new TextComponentString("-- Current Grip --").setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
-				player.sendMessage(new TextComponentString(String.format(" Scale: %01.2f",offset.scale)));
-				player.sendMessage(new TextComponentString(String.format(" Position: %01.2f, %01.2f, %01.2f",offset.position.x,offset.position.y,offset.position.z)));
-				player.sendMessage(new TextComponentString(String.format(" Rotation: %01.0f, %01.0f, %01.0f",offset.rotation.x,offset.rotation.y,offset.rotation.z)));
-				player.sendMessage(new TextComponentString(" Type: "+(curTransform == TransformType.NONE ? "CUSTOM" : curTransform.name())).setStyle(new Style().setColor(TextFormatting.GRAY)));
-			}
-			if (inputs[11])
-				offset.scale+=incrementScale;
-			if (inputs[12])
-				offset.scale-=incrementScale;
-			{
-				if (inputs[0])
-					offset.position = offset.position.add(0,damn ? 0 : increment,damn ? increment : 0);
-				if (inputs[2])
-					offset.position = offset.position.add(0,damn ? 0 : -increment,damn ? -increment : 0);
-				if (inputs[1])
-					offset.position = offset.position.add(-increment,0,0);
-				if (inputs[3])
-					offset.position = offset.position.add(increment,0,0);
-			}
-			{
-				if (inputs[4])
-					offset.rotation = offset.rotation.add(incrementAngle,0,0);
-				if (inputs[6])
-					offset.rotation = offset.rotation.add(-incrementAngle,0,0);
-				if (inputs[5])
-					offset.rotation = offset.rotation.add(0,damn ? 0 : -incrementAngle,damn ? incrementAngle : 0);
-				if (inputs[7])
-					offset.rotation = offset.rotation.add(0,damn ? 0 : incrementAngle,damn ? -incrementAngle : 0);
-			}
-		}
-	}
+    private static final TransformType[] TRANSFORMS = TransformType.values();
+    private static final int[] KEYS = {Keyboard.KEY_UP, Keyboard.KEY_LEFT, Keyboard.KEY_DOWN, Keyboard.KEY_RIGHT,
+            Keyboard.KEY_I, Keyboard.KEY_J, Keyboard.KEY_K, Keyboard.KEY_L, Keyboard.KEY_SPACE,
+            Keyboard.KEY_RSHIFT, Keyboard.KEY_RCONTROL, Keyboard.KEY_ADD, Keyboard.KEY_SUBTRACT};
+    private static final int[] EDIT_ORDER = {0, 2, 1, 3, 4, 6, 5, 7};
+    static boolean blockInput;
+    public boolean debug;
+    public Map<TransformType, LeafiaGripOffset> offsetMap;
+    protected int debugIndex;
+
+    public static LeafiaGripOffsetHelper fixGrip = new LeafiaGripOffsetHelper()
+            .get(TransformType.GUI).setScale(1).setRotation(180, 0, 90).getHelper()
+            .get(TransformType.FIRST_PERSON_RIGHT_HAND).setScale(1).setRotation(180, 0, 90).setPosition(0.5, 0.5, 0.5).getHelper()
+            .get(TransformType.FIRST_PERSON_LEFT_HAND).setPosition(0, 0, 1.125).getHelper()
+            .get(TransformType.THIRD_PERSON_RIGHT_HAND).setScale(1).getHelper();
+    static final boolean fixNeeded = Loader.isModLoaded("vintagefix");
+
+    public static void fixGrip(TransformType type) {
+        if (fixNeeded) fixGrip.apply(type);
+    }
+
+    public static class LeafiaGripOffset {
+        public double scale = 1;
+        public Vec3d rotation = Vec3d.ZERO;
+        public Vec3d position = Vec3d.ZERO;
+        protected LeafiaGripOffsetHelper helper;
+
+        public LeafiaGripOffset(LeafiaGripOffsetHelper helper) {
+            this.helper = helper;
+        }
+
+        public LeafiaGripOffset setPosition(double x, double y, double z) {
+            position = new Vec3d(x, y, z);
+            return this;
+        }
+
+        public LeafiaGripOffset setRotation(double x, double y, double z) {
+            rotation = new Vec3d(x, y, z);
+            return this;
+        }
+
+        public LeafiaGripOffset setScale(double scale) {
+            this.scale = scale;
+            return this;
+        }
+
+        public LeafiaGripOffset copySettings(TransformType type) {
+            var source = helper.get(type);
+            scale = source.scale;
+            position = source.position;
+            rotation = source.rotation;
+            return this;
+        }
+
+        public LeafiaGripOffsetHelper getHelper() {
+            return helper;
+        }
+    }
+
+    public LeafiaGripOffsetHelper() {
+        offsetMap = new EnumMap<>(TransformType.class);
+        for (var type : TRANSFORMS) {
+            var offset = new LeafiaGripOffset(this);
+            offset.scale = switch (type) {
+                case NONE, FIRST_PERSON_LEFT_HAND, THIRD_PERSON_LEFT_HAND, FIXED -> 1;
+                default -> 0.25;
+            };
+            offsetMap.put(type, offset);
+        }
+    }
+
+    public LeafiaGripOffset get(TransformType transform) {
+        return offsetMap.get(transform);
+    }
+
+    public void applyCustomOffset(LeafiaGripOffset offset) {
+        GlStateManager.scale(offset.scale, offset.scale, offset.scale);
+        GlStateManager.translate(-offset.position.x, offset.position.y, offset.position.z);
+        GlStateManager.rotate((float) -offset.rotation.y, 0, 1, 0);
+        GlStateManager.rotate((float) offset.rotation.x, 1, 0, 0);
+        GlStateManager.rotate((float) -offset.rotation.z, 0, 0, 1);
+    }
+
+    protected void render(TransformType type) {
+        applyCustomOffset(get(type));
+    }
+
+    public void apply(TransformType type) {
+        GlStateManager.rotate(-90F, 0, 1, 0);
+        var inherited = switch (type) {
+            case FIRST_PERSON_LEFT_HAND -> TransformType.FIRST_PERSON_RIGHT_HAND;
+            case THIRD_PERSON_LEFT_HAND -> TransformType.THIRD_PERSON_RIGHT_HAND;
+            default -> null;
+        };
+        if (inherited != null) render(inherited);
+        render(type);
+        render(TransformType.NONE);
+        if (debug) tickDebug();
+    }
+
+    protected void tickDebug() {
+        var keys = 0;
+        for (var index = 0; index < KEYS.length; index++) {
+            if (Keyboard.isKeyDown(KEYS[index])) keys |= 1 << index;
+        }
+        if (keys == 0) blockInput = false;
+        if (blockInput) return;
+        blockInput = keys != 0;
+        debugIndex = Math.floorMod(debugIndex + ((keys >>> 9) & 1) - ((keys >>> 10) & 1), TRANSFORMS.length);
+        var view = TRANSFORMS[debugIndex];
+        var offset = get(view);
+        if ((keys & ((1 << 8) | (1 << 9) | (1 << 10))) != 0) printOffset(view, offset);
+        var fine = Keyboard.isKeyDown(Keyboard.KEY_TAB);
+        var distance = fine ? 0.05 : 0.25;
+        var angle = fine ? 1D : 5D;
+        var scaleStep = fine ? 0.01 : 0.05;
+        if ((keys & (1 << 11)) != 0) offset.scale += scaleStep;
+        if ((keys & (1 << 12)) != 0) offset.scale -= scaleStep;
+        var control = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
+        for (var key : EDIT_ORDER) {
+            if ((keys & (1 << key)) == 0) continue;
+            var rotation = key >= 4;
+            var axis = switch (key) {
+                case 1, 3, 4, 6 -> 0;
+                default -> control ? 2 : 1;
+            };
+            var sign = switch (key) {
+                case 1, 2, 6 -> -1;
+                case 5 -> control ? 1 : -1;
+                case 7 -> control ? -1 : 1;
+                default -> 1;
+            };
+            var delta = (rotation ? angle : distance) * sign;
+            var value = rotation ? offset.rotation : offset.position;
+            value = value.add(axis == 0 ? delta : 0, axis == 1 ? delta : 0, axis == 2 ? delta : 0);
+            if (rotation) offset.rotation = value;
+            else offset.position = value;
+        }
+    }
+
+    private static void printOffset(TransformType type, LeafiaGripOffset offset) {
+        var client = Minecraft.getMinecraft();
+        var player = client.player;
+        client.ingameGUI.getChatGUI().clearChatMessages(false);
+        player.sendMessage(new TextComponentString("-- Current Grip --")
+                .setStyle(new Style().setColor(TextFormatting.LIGHT_PURPLE)));
+        player.sendMessage(new TextComponentString(String.format(" Scale: %01.2f", offset.scale)));
+        player.sendMessage(new TextComponentString(String.format(" Position: %01.2f, %01.2f, %01.2f",
+                offset.position.x, offset.position.y, offset.position.z)));
+        player.sendMessage(new TextComponentString(String.format(" Rotation: %01.0f, %01.0f, %01.0f",
+                offset.rotation.x, offset.rotation.y, offset.rotation.z)));
+        player.sendMessage(new TextComponentString(" Type: " + (type == TransformType.NONE ? "CUSTOM" : type.name()))
+                .setStyle(new Style().setColor(TextFormatting.GRAY)));
+    }
 }

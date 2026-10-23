@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.misc.modular_turbine;
 
 import com.leafia.contents.machines.misc.modular_turbine.core.MTCoreData.StageUpgradeContext;

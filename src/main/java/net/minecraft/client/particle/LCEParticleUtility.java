@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package net.minecraft.client.particle;
 
 //Stupid minecraft particles have all their fields protected. Solution? Make a class in the same package!

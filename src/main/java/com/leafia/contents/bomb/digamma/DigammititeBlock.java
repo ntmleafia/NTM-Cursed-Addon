@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 MrNorwood
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.bomb.digamma;
 
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +18,7 @@ import com.hbm.render.icon.TextureAtlasSpriteMutatable;
 import com.hbm.render.model.VariantBakedModel;
 import com.hbm.util.ContaminationUtil;
 import com.leafia.contents.AddonBlocks;
-import com.llib.math.LeafiaColor;
+import com.leafia.overwrite_contents.mixin.mod.hbm.AccessorBlockSellafield;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -52,29 +57,17 @@ public class DigammititeBlock extends BlockMeta implements IDynamicModels {
 	public final static int LEVELS = 6;
 	public static final float rad = 5f;
 	public static final int[][] colors;
-	private static LeafiaColor transformColor(LeafiaColor col,double temperature) {
-		double delta = col.green-col.red;
-		return new LeafiaColor(col.green,col.blue,col.blue);
-	}
-	static {
-		int[][] sellafieldColors = new int[][]{
-				{0x4C7939, 0x41463F},
-				{0x418223, 0x3E443B},
-				{0x338C0E, 0x3B5431},
-				{0x1C9E00, 0x394733},
-				{0x02B200, 0x37492F},
-				{0x00D300, 0x324C26}
-		};
-		for (int i = 0; i < sellafieldColors.length; i++) {
-			LeafiaColor colorA = new LeafiaColor(sellafieldColors[i][0]);
-			LeafiaColor colorB = new LeafiaColor(sellafieldColors[i][1]);
-			colorA = transformColor(colorA,(i+1)/(double)sellafieldColors.length*0.85);
-			colorB = transformColor(colorB,(i+1)/(double)sellafieldColors.length*0.35);
-			sellafieldColors[i][0] = colorA.toInARGB();
-			sellafieldColors[i][1] = colorB.toInARGB();
-		}
-		colors = sellafieldColors;
-	}
+    static {
+        var source = AccessorBlockSellafield.leafia$getColors();
+        colors = new int[LEVELS][2];
+        for (int level = 0; level < LEVELS; level++) {
+            for (int shade = 0; shade < 2; shade++) {
+                int rgb = source[level][shade];
+                // MixinBlockSellafield already maps the original green to red and preserves blue.
+                colors[level][shade] = rgb & 0xff0000 | (rgb & 0xff) * 0x101;
+            }
+        }
+    }
 
 
 	public DigammititeBlock(Material mat,SoundType type,String s) {
@@ -137,10 +130,10 @@ public class DigammititeBlock extends BlockMeta implements IDynamicModels {
 
 	@SideOnly(Side.CLIENT)
 	public void bakeModel(ModelBakeEvent event) {
+        var baseModel = ModelLoaderRegistry.getModelOrMissing(sellafieldTextures[0].getBaseModelLocation());
 		for (int level = 0; level < LEVELS; level++) {
 			var models = new IBakedModel[4];
 			for (int variant = 0; variant < 4; variant++) {
-				IModel baseModel = ModelLoaderRegistry.getModelOrMissing(sellafieldTextures[0].getBaseModelLocation());
 				ImmutableMap.Builder<String, String> textureMap = ImmutableMap.builder();
 				textureMap.put("all", new ResourceLocation("leafia", ROOT_PATH) + sellafieldTextures[variant].getPrimaryTexturePath() + "-" + level+"-copy");
 

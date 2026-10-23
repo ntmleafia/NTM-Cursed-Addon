@@ -1,6 +1,9 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.gear.utility.fuzzy;
 
-import com.custom_hbm.render.LCERenderHelper;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.render.item.TEISRBase;
 import com.hbm.render.misc.EnumSymbol;
@@ -8,6 +11,9 @@ import com.hbm.render.model.BakedModelTransforms;
 import com.leafia.contents.AddonItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.Item;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
@@ -45,7 +51,9 @@ public class FuzzyIdentifierRender extends TEISRBase {
 		final double PIX = 0.0625;
 		FluidType fluid = FuzzyIdentifierItem.getType(itemStackIn);
 		TextureAtlasSprite fluidIcon = getTextureFromFluid(fluid.getFF());
-		LCERenderHelper.bindBlockTexture();
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		var tessellator = Tessellator.getInstance();
+		var buffer = tessellator.getBuffer();
 		boolean fuzzy = true;
 		{
 			GL11.glPushMatrix();
@@ -60,7 +68,7 @@ public class FuzzyIdentifierRender extends TEISRBase {
 
 			if(fluidIcon != null){
 				//FFUtils.setColorFromFluid(fluid);
-				LCERenderHelper.startDrawingColoredTexturedQuads();
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
 				if (fuzzy) {
 					float minU = fluidIcon.getInterpolatedU(9*1.5-8);
@@ -71,66 +79,66 @@ public class FuzzyIdentifierRender extends TEISRBase {
 					GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE);
 
 					float alpha = getDisplayAlpha(0);
-					LCERenderHelper.addVertexColorWithUV(9*PIX, 14*PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 14 * PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 15 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(9 * PIX, 15 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13*PIX, 14*PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(9 * PIX, 14 * PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(9 * PIX, 15 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 15 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
+					buffer.pos(9*PIX, 14*PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 15 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(9 * PIX, 15 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13*PIX, 14*PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(9 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(9 * PIX, 15 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 15 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
 
 					alpha = getDisplayAlpha(15);
 					minU = fluidIcon.getInterpolatedU(5*1.5-8);
 					minV = fluidIcon.getInterpolatedV(13*1.5-8);
 					maxU = fluidIcon.getInterpolatedU(13*1.5-8);
 					maxV = fluidIcon.getInterpolatedV(14*1.5-8);
-					LCERenderHelper.addVertexColorWithUV(5*PIX, 13*PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 13 * PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 14 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(5 * PIX, 14 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13*PIX, 13*PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(5 * PIX, 13 * PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(5 * PIX, 14 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 14 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
+					buffer.pos(5*PIX, 13*PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(5 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13*PIX, 13*PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(5 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(5 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 14 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
 
 					alpha = getDisplayAlpha(30);
 					minU = fluidIcon.getInterpolatedU(7*1.5-8);
 					minV = fluidIcon.getInterpolatedV(12*1.5-8);
 					maxU = fluidIcon.getInterpolatedU(13*1.5-8);
 					maxV = fluidIcon.getInterpolatedV(13*1.5-8);
-					LCERenderHelper.addVertexColorWithUV(7*PIX, 12*PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 12 * PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 13 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(7 * PIX, 13 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13*PIX, 12*PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(7 * PIX, 12 * PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(7 * PIX, 13 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(13 * PIX, 13 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
+					buffer.pos(7*PIX, 12*PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(7 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13*PIX, 12*PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(7 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(7 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(13 * PIX, 13 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
 
 					alpha = getDisplayAlpha(45);
 					minU = fluidIcon.getInterpolatedU(8*1.5-8);
 					minV = fluidIcon.getInterpolatedV(11*1.5-8);
 					maxU = fluidIcon.getInterpolatedU(10*1.5-8);
 					maxV = fluidIcon.getInterpolatedV(12*1.5-8);
-					LCERenderHelper.addVertexColorWithUV(8*PIX, 11*PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(10 * PIX, 11 * PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(10 * PIX, 12 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(8 * PIX, 12 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(10*PIX, 11*PIX, -HALF_A_PIXEL, maxU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(8 * PIX, 11 * PIX, -HALF_A_PIXEL, minU, minV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(8 * PIX, 12 * PIX, -HALF_A_PIXEL, minU, maxV, r1, g1, b1, alpha);
-					LCERenderHelper.addVertexColorWithUV(10 * PIX, 12 * PIX, -HALF_A_PIXEL, maxU, maxV, r1, g1, b1, alpha);
+					buffer.pos(8*PIX, 11*PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(10 * PIX, 11 * PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(10 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(8 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(10*PIX, 11*PIX, -HALF_A_PIXEL).tex(maxU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(8 * PIX, 11 * PIX, -HALF_A_PIXEL).tex(minU, minV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(8 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(minU, maxV).color(r1, g1, b1, alpha).endVertex();
+					buffer.pos(10 * PIX, 12 * PIX, -HALF_A_PIXEL).tex(maxU, maxV).color(r1, g1, b1, alpha).endVertex();
 				}
 
 
-				LCERenderHelper.draw();
+				tessellator.draw();
 			}
 			if (fuzzy) {
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE_MINUS_SRC_ALPHA);
 				GlStateManager.color(1.0F, 1.0F,1.0F,1.0F);
 				GlStateManager.disableTexture2D();
-				LCERenderHelper.startDrawingColoredQuads();
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 				for (int type = 0; type < 4; type++) {
 					int x = 3;
 					int y = 10;
@@ -165,16 +173,16 @@ public class FuzzyIdentifierRender extends TEISRBase {
 					r = (float)Math.pow(r,0.65);
 					g = (float)Math.pow(g,0.65);
 					b = (float)Math.pow(b,0.65);
-					LCERenderHelper.addVertexColor(x*PIX,y*PIX,0,r,g,b,1);
-					LCERenderHelper.addVertexColor((x+1)*PIX,y*PIX,0,r,g,b,1);
-					LCERenderHelper.addVertexColor((x+1)*PIX,(y+1)*PIX,0,r,g,b,1);
-					LCERenderHelper.addVertexColor(x*PIX,(y+1)*PIX,0,r,g,b,1);
-					LCERenderHelper.addVertexColor((x+1)*PIX,y*PIX,-PIX,r,g,b,1);
-					LCERenderHelper.addVertexColor(x*PIX,y*PIX,-PIX,r,g,b,1);
-					LCERenderHelper.addVertexColor(x*PIX,(y+1)*PIX,-PIX,r,g,b,1);
-					LCERenderHelper.addVertexColor((x+1)*PIX,(y+1)*PIX,-PIX,r,g,b,1);
+					buffer.pos(x*PIX, y*PIX, 0).color(r, g, b, 1).endVertex();
+					buffer.pos((x+1)*PIX, y*PIX, 0).color(r, g, b, 1).endVertex();
+					buffer.pos((x+1)*PIX, (y+1)*PIX, 0).color(r, g, b, 1).endVertex();
+					buffer.pos(x*PIX, (y+1)*PIX, 0).color(r, g, b, 1).endVertex();
+					buffer.pos((x+1)*PIX, y*PIX, -PIX).color(r, g, b, 1).endVertex();
+					buffer.pos(x*PIX, y*PIX, -PIX).color(r, g, b, 1).endVertex();
+					buffer.pos(x*PIX, (y+1)*PIX, -PIX).color(r, g, b, 1).endVertex();
+					buffer.pos((x+1)*PIX, (y+1)*PIX, -PIX).color(r, g, b, 1).endVertex();
 				}
-				LCERenderHelper.draw();
+				tessellator.draw();
 				GlStateManager.enableTexture2D();
 			}
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);

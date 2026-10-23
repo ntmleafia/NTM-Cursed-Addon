@@ -1,0 +1,23 @@
+def workspace = providers.gradleProperty('addonWorkspace')
+def componentVersion = providers.gradleProperty('lgplCodeVersion').getOrElse('1.0.0')
+
+def rebuildComponent = tasks.register('rebuildComponent', Exec) {
+    doFirst {
+        if (!workspace.present) {
+            throw new GradleException('Supply -PaddonWorkspace=<matching addon source checkout> to rebuild this component')
+        }
+        def parent = file(workspace.get())
+        workingDir(parent)
+        def wrapper = new File(parent, System.getProperty('os.name').startsWith('Windows') ? 'gradlew.bat' : 'gradlew')
+        commandLine(wrapper.absolutePath,
+                '-PlgplCodeSourceProject=' + projectDir.absolutePath,
+                '-PlgplCodeVersion=' + componentVersion,
+                ':lgpl-code:reobfJar', '--console=plain', '--no-daemon', '--max-workers=2')
+    }
+}
+
+tasks.register('build', Copy) {
+    dependsOn(rebuildComponent)
+    from(workspace.map { new File(it, 'modules/lgpl-code/build/libs/leafia-lgpl-code-' + componentVersion + '.jar') })
+    into(layout.buildDirectory.dir('libs'))
+}

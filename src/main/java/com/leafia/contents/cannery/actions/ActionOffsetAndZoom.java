@@ -1,50 +1,26 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.cannery.actions;
 
 import com.hbm.wiaj.JarScene;
 import com.hbm.wiaj.WorldInAJar;
-import com.hbm.wiaj.actions.IJarAction;
+import com.hbm.wiaj.actions.ActionOffsetBy;
+import com.hbm.wiaj.actions.ActionSetZoom;
 
-/**
- * Shit that does ActionOffsetBy and ActionSetZoom at same time
- * @author ntmleafia
- */
-public class ActionOffsetAndZoom implements IJarAction {
+/** Runs the existing scene offset and zoom actions on the same ticks. */
+public class ActionOffsetAndZoom extends ActionOffsetBy {
+    private final ActionSetZoom zoomAction;
 
-	int time;
-	double motionX;
-	double motionY;
-	double motionZ;
-	double zoom;
+    public ActionOffsetAndZoom(double x, double y, double z, double zoom, int time) {
+        super(x, y, z, time);
+        zoomAction = new ActionSetZoom(zoom, time);
+    }
 
-	public ActionOffsetAndZoom(double x,double y,double z,double zoom,int time) {
-		this.motionX = x / (time + 1);
-		this.motionY = y / (time + 1);
-		this.motionZ = z / (time + 1);
-		this.zoom = zoom / (time + 1);
-		this.time = time;
-	}
-
-	@Override
-	public int getDuration() {
-		return this.time;
-	}
-
-	@Override
-	public void act(WorldInAJar world, JarScene scene) {
-		scene.script.offsetX += this.motionX;
-		scene.script.offsetY += this.motionY;
-		scene.script.offsetZ += this.motionZ;
-		
-		if(this.time == 0) {
-			scene.script.lastOffsetX = scene.script.offsetX;
-			scene.script.lastOffsetY = scene.script.offsetY;
-			scene.script.lastOffsetZ = scene.script.offsetZ;
-		}
-
-		if(this.getDuration() == 0) {
-			scene.script.lastZoom = scene.script.zoom = this.zoom;
-		} else {
-			scene.script.zoom += this.zoom;
-		}
-	}
+    @Override
+    public void act(WorldInAJar world, JarScene scene) {
+        super.act(world, scene);
+        zoomAction.act(world, scene);
+    }
 }

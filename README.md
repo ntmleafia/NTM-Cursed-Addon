@@ -8,6 +8,17 @@ Downloads: https://github.com/ntmleafia/NTM-Cursed-Addon/releases
 Created by me and movblock. Huge thanks to mov for helping a lot to kickstart this addon!<br>
 Developed mostly alone, so the mod's highly unstable. Not recommended to use on servers, but you can if you want to.
 
+## Licensing
+
+The main addon is licensed under [PolyForm Shield 1.0.0](LICENSE).
+It is not an open-source license and does not grant the freedoms normally associated with open-source or free-software
+licenses. Specifically, the license’s Noncompete clause prohibits using Shield-licensed material from this addon to
+provide competing products. This includes ports to other Minecraft or NTM versions offered as substitutes for this
+addon, and use in developing competing mods or addons. The license’s exceptions and separately licensed components’ own
+terms still apply.
+
+Separately licensed components and third-party exceptions are described in [NOTICE](NOTICE).
+
 ## Cursed Edition Overview
 <img width="800" height="420" alt="image" src="https://github.com/user-attachments/assets/6e9f305e-491c-406a-a0bd-fb0106714304" />
 

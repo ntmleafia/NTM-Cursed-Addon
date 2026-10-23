@@ -1,15 +1,18 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 MrNorwood
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.gear.ntmfbottle;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.PngSizeInfo;
+import com.leafia.dev.render.LayeredTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.AnimationFrame;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.compress.utils.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,11 +20,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
-public class TextureAtlasSpriteMask extends TextureAtlasSprite {
+public class TextureAtlasSpriteMask extends LayeredTextureAtlasSprite {
 	/// thanks community edition
 	public final ResourceLocation mask;
 	public final ResourceLocation texture;
-	private int mipmap = 0;
 	//private final String basePath = "textures";
 
 	public TextureAtlasSpriteMask(String spriteName,ResourceLocation mask,ResourceLocation texture) {
@@ -30,53 +32,13 @@ public class TextureAtlasSpriteMask extends TextureAtlasSprite {
 		this.texture = texture;
 	}
 
-	@Override
-	public boolean hasCustomLoader(IResourceManager manager,ResourceLocation location) {
-		return true;
-	}
 	/*private ResourceLocation completeResourceLocation(ResourceLocation loc) {
 		return new ResourceLocation(loc.getNamespace(), String.format("%s/%s%s", new Object[] { this.basePath, loc.getPath(), ".png" }));
 	}*/
 
 	@Override
 	public boolean load(IResourceManager man, ResourceLocation resourcelocation, Function<ResourceLocation, TextureAtlasSprite> textureGetter) {
-
-
-		ResourceLocation baseSpriteResourceLocationFull = mask; //this.completeResourceLocation(this.mask);
-		ResourceLocation overlaySpriteResourceLocationFull = texture; //this.completeResourceLocation(this.texture);
-
-		IResource iresource = null;
-		IResource overlayResource = null;
-		try {
-
-			//Base texture
-			iresource = man.getResource(baseSpriteResourceLocationFull);
-			PngSizeInfo pngSizeInfo = PngSizeInfo.makeFromResource(iresource);
-			boolean hasAnimation = iresource.getMetadata("animation") != null;
-			this.loadSprite(pngSizeInfo, hasAnimation);
-
-			//Overlay
-			overlayResource = man.getResource(overlaySpriteResourceLocationFull);
-			PngSizeInfo overlayPngSizeInfo = PngSizeInfo.makeFromResource(overlayResource);
-			boolean overlayHasAnimation = iresource.getMetadata("animation") != null;
-			this.loadSprite(overlayPngSizeInfo, overlayHasAnimation);
-
-			if (pngSizeInfo.pngWidth != overlayPngSizeInfo.pngWidth || pngSizeInfo.pngHeight != overlayPngSizeInfo.pngHeight)
-				throw new RuntimeException("no");
-
-			iresource = man.getResource(baseSpriteResourceLocationFull);
-			overlayResource = man.getResource(overlaySpriteResourceLocationFull);
-			this.mipmap = Minecraft.getMinecraft().getTextureMapBlocks().getMipmapLevels()+1;
-			this.loadSpriteFrames(iresource, overlayResource, this.mipmap);
-
-		} catch (RuntimeException|IOException e) {
-			net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(baseSpriteResourceLocationFull, e.getMessage());
-			return true;
-		} finally {
-			IOUtils.closeQuietly(iresource);
-		}
-
-		return false;
+		return loadLayeredSprite(man, mask, texture);
 	}
 
 	public void loadSpriteFrames(IResource maskRsc, IResource overlayRsc, int mipmapLevels) throws IOException {

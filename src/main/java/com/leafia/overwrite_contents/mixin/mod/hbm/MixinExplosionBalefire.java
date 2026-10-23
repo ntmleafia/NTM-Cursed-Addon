@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.blocks.ModBlocks;
@@ -7,95 +11,97 @@ import com.leafia.contents.AddonBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(value = ExplosionBalefire.class,remap = false)
-public class MixinExplosionBalefire {
-	@Shadow
-	public int radius;
+@Mixin(value = ExplosionBalefire.class, remap = false)
+public abstract class MixinExplosionBalefire {
+    @Shadow public int radius;
+    @Shadow public int posX;
+    @Shadow public int posY;
+    @Shadow public int posZ;
+    @Shadow public World worldObj;
 
-	@Shadow
-	public int posX;
+    /**
+     * @author movblock
+     * @reason Addon crater shape, protected materials and baleonitite deposits.
+     */
+    @Overwrite
+    private void breakColumn(int x, int z) {
+        double distance = Math.sqrt(x * x + z * z);
+        int amplitude = (int) (radius - distance);
+        if (amplitude <= 0) return;
 
-	@Shadow
-	public int posZ;
+        int columnX = posX + x;
+        int columnZ = posZ + z;
+        int top = posY + 5;
+        int surface = top;
+        var cursor = new MutableBlockPos(columnX, top, columnZ);
+        for (int scan = top; scan >= 0; scan--) {
+            cursor.setPos(columnX, scan, columnZ);
+            var state = worldObj.getBlockState(cursor);
+            if (state.getBlock().isReplaceable(worldObj, cursor)) worldObj.setBlockToAir(cursor);
+            if (!worldObj.isAirBlock(cursor)) break;
+            surface = scan;
+        }
 
-	@Shadow
-	public World worldObj;
+        int depthScale = (int) (10 + radius * 0.25);
+        int cavity = (int) (depthScale * amplitude / radius + Math.sin(amplitude * 0.15 + 2) * 2);
+        int ceiling = (int) (top + depthScale * 2.5 * Math.pow(Math.cos(distance / radius * Math.PI / 2), 0.375))
+                - worldObj.rand.nextInt(5);
+        for (int height = top; height < ceiling - 10; height++) {
+            cursor.setPos(columnX, height, columnZ);
+            worldObj.setBlockState(cursor, Blocks.AIR.getDefaultState(), 2);
+        }
 
-	@Shadow
-	public int posY;
+        int floor = Math.max(surface - cavity, 0);
+        while (surface > floor) {
+            cursor.setPos(columnX, surface, columnZ);
+            var block = worldObj.getBlockState(cursor).getBlock();
+            boolean cluster = block == ModBlocks.block_schrabidium_cluster;
+            if (cluster || block == ModBlocks.cmb_brick_reinforced) {
+                if (worldObj.rand.nextInt(10) == 0) {
+                    leafia$igniteAbove(cursor, surface + 1);
+                    if (cluster) leafia$enrichCluster(cursor, block);
+                }
+                return;
+            }
+            worldObj.setBlockToAir(cursor);
+            surface--;
+        }
 
-	/**
-	 * @author ntmleafia
-	 * @reason use LCE algorithm
-	 */
-	@Overwrite
-	private void breakColumn(int x,int z)
-	{
-		double dist = Math.sqrt(x * x + z * z);
-		int amplitude = (int) (radius - dist);
+        if (worldObj.rand.nextInt(10) == 0) {
+            cursor.setPos(columnX, surface, columnZ);
+            leafia$igniteAbove(cursor, floor + 1);
+            var block = worldObj.getBlockState(cursor).getBlock();
+            if (block == ModBlocks.block_schrabidium_cluster) leafia$enrichCluster(cursor, block);
+        }
 
-		if (amplitude > 0) {
-			int pX = posX + x;
-			int pZ = posZ + z;
+        int depositDepth = 6 * amplitude / radius;
+        for (int below = 0; below <= depositDepth; below++) {
+            cursor.setPos(columnX, floor - below, columnZ);
+            if (worldObj.getBlockState(cursor).getMaterial() != Material.ROCK) continue;
+            worldObj.setBlockState(cursor,
+                    AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META, Math.min(5, depositDepth - below)));
+            break;
+        }
+    }
 
-			int y  = posY+5;//worldObj.getHeight(pX, pZ);
-			int ystart = y;
-			for (int y0 = y; y0 >= 0; y0--) {
-				BlockPos p = new BlockPos(pX,y0,pZ);
-				if (worldObj.getBlockState(p).getBlock().isReplaceable(worldObj,p)) worldObj.setBlockToAir(p);
-				if (worldObj.isAirBlock(p)) y = y0;
-				else break;
-			}
-			int maxdepth = (int) (10 + radius * 0.25);
-			int voidDepth = (int) ((maxdepth * amplitude / radius) + (Math.sin(amplitude * 0.15 + 2) * 2));//
+    @Unique
+    private void leafia$igniteAbove(MutableBlockPos position, int height) {
+        int originalY = position.getY();
+        position.setY(height);
+        worldObj.setBlockState(position, ModBlocks.balefire.getDefaultState());
+        position.setY(originalY);
+    }
 
-			int yend = (int)(ystart+maxdepth*2.5*Math.pow(Math.cos(dist/(double)radius*Math.PI/2),0.375))-worldObj.rand.nextInt(5);
-			for (int yc = ystart; yc < yend-10; yc++)
-				worldObj.setBlockState(new BlockPos(pX,yc,pZ),Blocks.AIR.getDefaultState(),2);
-			int depth = Math.max(y - voidDepth, 0);
-
-			while(y > depth) {
-
-				Block b = worldObj.getBlockState(new BlockPos(pX, y, pZ)).getBlock();
-
-				if(b == ModBlocks.block_schrabidium_cluster) {
-
-					if(worldObj.rand.nextInt(10) == 0) {
-						worldObj.setBlockState(new BlockPos(pX, y + 1, pZ), ModBlocks.balefire.getDefaultState());
-						worldObj.setBlockState(new BlockPos(pX, y, pZ), ModBlocks.block_euphemium_cluster.getStateFromMeta(b.getMetaFromState(worldObj.getBlockState(new BlockPos(pX, y, pZ)))), 3);
-					}
-					return;
-				} else if(b == ModBlocks.cmb_brick_reinforced){
-					if(worldObj.rand.nextInt(10) == 0) {
-						worldObj.setBlockState(new BlockPos(pX, y + 1, pZ), ModBlocks.balefire.getDefaultState());
-					}
-					return;
-				}
-
-				worldObj.setBlockToAir(new BlockPos(pX, y, pZ));
-
-				y--;
-			}
-
-			if(worldObj.rand.nextInt(10) == 0) {
-				worldObj.setBlockState(new BlockPos(pX, depth + 1, pZ), ModBlocks.balefire.getDefaultState());
-
-				Block b = worldObj.getBlockState(new BlockPos(pX, y, pZ)).getBlock();
-
-				if(b == ModBlocks.block_schrabidium_cluster)
-					worldObj.setBlockState(new BlockPos(pX, y, pZ), ModBlocks.block_euphemium_cluster.getStateFromMeta(b.getMetaFromState(worldObj.getBlockState(new BlockPos(pX, y, pZ)))), 3);
-			}
-			int startDepth = (int)(6 * amplitude / radius);
-			for(int i = 0; i <= startDepth; i++) {
-				if(worldObj.getBlockState(new BlockPos(pX, depth-i, pZ)).getMaterial() == Material.ROCK) //mlbv: was == Blocks.stone; loosened for compatibility.
-					worldObj.setBlockState(new BlockPos(pX, depth-i, pZ), AddonBlocks.baleonitite.getDefaultState().withProperty(BlockMeta.META,Math.min(5,startDepth-i))); break;
-			}
-		}
-	}
+    @Unique
+    private void leafia$enrichCluster(MutableBlockPos position, Block originalBlock) {
+        int metadata = originalBlock.getMetaFromState(worldObj.getBlockState(position));
+        worldObj.setBlockState(position, ModBlocks.block_euphemium_cluster.getStateFromMeta(metadata), 3);
+    }
 }

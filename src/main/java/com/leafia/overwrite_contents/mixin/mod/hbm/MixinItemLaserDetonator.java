@@ -1,14 +1,16 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.config.GeneralConfig;
 import com.hbm.handler.threading.PacketThreading;
 import com.hbm.interfaces.IBomb;
 import com.hbm.interfaces.IHoldableWeapon;
-import com.hbm.items.ModItems;
 import com.hbm.items.tool.ItemLaserDetonator;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.main.MainRegistry;
-import com.hbm.packet.PacketDispatcher;
 import com.custom_hbm.render.amlfrom1710.Vec3;
 import com.hbm.util.I18nUtil;
 import com.leafia.contents.gear.IADSWeapon;
@@ -38,19 +40,15 @@ import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
 @Mixin(value = ItemLaserDetonator.class)
 public abstract class MixinItemLaserDetonator extends Item implements IMixinItemLaserDetonator, IHoldableWeapon, IADSWeapon {
 
-	public MixinItemLaserDetonator(String s) {
-		this.setRegistryName(s);
-		this.setTranslationKey(s);
-		this.setCreativeTab(MainRegistry.controlTab);
-
-		ModItems.ALL_ITEMS.add(this);
-	}
 	@Unique boolean leafia$lastKeyDown = false;
 	@Unique
 	@SideOnly(Side.CLIENT)
@@ -70,16 +68,11 @@ public abstract class MixinItemLaserDetonator extends Item implements IMixinItem
 			leafia$handlePointing(worldIn,entityIn);
 	}
 
-	/**
-	 * @author ntmleafia
-	 * @reason item.detonator_laser.desc2
-	 */
-	@Overwrite
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack,World worldIn,List<String> list,ITooltipFlag flagIn) {
-		list.add(I18nUtil.resolveKey("item.detonator_laser.desc"));
-		list.add(I18nUtil.resolveKey("item.detonator_laser.desc2"));
-	}
+    @Inject(method = "addInformation", at = @At("TAIL"), require = 1)
+    @SideOnly(Side.CLIENT)
+    private void leafia$addPointingTooltip(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag, CallbackInfo ci) {
+        tooltip.add(I18nUtil.resolveKey("item.detonator_laser.desc2"));
+    }
 
 	@Override
 	public float getADS() {
@@ -109,42 +102,32 @@ public abstract class MixinItemLaserDetonator extends Item implements IMixinItem
 				startPos.add(vecLook.scale(distance)),
 				false,false,true
 		); //Library.rayTrace(player, distance, 1);
-		if (ray != null) {
-			BlockPos pos = ray.getBlockPos();
-			Vec3 vec = Vec3.createVectorHelper(pos.getX() + 0.5 - rayStart.x,pos.getY() + 0.5 - rayStart.y,pos.getZ() + 0.5 - rayStart.z);
-			PacketThreading.createSendToAllTrackingThreadedPacket(
-					new LaserDetonatorPacket().set(new Vec3(rayStart),vec),
-					new NetworkRegistry.TargetPoint(player.dimension,pos.getX(),pos.getY(),pos.getZ(),distance * 2)
-			);
-			if (detonate) {
-				if (world.getBlockState(pos).getBlock() instanceof IBomb) {
-					if (!rem)
-						((IBomb) world.getBlockState(pos).getBlock()).explode(world,pos,player);
-
-					if (GeneralConfig.enableExtendedLogging)
-						MainRegistry.logger.log(Level.INFO,"[DET] Tried to detonate block at "+pos.getX()+" / "+pos.getY()+" / "+pos.getZ()+" by "+player.getDisplayName()+"!");
-
-					if (rem)
-						player.sendMessage(new TextComponentString("§2["+I18nUtil.resolveKey("chat.detonated")+"]"+"§r"));
-					else
-						world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
-
-				} else {
-					if (rem) {
-						player.sendMessage(new TextComponentString("§c"+I18nUtil.resolveKey("chat.posbadrror")+"§r"));
-					} else
-						world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
-				}
-			} else if (!rem)
-				world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
-		} else {
-			if (rem) {
-				if (detonate)
-					player.sendMessage(new TextComponentString("§c"+I18nUtil.resolveKey("chat.postoofarerror")+"§r"));
-			} else
-				world.playSound(null,player.posX,player.posY,player.posZ,HBMSoundHandler.techBleep,SoundCategory.AMBIENT,1.0F,1.0F);
-		}
-	}
+        if (ray != null) {
+            var hit = ray.getBlockPos();
+            var beam = Vec3.createVectorHelper(hit.getX() + 0.5 - rayStart.x, hit.getY() + 0.5 - rayStart.y, hit.getZ() + 0.5 - rayStart.z);
+            PacketThreading.createSendToAllTrackingThreadedPacket(
+                    new LaserDetonatorPacket().set(new Vec3(rayStart), beam),
+                    new NetworkRegistry.TargetPoint(player.dimension, hit.getX(), hit.getY(), hit.getZ(), distance * 2));
+        }
+        if (detonate) {
+            boolean accepted = false;
+            if (ray != null) {
+                var hit = ray.getBlockPos();
+                if (world.getBlockState(hit).getBlock() instanceof IBomb bomb) {
+                    accepted = true;
+                    if (!rem) bomb.explode(world, hit, player);
+                    if (GeneralConfig.enableExtendedLogging) {
+                        MainRegistry.logger.log(Level.INFO, "[DET] Tried to detonate block at " + hit.getX() + " / " + hit.getY() + " / " + hit.getZ() + " by " + player.getDisplayName() + "!");
+                    }
+                }
+            }
+            if (rem) {
+                String message = ray == null ? "chat.postoofarerror" : accepted ? "chat.detonated" : "chat.posbadrror";
+                player.sendMessage(new TextComponentString((accepted ? "§2[" : "§c") + I18nUtil.resolveKey(message) + (accepted ? "]§r" : "§r")));
+            }
+        }
+        if (!rem) world.playSound(null, player.posX, player.posY, player.posZ, HBMSoundHandler.techBleep, SoundCategory.AMBIENT, 1.0F, 1.0F);
+    }
 
 	/**
 	 * @author ntmleafia

@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 TheSlize <r.region-4@yandex.ru>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.pipe_amat;
 
 import com.hbm.blocks.network.FluidDuctStandard;

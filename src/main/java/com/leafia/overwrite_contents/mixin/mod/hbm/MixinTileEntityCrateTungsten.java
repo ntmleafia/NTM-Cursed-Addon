@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.custom_hbm.util.LCETuple.Pair;
@@ -60,38 +64,27 @@ public abstract class MixinTileEntityCrateTungsten extends TileEntityCrate imple
      * @reason i preferred Extended algorithm
      */
     @Overwrite(remap = false)
-    public void addEnergy(World gay,BlockPos pos,long energy,EnumFacing dir) {
+    public void addEnergy(World sourceWorld, BlockPos pos, long energy, EnumFacing direction) {
         leafia$heatTimer = 5;
-
-        for(int i = 0; i < inventory.getSlots(); i++) {
-
-            if(inventory.getStackInSlot(i).isEmpty())
-                continue;
-
-            ItemStack result = FurnaceRecipes.instance().getSmeltingResult(inventory.getStackInSlot(i));
-
-            long requiredEnergy = DFCRecipes.getRequiredFlux(inventory.getStackInSlot(i));
-            int count = inventory.getStackInSlot(i).getCount();
-            requiredEnergy *= 0.9D;
-            if(requiredEnergy > -1 && energy > requiredEnergy){
-                if(0.001D > count * world.rand.nextDouble() * ((double)requiredEnergy/(double)energy)){
-                    ItemStack check = DFCRecipes.getOutput(inventory.getStackInSlot(i));
-                    if (check != null && check != ItemStack.EMPTY)
-                        result = check;
-                }
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
+            var input = inventory.getStackInSlot(slot);
+            if (input.isEmpty()) continue;
+            var output = FurnaceRecipes.instance().getSmeltingResult(input);
+            long flux = (long) (DFCRecipes.getRequiredFlux(input) * 0.9D);
+            if (flux >= 0 && energy > flux &&
+                    0.001D > input.getCount() * world.rand.nextDouble() * ((double) flux / (double) energy)) {
+                var fusion = DFCRecipes.getOutput(input);
+                if (fusion != null && fusion != ItemStack.EMPTY) output = fusion;
             }
-
-            if(inventory.getStackInSlot(i).getItem() == ModItems.crucible && ItemCrucible.getCharges(inventory.getStackInSlot(i)) < 3 && energy > 10000000)
-                ItemCrucible.charge(inventory.getStackInSlot(i));
-
-            if(result != null && !result.isEmpty()){
-                int size = inventory.getStackInSlot(i).getCount();
-
-                if(result.getCount() * size <= result.getMaxStackSize()) {
-                    inventory.setStackInSlot(i, result.copy());
-                    inventory.getStackInSlot(i).setCount(inventory.getStackInSlot(i).getCount()*size);
-                }
+            if (input.getItem() == ModItems.crucible && ItemCrucible.getCharges(input) < 3 && energy > 10000000) {
+                ItemCrucible.charge(input);
             }
+            if (output == null || output.isEmpty()) continue;
+            int count = input.getCount();
+            if (output.getCount() * count > output.getMaxStackSize()) continue;
+            inventory.setStackInSlot(slot, output.copy());
+            var replacement = inventory.getStackInSlot(slot);
+            replacement.setCount(replacement.getCount() * count);
         }
         joules = energy;
     }

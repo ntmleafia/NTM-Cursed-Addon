@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.init.hazards.modifiers;
 
 import com.hbm.hazard.modifier.IHazardModifier;

@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 TheSlize <r.region-4@yandex.ru>
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.controlpanel.instruments.types.rbmk;
 
 import com.hbm.blocks.generic.BlockControlPanel;
@@ -136,7 +141,7 @@ public class RBMKDisplay extends Control {
 				font.drawString(s,-font.getStringWidth(s)/2,(int)(line*11),0xFFFFFF);
 			}
 		} else {
-			BlockPos center = (BlockPos)taggedLinks.values().toArray()[0];
+			BlockPos center = taggedLinks.values().iterator().next();
 			EnumFacing facing = state.getValue(BlockControlPanel.FACING).getOpposite();
 			LeafiaGls.scale(1/0.125*sc);
 			LeafiaGls.rotate(90,0,1,0);
@@ -147,9 +152,15 @@ public class RBMKDisplay extends Control {
 			float startY = -(height-1)/2f;
 			int startXInt = (int)Math.floor(startX);
 			int startYInt = (int)Math.floor(startY);
+            var right = facing.rotateY();
+            var query = new BlockPos.MutableBlockPos();
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
-					BlockPos pos = center.offset(facing,-startYInt-y).offset(facing.rotateY(),startXInt+x);
+                    int forwardOffset = -startYInt - y;
+                    int rightOffset = startXInt + x;
+                    query.setPos(center.getX() + facing.getXOffset() * forwardOffset + right.getXOffset() * rightOffset,
+                            center.getY(), center.getZ() + facing.getZOffset() * forwardOffset + right.getZOffset() * rightOffset);
+                    BlockPos pos = query;
 					Block block = world.getBlockState(pos).getBlock();
 					if (block instanceof RBMKBase rbmk) {
 						pos = rbmk.findCore(world,pos);
@@ -165,87 +176,53 @@ public class RBMKDisplay extends Control {
 	}
 	@SideOnly(Side.CLIENT)
 	void processColumn(World world,BlockPos pos,BufferBuilder buf,double ky,double kz) {
-		if (world.getTileEntity(pos) instanceof TileEntityRBMKBase rbmk) {
-			RBMKColumn col = rbmk.getConsoleData();
-			float r = 1.0F;
-			float g = 1.0F;
-			float b = 1.0F;
-			if(col instanceof RBMKColumn.ControlColumn && ((RBMKColumn.ControlColumn) col).color >= 0) {
-				short colorType = ((RBMKColumn.ControlColumn) col).color;
-				if(colorType == 0) { g = 0.0F; b = 0.0F; }
-				else if(colorType == 1) { b = 0.0F; }
-				else if(colorType == 2) { r = 0.0F; g = 0.5F; b = 0.0F; }
-				else if(colorType == 3) { r = 0.0F; g = 0.0F; }
-				else if(colorType == 4) { r = 0.5F; g = 0.0F; }
-			} else {
-				double heat = col.maxHeat > 0 ? Math.min(col.heat / col.maxHeat,1) : 0;
-				double baseColor = 0.65D;// + (i % 2) * 0.05D; what's this
-				r = (float) (baseColor + ((1 - baseColor) * heat));
-				g = (float) baseColor;
-				b = (float) baseColor;
-			}
-			drawColumn(buf,0,ky,kz,r,g,b);
-			switch (col.type) {
-				case FUEL:
-				case FUEL_SIM:
-					drawFuel(buf, 0.01, ky, kz, ((RBMKColumn.FuelColumn) col).enrichment);
-					break;
-				case CONTROL:
-					drawControl(buf, 0.01, ky, kz, ((RBMKColumn.ControlColumn) col).level);
-					break;
-				case CONTROL_AUTO:
-					drawControlAuto(buf, 0.01, ky, kz, ((RBMKColumn.ControlColumn) col).level);
-					break;
-				default:
-			}
-		}
+        var tile = world.getTileEntity(pos);
+        if (!(tile instanceof TileEntityRBMKBase rbmk)) return;
+        var column = rbmk.getConsoleData();
+        float red = 1, green = 1, blue = 1;
+        if (column instanceof RBMKColumn.ControlColumn control && control.color >= 0) {
+            if (control.color < 5) {
+                int colorOffset = control.color * 3;
+                red = CONTROL_COLORS[colorOffset];
+                green = CONTROL_COLORS[colorOffset + 1];
+                blue = CONTROL_COLORS[colorOffset + 2];
+            }
+        } else {
+            double heatRatio = column.maxHeat > 0 ? Math.min(column.heat / column.maxHeat, 1) : 0;
+            red = (float) (0.65D + 0.35D * heatRatio);
+            green = blue = 0.65F;
+        }
+        emitGlyph(buf, 0, ky, kz, COLUMN, red, green, blue);
+        switch (column.type) {
+            case FUEL, FUEL_SIM -> {
+                float fuelColor = 0.25F + (float) (((RBMKColumn.FuelColumn) column).enrichment * 0.75D);
+                emitGlyph(buf, 0.01, ky, kz, DOT, 0, fuelColor, 0);
+            }
+            case CONTROL -> {
+                float level = (float) ((RBMKColumn.ControlColumn) column).level;
+                emitGlyph(buf, 0.01, ky, kz, DOT, level, level, 0);
+            }
+            case CONTROL_AUTO -> {
+                float level = (float) ((RBMKColumn.ControlColumn) column).level;
+                emitGlyph(buf, 0.01, ky, kz, DOT, level, 0, level);
+            }
+            default -> { }
+        }
 	}
-	/// stolen code
-	@SideOnly(Side.CLIENT)
-	private void drawColumn(BufferBuilder buf,double x,double y,double z,float r,float g,float b) {
-		double width = 0.0625D * 0.75;
-		buf.pos(x, y + width, z - width).color(r, g, b, 1.0F).endVertex();
-		buf.pos(x, y + width, z + width).color(r, g, b, 1.0F).endVertex();
-		buf.pos(x, y - width, z + width).color(r, g, b, 1.0F).endVertex();
-		buf.pos(x, y - width, z - width).color(r, g, b, 1.0F).endVertex();
-	}
-	/// stolen code
-	@SideOnly(Side.CLIENT)
-	private void drawFuel(BufferBuilder buf, double x, double y, double z, double enrichment) {
-		this.drawDot(buf, x, y, z, 0F, 0.25F + (float) (enrichment * 0.75D), 0F);
-	}
-	/// stolen code
-	@SideOnly(Side.CLIENT)
-	private void drawControl(BufferBuilder buf, double x, double y, double z, double level) {
-		this.drawDot(buf, x, y, z, (float) level, (float) level, 0F);
-	}
-	/// stolen code
-	@SideOnly(Side.CLIENT)
-	private void drawControlAuto(BufferBuilder buf, double x, double y, double z, double level) {
-		this.drawDot(buf, x, y, z, (float) level, 0F, (float) level);
-	}
-	/// stolen code
-	@SideOnly(Side.CLIENT)
-	private void drawDot(BufferBuilder buf, double x, double y, double z, float r, float g, float b) {
+    private static final float[] CONTROL_COLORS = {1, 0, 0, 1, 1, 0, 0, 0.5F, 0, 0, 0, 1, 0.5F, 0, 1};
+    private static final double[] COLUMN = {0.046875, -0.046875, 0.046875, 0.046875,
+            -0.046875, 0.046875, -0.046875, -0.046875};
+    private static final double[] DOT = {0.03125, 0, 0.022097, 0.022097, 0, 0.03125, -0.022097, 0.022097,
+            0.022097, -0.022097, 0.03125, 0, -0.022097, -0.022097, 0, -0.03125,
+            0.03125, 0, -0.022097, 0.022097, -0.03125, 0, -0.022097, -0.022097};
 
-		double width = 0.03125D;
-		double edge = 0.022097D;
-
-		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y + edge, z + edge).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y, z + width).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y - edge, z + edge).color(r, g, b, 1F).endVertex();
-
-		buf.pos(x, y + edge, z - edge).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y - edge, z - edge).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y, z - width).color(r, g, b, 1F).endVertex();
-
-		buf.pos(x, y + width, z).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y - edge, z + edge).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y - width, z).color(r, g, b, 1F).endVertex();
-		buf.pos(x, y - edge, z - edge).color(r, g, b, 1F).endVertex();
-	}
+    @SideOnly(Side.CLIENT)
+    private static void emitGlyph(BufferBuilder buffer, double x, double y, double z, double[] offsets,
+                                  float red, float green, float blue) {
+        for (int vertex = 0; vertex < offsets.length; vertex += 2) {
+            buffer.pos(x, y + offsets[vertex], z + offsets[vertex + 1]).color(red, green, blue, 1).endVertex();
+        }
+    }
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IModelCustom getModel() {

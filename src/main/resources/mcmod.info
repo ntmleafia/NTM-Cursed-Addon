@@ -10,7 +10,7 @@
         "Leafia",
         "movblock"
     ],
-    "credits": "",
+    "credits": "Includes separately licensed LGPL Code and Assets components. See NOTICE.",
     "dependencies": [
       "hbm"
     ]

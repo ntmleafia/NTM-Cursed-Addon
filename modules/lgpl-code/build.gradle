@@ -1,0 +1,85 @@
+plugins {
+    id 'java-library'
+    id 'xyz.wagyourtail.jvmdowngrader'
+}
+
+group = 'com.leafia'
+version = providers.gradleProperty('lgplCodeVersion').getOrElse('1.0.0')
+
+base {
+    archivesName = 'leafia-lgpl-code'
+}
+
+def codeInput = rootProject.providers.gradleProperty('lgplCodeSourceProject')
+        .map { rootProject.file(it) }.getOrElse(projectDir)
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+}
+
+// The parent compiles the mutually referring source trees in one compiler invocation.
+sourceSets.main.java.setSrcDirs([])
+sourceSets.main.resources.setSrcDirs([new File(codeInput, 'src/main/resources')])
+tasks.named('compileJava').configure { enabled = false }
+
+configurations {
+    nestedElements {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+    developmentElements {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+}
+
+jvmdg {
+    shadeInlining = false
+}
+
+tasks.named('jar', Jar) {
+    archiveClassifier.set('dev-java25')
+}
+
+tasks.named('shadeDowngradedApi') {
+    archiveClassifier.set('dev')
+}
+
+tasks.named('processResources') {
+    inputs.property('version', project.version)
+    filesMatching('mcmod.info') { expand(version: project.version) }
+}
+
+tasks.withType(Jar).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.named('jar', Jar) {
+    from(new File(codeInput, 'REUSE.toml'))
+    from(codeInput) {
+        include('LICENSE', 'LICENSE.LESSER', 'LICENSE.JAVA8-RUNTIME', 'NOTICE')
+        into('META-INF/licenses/leafia_lgpl_code')
+    }
+}
+
+tasks.named('sourcesJar', Jar) {
+    from(rootProject.file('LICENSES/LGPL-3.0-only.txt')) {
+        into('LICENSES')
+    }
+    includeEmptyDirs = false
+    eachFile { details ->
+        if (details.file.toPath().startsWith(new File(codeInput, 'src').toPath())) {
+            details.path = codeInput.toPath().relativize(details.file.toPath()).toString().replace('\\', '/')
+        }
+    }
+    from(codeInput) {
+        include('LICENSE', 'LICENSE.LESSER', 'LICENSE.JAVA8-RUNTIME', 'NOTICE', 'REUSE.toml', 'build.gradle', 'settings.gradle', 'rebuild.gradle', 'README.md')
+    }
+    from(rootProject.file('gradle/lgpl-code.gradle')) {
+        into('parent-build/gradle')
+    }
+}

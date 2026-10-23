@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.lftr.components.control;
 
 import com.hbm.api.block.IToolable;
@@ -8,12 +12,10 @@ import com.hbm.interfaces.IRadResistantBlock;
 import com.hbm.items.tool.ItemTooling;
 import com.hbm.lib.HBMSoundHandler;
 import com.hbm.util.I18nUtil;
-import com.leafia.contents.AddonBlocks;
+import com.leafia.dev.blocks.blockbase.AddonBlockContainer;
+import com.leafia.dev.blocks.blockbase.DirectionalBlockStates;
 import com.leafia.dev.machine.MachineTooltip;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -31,16 +33,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MSRControlBlock extends BlockContainer implements ILookOverlay, IRadResistantBlock, ITooltipProvider, IToolable {
+public class MSRControlBlock extends AddonBlockContainer implements ILookOverlay, IRadResistantBlock, ITooltipProvider, IToolable {
 
-	public static final PropertyDirection FACING = BlockDirectional.FACING;
+	public static final PropertyDirection FACING = DirectionalBlockStates.FACING;
 
 	public MSRControlBlock(Material materialIn,String s) {
-		super(materialIn);
-		this.setTranslationKey(s);
-		this.setRegistryName(s);
-
-		AddonBlocks.ALL_BLOCKS.add(this);
+		super(materialIn, s);
 	}
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
@@ -62,30 +60,29 @@ public class MSRControlBlock extends BlockContainer implements ILookOverlay, IRa
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, new IProperty[] { FACING });
-	}
+	protected BlockStateContainer createBlockState() {
+        return DirectionalBlockStates.createContainer(this);
+    }
 
 	@Override
-	public int getMetaFromState(IBlockState state){
-		return ((EnumFacing)state.getValue(FACING)).getIndex();
-	}
+	public int getMetaFromState(IBlockState state) {
+        return DirectionalBlockStates.metadata(state);
+    }
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		EnumFacing enumfacing = EnumFacing.byIndex(meta);
-		return this.getDefaultState().withProperty(FACING, enumfacing);
-	}
+        return DirectionalBlockStates.fromMetadata(getDefaultState(), meta);
+    }
 
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rot){
-		return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
-	}
+	public IBlockState withRotation(IBlockState state, Rotation rot) {
+        return DirectionalBlockStates.rotate(state, rot);
+    }
 
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirrorIn){
-		return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
-	}
+	public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+        return DirectionalBlockStates.mirror(state, mirrorIn);
+    }
 
 	@Override
 	public void onBlockPlacedBy(World worldIn,BlockPos pos,IBlockState state,EntityLivingBase placer,ItemStack stack) {

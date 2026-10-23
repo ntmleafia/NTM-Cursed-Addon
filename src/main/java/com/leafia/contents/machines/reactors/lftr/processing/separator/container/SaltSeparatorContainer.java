@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2025 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 TheSlize <r.region-4@yandex.ru>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.lftr.processing.separator.container;
 
 import com.hbm.capability.NTMFluidCapabilityHandler;

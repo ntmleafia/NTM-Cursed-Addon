@@ -1,11 +1,16 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.ams.emitter;
 
-import com.hbm.inventory.fluid.Fluids;
-import com.hbm.render.NTMRenderHelper;
 import com.hbm.render.loader.WaveFrontObjectVAO;
+import com.hbm.render.util.NTMBufferBuilder;
+import com.hbm.render.util.NTMImmediate;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseTE;
+import com.leafia.dev.render.AMSRenderSupport;
 import com.leafia.dev.render.LeafiaItemRenderer;
-import com.leafia.unsorted.NTMRenderHelperWrapper;
+import com.leafia.dev.render.RenderState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,151 +23,79 @@ import static com.leafia.AddonBase.getIntegrated;
 import static com.leafia.init.ResourceInit.getVAO;
 
 public class AMSEmitterRender extends TileEntitySpecialRenderer<AMSEmitterTE> {
-	public static final WaveFrontObjectVAO mdl0 = getVAO(getIntegrated("machines/ams/ams_emitter.obj"));
-	public static final WaveFrontObjectVAO mdld = getVAO(getIntegrated("machines/ams/ams_emitter_destroyed.obj"));
-	public static final ResourceLocation texd = getIntegrated("machines/ams/ams_destroyed.png");
-	public static final ResourceLocation tex0 = getIntegrated("machines/ams/ams_emitter.png");
-	public static final ResourceLocation tex1 = getIntegrated("machines/ams/balefire/ams_emitter.png");
-	Random rand = new Random();
+    public static final WaveFrontObjectVAO mdl0 = getVAO(getIntegrated("machines/ams/ams_emitter.obj"));
+    public static final WaveFrontObjectVAO mdld = getVAO(getIntegrated("machines/ams/ams_emitter_destroyed.obj"));
+    public static final ResourceLocation texd = getIntegrated("machines/ams/ams_destroyed.png");
+    public static final ResourceLocation tex0 = getIntegrated("machines/ams/ams_emitter.png");
+    public static final ResourceLocation tex1 = getIntegrated("machines/ams/balefire/ams_emitter.png");
+    Random rand = new Random();
 
-	public static class AMSEmitterItemRender extends LeafiaItemRenderer {
-		@Override
-		protected double _sizeReference() {
-			return 9.7;
-		}
-		@Override
-		protected double _itemYoffset() {
-			return -0.2;
-		}
-		@Override
-		protected ResourceLocation __getTexture() {
-			return tex0;
-		}
-		@Override
-		protected WaveFrontObjectVAO __getModel() {
-			return mdl0;
-		}
-	}
+    public static class AMSEmitterItemRender extends LeafiaItemRenderer {
+        @Override protected double _sizeReference() { return 9.7; }
+        @Override protected double _itemYoffset() { return -0.2; }
+        @Override protected ResourceLocation __getTexture() { return tex0; }
+        @Override protected WaveFrontObjectVAO __getModel() { return mdl0; }
+    }
 
-	@Override
-	public void render(AMSEmitterTE te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    @Override
+    public void render(AMSEmitterTE emitter, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        var base = emitter.locked ? null : AMSRenderSupport.baseAt(emitter, 0, -9, 0);
+        try (var state = new RenderState()) {
+            GlStateManager.pushMatrix();
+            try {
+                GlStateManager.translate(x + 0.5D, y, z + 0.5D);
+                GlStateManager.enableLighting();
+                GlStateManager.disableCull();
+                GlStateManager.rotate(180F, 0, 1, 0);
+                bindTexture(emitter.locked ? texd : AMSRenderSupport.usesBalefire(base) ? tex1 : tex0);
+                (emitter.locked ? mdld : mdl0).renderAll();
+            } finally {
+                GlStateManager.popMatrix();
+            }
+            drawBeam(emitter, base, x, y, z);
+        }
+    }
 
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y, z + 0.5D);
-		GlStateManager.enableLighting();
-		GlStateManager.disableCull();
-		GL11.glRotatef(180, 0F, 1F, 0F);
+    public void renderTileEntityAt2(TileEntity tileEntity, double x, double y, double z, float partialTicks) {
+        var emitter = (AMSEmitterTE) tileEntity;
+        try (var state = new RenderState()) {
+            drawBeam(emitter, emitter.locked ? null : AMSRenderSupport.baseAt(emitter, 0, -9, 0), x, y, z);
+        }
+    }
 
-
-		if(te.locked)
-			bindTexture(texd);
-		else {
-			AMSBaseTE base = null;
-			if (te.getWorld().getTileEntity(te.getPos().add(0, -9, 0)) instanceof AMSBaseTE b)
-				base = b;
-			if (base != null && ((base.tanks[2].getTankType() == Fluids.ASCHRAB && base.tanks[3].getTankType() == Fluids.BALEFIRE) || (base.tanks[2].getTankType() == Fluids.BALEFIRE && base.tanks[3].getTankType() == Fluids.ASCHRAB)))
-				bindTexture(tex1);
-			else
-				bindTexture(tex0);
-		}
-
-		if(te.locked)
-			mdld.renderAll();
-		else
-			mdl0.renderAll();
-
-		GL11.glPopMatrix();
-		renderTileEntityAt2(te, x, y, z, partialTicks);
-		GlStateManager.enableCull();
-	}
-
-	public void renderTileEntityAt2(TileEntity tileEntity,double x,double y,double z,float f)
-	{
-		float radius = 0.04F;
-		int distance = 1;
-		int layers = 3;
-
-		GL11.glPushMatrix();
-		GlStateManager.disableTexture2D();
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.enableLighting();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GL11.glTranslatef((float) x + 0.5F, (float) y - 7, (float) z + 0.5F);
-
-		AMSEmitterTE emitter = (AMSEmitterTE)tileEntity;
-
-		if(emitter.getWorld().getTileEntity(emitter.getPos().add(0, -9, 0)) instanceof AMSBaseTE && !emitter.locked) {
-
-			NTMRenderHelper.startDrawingColored(GL11.GL_QUADS);
-
-			if(emitter.efficiency > 0) {
-
-				double lastPosX = 0;
-				double lastPosZ = 0;
-
-
-
-				for(int i = 7; i > 0; i -= distance) {
-
-					double posX = rand.nextDouble() - 0.5;
-					double posZ = rand.nextDouble() - 0.5;
-
-					for(int j = 1; j <= layers; j++) {
-
-						NTMRenderHelperWrapper.addVertexColor(lastPosX + (radius * j), i, lastPosZ + (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(lastPosX + (radius * j), i, lastPosZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX + (radius * j), i - distance, posZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX + (radius * j), i - distance, posZ + (radius * j), 1, 0.5F, 0, 1f);
-
-						NTMRenderHelperWrapper.addVertexColor(lastPosX - (radius * j), i, lastPosZ + (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(lastPosX - (radius * j), i, lastPosZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX - (radius * j), i - distance, posZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX - (radius * j), i - distance, posZ + (radius * j), 1, 0.5F, 0, 1f);
-
-						NTMRenderHelperWrapper.addVertexColor(lastPosX + (radius * j), i, lastPosZ + (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(lastPosX - (radius * j), i, lastPosZ + (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX - (radius * j), i - distance, posZ + (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX + (radius * j), i - distance, posZ + (radius * j), 1, 0.5F, 0, 1f);
-
-						NTMRenderHelperWrapper.addVertexColor(lastPosX + (radius * j), i, lastPosZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(lastPosX - (radius * j), i, lastPosZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX - (radius * j), i - distance, posZ - (radius * j), 1, 0.5F, 0, 1f);
-						NTMRenderHelperWrapper.addVertexColor(posX + (radius * j), i - distance, posZ - (radius * j), 1, 0.5F, 0, 1f);
-					}
-
-					lastPosX = posX;
-					lastPosZ = posZ;
-				}
-			}
-
-			for(int j = 1; j <= 2; j++) {
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 7, 0 + (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 7, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 0, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 0, 0 + (radius * j), 1, 1, 0, 1f);
-
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 7, 0 + (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 7, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 0, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 0, 0 + (radius * j), 1, 1, 0, 1f);
-
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 7, 0 + (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 7, 0 + (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 0, 0 + (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 0, 0 + (radius * j), 1, 1, 0, 1f);
-
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 7, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 7, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 - (radius * j), 0, 0 - (radius * j), 1, 1, 0, 1f);
-				NTMRenderHelper.addVertexColor(0 + (radius * j), 0, 0 - (radius * j), 1, 1, 0, 1f);
-			}
-			NTMRenderHelper.draw();
-		}
-
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture2D();
-		GL11.glPopMatrix();
-	}
+    private void drawBeam(AMSEmitterTE emitter, AMSBaseTE base, double x, double y, double z) {
+        if (base == null || emitter.locked) return;
+        GlStateManager.pushMatrix();
+        try {
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableCull();
+            GlStateManager.enableBlend();
+            GlStateManager.enableLighting();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+            GlStateManager.translate((float) x + 0.5F, (float) y - 7, (float) z + 0.5F);
+            var buffer = NTMImmediate.INSTANCE.beginPositionColor(GL11.GL_QUADS, 368);
+            if (emitter.efficiency > 0) {
+                var color = NTMBufferBuilder.packColor(1F, 0.5F, 0F, 1F);
+                var previousX = 0D;
+                var previousZ = 0D;
+                for (var height = 7; height > 0; height--) {
+                    var nextX = rand.nextDouble() - 0.5;
+                    var nextZ = rand.nextDouble() - 0.5;
+                    for (var layer = 1; layer <= 3; layer++) {
+                        AMSRenderSupport.column(buffer, previousX, previousZ, nextX, nextZ,
+                                height, height - 1, 0.04F * layer, color);
+                    }
+                    previousX = nextX;
+                    previousZ = nextZ;
+                }
+            }
+            var color = NTMBufferBuilder.packColor(1F, 1F, 0F, 1F);
+            for (var layer = 1; layer <= 2; layer++) {
+                AMSRenderSupport.column(buffer, 0, 0, 0, 0, 7, 0, 0.04F * layer, color);
+            }
+            NTMImmediate.INSTANCE.draw();
+        } finally {
+            GlStateManager.popMatrix();
+        }
+    }
 }

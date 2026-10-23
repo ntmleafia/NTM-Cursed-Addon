@@ -511,6 +511,8 @@ repositories {
 
 // Dependencies
 
+apply from: 'gradle/jarjar.gradle'
+
 // Configure dependency configurations
 configurations {
     embed
@@ -1685,3 +1687,5 @@ tasks.withType(Test).configureEach {
         languageVersion = JavaLanguageVersion.of(25)
     }
 }
+
+apply from: 'gradle/lgpl-code.gradle'

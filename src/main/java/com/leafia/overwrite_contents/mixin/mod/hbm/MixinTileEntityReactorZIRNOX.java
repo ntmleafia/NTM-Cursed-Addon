@@ -1,10 +1,13 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.api.fluidmk2.IFluidStandardSenderMK2;
 import com.hbm.blocks.BlockDummyable;
 import com.hbm.blocks.ModBlocks;
 import com.hbm.config.MobConfig;
-import com.hbm.entity.projectile.EntityZirnoxDebris;
 import com.hbm.entity.projectile.EntityZirnoxDebris.DebrisType;
 import com.hbm.explosion.ExplosionNukeGeneric;
 import com.hbm.handler.CompatHandler;
@@ -356,28 +359,10 @@ public abstract class MixinTileEntityReactorZIRNOX extends TileEntityMachineBase
 			case 3: setCompression(Fluids.ULTRAHOTSTEAM); break;
 		}
 	}
-	@Unique
+	@Shadow(remap = false)
 	private void spawnDebris(DebrisType type) {
-
-		EntityZirnoxDebris debris = new EntityZirnoxDebris(world, pos.getX() + 0.5D, pos.getY() + 4D, pos.getZ() + 0.5D, type);
-		debris.motionX = world.rand.nextGaussian() * 0.75D;
-		debris.motionZ = world.rand.nextGaussian() * 0.75D;
-		debris.motionY = 0.01D + world.rand.nextDouble() * 1.25D;
-
-		if (type == DebrisType.CONCRETE) {
-			debris.motionX *= 0.25D;
-			debris.motionY += world.rand.nextDouble();
-			debris.motionZ *= 0.25D;
-		}
-
-		if (type == EXCHANGER) {
-			debris.motionX += 0.5D;
-			debris.motionY *= 0.1D;
-			debris.motionZ += 0.5D;
-		}
-
-		world.spawnEntity(debris);
-	}
+        throw new AssertionError();
+    }
 	@Unique
 	private void zirnoxDebris() {
 		for(int i = 0; i < 2; i++) {
@@ -411,7 +396,7 @@ public abstract class MixinTileEntityReactorZIRNOX extends TileEntityMachineBase
 		int meta = this.getBlockMetadata();
 		for (int ox = -2; ox <= 2; ox++) {
 			for (int oz = -2; oz <= 2; oz++) {
-				for (int oy = 2; ox <= 5; ox++) {
+				for (int oy = 2; oy <= 5; oy++) {
 					world.setBlockToAir(pos.add(ox,oy,oz));
 				}
 			}

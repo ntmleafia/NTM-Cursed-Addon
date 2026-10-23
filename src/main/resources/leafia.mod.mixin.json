@@ -27,6 +27,7 @@
     "hbm.MixinRrenderControlPanel"
   ],
   "mixins": [
+    "hbm.AccessorBlockSellafield",
     "hbm.FuckOff",
     "hbm.MixinBalefire",
     "hbm.MixinBlockControlPanel",

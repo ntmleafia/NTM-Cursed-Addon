@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.asm;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
@@ -15,7 +19,7 @@ public class LeafiaCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public String @Nullable [] getASMTransformerClass() {
-        return new String[]{KillMethodTransformer.class.getName()};
+        return new String[]{KillMethodTransformer.class.getName(), NestedModTransformer.class.getName()};
     }
 
     @Override

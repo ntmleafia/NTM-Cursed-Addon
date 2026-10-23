@@ -1,0 +1,11 @@
+Leafia LGPL Assets
+=================
+
+This component preserves artwork, models, recordings and translations retained
+from existing NTM projects and their contributors. It is not covered by a
+license grant limited to work owned by the main addon's licensors.
+
+Recipients may inspect, modify and redistribute this component under its
+applicable terms, and may supply a replacement with the same mod ID. The main
+addon's nested loader gives an externally supplied equivalent precedence over
+the bundled component regardless of version ordering.

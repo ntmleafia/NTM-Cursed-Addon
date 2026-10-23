@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.custom_hbm.contents.oilycoal;
 
 import com.hbm.blocks.ModBlocks;
@@ -18,45 +22,41 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class BlockCoalOil extends BlockOre {
+    public BlockCoalOil(String name) {
+        setTranslationKey(name);
+        setRegistryName(name);
+        AddonBlocks.ALL_BLOCKS.add(this);
+    }
 
-	public BlockCoalOil(String s) {
-		super();
-		this.setTranslationKey(s);
-		this.setRegistryName(s);
-
-		AddonBlocks.ALL_BLOCKS.add(this);
-	}
-
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
-		for(EnumFacing dir : EnumFacing.VALUES) {
-
-        	IBlockState nS = world.getBlockState(pos.offset(dir));
-        	Block n = nS.getBlock();
-
-        	if(n == LegacyBlocks.ore_coal_oil_burning || n == ModBlocks.balefire || n == Blocks.FIRE || nS.getMaterial() == Material.LAVA) {
-        		world.scheduleUpdate(pos, this, world.rand.nextInt(20) + 2);
-        	}
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block changed, BlockPos neighbor) {
+        var cursor = new BlockPos.MutableBlockPos();
+        for (var face : EnumFacing.VALUES) {
+            cursor.setPos(pos.getX() + face.getXOffset(), pos.getY() + face.getYOffset(), pos.getZ() + face.getZOffset());
+            var adjacent = world.getBlockState(cursor);
+            if (ignites(adjacent)) world.scheduleUpdate(pos, this, world.rand.nextInt(20) + 2);
         }
-	}
+    }
 
-	@Override
-	public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-		worldIn.setBlockState(pos, Blocks.FIRE.getDefaultState());
-	}
+    private static boolean ignites(IBlockState state) {
+        var block = state.getBlock();
+        return block == LegacyBlocks.ore_coal_oil_burning || block == Blocks.FIRE
+                || block == ModBlocks.balefire || state.getMaterial() == Material.LAVA;
+    }
 
-	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-		world.setBlockState(pos, LegacyBlocks.ore_coal_oil_burning.getDefaultState());
-	}
+    @Override
+    public void onExplosionDestroy(World world, BlockPos pos, Explosion explosion) {
+        world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+    }
 
-	@Override
-	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return Items.COAL;
-	}
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
+        world.setBlockState(pos, LegacyBlocks.ore_coal_oil_burning.getDefaultState());
+    }
 
-	@Override
-	public int quantityDropped(IBlockState state, int fortune, Random random) {
-		return 2 + random.nextInt(2);
-	}
+    @Override
+    public Item getItemDropped(IBlockState state, Random random, int fortune) { return Items.COAL; }
+
+    @Override
+    public int quantityDropped(IBlockState state, int fortune, Random random) { return random.nextInt(2) + 2; }
 }

@@ -1,97 +1,73 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.powercores.ams.base.container;
 
-import com.hbm.inventory.gui.GuiInfoContainer;
 import com.leafia.AddonBase;
 import com.leafia.contents.machines.powercores.ams.base.AMSBaseTE;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
+import com.leafia.dev.gui.MachineGaugeUI;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
-public class AMSBaseUI extends GuiInfoContainer {
+public class AMSBaseUI extends MachineGaugeUI {
+    private static final ResourceLocation TEXTURE = AddonBase.getIntegrated("machines/ams/gui_base.png");
+    private static final String[] RESONATOR_ERROR = {
+            "Error: Three satellite ID-chips linked", "to xenium resonators are required", "for this machine to work!"
+    };
+    private final AMSBaseTE base;
 
-	private static ResourceLocation texture = AddonBase.getIntegrated("machines/ams/gui_base.png");
-	private AMSBaseTE base;
+    public AMSBaseUI(InventoryPlayer player, AMSBaseTE base) {
+        super(new AMSBaseContainer(player, base), TEXTURE, 222);
+        this.base = base;
+    }
 
-	public AMSBaseUI(InventoryPlayer invPlayer,AMSBaseTE tedf) {
-		super(new AMSBaseContainer(invPlayer, tedf));
-		base = tedf;
-		
-		this.xSize = 176;
-		this.ySize = 222;
-	}
-	
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float f) {
-		super.drawScreen(mouseX, mouseY, f);
+    @Override
+    protected String inventoryTitle() {
+        return title(base.getInventoryName(), base.hasCustomInventoryName());
+    }
 
-		base.tanks[0].renderTankInfo(this, mouseX, mouseY, guiLeft + 26, guiTop + 70 - 52, 16, 52);
-		base.tanks[1].renderTankInfo(this, mouseX, mouseY, guiLeft + 134, guiTop + 70 - 52, 16, 52);
-		base.tanks[2].renderTankInfo(this, mouseX, mouseY, guiLeft + 26, guiTop + 124 - 52, 16, 52);
-		base.tanks[3].renderTankInfo(this, mouseX, mouseY, guiLeft + 134, guiTop + 124 - 52, 16, 52);
-		this.drawElectricityInfo(this, mouseX, mouseY, guiLeft + 116, guiTop + 124 - 104, 7, 104, base.power, AMSBaseTE.maxPower);
-		this.drawCustomInfo(mouseX, mouseY, guiLeft + 44, guiTop + 124 - 106, 7, 106, new String[] { "Restriction Field:", base.field + "%" });
-		this.drawCustomInfo(mouseX, mouseY, guiLeft + 53, guiTop + 124 - 106, 7, 106, new String[] { "Efficiency:", base.efficiency + "%" });
-		this.drawCustomInfo(mouseX, mouseY, guiLeft + 125, guiTop + 124 - 106, 7, 106, new String[] { "Heat:", base.heat + "/" + AMSBaseTE.maxHeat });
+    @Override
+    protected void drawMachine() {
+        gauge(116, 124, 206, 106, 7, (int) base.getPowerScaled(106));
+        gauge(44, 124, 192, 106, 7, base.getFieldScaled(106));
+        gauge(53, 124, 199, 106, 7, base.getEfficiencyScaled(106));
+        gauge(125, 124, 213, 106, 7, base.getHeatScaled(106));
+        if (base.mode > 0) {
+            drawTexturedModalRect(guiLeft + 89, guiTop + 18, 176, 32 + 16 * base.mode, 16, 16);
+        }
+        if (base.warning > 0) {
+            drawTexturedModalRect(guiLeft + 71, guiTop + 18, 176, -16 + 16 * base.warning, 16, 16);
+        }
+        if (base.color > -1) {
+            GlStateManager.color(((base.color >> 16) & 255) / 255F, ((base.color >> 8) & 255) / 255F, (base.color & 255) / 255F, 1);
+            drawTexturedModalRect(guiLeft + 61, guiTop + 44, 176, 160, 54, 54);
+            GlStateManager.color(1, 1, 1, 1);
+            drawTexturedModalRect(guiLeft + 61, guiTop + 44, 176, 106, 54, 54);
+        }
+        if (!base.hasResonators()) {
+            drawInfoPanel(guiLeft - 16, guiTop + 36, 16, 16, 6);
+        }
+        for (int tank = 0; tank < 4; tank++) {
+            base.tanks[tank].renderTank(guiLeft + ((tank & 1) == 0 ? 26 : 134),
+                    guiTop + (tank < 2 ? 70 : 124), zLevel, 16, 52);
+        }
+    }
 
-		if(!base.hasResonators()) {
-			String[] text = new String[] { "Error: Three satellite ID-chips linked",
-				"to xenium resonators are required",
-				"for this machine to work!" };
-			this.drawCustomInfoStat(mouseX, mouseY, guiLeft - 16, guiTop + 36, 16, 16, guiLeft - 8, guiTop + 36 + 16, text);
-		}
-		super.renderHoveredToolTip(mouseX, mouseY);
-	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer( int i, int j) {
-		String name = this.base.hasCustomInventoryName() ? this.base.getInventoryName() : I18n.format(this.base.getInventoryName());
-		
-		this.fontRenderer.drawString(name, this.xSize / 2 - this.fontRenderer.getStringWidth(name) / 2, 6, 4210752);
-		this.fontRenderer.drawString(I18n.format("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-	}
-	
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
-		super.drawDefaultBackground();
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		
-		int i = (int)base.getPowerScaled(106);
-		drawTexturedModalRect(guiLeft + 116, guiTop + 124 - i, 206, 106 - i, 7, i);
-		
-		int j = base.getFieldScaled(106);
-		drawTexturedModalRect(guiLeft + 44, guiTop + 124 - j, 192, 106 - j, 7, j);
-		
-		int k = base.getEfficiencyScaled(106);
-		drawTexturedModalRect(guiLeft + 53, guiTop + 124 - k, 199, 106 - k, 7, k);
-		
-		int l = base.getHeatScaled(106);
-		drawTexturedModalRect(guiLeft + 125, guiTop + 124 - l, 213, 106 - l, 7, l);
-		
-		int m = base.mode;
-		if(m > 0)
-			drawTexturedModalRect(guiLeft + /*80*/89, guiTop + /*108*/18, 176, 32 + 16 * m, 16, 16);
-		
-		int n = base.warning;
-		if(n > 0)
-			drawTexturedModalRect(guiLeft + /*80*/71, guiTop + 18, 176, /*32*/-16 + 16 * n, 16, 16);
-		
-		if(base.color > -1) {
-			GL11.glColor3ub((byte)((base.color & 0xFF0000) >> 16), (byte)((base.color & 0x00FF00) >> 8), (byte)((base.color & 0x0000FF) >> 0));
-			drawTexturedModalRect(guiLeft + 61, guiTop + 44, 176, 160, 54, 54);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			drawTexturedModalRect(guiLeft + 61, guiTop + 44, 176, 106, 54, 54);
-		}
-
-		if(!base.hasResonators())
-			this.drawInfoPanel(guiLeft - 16, guiTop + 36, 16, 16, 6);
-
-		base.tanks[0].renderTank(guiLeft+26, guiTop+98-28, zLevel, 16, 52);
-		base.tanks[1].renderTank(guiLeft+134, guiTop+98-28, zLevel, 16, 52);
-		base.tanks[2].renderTank(guiLeft+26, guiTop+152-28, zLevel, 16, 52);
-		base.tanks[3].renderTank(guiLeft+134, guiTop+152-28, zLevel, 16, 52);
-	}
+    @Override
+    protected void drawMachineTooltips(int mouseX, int mouseY) {
+        for (int tank = 0; tank < 4; tank++) {
+            base.tanks[tank].renderTankInfo(this, mouseX, mouseY,
+                    guiLeft + ((tank & 1) == 0 ? 26 : 134), guiTop + (tank < 2 ? 18 : 72), 16, 52);
+        }
+        drawElectricityInfo(this, mouseX, mouseY, guiLeft + 116, guiTop + 20, 7, 104, base.power, AMSBaseTE.maxPower);
+        metric(mouseX, mouseY, 44, 18, 7, 106, "Restriction Field:", base.field, 0, true);
+        metric(mouseX, mouseY, 53, 18, 7, 106, "Efficiency:", base.efficiency, 0, true);
+        metric(mouseX, mouseY, 125, 18, 7, 106, "Heat:", base.heat, AMSBaseTE.maxHeat, false);
+        if (!base.hasResonators()) {
+            drawCustomInfoStat(mouseX, mouseY, guiLeft - 16, guiTop + 36, 16, 16,
+                    guiLeft - 8, guiTop + 52, RESONATOR_ERROR);
+        }
+    }
 }

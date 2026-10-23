@@ -1,98 +1,115 @@
+// SPDX-FileCopyrightText: 2026 Leafia
+// SPDX-FileCopyrightText: 2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.machines.reactors.rbmk.effects;
 
 import com.hbm.render.NTMRenderHelper;
+import com.hbm.util.RenderUtil;
+import com.leafia.dev.particles.ParticleRenderState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
+/** Upright, camera-facing steam strip using twenty horizontal animation frames. */
 public class ParticleRBMKJet extends Particle {
-	private static final ResourceLocation texture = new ResourceLocation("hbm:textures/particle/rbmk_jet_steam.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("hbm", "textures/particle/rbmk_jet_steam.png");
 
-	public ParticleRBMKJet(World worldIn,double posXIn,double posYIn,double posZIn,int maxAge){
-		super(worldIn, posXIn, posYIn, posZIn);
-		this.particleMaxAge = maxAge;
-		this.particleScale = rand.nextFloat() + 1F;
-	}
+    public ParticleRBMKJet(World world, double x, double y, double z, int maxAge) {
+        super(world, x, y, z);
+        particleMaxAge = maxAge;
+        particleScale = rand.nextFloat() + 1F;
+    }
 
-	@Override
-	public int getFXLayer(){
-		return 3;
-	}
+    @Override
+    public int getFXLayer() {
+        return 3;
+    }
 
-	@Override
-	public void renderParticle(BufferBuilder buffer,Entity entityIn,float partialTicks,float rotationX,float rotationZ,float rotationYZ,float rotationXY,float rotationXZ){
-		Minecraft.getMinecraft().getTextureManager().bindTexture(getTexture());
-		NTMRenderHelper.resetParticleInterpPos(entityIn, partialTicks);
+    protected ResourceLocation getTexture() {
+        return TEXTURE;
+    }
 
-		GlStateManager.pushMatrix();
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.enableBlend();
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
-		GlStateManager.depthMask(false);
-		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
-		RenderHelper.disableStandardItemLighting();
+    @Override
+    public void renderParticle(BufferBuilder buffer, Entity camera, float partialTicks,
+                               float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        var minecraft = Minecraft.getMinecraft();
+        NTMRenderHelper.resetParticleInterpPos(camera, partialTicks);
+        var lighting = RenderUtil.isLightingEnabled();
+        var blend = RenderUtil.isBlendEnabled();
+        var blendFactors = ParticleRenderState.blendFactors();
+        var alphaFunc = RenderUtil.getAlphaFunc();
+        var alphaRef = RenderUtil.getAlphaRef();
+        var depthMask = RenderUtil.isDepthMaskEnabled();
+        var textureUnit = RenderUtil.getActiveTextureUnitIndex();
+        var textureName = GlStateManager.textureState[textureUnit].textureName;
+        var red = RenderUtil.getCurrentColorRed();
+        var green = RenderUtil.getCurrentColorGreen();
+        var blue = RenderUtil.getCurrentColorBlue();
+        var alpha = RenderUtil.getCurrentColorAlpha();
+        var lightX = OpenGlHelper.lastBrightnessX;
+        var lightY = OpenGlHelper.lastBrightnessY;
+        var tessellator = Tessellator.getInstance();
+        var output = tessellator.getBuffer();
+        var building = false;
+        GlStateManager.pushMatrix();
+        try {
+            minecraft.getTextureManager().bindTexture(getTexture());
+            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.disableLighting();
+            GlStateManager.enableBlend();
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
+            GlStateManager.depthMask(false);
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
-		if(this.particleAge > this.particleMaxAge)
-			this.particleAge = this.particleMaxAge;
+            particleAge = Math.min(particleAge, particleMaxAge);
+            var frame = particleAge * 20 / particleMaxAge;
+            var minU = frame * (1F / 20F);
+            var maxU = minU + 1F / 20F;
+            // The stored alpha belongs to the preceding render, as in the steam effect.
+            GlStateManager.color(1, 1, 1, particleAlpha);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
+            particleAlpha = 1;
+            if (particleAge < 20)
+                particleAlpha = particleAge / 20F;
+            if (particleAge > particleMaxAge - 20)
+                particleAlpha = (particleMaxAge - particleAge) / 20F;
+            particleAlpha *= 0.5F;
 
-		int texIndex = this.particleAge*20/particleMaxAge;
-		float f0 = 1F / 20F;
-
-		float uMin = texIndex * f0;
-		float uMax = uMin + f0;
-		float vMin = 0;
-		float vMax = 1;
-
-		Tessellator tes = Tessellator.getInstance();
-		BufferBuilder buf = tes.getBuffer();
-
-		GlStateManager.glNormal3f(0, 1, 0);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, this.particleAlpha);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-
-		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-		this.particleAlpha = 1F;
-
-		if(this.particleAge < 20) {
-			this.particleAlpha = this.particleAge / 20F;
-		}
-
-		if(this.particleAge > this.particleMaxAge - 20) {
-			this.particleAlpha = (this.particleMaxAge - this.particleAge) / 20F;
-		}
-
-		this.particleAlpha *= 0.5F;
-
-		float pX = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-		float pY = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-		float pZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
-
-		GlStateManager.translate(pX + rotationX, pY + rotationZ, pZ + rotationYZ);
-		GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-
-		buf.pos((double) (-this.particleScale - 1), (double)0, (double) (0)).tex(uMax, vMax).endVertex();
-		buf.pos((double) (-this.particleScale - 1), (double) (this.particleScale * 4), (double) 0).tex(uMax, vMin).endVertex();
-		buf.pos((double) (this.particleScale - 1), (double) (this.particleScale * 4), (double) (0)).tex(uMin, vMin).endVertex();
-		buf.pos((double) (this.particleScale - 1), (double)0, (double) (0)).tex(uMin, vMax).endVertex();
-
-		tes.draw();
-
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.doPolygonOffset(0, 0);
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-		GlStateManager.disableBlend();
-		GlStateManager.popMatrix();
-	}
-
-	protected ResourceLocation getTexture() {
-		return texture;
-	}
+            var x = (float) (prevPosX + (posX - prevPosX) * (double) partialTicks - interpPosX);
+            var y = (float) (prevPosY + (posY - prevPosY) * (double) partialTicks - interpPosY);
+            var z = (float) (prevPosZ + (posZ - prevPosZ) * (double) partialTicks - interpPosZ);
+            GlStateManager.translate(x + rotationX, y + rotationZ, z + rotationYZ);
+            GlStateManager.rotate(-minecraft.getRenderManager().playerViewY, 0, 1, 0);
+            output.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            building = true;
+            for (var corner = 0; corner < 4; corner++) {
+                var right = corner >= 2;
+                var top = corner == 1 || corner == 2;
+                output.pos(right ? particleScale - 1 : -particleScale - 1, top ? particleScale * 4 : 0, 0)
+                        .tex(right ? minU : maxU, top ? 0 : 1).endVertex();
+            }
+            building = false;
+            tessellator.draw();
+        } finally {
+            if (building) output.finishDrawing();
+            GlStateManager.popMatrix();
+            ParticleRenderState.restoreTexture(textureUnit, textureName);
+            ParticleRenderState.restoreBlend(blend, blendFactors);
+            GlStateManager.alphaFunc(alphaFunc, alphaRef);
+            GlStateManager.depthMask(depthMask);
+            if (lighting) GlStateManager.enableLighting();
+            else GlStateManager.disableLighting();
+            ParticleRenderState.restoreColor(red, green, blue, alpha);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightX, lightY);
+        }
+    }
 }

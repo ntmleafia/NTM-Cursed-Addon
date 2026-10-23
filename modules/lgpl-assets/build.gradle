@@ -1,0 +1,70 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'com.leafia'
+version = '1.0.0'
+
+base {
+    archivesName = 'leafia-lgpl-assets'
+}
+
+repositories {
+    maven {
+        url = 'https://maven.minecraftforge.net/'
+    }
+}
+
+dependencies {
+    compileOnly('net.minecraftforge:forge:1.12.2-14.23.5.2860:universal') {
+        transitive = false
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 8
+}
+
+tasks.named('processResources') {
+    inputs.property('version', project.version)
+    filesMatching('mcmod.info') {
+        expand(version: project.version)
+    }
+}
+
+tasks.withType(Jar).configureEach {
+    from(project.file('REUSE.toml'))
+    def licensePath = name == 'sourcesJar' ? '' : 'META-INF/licenses/leafia_lgpl_assets'
+    from(projectDir) {
+        include('LICENSE', 'LICENSE.LESSER', 'NOTICE')
+        into(licensePath)
+    }
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.named('sourcesJar', Jar) {
+    from(rootProject.file('LICENSES/LGPL-3.0-only.txt')) {
+        into('LICENSES')
+    }
+    includeEmptyDirs = false
+    eachFile { details ->
+        if (details.file.toPath().startsWith(project.file('src').toPath())) {
+            details.path = project.relativePath(details.file)
+        }
+    }
+    from('source-art') {
+        into('source-art')
+    }
+    from(projectDir) {
+        include('build.gradle', 'settings.gradle', 'README.md')
+    }
+}

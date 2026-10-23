@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.overwrite_contents.mixin.mod.hbm;
 
 import com.hbm.api.fluidmk2.FluidNetMK2;
@@ -7,67 +11,32 @@ import com.hbm.api.fluidmk2.IFluidReceiverMK2;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.inventory.fluid.trait.FluidTraitSimple.FT_Amat;
 import com.hbm.uninos.NodeNet;
-import com.hbm.util.Tuple;
-import com.hbm.util.Tuple.ObjectLongPair;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import it.unimi.dsi.fastutil.objects.Object2LongMap.Entry;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.tileentity.TileEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.List;
+@Mixin(value = FluidNetMK2.class, remap = false)
+public abstract class MixinFluidNetMK2 extends NodeNet<IFluidReceiverMK2, IFluidProviderMK2, FluidNode, FluidNetMK2> {
+    @Shadow protected FluidType type;
 
-@Mixin(value = FluidNetMK2.class,remap = false)
-public abstract class MixinFluidNetMK2 extends NodeNet<IFluidReceiverMK2, IFluidProviderMK2,FluidNode, FluidNetMK2> {
-	@Shadow protected long currentTime;
-	@Shadow protected static int timeout;
-	@Shadow protected FluidType type;
-	@Shadow public List<ObjectLongPair<IFluidProviderMK2>>[] providers;
-	@Shadow public long[] fluidAvailable;
+    @Unique
+    public boolean checkExplode(IFluidProviderMK2 provider) {
+        if (!type.hasTrait(FT_Amat.class) || !(provider instanceof TileEntity tile)) return false;
+        var receivers = receiverEntries.object2LongEntrySet().fastIterator();
+        while (receivers.hasNext()) {
+            if (receivers.next().getKey() == provider) continue;
+            tile.getWorld().newExplosion(null, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 5, true, true);
+            return true;
+        }
+        return false;
+    }
 
-	@Unique
-	private boolean isConnectedToAnywhere(IFluidProviderMK2 provider) {
-		ObjectIterator<Entry<IFluidReceiverMK2>> iterator = receiverEntries.object2LongEntrySet().fastIterator();
-		while (iterator.hasNext()) {
-			Object2LongMap.Entry<IFluidReceiverMK2> entry = iterator.next();
-			if (entry.getKey() != provider)
-				return true;
-		}
-		return false;
-	}
-
-	@Unique
-	public boolean checkExplode(IFluidProviderMK2 provider) {
-		if (!type.hasTrait(FT_Amat.class)) return false;
-		if (!isConnectedToAnywhere(provider)) return false;
-		if (provider instanceof TileEntity te) {
-			te.getWorld().newExplosion(null,te.getPos().getX(),te.getPos().getY(),te.getPos().getZ(),5,true,true);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @author ntmleafia
-	 * @reason not enough budget to inject
-	 */
-	@Overwrite
-	public void setupFluidProviders() {
-		ObjectIterator<Entry<IFluidProviderMK2>> iterator = providerEntries.object2LongEntrySet().fastIterator();
-
-		while(iterator.hasNext()) {
-			Object2LongMap.Entry<IFluidProviderMK2> entry = iterator.next();
-			if(currentTime - entry.getLongValue() > timeout || isBadLink(entry.getKey()) || checkExplode(entry.getKey())) { iterator.remove(); continue; }
-			IFluidProviderMK2 provider = entry.getKey();
-			int[] pressureRange = provider.getProvidingPressureRange(type);
-			for(int p = pressureRange[0]; p <= pressureRange[1]; p++) {
-				long available = Math.min(provider.getFluidAvailable(type, p), provider.getProviderSpeed(type, p));
-				providers[p].add(new Tuple.ObjectLongPair<>(provider, available));
-				fluidAvailable[p] += available;
-			}
-		}
-	}
+    @Redirect(method = "setupFluidProviders", at = @At(value = "INVOKE",
+            target = "Lcom/hbm/api/fluidmk2/FluidNetMK2;isBadLink(Ljava/lang/Object;)Z"), require = 1)
+    private boolean leafia$rejectUnsafeProvider(Object provider) {
+        return NodeNet.isBadLink(provider) || checkExplode((IFluidProviderMK2) provider);
+    }
 }

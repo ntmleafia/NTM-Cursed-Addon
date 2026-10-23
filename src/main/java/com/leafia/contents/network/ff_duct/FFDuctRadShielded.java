@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2022 Aionoso <Aionoso-software@outlook.de>
+// SPDX-FileCopyrightText: 2024 Alcater <alcater.fallout4@gmail.com>
+// SPDX-FileCopyrightText: 2021 Drillgon200 <drillgon200@gmail.com>
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-FileCopyrightText: 2025-2026 movblock <admin@movblock.mov>
+// SPDX-FileCopyrightText: 2025 MrNorwood
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.contents.network.ff_duct;
 
 import com.google.common.collect.ImmutableMap;

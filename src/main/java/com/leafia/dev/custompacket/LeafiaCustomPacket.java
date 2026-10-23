@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Leafia
+// SPDX-License-Identifier: LicenseRef-PolyForm-Shield-1.0.0
+
 package com.leafia.dev.custompacket;
 
 import com.custom_hbm.explosion.LCEExplosionNT.ExplosionNTSyncPacket;
