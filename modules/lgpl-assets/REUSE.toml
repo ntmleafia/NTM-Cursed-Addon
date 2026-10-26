@@ -43,6 +43,12 @@ SPDX-FileCopyrightText = ["Xenoulexi"]
 SPDX-License-Identifier = "LGPL-3.0-only"
 
 [[annotations]]
+path = ["src/main/resources/assets/leafia/textures/_integrated/machines/ams/**", "assets/leafia/textures/_integrated/machines/ams/**", "src/main/resources/assets/leafia/textures/items/dfc/ams_focus_*.png", "assets/leafia/textures/items/dfc/ams_focus_*.png"]
+precedence = "override"
+SPDX-FileCopyrightText = ["Nuclear Grand Father"]
+SPDX-License-Identifier = "LGPL-3.0-only"
+
+[[annotations]]
 path = ["src/main/resources/assets/leafia/sounds/tool/geiger*.ogg", "assets/leafia/sounds/tool/geiger*.ogg", "src/main/resources/assets/leafia/sounds/weapon/*.ogg", "assets/leafia/sounds/weapon/*.ogg"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["Contributors to HBM's Nuclear Tech Mod and its ports", "2025-2026 Leafia <https://github.com/ntmleafia>"]
